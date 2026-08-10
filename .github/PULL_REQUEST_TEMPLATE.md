@@ -17,7 +17,7 @@ Thank you for contributing an open dataset!
 - [ ] Lists contain no duplicate values and text fields are not blank
 - [ ] Metadata can be independently verified against the source
 - [ ] `getting_started` includes complete prerequisites and access steps
-- [ ] The Python example is concise, credential-free, and matches the described download
+- [ ] The Python example is valid, concise, credential-free, and matches the described download
 - [ ] The first project has a clear goal and three actionable steps
 
 ### Exclude if any apply
@@ -30,4 +30,6 @@ Thank you for contributing an open dataset!
 
 ### Notes for reviewers
 
-Automated CI will validate YAML parsing, required fields, unique IDs and list values, size ranges, difficulty, free access, license fields, calendar-valid dates, and live URL reachability.
+Automated CI will validate YAML parsing, required and unknown fields, unique IDs
+and list values, size ranges, difficulty, free access, license fields,
+calendar-valid dates, Python syntax, and live URL reachability.

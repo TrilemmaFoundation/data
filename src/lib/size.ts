@@ -33,7 +33,7 @@ export function formatSizeRange(min: number, max: number): string {
     return `${formatGb(max)} GB`;
   }
   if (min === 0 && max < 0.001) return "<0.001 GB";
-  if (min === 0) return `<${formatGb(max)} GB`;
+  if (min === 0) return `≤${formatGb(max)} GB`;
   return `${formatGb(min)}–${formatGb(max)} GB`;
 }
 

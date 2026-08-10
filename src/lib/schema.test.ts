@@ -139,4 +139,43 @@ describe("DatasetSchema", () => {
       }).success,
     ).toBe(false);
   });
+
+  it("rejects undocumented fields at every metadata level", () => {
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, invented_field: true }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        getting_started: {
+          ...validDataset.getting_started,
+          invented_field: true,
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        getting_started: {
+          ...validDataset.getting_started,
+          python: {
+            ...validDataset.getting_started.python,
+            invented_field: true,
+          },
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        getting_started: {
+          ...validDataset.getting_started,
+          first_project: {
+            ...validDataset.getting_started.first_project,
+            invented_field: true,
+          },
+        },
+      }).success,
+    ).toBe(false);
+  });
 });

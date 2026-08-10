@@ -14,9 +14,12 @@ test("a beginner can open and copy a complete dataset guide", async ({ page }) =
   await expect(page.getByRole("link", { name: /Open connections/ })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Copy" }).click();
+  await page.getByRole("button", { name: "Copy Python" }).click();
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
   await expect(page.getByText("Python code copied to clipboard.")).toBeAttached();
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copied).toContain("import ");
+  expect(copied).not.toContain("python -m pip install");
   await expect(page.getByLabel("Python example")).toHaveAttribute("tabindex", "0");
 });
 

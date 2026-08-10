@@ -21,7 +21,7 @@ export function CopyButton({ value }: { value: string }) {
     <div className="flex items-center gap-2">
       <Button type="button" variant="ghost" size="sm" onClick={copy}>
         {status === "copied" ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
-        {status === "copied" ? "Copied" : status === "error" ? "Try copy again" : "Copy"}
+        {status === "copied" ? "Copied" : status === "error" ? "Try again" : "Copy Python"}
       </Button>
       <span className="sr-only" aria-live="polite">
         {status === "copied" ? "Python code copied to clipboard." : ""}

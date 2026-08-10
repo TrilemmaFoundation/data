@@ -45,6 +45,9 @@ No database, graph database, authentication, admin panel, backend service, or da
 
 ## Local development
 
+Prerequisites: Node.js 22 and Python 3. Python is used by dataset validation
+to syntax-check the beginner examples.
+
 ```bash
 npm install
 npm run dev
@@ -53,8 +56,8 @@ npm run dev
 Useful scripts:
 
 ```bash
-npm run validate-datasets          # schema + live URL checks
-npm run validate-datasets:offline  # schema only
+npm run validate-datasets          # schema + Python syntax + live URL checks
+npm run validate-datasets:offline  # schema + Python syntax, no URL checks
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
 npm run build                      # static export to out/
@@ -101,7 +104,8 @@ No application code changes required.
 
 1. Push this repository to GitHub
 2. Import the repo in [Vercel](https://vercel.com) (framework preset: Next.js)
-3. Build command: `npm run build` · Output directory: `out` (static export)
+3. Use the Next.js framework preset and `npm run build`; leave the Output
+   Directory at Vercel's framework default
 4. Add custom domain `data.trilemma.foundation` in the Vercel project settings
 5. Create the DNS record Vercel shows (usually a CNAME) at your DNS provider
 

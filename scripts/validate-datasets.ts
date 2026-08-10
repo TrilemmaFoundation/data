@@ -1,5 +1,6 @@
 import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
 import { validateDatasetUrls } from "../src/lib/url-validation";
+import { validatePythonSyntax } from "../src/lib/python-validation";
 
 function isOfflineMode(argv: string[]): boolean {
   return argv.includes("--offline");
@@ -29,6 +30,11 @@ async function main() {
       messages.push(
         `last_verified ${dataset.last_verified} is in the future`,
       );
+    }
+
+    const pythonError = validatePythonSyntax(dataset.getting_started.python.code);
+    if (pythonError) {
+      messages.push(`getting_started.python.code: ${pythonError}`);
     }
 
     messages.push(...(urlErrors.get(file) ?? []));

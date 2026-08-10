@@ -43,15 +43,15 @@ const UniqueAccessTypesSchema = z
     message: "access types must be unique",
   });
 
-export const GettingStartedSchema = z.object({
+export const GettingStartedSchema = z.strictObject({
   overview: NonEmptyStringSchema,
   prerequisites: uniqueStrings(),
   access_steps: uniqueStrings(),
-  python: z.object({
+  python: z.strictObject({
     packages: uniqueStrings(),
     code: NonEmptyStringSchema,
   }),
-  first_project: z.object({
+  first_project: z.strictObject({
     title: NonEmptyStringSchema,
     goal: NonEmptyStringSchema,
     steps: uniqueStrings(3),
@@ -59,7 +59,7 @@ export const GettingStartedSchema = z.object({
 });
 
 export const DatasetSchema = z
-  .object({
+  .strictObject({
     id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
     name: NonEmptyStringSchema,
     description: NonEmptyStringSchema,

@@ -19,7 +19,8 @@ describe("size helpers", () => {
   });
 
   it("formats ranges usefully", () => {
-    expect(formatSizeRange(0, 0.001)).toBe("<0.001 GB");
+    expect(formatSizeRange(0, 0.001)).toBe("≤0.001 GB");
+    expect(formatSizeRange(0, 1)).toBe("≤1 GB");
     expect(formatSizeRange(0.2, 0.5)).toBe("0.2–0.5 GB");
   });
 

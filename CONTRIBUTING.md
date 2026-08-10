@@ -51,8 +51,9 @@ Do **not** add:
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
 - The first project must contain at least three distinct, actionable steps
-- Python examples must use the authoritative source, avoid credentials, and be
-  short enough for a beginner to understand in one notebook cell
+- Python examples must be valid Python, use the authoritative source, avoid
+  credentials, and be short enough for a beginner to understand in one notebook
+  cell
 - Do not invent new fields in v1
 
 ## Local validation
@@ -62,7 +63,7 @@ npm install
 npm run validate-datasets
 ```
 
-Use offline mode (schema only, no live URL checks) while iterating:
+Use offline mode (schema and Python syntax, no live URL checks) while iterating:
 
 ```bash
 npm run validate-datasets:offline

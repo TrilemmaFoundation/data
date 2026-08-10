@@ -210,7 +210,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                   <p className="text-xs text-muted-foreground">Install the packages, then run the notebook cell.</p>
                 </div>
               </div>
-              <CopyButton value={`${installCommand}\n\n${guide.python.code}`} />
+              <CopyButton value={guide.python.code} />
             </div>
             <div
               className="overflow-x-auto bg-[#080910] p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
