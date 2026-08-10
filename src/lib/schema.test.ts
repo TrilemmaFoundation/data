@@ -88,6 +88,15 @@ describe("DatasetSchema", () => {
     ).toBe(false);
   });
 
+  it.each(["static snapshot", "archived", "discontinued", "whenever"])(
+    "rejects unsupported update frequency %s",
+    (update_frequency) => {
+      expect(
+        DatasetSchema.safeParse({ ...validDataset, update_frequency }).success,
+      ).toBe(false);
+    },
+  );
+
   it("rejects invalid id casing", () => {
     const result = DatasetSchema.safeParse({
       ...validDataset,

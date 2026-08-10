@@ -50,8 +50,9 @@ npm run dev
 Useful scripts:
 
 ```bash
-npm run validate-datasets          # schema + Python syntax + live URL checks
-npm run validate-datasets:offline  # schema + Python syntax, no URL checks
+npm run validate-datasets          # policy + Python syntax + live URL checks
+npm run validate-datasets:offline  # policy + Python syntax, no network
+npm run validate-providers         # bounded live provider contract checks
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
 npm run test:coverage              # 100% statement/branch/function/line coverage for src/lib
@@ -69,12 +70,16 @@ npm run build
 npm run test:e2e
 ```
 
-The browser checks include an initial JavaScript and CSS budget for the catalog,
-plus automated WCAG checks for the catalog and dataset guides. Raise a budget
-or accessibility exception only with a documented reason and intentional review.
+The browser checks report and enforce separate JavaScript, CSS, HTML, static RSC,
+and compressed-code budgets for the catalog, plus automated WCAG checks for the
+catalog and dataset guides. Raise a budget or accessibility exception only with
+a documented reason and intentional review.
 
-GitHub Actions also runs live source and data-terms URL validation every Monday
-so link rot is detected even when the catalog has no recent code changes.
+Pull-request validation is deterministic and credential-free: it checks schema,
+the 90-day maintenance policy, Python syntax, controlled provider fixtures,
+lint, tests, and the static application. GitHub Actions runs bounded live source,
+data-terms, and provider-contract validation after pushes to `main`, every Monday,
+and on manual dispatch so drift is detected even without recent code changes.
 
 ## Adding a dataset
 

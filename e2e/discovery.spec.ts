@@ -93,4 +93,14 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await page.getByRole("button", { name: "Close filters" }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await page.getByRole("button", { name: /^Show \d+ datasets?$/ }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(trigger).toBeFocused();
 });

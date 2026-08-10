@@ -54,8 +54,10 @@ Do **not** add:
 - `license` and `license_url` are required
 - Text values are trimmed and must not be blank
 - List values such as domains, tasks, formats, and geographies must not contain duplicates
-- `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form
-- `update_frequency` must describe an active cadence; `static` is rejected
+- `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form and
+  must be refreshed after a substantive review at least every 90 days
+- `update_frequency` must be one of `continuous`, `near real time`, `daily`,
+  `weekly`, `monthly`, `quarterly`, `annual`, or `occasional`
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
 - The first project must contain at least three distinct, actionable steps
@@ -71,11 +73,26 @@ npm install
 npm run validate-datasets
 ```
 
-Use offline mode (schema and Python syntax, no live URL checks) while iterating:
+Use offline mode (schema, maintenance policy, and Python syntax; no network)
+while iterating:
 
 ```bash
 npm run validate-datasets:offline
 ```
+
+Maintainers can also run the live checks:
+
+```bash
+npm run validate-datasets  # source and data-terms URLs
+npm run validate-providers # bounded provider response contracts
+```
+
+Pull-request CI stays deterministic and does not execute contributed Python.
+It compiles examples for syntax and tests controlled provider fixtures instead.
+Live URL and provider checks run after pushes to `main`, every Monday, and on
+manual workflow dispatch. A small code-owned allowlist may temporarily accept
+a bot-protected URL; every exception is exact, visible in validation output,
+and has an expiry date.
 
 ## What happens after merge
 

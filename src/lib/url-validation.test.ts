@@ -34,14 +34,49 @@ describe("checkUrl", () => {
     expect(fetchImpl).toHaveBeenCalledOnce();
   });
 
-  it.each([401, 403])("accepts HTTP %s as a reachable protected endpoint", async (status) => {
+  it.each([401, 403])("rejects unapproved HTTP %s responses", async (status) => {
     const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status }));
     await expect(
       checkUrl("https://example.com/protected", {
         fetchImpl: fetchImpl as typeof fetch,
       }),
-    ).resolves.toEqual({ ok: true, messages: [] });
-    expect(fetchImpl).toHaveBeenCalledOnce();
+    ).resolves.toEqual({
+      ok: false,
+      messages: [`https://example.com/protected returned HTTP ${status}`],
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("allows an exact, unexpired protected-URL exception after trying GET", async () => {
+    const url = "https://www.usgs.gov/data-management/data-licensing";
+    const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 403 }));
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        today: new Date("2026-08-10T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} returned HTTP 403; allowed until 2026-11-08: USGS CloudFront blocks automated validation from some regions`,
+      ],
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("rejects an expired protected-URL exception", async () => {
+    const url = "https://www.usgs.gov/data-management/data-licensing";
+    const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 403 }));
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        today: new Date("2026-11-09T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: [`${url} returned HTTP 403`],
+    });
   });
 
   it("accepts the first GET response", async () => {
@@ -165,7 +200,10 @@ describe("checkUrl", () => {
 
 describe("validateDatasetUrls", () => {
   it("handles an empty catalog and normalizes zero concurrency", async () => {
-    await expect(validateDatasetUrls([])).resolves.toEqual(new Map());
+    await expect(validateDatasetUrls([])).resolves.toEqual({
+      errors: new Map(),
+      warnings: new Map(),
+    });
     const checker = vi.fn().mockResolvedValue({ ok: true, messages: [] });
     const dataset = {
       id: "one",
@@ -174,7 +212,7 @@ describe("validateDatasetUrls", () => {
     } as Dataset;
     await expect(
       validateDatasetUrls([dataset], { checker, concurrency: 0 }),
-    ).resolves.toEqual(new Map());
+    ).resolves.toEqual({ errors: new Map(), warnings: new Map() });
     expect(checker).toHaveBeenCalledTimes(2);
   });
   it("checks each unique current-catalog URL once", async () => {
@@ -183,7 +221,7 @@ describe("validateDatasetUrls", () => {
       datasets.flatMap((dataset) => [dataset.url, dataset.license_url]),
     ).size;
     const calls: string[] = [];
-    const errors = await validateDatasetUrls(datasets, {
+    const result = await validateDatasetUrls(datasets, {
       checker: async (url) => {
         calls.push(url);
         return { ok: true, messages: [] };
@@ -192,7 +230,7 @@ describe("validateDatasetUrls", () => {
 
     expect(calls).toHaveLength(uniqueUrlCount);
     expect(new Set(calls).size).toBe(uniqueUrlCount);
-    expect(errors.size).toBe(0);
+    expect(result).toEqual({ errors: new Map(), warnings: new Map() });
   });
 
   it("checks shared URLs once with bounded concurrency and attributes failures", async () => {
@@ -222,7 +260,7 @@ describe("validateDatasetUrls", () => {
         : { ok: true, messages: [] };
     };
 
-    const errors = await validateDatasetUrls(datasets, {
+    const result = await validateDatasetUrls(datasets, {
       checker,
       concurrency: 2,
     });
@@ -236,11 +274,32 @@ describe("validateDatasetUrls", () => {
     );
     expect(calls).toHaveLength(3);
     expect(maxInFlight).toBe(2);
-    expect(errors).toEqual(
+    expect(result.errors).toEqual(
       new Map([
         ["one.yaml", ["license unavailable"]],
         ["two.yaml", ["license unavailable"]],
       ]),
     );
+    expect(result.warnings).toEqual(new Map());
+  });
+
+  it("attributes URL warnings to every owning dataset", async () => {
+    const dataset = {
+      id: "one",
+      url: "https://example.com/shared",
+      license_url: "https://example.com/shared",
+    } as Dataset;
+    const result = await validateDatasetUrls([dataset], {
+      checker: async () => ({
+        ok: true,
+        messages: [],
+        warnings: ["protected endpoint"],
+      }),
+    });
+
+    expect(result).toEqual({
+      errors: new Map(),
+      warnings: new Map([["one.yaml", ["protected endpoint"]]]),
+    });
   });
 });

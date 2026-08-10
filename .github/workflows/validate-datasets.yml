@@ -29,8 +29,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate datasets
+      - name: Validate datasets offline
+        if: github.event_name == 'pull_request'
+        run: npm run validate-datasets:offline
+
+      - name: Validate live source URLs
+        if: github.event_name != 'pull_request'
         run: npm run validate-datasets
+
+      - name: Validate provider contracts
+        if: github.event_name != 'pull_request'
+        run: npm run validate-providers
 
   test:
     name: Unit tests

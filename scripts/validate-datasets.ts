@@ -1,23 +1,13 @@
 import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
 import { validateDatasetUrls } from "../src/lib/url-validation";
 import { validatePythonSyntax } from "../src/lib/python-validation";
-
-function isOfflineMode(argv: string[]): boolean {
-  return argv.includes("--offline");
-}
-
-function isFutureDate(isoDate: string): boolean {
-  const today = new Date();
-  const todayIso = today.toISOString().slice(0, 10);
-  return isoDate > todayIso;
-}
+import { validateDatasetPolicy } from "../src/lib/catalog-validation";
 
 async function main() {
-  const offline = isOfflineMode(process.argv.slice(2));
-  const dir = getDatasetsDir();
-  const { datasets, errors } = loadDatasets(dir);
-  const urlErrors = offline
-    ? new Map<string, string[]>()
+  const offline = process.argv.slice(2).includes("--offline");
+  const { datasets, errors } = loadDatasets(getDatasetsDir());
+  const urlValidation = offline
+    ? { errors: new Map<string, string[]>(), warnings: new Map<string, string[]>() }
     : await validateDatasetUrls(datasets);
 
   const allErrors: { file: string; messages: string[] }[] = [...errors];
@@ -26,22 +16,22 @@ async function main() {
     const file = `${dataset.id}.yaml`;
     const messages: string[] = [];
 
-    if (isFutureDate(dataset.last_verified)) {
-      messages.push(
-        `last_verified ${dataset.last_verified} is in the future`,
-      );
-    }
+    messages.push(...validateDatasetPolicy(dataset));
 
     const pythonError = validatePythonSyntax(dataset.getting_started.python.code);
     if (pythonError) {
       messages.push(`getting_started.python.code: ${pythonError}`);
     }
 
-    messages.push(...(urlErrors.get(file) ?? []));
+    messages.push(...(urlValidation.errors.get(file) ?? []));
 
     if (messages.length > 0) {
       allErrors.push({ file, messages });
     }
+  }
+
+  for (const [file, warnings] of urlValidation.warnings) {
+    for (const warning of warnings) console.warn(`! ${file}: ${warning}`);
   }
 
   if (allErrors.length === 0) {

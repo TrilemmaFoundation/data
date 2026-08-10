@@ -37,14 +37,14 @@ geography:
 temporal_coverage: null
 # Use a string like "1960-present" when applicable, otherwise null.
 update_frequency: continuous
-# Examples: near real time | daily | monthly | annual | occasional
-# Static datasets are not accepted.
+# Allowed: continuous | near real time | daily | weekly | monthly | quarterly | annual | occasional
+# Static, archived, and discontinued datasets are not accepted.
 
 provider: Example Provider
 source_type: academic
 # Allowed values: government | intergovernmental | academic | nonprofit | company | community
 last_verified: 2026-08-10
-# ISO date YYYY-MM-DD — update when you verify the source is still live.
+# ISO date YYYY-MM-DD — re-verify the source and guide at least every 90 days.
 
 getting_started:
   overview: >

@@ -15,11 +15,19 @@ export const SourceTypeSchema = z.enum([
   "community",
 ]);
 
+const UPDATE_FREQUENCIES = [
+  "continuous",
+  "near real time",
+  "daily",
+  "weekly",
+  "monthly",
+  "quarterly",
+  "annual",
+  "occasional",
+] as const;
+
 const NonEmptyStringSchema = z.string().trim().min(1);
-const UpdateFrequencySchema = NonEmptyStringSchema.refine(
-  (value) => value.toLocaleLowerCase("en-US") !== "static",
-  "static datasets are not accepted",
-);
+const UpdateFrequencySchema = z.enum(UPDATE_FREQUENCIES);
 
 function uniqueStrings(min = 1) {
   return z

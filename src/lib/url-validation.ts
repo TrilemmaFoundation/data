@@ -8,15 +8,33 @@ const USER_AGENT =
 export type UrlCheckResult = {
   ok: boolean;
   messages: string[];
+  warnings?: string[];
+};
+
+type DatasetUrlValidationResult = {
+  errors: Map<string, string[]>;
+  warnings: Map<string, string[]>;
 };
 
 type CheckUrlOptions = {
   fetchImpl?: typeof fetch;
   delay?: (milliseconds: number) => Promise<void>;
+  today?: Date;
 };
 
+const STATUS_EXCEPTIONS = new Map([
+  [
+    "https://www.usgs.gov/data-management/data-licensing",
+    {
+      statuses: [403],
+      reason: "USGS CloudFront blocks automated validation from some regions",
+      expires: "2026-11-08",
+    },
+  ],
+]);
+
 function isReachable(status: number | null): boolean {
-  return status !== null && ((status >= 200 && status < 400) || status === 401 || status === 403);
+  return status !== null && status >= 200 && status < 400;
 }
 
 function isTransient(status: number | null): boolean {
@@ -29,6 +47,7 @@ export async function checkUrl(
 ): Promise<UrlCheckResult> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const delay = options.delay ?? ((milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)));
+  const today = (options.today ?? new Date()).toISOString().slice(0, 10);
 
   async function attempt(method: "HEAD" | "GET") {
     const controller = new AbortController();
@@ -71,6 +90,21 @@ export async function checkUrl(
     if (isReachable(get.status)) return { ok: true, messages: [] };
   }
 
+  const exception = STATUS_EXCEPTIONS.get(url);
+  if (
+    get.status !== null &&
+    exception?.statuses.includes(get.status) &&
+    exception.expires >= today
+  ) {
+    return {
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} returned HTTP ${get.status}; allowed until ${exception.expires}: ${exception.reason}`,
+      ],
+    };
+  }
+
   const message = get.status === null
     ? get.message!
     : `${url} returned HTTP ${get.status}`;
@@ -83,7 +117,7 @@ export async function validateDatasetUrls(
     concurrency?: number;
     checker?: (url: string) => Promise<UrlCheckResult>;
   } = {},
-): Promise<Map<string, string[]>> {
+): Promise<DatasetUrlValidationResult> {
   const owners = new Map<string, Set<string>>();
   for (const dataset of datasets) {
     for (const url of [dataset.url, dataset.license_url]) {
@@ -109,14 +143,22 @@ export async function validateDatasetUrls(
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
 
   const errorsByFile = new Map<string, string[]>();
+  const warningsByFile = new Map<string, string[]>();
   for (const [url, result] of results) {
-    if (result.ok) continue;
     for (const file of owners.get(url)!) {
-      errorsByFile.set(file, [
-        ...(errorsByFile.get(file) ?? []),
-        ...result.messages,
-      ]);
+      if (!result.ok) {
+        errorsByFile.set(file, [
+          ...(errorsByFile.get(file) ?? []),
+          ...result.messages,
+        ]);
+      }
+      if (result.warnings?.length) {
+        warningsByFile.set(file, [
+          ...(warningsByFile.get(file) ?? []),
+          ...result.warnings,
+        ]);
+      }
     }
   }
-  return errorsByFile;
+  return { errors: errorsByFile, warnings: warningsByFile };
 }

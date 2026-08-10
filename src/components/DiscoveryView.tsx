@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Dialog } from "@base-ui/react/dialog";
 import { Filter, Search, Sparkles, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Dataset } from "@/lib/schema";
@@ -71,6 +70,8 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
     [filterOptions, searchParams],
   );
   const searchRef = useRef<HTMLInputElement>(null);
+  const filterDialogRef = useRef<HTMLDialogElement>(null);
+  const filterTriggerRef = useRef<HTMLButtonElement>(null);
   const results = useMemo(() => filterDatasets(datasets, filters), [datasets, filters]);
   const chips = useMemo(() => activeChips(filters), [filters]);
 
@@ -112,7 +113,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
     filters.apiKeyRequired === false;
 
   return (
-    <Dialog.Root>
+    <>
       <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
       <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#1e1e44] px-5 py-9 shadow-[0_28px_90px_rgba(0,0,0,0.3)] sm:px-8 sm:py-12 lg:px-12">
         <div className="pointer-events-none absolute -top-24 -right-20 size-72 rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
@@ -185,8 +186,11 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
                 {results.length} dataset{results.length === 1 ? "" : "s"} found
               </p>
             </div>
-            <Dialog.Trigger
+            <button
+              ref={filterTriggerRef}
+              type="button"
               className={cn(buttonVariants({ variant: "outline" }), "lg:hidden")}
+              onClick={() => filterDialogRef.current?.showModal()}
             >
               <Filter aria-hidden="true" /> Filters
               {chips.length > 0 && (
@@ -194,7 +198,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
                   {chips.length}
                 </span>
               )}
-            </Dialog.Trigger>
+            </button>
           </div>
 
           {chips.length > 0 && (
@@ -235,35 +239,44 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
 
       </div>
 
-      <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[60] bg-[#0a0a14]/80 backdrop-blur-sm transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0" />
-        <Dialog.Viewport className="fixed inset-0 z-[70] flex justify-end">
-          <Dialog.Popup className="flex h-dvh w-[min(92vw,26rem)] flex-col border-l border-white/10 bg-[#0a0a14] text-white shadow-2xl transition-transform duration-200 data-ending-style:translate-x-full data-starting-style:translate-x-full">
+      <dialog
+        ref={filterDialogRef}
+        aria-labelledby="filter-dialog-title"
+        aria-describedby="filter-dialog-description"
+        className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,26rem)] max-w-none border-0 border-l border-white/10 bg-[#0a0a14] p-0 text-white shadow-2xl backdrop:bg-[#0a0a14]/80 backdrop:backdrop-blur-sm"
+        onClose={() => filterTriggerRef.current?.focus()}
+      >
+          <div className="flex h-full flex-col">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a14]/95 px-5 py-4 backdrop-blur">
               <div>
-                <Dialog.Title className="text-lg font-semibold">Filter datasets</Dialog.Title>
-                <Dialog.Description className="sr-only">
+                <h2 id="filter-dialog-title" className="text-lg font-semibold">Filter datasets</h2>
+                <p id="filter-dialog-description" className="sr-only">
                   Refine the catalog by difficulty, topic, format, access, and size.
-                </Dialog.Description>
+                </p>
               </div>
-              <Dialog.Close
+              <button
+                type="button"
                 className="grid size-11 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white"
                 aria-label="Close filters"
+                onClick={() => filterDialogRef.current?.close()}
               >
                 <X aria-hidden="true" />
-              </Dialog.Close>
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto p-5">
               <DatasetFilters datasets={datasets} filters={filters} onChange={handleChange} />
             </div>
             <div className="sticky bottom-0 border-t border-white/10 bg-[#0a0a14]/95 p-4 backdrop-blur">
-              <Dialog.Close className={cn(buttonVariants({ size: "lg" }), "w-full")}>
+              <button
+                type="button"
+                className={cn(buttonVariants({ size: "lg" }), "w-full")}
+                onClick={() => filterDialogRef.current?.close()}
+              >
                 Show {results.length} dataset{results.length === 1 ? "" : "s"}
-              </Dialog.Close>
+              </button>
             </div>
-          </Dialog.Popup>
-        </Dialog.Viewport>
-      </Dialog.Portal>
-    </Dialog.Root>
+          </div>
+      </dialog>
+    </>
   );
 }
