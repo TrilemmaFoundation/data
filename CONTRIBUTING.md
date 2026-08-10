@@ -45,9 +45,12 @@ Do **not** add:
 - `difficulty` must be `beginner`, `intermediate`, or `advanced`
 - `source_type` must be one of: `government`, `academic`, `nonprofit`, `company`, `community`
 - `license` and `license_url` are required
-- `last_verified` must be an ISO date `YYYY-MM-DD`
+- Text values are trimmed and must not be blank
+- List values such as domains, tasks, formats, and geographies must not contain duplicates
+- `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
+- The first project must contain at least three distinct, actionable steps
 - Python examples must use the authoritative source, avoid credentials, and be
   short enough for a beginner to understand in one notebook cell
 - Do not invent new fields in v1

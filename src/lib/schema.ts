@@ -16,50 +16,77 @@ export const SourceTypeSchema = z.enum([
 
 const NonEmptyStringSchema = z.string().trim().min(1);
 
+function uniqueStrings(min = 1) {
+  return z
+    .array(NonEmptyStringSchema)
+    .min(min)
+    .superRefine((values, context) => {
+      const seen = new Set<string>();
+      values.forEach((value, index) => {
+        const normalized = value.toLocaleLowerCase("en-US");
+        if (seen.has(normalized)) {
+          context.addIssue({
+            code: "custom",
+            message: `duplicate value "${value}"`,
+            path: [index],
+          });
+        }
+        seen.add(normalized);
+      });
+    });
+}
+
+const UniqueAccessTypesSchema = z
+  .array(AccessTypeSchema)
+  .min(1)
+  .refine((values) => new Set(values).size === values.length, {
+    message: "access types must be unique",
+  });
+
 export const GettingStartedSchema = z.object({
   overview: NonEmptyStringSchema,
-  prerequisites: z.array(NonEmptyStringSchema).min(1),
-  access_steps: z.array(NonEmptyStringSchema).min(1),
+  prerequisites: uniqueStrings(),
+  access_steps: uniqueStrings(),
   python: z.object({
-    packages: z.array(NonEmptyStringSchema).min(1),
+    packages: uniqueStrings(),
     code: NonEmptyStringSchema,
   }),
   first_project: z.object({
     title: NonEmptyStringSchema,
     goal: NonEmptyStringSchema,
-    steps: z.array(NonEmptyStringSchema).min(1),
+    steps: uniqueStrings(3),
   }),
 });
 
 export const DatasetSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
-    name: z.string().min(1),
-    description: z.string().min(1),
+    name: NonEmptyStringSchema,
+    description: NonEmptyStringSchema,
 
     url: z.string().url(),
-    access_type: z.array(AccessTypeSchema).min(1),
+    access_type: UniqueAccessTypesSchema,
     api_key_required: z.boolean(),
     free_to_access: z.literal(true),
 
     size_gb_min: z.number().min(0),
     size_gb_max: z.number().min(0),
-    formats: z.array(z.string().min(1)).min(1),
-    license: z.string().min(1),
+    formats: uniqueStrings(),
+    license: NonEmptyStringSchema,
     license_url: z.string().url(),
 
-    domains: z.array(z.string().min(1)).min(1),
-    data_types: z.array(z.string().min(1)).min(1),
-    tasks: z.array(z.string().min(1)).min(1),
+    domains: uniqueStrings(),
+    data_types: uniqueStrings(),
+    tasks: uniqueStrings(),
     difficulty: DifficultySchema,
 
-    geography: z.array(z.string().min(1)).min(1),
-    temporal_coverage: z.string().nullable(),
-    update_frequency: z.string().min(1),
+    geography: uniqueStrings(),
+    temporal_coverage: NonEmptyStringSchema.nullable(),
+    update_frequency: NonEmptyStringSchema,
 
-    provider: z.string().min(1),
+    provider: NonEmptyStringSchema,
     source_type: SourceTypeSchema,
-    last_verified: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    last_verified: z.iso.date(),
     getting_started: GettingStartedSchema,
   })
   .refine((d) => d.size_gb_min <= d.size_gb_max, {

@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { ArrowLeft, ChevronDown, Network } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dataset } from "@/lib/schema";
 import {
+  GRAPH_NODE_TYPES,
+  getConnectedNodes,
+  getRelatedDatasets,
   graphNodeHref,
   getSubgraph,
+  groupGraphNodes,
   resolveGraphFocus,
   type GraphNodeType,
   type KnowledgeGraph,
@@ -39,6 +43,21 @@ export function GraphExplorer({
   const searchParams = useSearchParams();
   const datasetId = searchParams.get("dataset");
   const focusParam = searchParams.get("focus");
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [hasOpenedMap, setHasOpenedMap] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (detailsRef.current) detailsRef.current.open = isDesktop;
+  }, [isDesktop]);
 
   const focusId = useMemo(() => {
     return resolveGraphFocus(
@@ -54,43 +73,19 @@ export function GraphExplorer({
     [focusId, fullGraph],
   );
   const selectedNode = fullGraph.nodes.find((node) => node.id === focusId) ?? null;
-  const connectedNodes = selectedNode
-    ? graph.nodes.filter((node) => node.id !== selectedNode.id)
-    : fullGraph.nodes.filter((node) => node.type === "dataset");
-  const relatedDatasets = useMemo(() => {
-    if (!selectedNode) return datasets;
-
-    if (selectedNode.type !== "dataset") {
-      const datasetIds = new Set(
-        fullGraph.edges
-          .filter((edge) => edge.target === selectedNode.id)
-          .map((edge) => edge.source.replace(/^dataset:/, "")),
-      );
-      return datasets.filter((dataset) => datasetIds.has(dataset.id));
-    }
-
-    const selectedConcepts = new Set(
-      fullGraph.edges
-        .filter((edge) => edge.source === selectedNode.id)
-        .map((edge) => edge.target),
-    );
-    const relatedIds = new Set(
-      fullGraph.edges
-        .filter((edge) => selectedConcepts.has(edge.target) && edge.source !== selectedNode.id)
-        .map((edge) => edge.source.replace(/^dataset:/, "")),
-    );
-    return datasets.filter((dataset) => relatedIds.has(dataset.id));
-  }, [datasets, fullGraph.edges, selectedNode]);
+  const connectedNodes = useMemo(
+    () => getConnectedNodes(fullGraph, graph, focusId),
+    [focusId, fullGraph, graph],
+  );
+  const relatedDatasets = useMemo(
+    () => getRelatedDatasets(datasets, fullGraph, focusId),
+    [datasets, focusId, fullGraph],
+  );
 
   const groupedOptions = useMemo(
     () =>
-      (Object.keys(TYPE_LABELS) as GraphNodeType[]).map((type) => ({
-        type,
-        nodes: fullGraph.nodes
-          .filter((node) => node.type === type)
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      })),
-    [fullGraph.nodes],
+      groupGraphNodes(fullGraph),
+    [fullGraph],
   );
 
   function selectNode(id: string) {
@@ -208,26 +203,38 @@ export function GraphExplorer({
         </div>
       </section>
 
-      <details className="group mt-6 lg:open" open={false}>
+      <details
+        ref={detailsRef}
+        className="group mt-6"
+        onToggle={(event) => {
+          if (event.currentTarget.open) setHasOpenedMap(true);
+        }}
+      >
         <summary className="surface flex min-h-14 cursor-pointer list-none items-center justify-between px-5 font-semibold text-white marker:content-none lg:hidden">
           <span className="flex items-center gap-2"><Network className="size-5 text-primary" aria-hidden="true" /> Show visual map</span>
           <ChevronDown className="size-5 transition-transform group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="mt-3 hidden group-open:block lg:mt-0 lg:block">
-          <DatasetGraph
-            key={focusId ?? "all"}
-            graph={graph}
-            focusId={focusId}
-            height={640}
-            onNodeSelect={selectNode}
-          />
+          {isDesktop || hasOpenedMap ? (
+            <DatasetGraph
+              key={focusId ?? "all"}
+              graph={graph}
+              focusId={focusId}
+              height={640}
+              onNodeSelect={selectNode}
+            />
+          ) : (
+            <div className="grid h-[420px] place-items-center rounded-2xl border border-white/10 bg-[#0d0f1a] text-sm text-muted-foreground lg:h-[640px]">
+              Preparing visual map…
+            </div>
+          )}
         </div>
       </details>
 
       <section className="mt-6" aria-labelledby="legend-title">
         <h2 id="legend-title" className="sr-only">Connection types</h2>
         <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-          {(Object.keys(TYPE_LABELS) as GraphNodeType[]).map((type) => (
+          {GRAPH_NODE_TYPES.map((type) => (
             <li key={type} className="flex items-center gap-2">
               <span className="size-2.5 rounded-full" style={{ backgroundColor: NODE_COLORS[type] }} aria-hidden="true" />
               {TYPE_LABELS[type]}

@@ -5,7 +5,12 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Filter, Search, Sparkles, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Dataset } from "@/lib/schema";
-import { filterDatasets, type DatasetFilters as Filters } from "@/lib/search";
+import {
+  EMPTY_FILTERS,
+  filterDatasets,
+  getFilterOptions,
+  type DatasetFilters as Filters,
+} from "@/lib/search";
 import {
   applyQuickPreset,
   filtersToParams,
@@ -60,19 +65,27 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const filterOptions = useMemo(() => getFilterOptions(datasets), [datasets]);
   const filters = useMemo(
-    () => parseFilters(new URLSearchParams(searchParams.toString())),
-    [searchParams],
+    () => parseFilters(new URLSearchParams(searchParams.toString()), filterOptions),
+    [filterOptions, searchParams],
   );
   const results = useMemo(() => filterDatasets(datasets, filters), [datasets, filters]);
   const chips = useMemo(() => activeChips(filters), [filters]);
 
-  const handleChange = useCallback(
-    (next: Filters) => {
+  const updateFilters = useCallback(
+    (next: Filters, history: "push" | "replace" = "replace") => {
       const query = filtersToParams(next).toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      const href = query ? `${pathname}?${query}` : pathname;
+      if (history === "push") router.push(href, { scroll: false });
+      else router.replace(href, { scroll: false });
     },
     [pathname, router],
+  );
+
+  const handleChange = useCallback(
+    (next: Filters) => updateFilters(next),
+    [updateFilters],
   );
 
   const beginnerActive =
@@ -119,7 +132,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
               size="sm"
               aria-pressed={beginnerActive}
               className={beginnerActive ? "border-primary bg-primary/15 text-primary" : undefined}
-              onClick={() => handleChange(applyQuickPreset(filters, "beginner"))}
+              onClick={() => updateFilters(applyQuickPreset(filters, "beginner"), "push")}
             >
               <Sparkles aria-hidden="true" /> Beginner-friendly
             </Button>
@@ -128,7 +141,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
               size="sm"
               aria-pressed={smallCsvActive}
               className={smallCsvActive ? "border-primary bg-primary/15 text-primary" : undefined}
-              onClick={() => handleChange(applyQuickPreset(filters, "small-csv"))}
+              onClick={() => updateFilters(applyQuickPreset(filters, "small-csv"), "push")}
             >
               Small CSVs
             </Button>
@@ -183,7 +196,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
               <p className="mt-2 text-sm text-muted-foreground">
                 Try a broader search or remove one of the active filters.
               </p>
-              <Button className="mt-5" onClick={() => handleChange({ ...filters, query: "", domains: [], dataTypes: [], tasks: [], difficulties: [], sizes: [], formats: [], apiKeyRequired: null, geographies: [] })}>
+              <Button className="mt-5" onClick={() => handleChange(EMPTY_FILTERS)}>
                 Clear filters
               </Button>
             </div>

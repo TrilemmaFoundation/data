@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   buildGraph,
+  getConnectedNodes,
   getDatasetsForConcept,
+  getRelatedDatasets,
   getSubgraph,
+  groupGraphNodes,
   graphNodeHref,
   resolveGraphFocus,
 } from "./graph";
@@ -39,7 +42,7 @@ const iris: Dataset = {
     first_project: {
       title: "Explore the data",
       goal: "Understand its columns.",
-      steps: ["Inspect the first rows."],
+      steps: ["Inspect the first rows.", "Summarize the columns.", "Record one finding."],
     },
   },
 };
@@ -96,5 +99,31 @@ describe("buildGraph", () => {
       "task:Classification",
     );
     expect(resolveGraphFocus("missing", "not-valid", ["iris"], graph)).toBeNull();
+  });
+
+  it("derives explorer connections and related datasets", () => {
+    const graph = buildGraph([iris, wine]);
+    const focused = getSubgraph(graph, "dataset:iris", 1);
+
+    expect(getConnectedNodes(graph, focused, "dataset:iris")).not.toContainEqual(
+      expect.objectContaining({ id: "dataset:iris" }),
+    );
+    expect(getConnectedNodes(graph, graph, null).map((node) => node.id)).toEqual([
+      "dataset:iris",
+      "dataset:wine-quality",
+    ]);
+    expect(getRelatedDatasets([iris, wine], graph, "dataset:iris").map((d) => d.id)).toEqual([
+      "wine-quality",
+    ]);
+    expect(
+      getRelatedDatasets([iris, wine], graph, "task:Classification").map((d) => d.id),
+    ).toEqual(["iris", "wine-quality"]);
+    expect(getRelatedDatasets([iris, wine], graph, "task:missing")).toEqual([]);
+  });
+
+  it("groups focus options in stable label order", () => {
+    const groups = groupGraphNodes(buildGraph([wine, iris]));
+    expect(groups[0]?.type).toBe("dataset");
+    expect(groups[0]?.nodes.map((node) => node.label)).toEqual(["Iris", "Wine Quality"]);
   });
 });

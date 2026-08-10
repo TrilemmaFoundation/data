@@ -58,9 +58,22 @@ npm run validate-datasets:offline  # schema only
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
 npm run build                      # static export to out/
+npm run test:e2e                   # browser tests against the built export
 ```
 
 This project uses Next.js static export (`output: "export"`). After `npm run build`, serve the `out/` directory with any static file server (for example `npx serve out`). `next start` is not used.
+
+The browser suite starts that static server automatically. Install its Chromium
+binary once with `npx playwright install chromium`, then run the build and suite:
+
+```bash
+npm run build
+npm run test:e2e
+```
+
+The browser checks include initial JavaScript and CSS budgets for the catalog
+and the closed mobile Connections route. Raise a budget only with a documented
+before/after measurement and intentional review.
 
 ## Adding a dataset
 

@@ -1,38 +1,42 @@
 import {
   EMPTY_FILTERS,
   type DatasetFilters,
+  type FilterOptions,
 } from "./search";
 import {
   SIZE_CATEGORIES,
   type SizeCategory,
 } from "./size";
 
-function parseList(value: string | null): string[] {
+function parseList(value: string | null, allowed: readonly string[]): string[] {
   if (!value) return [];
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
+  const selected = new Set(
+    value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+  );
+  return allowed.filter((item) => selected.has(item));
 }
 
-export function parseFilters(params: URLSearchParams): DatasetFilters {
+export function parseFilters(
+  params: URLSearchParams,
+  options: FilterOptions,
+): DatasetFilters {
   const apiKey = params.get("apiKey");
-  const sizes = parseList(params.get("size")).filter(
-    (item): item is SizeCategory =>
-      (SIZE_CATEGORIES as readonly string[]).includes(item),
-  );
+  const sizes = parseList(params.get("size"), SIZE_CATEGORIES) as SizeCategory[];
 
   return {
     query: params.get("q") ?? "",
-    domains: parseList(params.get("domain")),
-    dataTypes: parseList(params.get("dataType")),
-    tasks: parseList(params.get("task")),
-    difficulties: parseList(params.get("difficulty")),
+    domains: parseList(params.get("domain"), options.domains),
+    dataTypes: parseList(params.get("dataType"), options.dataTypes),
+    tasks: parseList(params.get("task"), options.tasks),
+    difficulties: parseList(params.get("difficulty"), options.difficulties),
     sizes,
-    formats: parseList(params.get("format")),
+    formats: parseList(params.get("format"), options.formats),
     apiKeyRequired:
       apiKey === "true" ? true : apiKey === "false" ? false : null,
-    geographies: parseList(params.get("geography")),
+    geographies: parseList(params.get("geography"), options.geographies),
   };
 }
 

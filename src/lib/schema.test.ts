@@ -32,7 +32,11 @@ const validDataset = {
     first_project: {
       title: "Explore the data",
       goal: "Understand its columns.",
-      steps: ["Inspect the first rows."],
+      steps: [
+        "Inspect the first rows.",
+        "Summarize the columns.",
+        "Record one finding.",
+      ],
     },
   },
 };
@@ -89,5 +93,50 @@ describe("DatasetSchema", () => {
       },
     };
     expect(DatasetSchema.safeParse(emptyOverview).success).toBe(false);
+  });
+
+  it("rejects impossible calendar dates", () => {
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, last_verified: "2026-02-31" })
+        .success,
+    ).toBe(false);
+  });
+
+  it("rejects duplicate categorical values regardless of case", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        tasks: ["Classification", "classification"],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("trims metadata and rejects whitespace-only values", () => {
+    const trimmed = DatasetSchema.safeParse({
+      ...validDataset,
+      name: "  Iris  ",
+      domains: ["  Biology  "],
+    });
+    expect(trimmed.success).toBe(true);
+    if (trimmed.success) {
+      expect(trimmed.data.name).toBe("Iris");
+      expect(trimmed.data.domains).toEqual(["Biology"]);
+    }
+    expect(DatasetSchema.safeParse({ ...validDataset, provider: "   " }).success).toBe(false);
+  });
+
+  it("requires three actionable first-project steps", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        getting_started: {
+          ...validDataset.getting_started,
+          first_project: {
+            ...validDataset.getting_started.first_project,
+            steps: ["Inspect the first rows."],
+          },
+        },
+      }).success,
+    ).toBe(false);
   });
 });

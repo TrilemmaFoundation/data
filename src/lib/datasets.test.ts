@@ -63,6 +63,8 @@ getting_started:
     goal: Understand its columns.
     steps:
       - Inspect the first rows.
+      - Summarize the columns.
+      - Record one finding.
 `;
 
 describe("loadDatasets", () => {

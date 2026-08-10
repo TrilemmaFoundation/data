@@ -37,6 +37,17 @@ export type KnowledgeGraph = {
   edges: GraphEdge[];
 };
 
+export const GRAPH_NODE_TYPES = [
+  "dataset",
+  "domain",
+  "dataType",
+  "task",
+  "provider",
+  "geography",
+  "format",
+  "license",
+] as const satisfies readonly GraphNodeType[];
+
 export function graphNodeHref(node: GraphNode): string {
   if (node.type === "dataset") {
     return `/graph?dataset=${encodeURIComponent(node.id.replace(/^dataset:/, ""))}`;
@@ -177,6 +188,55 @@ export function getSubgraph(
   };
 }
 
+export function getConnectedNodes(
+  fullGraph: KnowledgeGraph,
+  graph: KnowledgeGraph,
+  selectedNodeId: string | null,
+): GraphNode[] {
+  if (!selectedNodeId) {
+    return fullGraph.nodes.filter((node) => node.type === "dataset");
+  }
+  return graph.nodes.filter((node) => node.id !== selectedNodeId);
+}
+
+export function getRelatedDatasets(
+  datasets: Dataset[],
+  graph: KnowledgeGraph,
+  selectedNodeId: string | null,
+): Dataset[] {
+  if (!selectedNodeId) return datasets;
+  const selectedNode = graph.nodes.find((node) => node.id === selectedNodeId);
+  if (!selectedNode) return [];
+
+  if (selectedNode.type !== "dataset") {
+    return getDatasetsForConcept(datasets, selectedNode.type, selectedNode.label);
+  }
+
+  const selectedConcepts = new Set(
+    graph.edges
+      .filter((edge) => edge.source === selectedNode.id)
+      .map((edge) => edge.target),
+  );
+  const relatedIds = new Set(
+    graph.edges
+      .filter(
+        (edge) =>
+          selectedConcepts.has(edge.target) && edge.source !== selectedNode.id,
+      )
+      .map((edge) => edge.source.replace(/^dataset:/, "")),
+  );
+  return datasets.filter((dataset) => relatedIds.has(dataset.id));
+}
+
+export function groupGraphNodes(graph: KnowledgeGraph) {
+  return GRAPH_NODE_TYPES.map((type) => ({
+    type,
+    nodes: graph.nodes
+      .filter((node) => node.type === type)
+      .sort((a, b) => a.label.localeCompare(b.label)),
+  }));
+}
+
 export function getDatasetsForConcept(
   datasets: Dataset[],
   type: Exclude<GraphNodeType, "dataset">,
@@ -211,16 +271,6 @@ export function parseConceptFocus(
   if (separator <= 0) return null;
   const type = focus.slice(0, separator) as GraphNodeType;
   const value = focus.slice(separator + 1);
-  const validTypes: GraphNodeType[] = [
-    "dataset",
-    "domain",
-    "dataType",
-    "task",
-    "provider",
-    "geography",
-    "format",
-    "license",
-  ];
-  if (!validTypes.includes(type) || !value) return null;
+  if (!(GRAPH_NODE_TYPES as readonly string[]).includes(type) || !value) return null;
   return { type, value };
 }

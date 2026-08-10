@@ -13,7 +13,8 @@ Thank you for contributing an open dataset!
 - [ ] The dataset is accessible without paid infrastructure
 - [ ] The `url` points to an authoritative source (not a mirror, when avoidable)
 - [ ] I verified the source URL and license URL are live
-- [ ] `last_verified` is today's date (`YYYY-MM-DD`)
+- [ ] `last_verified` is today's real calendar date (`YYYY-MM-DD`)
+- [ ] Lists contain no duplicate values and text fields are not blank
 - [ ] Metadata can be independently verified against the source
 - [ ] `getting_started` includes complete prerequisites and access steps
 - [ ] The Python example is concise, credential-free, and matches the described download
@@ -29,4 +30,4 @@ Thank you for contributing an open dataset!
 
 ### Notes for reviewers
 
-Automated CI will validate YAML parsing, required fields, unique IDs, size ranges, difficulty, free access, license fields, date format, and live URL reachability.
+Automated CI will validate YAML parsing, required fields, unique IDs and list values, size ranges, difficulty, free access, license fields, calendar-valid dates, and live URL reachability.
