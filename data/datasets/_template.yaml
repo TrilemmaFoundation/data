@@ -22,6 +22,10 @@ formats:
   - CSV
 license: Provider data-use terms
 license_url: https://example.com/data-terms
+# Case-insensitive text that uniquely identifies the intended HTML pages.
+url_checks:
+  source_marker: Example Dataset Downloads
+  license_marker: Example Provider Data Terms
 
 domains:
   - Biology

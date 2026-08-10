@@ -13,7 +13,9 @@ Thank you for contributing an operational dataset!
 - [ ] `license` and `license_url` point to authoritative terms
 - [ ] The dataset is accessible without paid infrastructure
 - [ ] The `url` points to an authoritative source (not a mirror, when avoidable)
+- [ ] Source and license URLs use HTTPS and contain no embedded credentials
 - [ ] I verified the source URL and license URL are live
+- [ ] `url_checks` contains page-specific source and license text markers
 - [ ] `last_verified` is today's real calendar date (`YYYY-MM-DD`)
 - [ ] Lists contain no duplicate values and text fields are not blank
 - [ ] Metadata can be independently verified against the source
@@ -36,4 +38,4 @@ Thank you for contributing an operational dataset!
 
 Automated CI will validate YAML parsing, required and unknown fields, unique IDs
 and list values, size ranges, difficulty, free access, license fields,
-calendar-valid dates, Python syntax, and live URL reachability.
+calendar-valid dates, Python syntax, and live URL page identity.

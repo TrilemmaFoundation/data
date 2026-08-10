@@ -20,6 +20,9 @@ formats:
   - KML
 license: NASA Earthdata CC0 data-use policy
 license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy
+url_checks:
+  source_marker: API - Area
+  license_marker: Data Use
 
 domains:
   - Wildfires

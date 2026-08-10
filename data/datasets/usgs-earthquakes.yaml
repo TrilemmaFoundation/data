@@ -20,6 +20,9 @@ formats:
   - QuakeML
 license: U.S. Public Domain / USGS CC0 guidance
 license_url: https://www.usgs.gov/data-management/data-licensing
+url_checks:
+  source_marker: API Documentation - Earthquake Catalog
+  license_marker: Data Licensing
 
 domains:
   - Seismology

@@ -33,7 +33,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: npm run validate-datasets:offline
 
-      - name: Validate live source URLs
+      - name: Validate live source page identity
         if: github.event_name != 'pull_request'
         run: npm run validate-datasets
 

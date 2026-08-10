@@ -17,6 +17,9 @@ formats:
   - API
 license: Polymarket Terms of Use
 license_url: https://polymarket.com/tos
+url_checks:
+  source_marker: Learn how Polymarket organizes market data
+  license_marker: Terms of Use
 
 domains:
   - Prediction Markets

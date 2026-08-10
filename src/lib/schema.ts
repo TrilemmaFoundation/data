@@ -26,13 +26,35 @@ const UPDATE_FREQUENCIES = [
   "occasional",
 ] as const;
 
-const NonEmptyStringSchema = z.string().trim().min(1);
+export const MAX_TEXT_LENGTH = 2_000;
+export const MAX_PYTHON_LENGTH = 20_000;
+export const MAX_URL_LENGTH = 2_048;
+
+const NonEmptyStringSchema = z.string().trim().min(1).max(MAX_TEXT_LENGTH);
+const PythonCodeSchema = z.string().trim().min(1).max(MAX_PYTHON_LENGTH);
+const HttpsUrlSchema = z
+  .string()
+  .max(MAX_URL_LENGTH)
+  .url()
+  .refine((value) => {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  }, "must be an HTTPS URL without embedded credentials");
+const PageMarkerSchema = NonEmptyStringSchema.max(200).regex(
+  /^[^\r\n\u001b]+$/,
+  "must be a single line without terminal control sequences",
+);
 const UpdateFrequencySchema = z.enum(UPDATE_FREQUENCIES);
 
 function uniqueStrings(min = 1) {
   return z
     .array(NonEmptyStringSchema)
     .min(min)
+    .max(25)
     .superRefine((values, context) => {
       const seen = new Set<string>();
       values.forEach((value, index) => {
@@ -62,7 +84,7 @@ export const GettingStartedSchema = z.strictObject({
   access_steps: uniqueStrings(),
   python: z.strictObject({
     packages: uniqueStrings(),
-    code: NonEmptyStringSchema,
+    code: PythonCodeSchema,
   }),
   first_project: z.strictObject({
     title: NonEmptyStringSchema,
@@ -71,13 +93,18 @@ export const GettingStartedSchema = z.strictObject({
   }),
 });
 
+export const UrlChecksSchema = z.strictObject({
+  source_marker: PageMarkerSchema,
+  license_marker: PageMarkerSchema,
+});
+
 export const DatasetSchema = z
   .strictObject({
-    id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
+    id: z.string().max(100).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
     name: NonEmptyStringSchema,
     description: NonEmptyStringSchema,
 
-    url: z.string().url(),
+    url: HttpsUrlSchema,
     access_type: UniqueAccessTypesSchema,
     api_key_required: z.boolean(),
     free_to_access: z.literal(true),
@@ -86,7 +113,8 @@ export const DatasetSchema = z
     size_gb_max: z.number().min(0),
     formats: uniqueStrings(),
     license: NonEmptyStringSchema,
-    license_url: z.string().url(),
+    license_url: HttpsUrlSchema,
+    url_checks: UrlChecksSchema,
 
     domains: uniqueStrings(),
     data_types: uniqueStrings(),

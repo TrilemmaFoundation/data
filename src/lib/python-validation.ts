@@ -2,6 +2,8 @@ import { spawnSync } from "node:child_process";
 
 const COMPILE_SCRIPT =
   'import sys; compile(sys.stdin.read(), "<dataset guide>", "exec")';
+const COMPILE_TIMEOUT_MS = 5_000;
+const MAX_COMPILER_OUTPUT_BYTES = 1_000_000;
 
 type Spawn = typeof spawnSync;
 
@@ -13,6 +15,9 @@ export function validatePythonSyntax(
     const result = spawn(executable, ["-c", COMPILE_SCRIPT], {
       input: code,
       encoding: "utf8",
+      timeout: COMPILE_TIMEOUT_MS,
+      maxBuffer: MAX_COMPILER_OUTPUT_BYTES,
+      windowsHide: true,
     });
     if (result.error && "code" in result.error && result.error.code === "ENOENT") {
       continue;

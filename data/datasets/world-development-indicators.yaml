@@ -20,6 +20,9 @@ formats:
 
 license: CC BY 4.0
 license_url: https://data.worldbank.org/summary-terms-of-use
+url_checks:
+  source_marker: World Development Indicators
+  license_marker: Summary Terms of Use
 
 domains:
   - Economics

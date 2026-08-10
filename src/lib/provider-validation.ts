@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readBoundedBody } from "./http-validation";
 import type { Dataset } from "./schema";
 
 const MAX_RESPONSE_BYTES = 1_000_000;
@@ -104,32 +105,6 @@ function jsonValidator(schema: z.ZodType) {
   };
 }
 
-async function readBoundedBody(response: Response): Promise<Uint8Array | null> {
-  if (!response.body) return new Uint8Array();
-
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > MAX_RESPONSE_BYTES) {
-      await reader.cancel();
-      return null;
-    }
-    chunks.push(value);
-  }
-
-  const body = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    body.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return body;
-}
-
 export async function checkProviderContract(
   datasetId: string,
   options: ProviderValidationOptions = {},
@@ -166,7 +141,7 @@ export async function checkProviderContract(
       return [`unexpected provider content type: ${contentType || "missing"}`];
     }
 
-    const body = await readBoundedBody(response);
+    const body = await readBoundedBody(response, MAX_RESPONSE_BYTES);
     if (!body) {
       return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
     }

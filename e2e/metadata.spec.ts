@@ -2,6 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("public routes expose canonical and social metadata", async ({ page }) => {
   await page.goto("/");
+  await expect(page.locator('meta[name="referrer"]')).toHaveAttribute(
+    "content",
+    "strict-origin-when-cross-origin",
+  );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://data.trilemma.foundation",

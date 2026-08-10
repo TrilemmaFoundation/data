@@ -39,5 +39,14 @@ describe("validatePythonSyntax", () => {
       stderr: "permission denied",
     }) as unknown as typeof spawnSync;
     expect(validatePythonSyntax("print('ok')", spawn)).toBe("denied");
+    expect(spawn).toHaveBeenCalledWith(
+      "python3",
+      expect.any(Array),
+      expect.objectContaining({
+        timeout: 5_000,
+        maxBuffer: 1_000_000,
+        windowsHide: true,
+      }),
+    );
   });
 });

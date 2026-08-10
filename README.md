@@ -8,6 +8,9 @@ Find **actively maintained, authoritative datasets** and start a practical data 
 **Stack:** Next.js + TypeScript + Vercel  
 **License:** MIT (application/code)
 
+Security issues should be reported privately as described in
+[`SECURITY.md`](SECURITY.md).
+
 The dataset files themselves are **not** redistributed or relicensed. This app stores metadata and links to the original authoritative source.
 
 ## Core experience
@@ -50,7 +53,7 @@ npm run dev
 Useful scripts:
 
 ```bash
-npm run validate-datasets          # policy + Python syntax + live URL checks
+npm run validate-datasets          # policy + Python syntax + live page identity
 npm run validate-datasets:offline  # policy + Python syntax, no network
 npm run validate-providers         # bounded live provider contract checks
 npm run lint                       # Next.js and TypeScript lint checks
@@ -80,6 +83,9 @@ the 90-day maintenance policy, Python syntax, controlled provider fixtures,
 lint, tests, and the static application. GitHub Actions runs bounded live source,
 data-terms, and provider-contract validation after pushes to `main`, every Monday,
 and on manual dispatch so drift is detected even without recent code changes.
+Dataset URLs must use HTTPS without embedded credentials. Live validation
+rejects private or link-local destinations and revalidates every same-host
+redirect before requesting it.
 
 ## Adding a dataset
 

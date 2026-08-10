@@ -52,6 +52,9 @@ Do **not** add:
 - `source_type` must be one of: `government`, `intergovernmental`, `academic`,
   `nonprofit`, `company`, `community`
 - `license` and `license_url` are required
+- Source and license URLs must use HTTPS and must not embed credentials
+- `url_checks` must provide a short, page-specific text marker for the source
+  and license pages; matching is case-insensitive after redirects
 - Text values are trimmed and must not be blank
 - List values such as domains, tasks, formats, and geographies must not contain duplicates
 - `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form and
@@ -65,6 +68,8 @@ Do **not** add:
   credentials, and be short enough for a beginner to understand in one notebook
   cell
 - Do not invent new fields in v1
+- Keep each dataset YAML file below 64 KiB; fields and lists are schema-bounded
+  to protect validation and static builds from resource exhaustion
 
 ## Local validation
 
@@ -83,16 +88,18 @@ npm run validate-datasets:offline
 Maintainers can also run the live checks:
 
 ```bash
-npm run validate-datasets  # source and data-terms URLs
+npm run validate-datasets  # source and data-terms page identity
 npm run validate-providers # bounded provider response contracts
 ```
 
 Pull-request CI stays deterministic and does not execute contributed Python.
 It compiles examples for syntax and tests controlled provider fixtures instead.
-Live URL and provider checks run after pushes to `main`, every Monday, and on
-manual workflow dispatch. A small code-owned allowlist may temporarily accept
-a bot-protected URL; every exception is exact, visible in validation output,
-and has an expiry date.
+Live URL checks follow redirects, require the final page to remain on the
+intended host, and search the bounded response body for each YAML marker. URL
+and provider checks run after pushes to `main`, every Monday, and on manual
+workflow dispatch. A small code-owned allowlist may temporarily accept a
+bot-protected URL; every exception is exact, visible in validation output, and
+has an expiry date.
 
 ## What happens after merge
 

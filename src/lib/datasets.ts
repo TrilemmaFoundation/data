@@ -4,6 +4,7 @@ import { parse as parseYaml } from "yaml";
 import { DatasetSchema, type Dataset } from "./schema";
 
 const DATASETS_DIR = path.join(process.cwd(), "data", "datasets");
+export const MAX_DATASET_FILE_BYTES = 64 * 1024;
 
 export function getDatasetsDir(): string {
   return DATASETS_DIR;
@@ -58,10 +59,25 @@ export function loadDatasets(dir: string = DATASETS_DIR): DatasetLoadResult {
     const idFromFilename = file.replace(/\.yaml$/, "");
     const messages: string[] = [];
 
+    try {
+      const stats = fs.lstatSync(filePath);
+      if (!stats.isFile()) {
+        messages.push("dataset entry must be a regular file");
+      } else if (stats.size > MAX_DATASET_FILE_BYTES) {
+        messages.push(`dataset file exceeds ${MAX_DATASET_FILE_BYTES} bytes`);
+      }
+    } catch (error) {
+      messages.push(`Dataset file error: ${String(error)}`);
+    }
+    if (messages.length > 0) {
+      errors.push({ file, messages });
+      continue;
+    }
+
     let raw: unknown;
     try {
       const contents = fs.readFileSync(filePath, "utf8");
-      raw = parseYaml(contents);
+      raw = parseYaml(contents, { maxAliasCount: 50 });
     } catch (error) {
       messages.push(
         `YAML parse error: ${error instanceof Error ? error.message : String(error)}`,

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { DatasetSchema } from "./schema";
+import {
+  DatasetSchema,
+  MAX_PYTHON_LENGTH,
+  MAX_TEXT_LENGTH,
+  MAX_URL_LENGTH,
+} from "./schema";
 
 const validDataset = {
   id: "live-events",
@@ -14,6 +19,10 @@ const validDataset = {
   formats: ["CSV"],
   license: "CC BY 4.0",
   license_url: "https://creativecommons.org/licenses/by/4.0/",
+  url_checks: {
+    source_marker: "Live Events Downloads",
+    license_marker: "Creative Commons Attribution 4.0",
+  },
   domains: ["Natural Hazards"],
   data_types: ["Event Data"],
   tasks: ["Monitoring"],
@@ -45,6 +54,63 @@ describe("DatasetSchema", () => {
   it("accepts a valid dataset", () => {
     const result = DatasetSchema.safeParse(validDataset);
     expect(result.success).toBe(true);
+  });
+
+  it.each([
+    "http://example.com/data",
+    "ftp://example.com/data",
+    "file:///etc/passwd",
+    "data:text/html,test",
+    "javascript:alert(1)",
+    "https://user:secret@example.com/data",
+    "not a URL",
+  ])("rejects unsafe source URL %s", (url) => {
+    expect(DatasetSchema.safeParse({ ...validDataset, url }).success).toBe(false);
+  });
+
+  it("bounds URLs, text, lists, markers, identifiers, and Python code", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        url: `https://example.com/${"x".repeat(MAX_URL_LENGTH)}`,
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        description: "x".repeat(MAX_TEXT_LENGTH + 1),
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        domains: Array.from({ length: 26 }, (_, index) => `Domain ${index}`),
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        url_checks: {
+          ...validDataset.url_checks,
+          source_marker: "x".repeat(201),
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, id: "x".repeat(101) }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        getting_started: {
+          ...validDataset.getting_started,
+          python: {
+            ...validDataset.getting_started.python,
+            code: "x".repeat(MAX_PYTHON_LENGTH + 1),
+          },
+        },
+      }).success,
+    ).toBe(false);
   });
 
   it("accepts intergovernmental sources", () => {
@@ -118,6 +184,26 @@ describe("DatasetSchema", () => {
       },
     };
     expect(DatasetSchema.safeParse(emptyOverview).success).toBe(false);
+  });
+
+  it("requires non-empty page identity markers", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        url_checks: { ...validDataset.url_checks, source_marker: "   " },
+      }).success,
+    ).toBe(false);
+    const missing = { ...validDataset } as Record<string, unknown>;
+    delete missing.url_checks;
+    expect(DatasetSchema.safeParse(missing).success).toBe(false);
+    for (const source_marker of ["line one\nline two", "unsafe\u001b[31m"]) {
+      expect(
+        DatasetSchema.safeParse({
+          ...validDataset,
+          url_checks: { ...validDataset.url_checks, source_marker },
+        }).success,
+      ).toBe(false);
+    }
   });
 
   it("rejects impossible calendar dates", () => {

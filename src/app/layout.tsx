@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Find actively maintained, authoritative datasets and start a practical data science project.",
+  referrer: "strict-origin-when-cross-origin",
   applicationName: "Trilemma Data",
   authors: [{ name: "Trilemma Foundation", url: "https://www.trilemma.foundation/" }],
   creator: "Trilemma Foundation",

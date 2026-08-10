@@ -8,6 +8,7 @@ import {
   getDatasetsDir,
   listDatasetFiles,
   loadDatasets,
+  MAX_DATASET_FILE_BYTES,
 } from "./datasets";
 
 const tempDirs: string[] = [];
@@ -39,6 +40,9 @@ formats:
   - CSV
 license: CC BY 4.0
 license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: Sample Dataset
+  license_marker: Creative Commons Attribution 4.0
 domains:
   - Biology
 data_types:
@@ -120,6 +124,35 @@ describe("loadDatasets", () => {
     const invalidRoot = makeTempDir();
     fs.writeFileSync(path.join(invalidRoot, "sample.yaml"), "null\n");
     expect(loadDatasets(invalidRoot).errors[0]?.messages[0]).toContain("(root)");
+  });
+
+  it("rejects oversized files and non-file dataset entries", () => {
+    const oversized = makeTempDir();
+    fs.writeFileSync(
+      path.join(oversized, "sample.yaml"),
+      "x".repeat(MAX_DATASET_FILE_BYTES + 1),
+    );
+    expect(loadDatasets(oversized).errors[0]?.messages).toContain(
+      `dataset file exceeds ${MAX_DATASET_FILE_BYTES} bytes`,
+    );
+
+    const linked = makeTempDir();
+    fs.symlinkSync(path.join(oversized, "sample.yaml"), path.join(linked, "sample.yaml"));
+    expect(loadDatasets(linked).errors[0]?.messages).toContain(
+      "dataset entry must be a regular file",
+    );
+  });
+
+  it("reports file metadata failures", () => {
+    const dir = makeTempDir();
+    fs.writeFileSync(path.join(dir, "sample.yaml"), validYaml);
+    const stat = vi.spyOn(fs, "lstatSync").mockImplementationOnce(() => {
+      throw "metadata unavailable";
+    });
+    expect(loadDatasets(dir).errors[0]?.messages[0]).toContain(
+      "metadata unavailable",
+    );
+    stat.mockRestore();
   });
 
   it("reports non-Error file read failures", () => {
