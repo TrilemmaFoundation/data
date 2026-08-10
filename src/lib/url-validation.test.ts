@@ -34,6 +34,16 @@ describe("checkUrl", () => {
     expect(fetchImpl).toHaveBeenCalledOnce();
   });
 
+  it.each([401, 403])("accepts HTTP %s as a reachable protected endpoint", async (status) => {
+    const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status }));
+    await expect(
+      checkUrl("https://example.com/protected", {
+        fetchImpl: fetchImpl as typeof fetch,
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
   it("accepts the first GET response", async () => {
     const fetchImpl = vi
       .fn()

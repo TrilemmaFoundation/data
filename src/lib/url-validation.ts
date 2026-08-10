@@ -16,7 +16,7 @@ type CheckUrlOptions = {
 };
 
 function isReachable(status: number | null): boolean {
-  return status !== null && status >= 200 && status < 400;
+  return status !== null && ((status >= 200 && status < 400) || status === 401 || status === 403);
 }
 
 function isTransient(status: number | null): boolean {
