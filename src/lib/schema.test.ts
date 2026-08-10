@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { DatasetSchema } from "./schema";
 
 const validDataset = {
-  id: "iris",
-  name: "Iris",
-  description: "Classic flower measurement dataset.",
-  url: "https://archive.ics.uci.edu/dataset/53/iris",
+  id: "live-events",
+  name: "Live Events",
+  description: "Continuously updated operational event data.",
+  url: "https://example.com/live-events",
   access_type: ["download"],
   api_key_required: false,
   free_to_access: true,
@@ -14,15 +14,15 @@ const validDataset = {
   formats: ["CSV"],
   license: "CC BY 4.0",
   license_url: "https://creativecommons.org/licenses/by/4.0/",
-  domains: ["Biology"],
-  data_types: ["Tabular"],
-  tasks: ["Classification"],
+  domains: ["Natural Hazards"],
+  data_types: ["Event Data"],
+  tasks: ["Monitoring"],
   difficulty: "beginner",
   geography: ["Not applicable"],
   temporal_coverage: null,
-  update_frequency: "static",
-  provider: "UCI Machine Learning Repository",
-  source_type: "academic",
+  update_frequency: "continuous",
+  provider: "Example Agency",
+  source_type: "government",
   last_verified: "2026-08-10",
   getting_started: {
     overview: "A friendly place to begin.",
@@ -81,10 +81,17 @@ describe("DatasetSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects static benchmark datasets", () => {
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, update_frequency: "STATIC" })
+        .success,
+    ).toBe(false);
+  });
+
   it("rejects invalid id casing", () => {
     const result = DatasetSchema.safeParse({
       ...validDataset,
-      id: "Iris",
+      id: "Live-Events",
     });
     expect(result.success).toBe(false);
   });
@@ -123,13 +130,13 @@ describe("DatasetSchema", () => {
   it("trims metadata and rejects whitespace-only values", () => {
     const trimmed = DatasetSchema.safeParse({
       ...validDataset,
-      name: "  Iris  ",
-      domains: ["  Biology  "],
+      name: "  Live Events  ",
+      domains: ["  Natural Hazards  "],
     });
     expect(trimmed.success).toBe(true);
     if (trimmed.success) {
-      expect(trimmed.data.name).toBe("Iris");
-      expect(trimmed.data.domains).toEqual(["Biology"]);
+      expect(trimmed.data.name).toBe("Live Events");
+      expect(trimmed.data.domains).toEqual(["Natural Hazards"]);
     }
     expect(DatasetSchema.safeParse({ ...validDataset, provider: "   " }).success).toBe(false);
   });

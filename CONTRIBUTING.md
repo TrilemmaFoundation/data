@@ -1,8 +1,10 @@
 # Contributing
 
-Thank you for helping grow a beginner-friendly catalog of **free, openly licensed datasets**.
+Thank you for helping grow a beginner-friendly catalog of **actively maintained,
+authoritative datasets**.
 
-You should **never** need to touch graph code, search code, TypeScript types, or UI to add a dataset. One YAML file is enough.
+You should **never** need to touch search code, TypeScript types, or UI to add a
+dataset. One YAML file is enough.
 
 ## Quick start
 
@@ -19,7 +21,8 @@ CI will automatically validate your YAML.
 A dataset can be added only if:
 
 - Free to access
-- Explicit reuse license or public-domain status
+- Open reuse terms, public-domain status, or published provider API terms that permit the described analysis
+- An active update schedule or operational maintenance program
 - Accessible without paid infrastructure
 - Useful for data science
 - Has an authoritative source URL
@@ -32,7 +35,10 @@ Free registration / free API keys are allowed.
 Do **not** add:
 
 - Paid datasets
-- Unclear licensing
+- Static teaching and benchmark datasets
+- Abandoned or unmaintained sources
+- Terms that prohibit the documented analysis or software access
+- Unclear data-use terms
 - Scraped datasets with questionable redistribution rights
 - Dead links
 - Dataset mirrors when an authoritative source exists
@@ -49,6 +55,7 @@ Do **not** add:
 - Text values are trimmed and must not be blank
 - List values such as domains, tasks, formats, and geographies must not contain duplicates
 - `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form
+- `update_frequency` must describe an active cadence; `static` is rejected
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
 - The first project must contain at least three distinct, actionable steps
@@ -72,6 +79,6 @@ npm run validate-datasets:offline
 
 ## What happens after merge
 
-The Next.js site rebuilds from YAML at build time. The dataset guide, knowledge
-graph, search index, and filters are generated automatically from your file. No
+The Next.js site rebuilds from YAML at build time. The dataset guide, search
+index, and filters are generated automatically from your file. No
 database or admin panel is involved.

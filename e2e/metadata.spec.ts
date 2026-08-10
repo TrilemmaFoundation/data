@@ -14,25 +14,19 @@ test("public routes expose canonical and social metadata", async ({ page }) => {
     "content",
     "summary_large_image",
   );
-
-  await page.goto("/graph");
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-    "href",
-    "https://data.trilemma.foundation/graph",
-  );
 });
 
 test("dataset guides expose canonical metadata and valid JSON-LD", async ({
   page,
 }) => {
-  await page.goto("/datasets/iris");
+  await page.goto("/datasets/usgs-earthquakes");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://data.trilemma.foundation/datasets/iris",
+    "https://data.trilemma.foundation/datasets/usgs-earthquakes",
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
-    "Iris",
+    "USGS Earthquake Catalog",
   );
 
   const jsonLd = JSON.parse(
@@ -41,11 +35,11 @@ test("dataset guides expose canonical metadata and valid JSON-LD", async ({
   expect(jsonLd).toMatchObject({
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: "Iris",
-    url: "https://data.trilemma.foundation/datasets/iris",
+    name: "USGS Earthquake Catalog",
+    url: "https://data.trilemma.foundation/datasets/usgs-earthquakes",
   });
   expect(jsonLd.keywords).toEqual(
-    expect.arrayContaining(["Biology", "Tabular", "Classification"]),
+    expect.arrayContaining(["Natural Hazards", "Geospatial", "Hazard Monitoring"]),
   );
 });
 
@@ -62,9 +56,8 @@ test("robots and sitemap enumerate the public static application", async ({
   expect(sitemap.ok()).toBe(true);
   const body = await sitemap.text();
   expect(body).toContain("<loc>https://data.trilemma.foundation</loc>");
-  expect(body).toContain("<loc>https://data.trilemma.foundation/graph</loc>");
   expect(body).toContain(
-    "<loc>https://data.trilemma.foundation/datasets/iris</loc>",
+    "<loc>https://data.trilemma.foundation/datasets/usgs-earthquakes</loc>",
   );
-  expect(body.match(/<loc>/g)).toHaveLength(28);
+  expect(body.match(/<loc>/g)).toHaveLength(6);
 });

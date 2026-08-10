@@ -20,8 +20,8 @@ size_gb_min: 0
 size_gb_max: 0.001
 formats:
   - CSV
-license: CC BY 4.0
-license_url: https://creativecommons.org/licenses/by/4.0/
+license: Provider data-use terms
+license_url: https://example.com/data-terms
 
 domains:
   - Biology
@@ -36,8 +36,9 @@ geography:
   - Not applicable
 temporal_coverage: null
 # Use a string like "1960-present" when applicable, otherwise null.
-update_frequency: static
-# Examples: static | annual | monthly | continuous
+update_frequency: continuous
+# Examples: near real time | daily | monthly | annual | occasional
+# Static datasets are not accepted.
 
 provider: Example Provider
 source_type: academic

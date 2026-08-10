@@ -3,7 +3,7 @@ import type { Dataset } from "./schema";
 const URL_TIMEOUT_MS = 10_000;
 const RETRY_DELAYS_MS = [250, 750];
 const USER_AGENT =
-  "OpenDatasetKnowledgeGraphValidator/1.0 (+https://data.trilemma.foundation)";
+  "TrilemmaDataCatalogValidator/1.0 (+https://data.trilemma.foundation)";
 
 export type UrlCheckResult = {
   ok: boolean;

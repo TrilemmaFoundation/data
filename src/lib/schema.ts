@@ -16,6 +16,10 @@ export const SourceTypeSchema = z.enum([
 ]);
 
 const NonEmptyStringSchema = z.string().trim().min(1);
+const UpdateFrequencySchema = NonEmptyStringSchema.refine(
+  (value) => value.toLocaleLowerCase("en-US") !== "static",
+  "static datasets are not accepted",
+);
 
 function uniqueStrings(min = 1) {
   return z
@@ -83,7 +87,7 @@ export const DatasetSchema = z
 
     geography: uniqueStrings(),
     temporal_coverage: NonEmptyStringSchema.nullable(),
-    update_frequency: NonEmptyStringSchema,
+    update_frequency: UpdateFrequencySchema,
 
     provider: NonEmptyStringSchema,
     source_type: SourceTypeSchema,

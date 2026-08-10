@@ -18,7 +18,7 @@ describe("SEO helpers", () => {
   });
 
   it("omits absent temporal coverage and safely serializes markup", () => {
-    const dataset = getDatasetById("iris")!;
+    const dataset = getDatasetById("natural-earth")!;
     expect(datasetJsonLd(dataset)).not.toHaveProperty("temporalCoverage");
     expect(serializeJsonLd({ value: "</script>" })).toBe(
       '{"value":"\\u003c/script>"}',

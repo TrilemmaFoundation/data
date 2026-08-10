@@ -1,0 +1,79 @@
+id: nasa-firms
+name: NASA FIRMS Active Fire Data
+description: >
+  Near-real-time satellite detections of active fires and thermal anomalies,
+  useful for wildfire monitoring, emergency response, and geospatial analysis.
+
+url: https://firms.modaps.eosdis.nasa.gov/api/area/
+access_type:
+  - download
+  - api
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 0.1
+formats:
+  - CSV
+  - JSON
+  - Shapefile
+  - KML
+license: NASA Earthdata CC0 data-use policy
+license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy
+
+domains:
+  - Wildfires
+  - Earth Observation
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Time Series
+tasks:
+  - Hotspot Monitoring
+  - Spatial Analysis
+  - Risk Mapping
+difficulty: intermediate
+
+geography:
+  - Global
+temporal_coverage: 2000-present
+update_frequency: near real time
+
+provider: NASA Earthdata FIRMS
+source_type: government
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    FIRMS turns satellite observations into frequently refreshed fire-detection
+    points. Begin with one sensor and one recent day before expanding the area
+    or time window.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free NASA FIRMS MAP_KEY stored in the NASA_FIRMS_MAP_KEY environment variable
+  access_steps:
+    - Request a free MAP_KEY from the FIRMS API page.
+    - Store the key in the NASA_FIRMS_MAP_KEY environment variable.
+    - Run the example to request the latest global VIIRS NOAA-20 detections.
+  python:
+    packages:
+      - pandas
+    code: |
+      import os
+      import pandas as pd
+
+      map_key = os.environ["NASA_FIRMS_MAP_KEY"]
+      url = (
+          "https://firms.modaps.eosdis.nasa.gov/api/area/csv/"
+          f"{map_key}/VIIRS_NOAA20_NRT/world/1"
+      )
+      fires = pd.read_csv(url)
+      print(fires[["latitude", "longitude", "acq_date", "frp"]].head())
+  first_project:
+    title: Map today's strongest fire detections
+    goal: Identify and map the highest-radiative-power detections from the latest day.
+    steps:
+      - Convert acquisition date and time into one timestamp column.
+      - Filter detections above the 90th percentile of fire radiative power.
+      - Plot the remaining coordinates and describe the largest visible clusters.

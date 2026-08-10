@@ -1,14 +1,15 @@
 ## Dataset contribution checklist
 
-Thank you for contributing an open dataset!
+Thank you for contributing an operational dataset!
 
 ### Before you open this PR
 
 - [ ] I copied `data/datasets/_template.yaml` to a new `<dataset-id>.yaml` file
 - [ ] The filename (without `.yaml`) matches the `id` field
-- [ ] I did **not** change application code, TypeScript types, graph code, or UI
+- [ ] I did **not** change application code, TypeScript types, or UI
 - [ ] The dataset is free to access (`free_to_access: true`)
-- [ ] The dataset has an explicit reuse license or public-domain status
+- [ ] The dataset has compatible open, public-domain, or provider API terms
+- [ ] The source is actively updated or operationally maintained
 - [ ] `license` and `license_url` point to authoritative terms
 - [ ] The dataset is accessible without paid infrastructure
 - [ ] The `url` points to an authoritative source (not a mirror, when avoidable)
@@ -23,7 +24,10 @@ Thank you for contributing an open dataset!
 ### Exclude if any apply
 
 - Paid datasets
-- Unclear licensing
+- Static teaching or benchmark datasets
+- Abandoned or unmaintained sources
+- Terms that prohibit the documented analysis or software access
+- Unclear data-use terms
 - Scraped datasets with questionable redistribution rights
 - Dead links
 - Dataset mirrors when an authoritative source exists

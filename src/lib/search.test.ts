@@ -3,6 +3,9 @@ import { getAllDatasets } from "./datasets";
 import { EMPTY_FILTERS, filterDatasets, getFilterOptions } from "./search";
 
 const datasets = getAllDatasets();
+const earthquakeCatalog = datasets.find(
+  (dataset) => dataset.id === "usgs-earthquakes",
+)!;
 
 describe("filterDatasets", () => {
   it("searches dataset formats", () => {
@@ -16,7 +19,7 @@ describe("filterDatasets", () => {
 
   it("builds sorted, de-duplicated filter options", () => {
     const options = getFilterOptions(datasets);
-    expect(options.domains).toContain("Biology");
+    expect(options.domains).toContain("Natural Hazards");
     expect(options.sizes).toEqual([
       "Tiny",
       "Small",
@@ -31,20 +34,19 @@ describe("filterDatasets", () => {
   });
 
   it("combines all filters and supports blank search text", () => {
-    const iris = datasets.find((dataset) => dataset.id === "iris")!;
     expect(
       filterDatasets(datasets, {
         query: "   ",
-        domains: [iris.domains[0]!],
-        dataTypes: [iris.data_types[0]!],
-        tasks: [iris.tasks[0]!],
-        difficulties: [iris.difficulty],
-        sizes: ["Tiny"],
-        formats: [iris.formats[0]!],
+        domains: [earthquakeCatalog.domains[0]!],
+        dataTypes: [earthquakeCatalog.data_types[0]!],
+        tasks: [earthquakeCatalog.tasks[0]!],
+        difficulties: [earthquakeCatalog.difficulty],
+        sizes: ["Small"],
+        formats: [earthquakeCatalog.formats[0]!],
         apiKeyRequired: false,
-        geographies: [iris.geography[0]!],
+        geographies: [earthquakeCatalog.geography[0]!],
       }).map((dataset) => dataset.id),
-    ).toContain("iris");
+    ).toContain("usgs-earthquakes");
   });
 
   it("rejects each mismatched filter independently", () => {
@@ -61,7 +63,7 @@ describe("filterDatasets", () => {
 
     for (const mismatch of mismatches) {
       expect(
-        filterDatasets(datasets, { ...EMPTY_FILTERS, ...mismatch }),
+        filterDatasets([earthquakeCatalog], { ...EMPTY_FILTERS, ...mismatch }),
       ).toEqual([]);
     }
   });

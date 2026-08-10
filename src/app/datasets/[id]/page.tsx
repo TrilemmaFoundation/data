@@ -38,8 +38,7 @@ export default async function DatasetDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const datasets = getAllDatasets();
-  const dataset = datasets.find((item) => item.id === id);
+  const dataset = getDatasetById(id);
 
   if (!dataset) notFound();
 

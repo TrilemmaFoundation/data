@@ -1,15 +1,17 @@
 import { expect, test } from "@playwright/test";
 
 test("discovery keeps valid URL state and ignores unknown filters", async ({ page }) => {
-  await page.goto("/?domain=Biology,Unknown&difficulty=novice");
+  await page.goto("/?domain=Natural%20Hazards,Unknown&difficulty=novice");
 
-  await expect(page.getByLabel("Active filters")).toContainText("Domain: Biology");
+  await expect(page.getByLabel("Active filters")).toContainText(
+    "Domain: Natural Hazards",
+  );
   await expect(page.getByLabel("Active filters")).not.toContainText("Unknown");
   await expect(page.getByLabel("Active filters")).not.toContainText("novice");
 
-  await page.getByLabel("Search by topic, task, format, or provider").fill("flower");
-  await expect(page).toHaveURL(/q=flower/);
-  await expect(page.getByRole("link", { name: "Iris" })).toBeVisible();
+  await page.getByLabel("Search by topic, task, format, or provider").fill("earthquake");
+  await expect(page).toHaveURL(/q=earthquake/);
+  await expect(page.getByRole("link", { name: "USGS Earthquake Catalog" })).toBeVisible();
   await expect(page.getByRole("status")).toHaveText("1 dataset found");
 
   await page.getByRole("button", { name: "Beginner-friendly" }).click();

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · Trilemma Data",
   },
   description:
-    "Find approachable, openly licensed datasets and start a practical data science project.",
+    "Find actively maintained, authoritative datasets and start a practical data science project.",
   applicationName: "Trilemma Data",
   authors: [{ name: "Trilemma Foundation", url: "https://www.trilemma.foundation/" }],
   creator: "Trilemma Foundation",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Trilemma Data",
     title: "Trilemma Data",
     description:
-      "Find approachable, openly licensed datasets and start a practical data science project.",
+      "Find actively maintained, authoritative datasets and start a practical data science project.",
     images: [
       {
         url: "/foundation-white.webp",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Trilemma Data",
     description:
-      "Find approachable, openly licensed datasets and start a practical data science project.",
+      "Find actively maintained, authoritative datasets and start a practical data science project.",
     images: ["/foundation-white.webp"],
   },
   icons: {

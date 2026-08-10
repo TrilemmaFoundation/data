@@ -1,0 +1,85 @@
+id: usgs-earthquakes
+name: USGS Earthquake Catalog
+description: >
+  Continuously updated earthquake locations, magnitudes, depths, timestamps,
+  and review status for seismic monitoring and geospatial risk analysis.
+
+url: https://earthquake.usgs.gov/fdsnws/event/1/
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - GeoJSON
+  - CSV
+  - KML
+  - QuakeML
+license: U.S. Public Domain / USGS CC0 guidance
+license_url: https://www.usgs.gov/data-management/data-licensing
+
+domains:
+  - Seismology
+  - Natural Hazards
+  - Earth Science
+data_types:
+  - Geospatial
+  - Event Data
+  - Time Series
+tasks:
+  - Hazard Monitoring
+  - Spatial Analysis
+  - Trend Analysis
+difficulty: beginner
+
+geography:
+  - Global
+temporal_coverage: 1900-present
+update_frequency: continuous
+
+provider: U.S. Geological Survey
+source_type: government
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    The USGS Event Web Service provides current and historical earthquake
+    records through bounded queries. A recent seven-day window is small enough
+    for a first notebook while still reflecting real operational data.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official API documentation and review the query limits.
+    - Request GeoJSON for a recent bounded time window.
+    - Preserve the response metadata and retrieval time with your analysis.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      end = date.today()
+      start = end - timedelta(days=7)
+      response = requests.get(
+          "https://earthquake.usgs.gov/fdsnws/event/1/query",
+          params={"format": "geojson", "starttime": start, "endtime": end},
+          timeout=30,
+      )
+      response.raise_for_status()
+      earthquakes = pd.json_normalize(response.json()["features"])
+      print(earthquakes[["properties.mag", "properties.place", "properties.time"]].head())
+  first_project:
+    title: Profile the past week's earthquakes
+    goal: Describe where and how strongly earthquakes occurred during the last seven days.
+    steps:
+      - Convert event timestamps from milliseconds to UTC datetimes.
+      - Plot the magnitude distribution and map events with magnitude 4 or greater.
+      - Summarize the strongest event and note the limits of a seven-day sample.

@@ -1,6 +1,6 @@
 # Trilemma Data
 
-Find **free, openly licensed datasets** and start a practical data science project.
+Find **actively maintained, authoritative datasets** and start a practical data science project.
 
 > Find a dataset, understand what it needs, and reach a first insight with a guided Python start.
 
@@ -13,10 +13,7 @@ The dataset files themselves are **not** redistributed or relicensed. This app s
 ## Core experience
 
 Each dataset includes searchable metadata, authoritative source links, practical
-access instructions, a copyable Python example, and a small first project. An
-optional connections explorer shows the useful graph path:
-
-**Dataset ↔ Domain ↔ Data Type ↔ Task ↔ Provider**
+access instructions, a copyable Python example, and a small first project.
 
 The catalog optimizes for beginner clarity, contribution simplicity, and dataset
 quality — not catalog size.
@@ -32,16 +29,13 @@ Public GitHub repo
 TypeScript validation (Zod)
         │
         ▼
-Graph generated at build time
-        │
-        ▼
 Next.js static export
         │
         ▼
 Vercel → data.trilemma.foundation
 ```
 
-No database, graph database, authentication, admin panel, backend service, or dataset storage.
+No database, authentication, admin panel, backend service, or dataset storage.
 
 ## Local development
 
@@ -75,13 +69,12 @@ npm run build
 npm run test:e2e
 ```
 
-The browser checks include initial JavaScript and CSS budgets for the catalog
-and the closed mobile Connections route, plus automated WCAG checks for the
-catalog, dataset guides, and semantic Connections explorer. Raise a budget or
-accessibility exception only with a documented reason and intentional review.
+The browser checks include an initial JavaScript and CSS budget for the catalog,
+plus automated WCAG checks for the catalog and dataset guides. Raise a budget
+or accessibility exception only with a documented reason and intentional review.
 
-GitHub Actions also runs live source and license URL validation every Monday so
-link rot is detected even when the catalog has no recent code changes.
+GitHub Actions also runs live source and data-terms URL validation every Monday
+so link rot is detected even when the catalog has no recent code changes.
 
 ## Adding a dataset
 
@@ -97,10 +90,10 @@ No application code changes required.
 
 ## Catalog
 
-The catalog currently contains 26 datasets spanning biology, health, climate,
-energy, transportation, business, economics, education, computing, and
-geospatial analysis. The YAML files in [`data/datasets`](data/datasets) are the
-source of truth for the current list.
+The catalog currently contains five operational datasets spanning natural
+hazards, Earth observation, prediction markets, economics, and geospatial
+analysis. The YAML files in [`data/datasets`](data/datasets) are the source of
+truth for the current list.
 
 ## Deploy to Vercel
 

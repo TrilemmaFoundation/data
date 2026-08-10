@@ -49,7 +49,7 @@ difficulty: beginner
 geography:
   - Not applicable
 temporal_coverage: null
-update_frequency: static
+update_frequency: continuous
 provider: Example
 source_type: academic
 last_verified: 2026-08-10

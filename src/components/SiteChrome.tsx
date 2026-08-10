@@ -12,7 +12,6 @@ const CONTRIBUTE_URL =
 
 const navigation = [
   { href: "/", label: "Datasets" },
-  { href: "/graph", label: "Connections" },
 ];
 
 export function SiteHeader() {
@@ -156,8 +155,8 @@ export function SiteFooter() {
             Trilemma Foundation
           </a>
           <p className="leading-relaxed">
-            A curated starting point for free, openly licensed data. We link to
-            authoritative sources; dataset files are not redistributed or relicensed.
+            A curated starting point for actively maintained, authoritative data.
+            Dataset files are not redistributed or relicensed.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">

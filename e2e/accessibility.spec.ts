@@ -19,11 +19,6 @@ test("catalog and mobile filter drawer pass automated accessibility checks", asy
 });
 
 test("dataset guide passes automated accessibility checks", async ({ page }) => {
-  await page.goto("/datasets/iris");
-  await expectNoAccessibilityViolations(page);
-});
-
-test("semantic connections explorer passes automated accessibility checks", async ({ page }) => {
-  await page.goto("/graph?focus=task%3AClassification");
+  await page.goto("/datasets/usgs-earthquakes");
   await expectNoAccessibilityViolations(page);
 });

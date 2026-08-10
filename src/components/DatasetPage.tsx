@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   ExternalLink,
   Lightbulb,
-  Network,
   TerminalSquare,
 } from "lucide-react";
 import type { Dataset } from "@/lib/schema";
@@ -31,11 +30,9 @@ function indefiniteArticle(value: string): "a" | "an" {
 
 function ConceptPills({
   label,
-  type,
   values,
 }: {
   label: string;
-  type: string;
   values: string[];
 }) {
   return (
@@ -45,13 +42,9 @@ function ConceptPills({
       </h3>
       <div className="mt-2 flex flex-wrap gap-2">
         {values.map((value) => (
-          <Link
-            key={value}
-            href={`/graph?focus=${encodeURIComponent(`${type}:${value}`)}`}
-            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-          >
+          <Badge key={value} variant="outline">
             {value}
-          </Link>
+          </Badge>
         ))}
       </div>
     </div>
@@ -78,7 +71,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
     ["Provider", dataset.provider],
     ["Updates", capitalize(dataset.update_frequency)],
     [
-      "License",
+      "Data terms",
       <a
         key="license"
         href={dataset.license_url}
@@ -252,7 +245,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-5 lg:grid-cols-[1fr_auto]" aria-labelledby="explore-title">
+      <section className="mt-16" aria-labelledby="explore-title">
         <div className="surface p-6 sm:p-7">
           <div className="flex items-start gap-4">
             <TerminalSquare className="mt-1 size-6 shrink-0 text-secondary" aria-hidden="true" />
@@ -264,30 +257,16 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 {dataset.provider} is {indefiniteArticle(dataset.source_type)} {dataset.source_type} source. Last verified {dataset.last_verified}. Temporal coverage: {dataset.temporal_coverage ?? "not applicable"}.
               </p>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                <ConceptPills label="Domains" type="domain" values={dataset.domains} />
-                <ConceptPills label="Data types" type="dataType" values={dataset.data_types} />
-                <ConceptPills label="Tasks" type="task" values={dataset.tasks} />
-                <ConceptPills label="Geography" type="geography" values={dataset.geography} />
-                <ConceptPills label="Formats" type="format" values={dataset.formats} />
-                <ConceptPills label="Provider" type="provider" values={[dataset.provider]} />
-                <ConceptPills label="License" type="license" values={[dataset.license]} />
+                <ConceptPills label="Domains" values={dataset.domains} />
+                <ConceptPills label="Data types" values={dataset.data_types} />
+                <ConceptPills label="Tasks" values={dataset.tasks} />
+                <ConceptPills label="Geography" values={dataset.geography} />
+                <ConceptPills label="Formats" values={dataset.formats} />
+                <ConceptPills label="Provider" values={[dataset.provider]} />
+                <ConceptPills label="Data terms" values={[dataset.license]} />
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="surface flex max-w-sm flex-col justify-center p-6">
-          <Network className="size-6 text-primary" aria-hidden="true" />
-          <h2 className="mt-4 text-lg font-semibold text-white">Explore connections</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            See related domains, tasks, formats, and datasets in the optional visual explorer.
-          </p>
-          <Link
-            href={`/graph?dataset=${dataset.id}`}
-            className={cn(buttonVariants({ variant: "secondary" }), "mt-5")}
-          >
-            Open connections <Network aria-hidden="true" />
-          </Link>
         </div>
       </section>
     </div>

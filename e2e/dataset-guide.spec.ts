@@ -11,7 +11,6 @@ test("a beginner can open and copy a complete dataset guide", async ({ page }) =
   );
   await expect(page.getByRole("heading", { name: "Get started in four steps" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Official source/ }).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /Open connections/ })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
 
   await page.getByRole("button", { name: "Copy Python" }).click();
