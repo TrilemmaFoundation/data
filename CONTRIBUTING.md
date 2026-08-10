@@ -1,0 +1,66 @@
+# Contributing
+
+Thank you for helping grow a beginner-friendly catalog of **free, openly licensed datasets**.
+
+You should **never** need to touch graph code, search code, TypeScript types, or UI to add a dataset. One YAML file is enough.
+
+## Quick start
+
+1. Fork this repository
+2. Copy [`data/datasets/_template.yaml`](data/datasets/_template.yaml)
+3. Rename it to `<dataset-id>.yaml` (kebab-case, matching the `id` field)
+4. Fill in every metadata field
+5. Open a pull request
+
+CI will automatically validate your YAML.
+
+## Inclusion rules
+
+A dataset can be added only if:
+
+- Free to access
+- Explicit reuse license or public-domain status
+- Accessible without paid infrastructure
+- Useful for data science
+- Has an authoritative source URL
+- Metadata can be independently verified
+
+Free registration / free API keys are allowed.
+
+## Exclusion rules
+
+Do **not** add:
+
+- Paid datasets
+- Unclear licensing
+- Scraped datasets with questionable redistribution rights
+- Dead links
+- Dataset mirrors when an authoritative source exists
+
+## Metadata rules
+
+- Filename without `.yaml` **must** equal `id`
+- `free_to_access` must be `true`
+- `size_gb_min` must be ≤ `size_gb_max`
+- `difficulty` must be `beginner`, `intermediate`, or `advanced`
+- `source_type` must be one of: `government`, `academic`, `nonprofit`, `company`, `community`
+- `license` and `license_url` are required
+- `last_verified` must be an ISO date `YYYY-MM-DD`
+- Do not invent new fields in v1
+
+## Local validation
+
+```bash
+npm install
+npm run validate-datasets
+```
+
+Use offline mode (schema only, no live URL checks) while iterating:
+
+```bash
+npm run validate-datasets:offline
+```
+
+## What happens after merge
+
+The Next.js site rebuilds from YAML at build time. The knowledge graph, search index, and filters are generated automatically from your file. No database or admin panel is involved.

@@ -1,0 +1,42 @@
+id: iris
+name: Iris
+description: >
+  Classic flower measurement dataset containing sepal and petal measurements
+  for three Iris species.
+
+url: https://archive.ics.uci.edu/dataset/53/iris
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+  - CSV
+
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Biology
+
+data_types:
+  - Tabular
+
+tasks:
+  - Classification
+  - Visualization
+  - Clustering
+
+difficulty: beginner
+
+geography:
+  - Not applicable
+
+temporal_coverage: null
+update_frequency: static
+
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
