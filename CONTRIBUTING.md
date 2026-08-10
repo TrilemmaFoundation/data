@@ -43,7 +43,8 @@ Do **not** add:
 - `free_to_access` must be `true`
 - `size_gb_min` must be ≤ `size_gb_max`
 - `difficulty` must be `beginner`, `intermediate`, or `advanced`
-- `source_type` must be one of: `government`, `academic`, `nonprofit`, `company`, `community`
+- `source_type` must be one of: `government`, `intergovernmental`, `academic`,
+  `nonprofit`, `company`, `community`
 - `license` and `license_url` are required
 - Text values are trimmed and must not be blank
 - List values such as domains, tasks, formats, and geographies must not contain duplicates

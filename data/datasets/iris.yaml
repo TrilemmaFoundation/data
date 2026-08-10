@@ -7,6 +7,7 @@ description: >
 url: https://archive.ics.uci.edu/dataset/53/iris
 access_type:
   - download
+  - api
 api_key_required: false
 free_to_access: true
 
@@ -14,6 +15,7 @@ size_gb_min: 0
 size_gb_max: 0.001
 formats:
   - CSV
+  - API
 
 license: CC BY 4.0
 license_url: https://creativecommons.org/licenses/by/4.0/

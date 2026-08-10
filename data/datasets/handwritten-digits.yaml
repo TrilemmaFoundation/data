@@ -1,0 +1,67 @@
+id: handwritten-digits
+name: Optical Recognition of Handwritten Digits
+description: >
+  Eight-by-eight pixel intensity features derived from handwritten digit images,
+  with labels from zero through nine.
+
+url: https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+  - CSV
+  - API
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Computer Vision
+  - Pattern Recognition
+data_types:
+  - Image Features
+  - Tabular
+tasks:
+  - Classification
+  - Visualization
+difficulty: intermediate
+geography:
+  - Not applicable
+temporal_coverage: null
+update_frequency: static
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    This dataset turns small digit images into 64 numeric features. Learners can
+    reshape rows into images and practice a ten-class classification problem.
+  prerequisites:
+    - Python 3.10 or newer
+    - Basic familiarity with arrays and classification
+  access_steps:
+    - Open the official UCI page and review how the 8-by-8 features were created.
+    - Install ucimlrepo, then run the example to fetch dataset ID 80.
+  python:
+    packages:
+      - ucimlrepo
+      - pandas
+    code: |
+      from ucimlrepo import fetch_ucirepo
+
+      digits = fetch_ucirepo(id=80)
+      data = digits.data.original
+      print(data.head())
+      print(digits.data.targets.value_counts().sort_index())
+  first_project:
+    title: Classify handwritten digits
+    goal: Build a baseline model and inspect which digit pairs it confuses.
+    steps:
+      - Reshape several feature rows into 8-by-8 arrays and display them.
+      - Train a classifier using the documented training and test separation.
+      - Plot a confusion matrix and inspect examples from the largest off-diagonal cells.

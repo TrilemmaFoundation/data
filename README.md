@@ -90,15 +90,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Short version:
 
 No application code changes required.
 
-## Initial catalog (v1)
+## Catalog
 
-| Dataset | Type | Example tasks |
-| --- | --- | --- |
-| UCI Iris | Tabular | Classification, visualization |
-| UCI Wine Quality | Tabular | Regression, classification |
-| UCI Human Activity Recognition | Time series / sensor | Classification, feature engineering |
-| World Development Indicators | Tabular / time series | Economic analysis, forecasting |
-| Natural Earth | Geospatial | GIS, visualization, spatial analysis |
+The catalog currently contains 26 datasets spanning biology, health, climate,
+energy, transportation, business, economics, education, computing, and
+geospatial analysis. The YAML files in [`data/datasets`](data/datasets) are the
+source of truth for the current list.
 
 ## Deploy to Vercel
 

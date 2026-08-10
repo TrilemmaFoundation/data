@@ -40,10 +40,10 @@ geography:
   - Global
 
 temporal_coverage: 1960-present
-update_frequency: annual
+update_frequency: quarterly
 
 provider: World Bank
-source_type: government
+source_type: intergovernmental
 last_verified: 2026-08-10
 
 getting_started:

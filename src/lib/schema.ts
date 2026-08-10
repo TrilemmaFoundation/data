@@ -8,6 +8,7 @@ export const DifficultySchema = z.enum([
 ]);
 export const SourceTypeSchema = z.enum([
   "government",
+  "intergovernmental",
   "academic",
   "nonprofit",
   "company",

@@ -47,6 +47,15 @@ describe("DatasetSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts intergovernmental sources", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        source_type: "intergovernmental",
+      }).success,
+    ).toBe(true);
+  });
+
   it("rejects free_to_access false", () => {
     const result = DatasetSchema.safeParse({
       ...validDataset,

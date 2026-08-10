@@ -1,0 +1,66 @@
+id: breast-cancer-diagnostic
+name: Breast Cancer Wisconsin (Diagnostic)
+description: >
+  Measurements computed from digitized images of breast-mass cell nuclei,
+  labeled as malignant or benign for classification practice.
+
+url: https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+  - CSV
+  - API
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Health
+  - Medical Imaging
+data_types:
+  - Tabular
+tasks:
+  - Classification
+  - Feature Analysis
+difficulty: beginner
+geography:
+  - Wisconsin, United States
+temporal_coverage: null
+update_frequency: static
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    This compact dataset has numeric features, a clear binary target, and no
+    missing values. It is for learning only and must not be used for clinical decisions.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+  access_steps:
+    - Open the official UCI page and read how the measurements were produced.
+    - Install ucimlrepo, then run the example to fetch dataset ID 17.
+  python:
+    packages:
+      - ucimlrepo
+      - pandas
+    code: |
+      from ucimlrepo import fetch_ucirepo
+
+      cancer = fetch_ucirepo(id=17)
+      data = cancer.data.original
+      print(data.head())
+      print(cancer.data.targets.value_counts())
+  first_project:
+    title: Compare benign and malignant samples
+    goal: Find measurements that differ most between the two diagnostic labels.
+    steps:
+      - Check the target balance and summarize every numeric feature.
+      - Compare feature medians by diagnosis and plot the largest differences.
+      - Fit a baseline classifier and report recall for malignant samples.

@@ -4,7 +4,7 @@ description: >
   Smartphone accelerometer and gyroscope recordings labeled with six common
   human activities, useful for classification and feature engineering.
 
-url: https://archive.ics.uci.edu/ml/datasets/human%2Bactivity%2Brecognition%2Busing%2Bsmartphones
+url: https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones
 access_type:
   - download
 api_key_required: false
@@ -13,7 +13,6 @@ free_to_access: true
 size_gb_min: 0.05
 size_gb_max: 0.1
 formats:
-  - CSV
   - TXT
 
 license: CC BY 4.0

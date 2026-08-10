@@ -41,7 +41,7 @@ update_frequency: static
 
 provider: Example Provider
 source_type: academic
-# Allowed values: government | academic | nonprofit | company | community
+# Allowed values: government | intergovernmental | academic | nonprofit | company | community
 last_verified: 2026-08-10
 # ISO date YYYY-MM-DD — update when you verify the source is still live.
 

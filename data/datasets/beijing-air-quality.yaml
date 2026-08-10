@@ -1,0 +1,66 @@
+id: beijing-air-quality
+name: Beijing Multi-Site Air Quality
+description: >
+  Hourly pollutant and weather observations from 12 monitoring sites across
+  Beijing between 2013 and 2017.
+
+url: https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 0.01
+formats:
+  - CSV
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Climate
+  - Public Health
+data_types:
+  - Time Series
+  - Sensor
+tasks:
+  - Environmental Analysis
+  - Forecasting
+difficulty: intermediate
+geography:
+  - Beijing, China
+temporal_coverage: 2013-2017
+update_frequency: static
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    This multi-station dataset is a realistic introduction to hourly environmental
+    data, missing observations, seasonal patterns, and comparisons across locations.
+  prerequisites:
+    - Python 3.10 or newer
+    - Basic familiarity with time series and missing values
+  access_steps:
+    - Open the official UCI page and review pollutant units and station coverage.
+    - Download and extract the UCI archive beside your notebook.
+    - Extract the nested PRSA2017_Data_20130301-20170228.zip archive.
+  python:
+    packages:
+      - pandas
+    code: |
+      from pathlib import Path
+      import pandas as pd
+
+      files = sorted(Path(".").glob("**/PRSA_Data_*.csv"))
+      data = pd.concat((pd.read_csv(path) for path in files), ignore_index=True)
+      print(data.head())
+      print(data.isna().mean().sort_values(ascending=False).head())
+  first_project:
+    title: Compare PM2.5 across stations
+    goal: Describe seasonal and station-level differences in particulate pollution.
+    steps:
+      - Build a timestamp from the year, month, day, and hour fields.
+      - Plot monthly PM2.5 averages for three stations with missing values excluded.
+      - Compare winter and summer levels and state the limits of the comparison.

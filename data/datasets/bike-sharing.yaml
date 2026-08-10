@@ -1,0 +1,67 @@
+id: bike-sharing
+name: Bike Sharing
+description: >
+  Hourly and daily Capital Bikeshare rental counts with weather and seasonal
+  variables from 2011 and 2012.
+
+url: https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 0.01
+formats:
+  - CSV
+  - API
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Transportation
+  - Urban Mobility
+data_types:
+  - Tabular
+  - Time Series
+tasks:
+  - Regression
+  - Forecasting
+difficulty: intermediate
+geography:
+  - Washington, DC
+temporal_coverage: 2011-2012
+update_frequency: static
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    Bike Sharing connects an intuitive demand measure with time, season, and
+    weather features. Its chronology makes it useful for learning time-aware validation.
+  prerequisites:
+    - Python 3.10 or newer
+    - Basic familiarity with regression and dates
+  access_steps:
+    - Open the official UCI page and read how the hourly and daily tables differ.
+    - Install ucimlrepo, then run the example to fetch dataset ID 275.
+  python:
+    packages:
+      - ucimlrepo
+      - pandas
+    code: |
+      from ucimlrepo import fetch_ucirepo
+
+      bikes = fetch_ucirepo(id=275)
+      data = bikes.data.original
+      print(data.head())
+      print(data.describe())
+  first_project:
+    title: Explain daily bike demand
+    goal: Measure how season and weather relate to rental volume.
+    steps:
+      - Reconstruct or inspect the date order and plot rentals through time.
+      - Compare average demand by season, working day, and weather category.
+      - Train on earlier observations, test on later ones, and report mean absolute error.

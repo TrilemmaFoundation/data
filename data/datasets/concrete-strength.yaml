@@ -1,0 +1,66 @@
+id: concrete-strength
+name: Concrete Compressive Strength
+description: >
+  Concrete ingredient quantities, curing age, and measured compressive strength
+  for a compact nonlinear regression problem.
+
+url: https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+  - Excel
+  - API
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+
+domains:
+  - Engineering
+  - Materials Science
+data_types:
+  - Tabular
+tasks:
+  - Regression
+  - Feature Analysis
+difficulty: beginner
+geography:
+  - Not applicable
+temporal_coverage: null
+update_frequency: static
+provider: UCI Machine Learning Repository
+source_type: academic
+last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    Concrete Strength contains only numeric columns and no missing values, so a
+    learner can focus on relationships, nonlinear effects, and regression metrics.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+  access_steps:
+    - Open the official UCI page and review the measurement units.
+    - Install ucimlrepo, then run the example to fetch dataset ID 165.
+  python:
+    packages:
+      - ucimlrepo
+      - pandas
+    code: |
+      from ucimlrepo import fetch_ucirepo
+
+      concrete = fetch_ucirepo(id=165)
+      data = concrete.data.original
+      print(data.head())
+      print(data.corr(numeric_only=True).iloc[:, -1].sort_values())
+  first_project:
+    title: Model concrete strength
+    goal: Predict compressive strength from ingredients and curing age.
+    steps:
+      - Plot the target against age, cement, water, and superplasticizer.
+      - Split the rows into training and test sets and fit a baseline regressor.
+      - Report mean absolute error and inspect the largest prediction errors.
