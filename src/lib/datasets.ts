@@ -34,10 +34,24 @@ export type DatasetLoadResult = {
  * Load and validate every dataset YAML. Does not throw — returns structured errors.
  */
 export function loadDatasets(dir: string = DATASETS_DIR): DatasetLoadResult {
+  if (!fs.existsSync(dir)) {
+    return {
+      datasets: [],
+      errors: [{ file: dir, messages: ["dataset directory does not exist"] }],
+    };
+  }
+
   const files = listDatasetFiles(dir);
   const datasets: Dataset[] = [];
   const errors: DatasetLoadError[] = [];
   const seenIds = new Map<string, string>();
+
+  if (files.length === 0) {
+    return {
+      datasets,
+      errors: [{ file: dir, messages: ["no dataset YAML files found"] }],
+    };
+  }
 
   for (const file of files) {
     const filePath = path.join(dir, file);

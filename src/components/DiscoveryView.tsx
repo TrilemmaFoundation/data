@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Filter, Search, Sparkles, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -70,6 +70,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
     () => parseFilters(new URLSearchParams(searchParams.toString()), filterOptions),
     [filterOptions, searchParams],
   );
+  const searchRef = useRef<HTMLInputElement>(null);
   const results = useMemo(() => filterDatasets(datasets, filters), [datasets, filters]);
   const chips = useMemo(() => activeChips(filters), [filters]);
 
@@ -83,8 +84,22 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
     [pathname, router],
   );
 
+  useEffect(() => {
+    const syncQuery = () => {
+      if (searchRef.current) {
+        searchRef.current.value =
+          new URLSearchParams(window.location.search).get("q") ?? "";
+      }
+    };
+    window.addEventListener("popstate", syncQuery);
+    return () => window.removeEventListener("popstate", syncQuery);
+  }, []);
+
   const handleChange = useCallback(
-    (next: Filters) => updateFilters(next),
+    (next: Filters) => {
+      if (searchRef.current) searchRef.current.value = next.query;
+      updateFilters(next);
+    },
     [updateFilters],
   );
 
@@ -117,9 +132,12 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
             <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <Input
               id="dataset-search"
+              ref={searchRef}
               type="search"
-              value={filters.query}
-              onChange={(event) => handleChange({ ...filters, query: event.target.value })}
+              defaultValue={filters.query}
+              onChange={(event) => {
+                updateFilters({ ...filters, query: event.target.value });
+              }}
               placeholder="Try classification, maps, economics…"
               className="h-13 rounded-xl border-white/15 bg-[#0a0a14]/70 pr-4 pl-12 text-base shadow-lg placeholder:text-white/40"
             />
@@ -186,10 +204,10 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
                   key={chip.key}
                   type="button"
                   onClick={() => handleChange(chip.next)}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-medium text-white/80 transition-colors hover:border-primary/60 hover:text-white"
+                  className="inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-left text-xs font-medium break-all whitespace-normal text-white/80 transition-colors hover:border-primary/60 hover:text-white"
                   aria-label={`Remove ${chip.label} filter`}
                 >
-                  {chip.label} <X className="size-3.5" aria-hidden="true" />
+                  {chip.label} <X className="size-3.5 shrink-0" aria-hidden="true" />
                 </button>
               ))}
             </div>

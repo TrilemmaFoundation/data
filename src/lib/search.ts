@@ -76,6 +76,7 @@ export function filterDatasets(
         "domains",
         "tasks",
         "data_types",
+        "formats",
       ],
       threshold: 0.35,
       ignoreLocation: true,

@@ -103,4 +103,17 @@ describe("loadDatasets", () => {
     const result = loadDatasets(dir);
     expect(result.errors.length).toBeGreaterThan(0);
   });
+
+  it("reports missing and empty dataset catalogs", () => {
+    const missing = path.join(makeTempDir(), "missing");
+    expect(loadDatasets(missing).errors[0]?.messages).toContain(
+      "dataset directory does not exist",
+    );
+
+    const empty = makeTempDir();
+    fs.writeFileSync(path.join(empty, "_template.yaml"), validYaml);
+    expect(loadDatasets(empty).errors[0]?.messages).toContain(
+      "no dataset YAML files found",
+    );
+  });
 });

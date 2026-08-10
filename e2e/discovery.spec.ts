@@ -28,6 +28,36 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
   );
 });
 
+test("search preserves typed spaces and finds dataset formats", async ({ page }) => {
+  await page.goto("/");
+  const search = page.getByLabel("Search by topic, task, format, or provider");
+
+  await search.pressSequentially("world development");
+  await expect(search).toHaveValue("world development");
+
+  await search.fill("GeoTIFF");
+  await expect(page.getByRole("link", { name: "Natural Earth" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Beginner-friendly" }).click();
+  await expect(page).toHaveURL(/difficulty=beginner/);
+  await search.fill("maps");
+  await expect(page).toHaveURL(/q=maps/);
+  await page.goBack();
+  await expect(search).toHaveValue("GeoTIFF");
+});
+
+test("long active filters do not create mobile horizontal scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`/?q=${"x".repeat(200)}`);
+  await expect(page.getByLabel(/^Remove Search:/)).toBeVisible();
+
+  const widths = await page.evaluate(() => ({
+    client: document.documentElement.clientWidth,
+    scroll: document.documentElement.scrollWidth,
+  }));
+  expect(widths.scroll).toBe(widths.client);
+});
+
 test("mobile navigation overlays content and restores focus on Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

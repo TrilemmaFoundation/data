@@ -33,6 +33,11 @@ describe("filter URL helpers", () => {
     expect(parseFilters(filtersToParams(filters), options)).toEqual(filters);
   });
 
+  it("preserves whitespace while a multi-word query is being typed", () => {
+    const filters = { ...EMPTY_FILTERS, query: "world " };
+    expect(filtersToParams(filters).get("q")).toBe("world ");
+  });
+
   it("drops invalid sizes and API-key values", () => {
     const filters = parseFilters(
       new URLSearchParams("size=Tiny,Unknown&apiKey=maybe"),

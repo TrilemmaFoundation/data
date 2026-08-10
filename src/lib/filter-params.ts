@@ -42,7 +42,7 @@ export function parseFilters(
 
 export function filtersToParams(filters: DatasetFilters): URLSearchParams {
   const params = new URLSearchParams();
-  if (filters.query.trim()) params.set("q", filters.query.trim());
+  if (filters.query.trim()) params.set("q", filters.query);
   if (filters.domains.length) params.set("domain", filters.domains.join(","));
   if (filters.dataTypes.length) params.set("dataType", filters.dataTypes.join(","));
   if (filters.tasks.length) params.set("task", filters.tasks.join(","));
