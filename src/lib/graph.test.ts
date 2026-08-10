@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildGraph, getDatasetsForConcept, getSubgraph } from "./graph";
+import {
+  buildGraph,
+  getDatasetsForConcept,
+  getSubgraph,
+  graphNodeHref,
+  resolveGraphFocus,
+} from "./graph";
 import type { Dataset } from "./schema";
 
 const iris: Dataset = {
@@ -25,6 +31,17 @@ const iris: Dataset = {
   provider: "UCI Machine Learning Repository",
   source_type: "academic",
   last_verified: "2026-08-10",
+  getting_started: {
+    overview: "A friendly place to begin.",
+    prerequisites: ["Python 3.10 or newer"],
+    access_steps: ["Download the CSV."],
+    python: { packages: ["pandas"], code: "print('hello')" },
+    first_project: {
+      title: "Explore the data",
+      goal: "Understand its columns.",
+      steps: ["Inspect the first rows."],
+    },
+  },
 };
 
 const wine: Dataset = {
@@ -63,5 +80,21 @@ describe("buildGraph", () => {
   it("finds datasets for a concept", () => {
     const matches = getDatasetsForConcept([iris, wine], "task", "Classification");
     expect(matches.map((d) => d.id).sort()).toEqual(["iris", "wine-quality"]);
+  });
+
+  it("keeps dataset and concept focus query links compatible", () => {
+    const graph = buildGraph([iris, wine]);
+    const datasetNode = graph.nodes.find((node) => node.id === "dataset:iris")!;
+    const conceptNode = graph.nodes.find((node) => node.id === "task:Classification")!;
+
+    expect(graphNodeHref(datasetNode)).toBe("/graph?dataset=iris");
+    expect(graphNodeHref(conceptNode)).toBe("/graph?focus=task%3AClassification");
+    expect(resolveGraphFocus("iris", null, ["iris", "wine-quality"], graph)).toBe(
+      "dataset:iris",
+    );
+    expect(resolveGraphFocus(null, "task:Classification", ["iris"], graph)).toBe(
+      "task:Classification",
+    );
+    expect(resolveGraphFocus("missing", "not-valid", ["iris"], graph)).toBeNull();
   });
 });

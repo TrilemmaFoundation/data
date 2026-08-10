@@ -14,6 +14,23 @@ export const SourceTypeSchema = z.enum([
   "community",
 ]);
 
+const NonEmptyStringSchema = z.string().trim().min(1);
+
+export const GettingStartedSchema = z.object({
+  overview: NonEmptyStringSchema,
+  prerequisites: z.array(NonEmptyStringSchema).min(1),
+  access_steps: z.array(NonEmptyStringSchema).min(1),
+  python: z.object({
+    packages: z.array(NonEmptyStringSchema).min(1),
+    code: NonEmptyStringSchema,
+  }),
+  first_project: z.object({
+    title: NonEmptyStringSchema,
+    goal: NonEmptyStringSchema,
+    steps: z.array(NonEmptyStringSchema).min(1),
+  }),
+});
+
 export const DatasetSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
@@ -43,6 +60,7 @@ export const DatasetSchema = z
     provider: z.string().min(1),
     source_type: SourceTypeSchema,
     last_verified: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    getting_started: GettingStartedSchema,
   })
   .refine((d) => d.size_gb_min <= d.size_gb_max, {
     message: "size_gb_min must be <= size_gb_max",

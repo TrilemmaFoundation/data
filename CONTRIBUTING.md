@@ -9,7 +9,7 @@ You should **never** need to touch graph code, search code, TypeScript types, or
 1. Fork this repository
 2. Copy [`data/datasets/_template.yaml`](data/datasets/_template.yaml)
 3. Rename it to `<dataset-id>.yaml` (kebab-case, matching the `id` field)
-4. Fill in every metadata field
+4. Fill in every metadata and `getting_started` field
 5. Open a pull request
 
 CI will automatically validate your YAML.
@@ -46,6 +46,10 @@ Do **not** add:
 - `source_type` must be one of: `government`, `academic`, `nonprofit`, `company`, `community`
 - `license` and `license_url` are required
 - `last_verified` must be an ISO date `YYYY-MM-DD`
+- `getting_started` must include an overview, prerequisites, access steps,
+  Python packages and code, and a small first project
+- Python examples must use the authoritative source, avoid credentials, and be
+  short enough for a beginner to understand in one notebook cell
 - Do not invent new fields in v1
 
 ## Local validation
@@ -63,4 +67,6 @@ npm run validate-datasets:offline
 
 ## What happens after merge
 
-The Next.js site rebuilds from YAML at build time. The knowledge graph, search index, and filters are generated automatically from your file. No database or admin panel is involved.
+The Next.js site rebuilds from YAML at build time. The dataset guide, knowledge
+graph, search index, and filters are generated automatically from your file. No
+database or admin panel is involved.

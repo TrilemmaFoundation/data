@@ -37,6 +37,26 @@ export type KnowledgeGraph = {
   edges: GraphEdge[];
 };
 
+export function graphNodeHref(node: GraphNode): string {
+  if (node.type === "dataset") {
+    return `/graph?dataset=${encodeURIComponent(node.id.replace(/^dataset:/, ""))}`;
+  }
+  return `/graph?focus=${encodeURIComponent(node.id)}`;
+}
+
+export function resolveGraphFocus(
+  datasetId: string | null,
+  focus: string | null,
+  datasetIds: string[],
+  graph: KnowledgeGraph,
+): string | null {
+  if (datasetId && datasetIds.includes(datasetId)) return `dataset:${datasetId}`;
+  if (!focus) return null;
+  const parsed = parseConceptFocus(focus);
+  const id = parsed ? `${parsed.type}:${parsed.value}` : null;
+  return id && graph.nodes.some((node) => node.id === id) ? id : null;
+}
+
 function conceptId(type: GraphNodeType, value: string): string {
   return `${type}:${value}`;
 }

@@ -47,6 +47,22 @@ update_frequency: static
 provider: Example
 source_type: academic
 last_verified: 2026-08-10
+getting_started:
+  overview: A friendly place to begin.
+  prerequisites:
+    - Python 3.10 or newer
+  access_steps:
+    - Download the CSV.
+  python:
+    packages:
+      - pandas
+    code: |
+      print("hello")
+  first_project:
+    title: Explore the data
+    goal: Understand its columns.
+    steps:
+      - Inspect the first rows.
 `;
 
 describe("loadDatasets", () => {

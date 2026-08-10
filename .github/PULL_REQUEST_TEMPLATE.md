@@ -15,6 +15,9 @@ Thank you for contributing an open dataset!
 - [ ] I verified the source URL and license URL are live
 - [ ] `last_verified` is today's date (`YYYY-MM-DD`)
 - [ ] Metadata can be independently verified against the source
+- [ ] `getting_started` includes complete prerequisites and access steps
+- [ ] The Python example is concise, credential-free, and matches the described download
+- [ ] The first project has a clear goal and three actionable steps
 
 ### Exclude if any apply
 

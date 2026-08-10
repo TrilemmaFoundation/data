@@ -1,23 +1,20 @@
 "use client";
 
 import { useMemo } from "react";
-import { Search, X } from "lucide-react";
 import type { Dataset } from "@/lib/schema";
 import {
   EMPTY_FILTERS,
   getFilterOptions,
-  type DatasetFilters,
+  type DatasetFilters as Filters,
 } from "@/lib/search";
 import type { SizeCategory } from "@/lib/size";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 
 type DatasetFiltersProps = {
   datasets: Dataset[];
-  filters: DatasetFilters;
-  onChange: (filters: DatasetFilters) => void;
+  filters: Filters;
+  onChange: (filters: Filters) => void;
 };
 
 function toggleValue(list: string[], value: string): string[] {
@@ -34,10 +31,10 @@ function FilterGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium">{title}</h3>
-      <div className="space-y-1.5">{children}</div>
-    </div>
+    <fieldset>
+      <legend className="mb-3 text-sm font-semibold text-white">{title}</legend>
+      <div className="space-y-1">{children}</div>
+    </fieldset>
   );
 }
 
@@ -51,68 +48,43 @@ function FilterCheckbox({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm">
-      <Checkbox
-        checked={checked}
-        onCheckedChange={(value) => onCheckedChange(value === true)}
-      />
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white">
+      <Checkbox checked={checked} onCheckedChange={(value) => onCheckedChange(value === true)} />
       <span>{label}</span>
     </label>
   );
 }
 
-export function DatasetFilters({
-  datasets,
-  filters,
-  onChange,
-}: DatasetFiltersProps) {
+export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersProps) {
   const options = useMemo(() => getFilterOptions(datasets), [datasets]);
 
-  const activeCount =
-    (filters.query ? 1 : 0) +
-    filters.domains.length +
-    filters.dataTypes.length +
-    filters.tasks.length +
-    filters.difficulties.length +
-    filters.sizes.length +
-    filters.formats.length +
-    filters.geographies.length +
-    (filters.apiKeyRequired !== null ? 1 : 0);
-
   return (
-    <aside className="space-y-6 rounded-xl border bg-card p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="font-heading text-lg font-semibold">Filters</h2>
-        {activeCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onChange(EMPTY_FILTERS)}
-          >
-            Clear
-            <X />
-          </Button>
-        )}
-      </div>
-
-      <div className="relative">
-        <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={filters.query}
-          onChange={(event) =>
-            onChange({ ...filters, query: event.target.value })
-          }
-          placeholder="Search datasets…"
-          className="pl-8"
-          aria-label="Search datasets"
-        />
-      </div>
-
-      {activeCount > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          <Badge variant="secondary">{activeCount} active</Badge>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="eyebrow">Refine</p>
+          <h2 className="mt-1 text-lg font-semibold text-white">Filters</h2>
         </div>
-      )}
+        <Button variant="ghost" size="sm" onClick={() => onChange(EMPTY_FILTERS)}>
+          Clear all
+        </Button>
+      </div>
+
+      <FilterGroup title="Difficulty">
+        {options.difficulties.map((difficulty) => (
+          <FilterCheckbox
+            key={difficulty}
+            label={difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            checked={filters.difficulties.includes(difficulty)}
+            onCheckedChange={() =>
+              onChange({
+                ...filters,
+                difficulties: toggleValue(filters.difficulties, difficulty),
+              })
+            }
+          />
+        ))}
+      </FilterGroup>
 
       <FilterGroup title="Domain">
         {options.domains.map((domain) => (
@@ -121,10 +93,7 @@ export function DatasetFilters({
             label={domain}
             checked={filters.domains.includes(domain)}
             onCheckedChange={() =>
-              onChange({
-                ...filters,
-                domains: toggleValue(filters.domains, domain),
-              })
+              onChange({ ...filters, domains: toggleValue(filters.domains, domain) })
             }
           />
         ))}
@@ -137,117 +106,94 @@ export function DatasetFilters({
             label={dataType}
             checked={filters.dataTypes.includes(dataType)}
             onCheckedChange={() =>
-              onChange({
-                ...filters,
-                dataTypes: toggleValue(filters.dataTypes, dataType),
-              })
+              onChange({ ...filters, dataTypes: toggleValue(filters.dataTypes, dataType) })
             }
           />
         ))}
       </FilterGroup>
 
-      <FilterGroup title="Task">
-        {options.tasks.map((task) => (
-          <FilterCheckbox
-            key={task}
-            label={task}
-            checked={filters.tasks.includes(task)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                tasks: toggleValue(filters.tasks, task),
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
+      <details className="group rounded-xl border border-white/10 bg-white/[0.025] p-4">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
+          More filters
+          <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>
+        </summary>
+        <div className="mt-5 space-y-6 border-t border-white/10 pt-5">
+          <FilterGroup title="Task">
+            {options.tasks.map((task) => (
+              <FilterCheckbox
+                key={task}
+                label={task}
+                checked={filters.tasks.includes(task)}
+                onCheckedChange={() =>
+                  onChange({ ...filters, tasks: toggleValue(filters.tasks, task) })
+                }
+              />
+            ))}
+          </FilterGroup>
 
-      <FilterGroup title="Difficulty">
-        {options.difficulties.map((difficulty) => (
-          <FilterCheckbox
-            key={difficulty}
-            label={difficulty}
-            checked={filters.difficulties.includes(difficulty)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                difficulties: toggleValue(filters.difficulties, difficulty),
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
+          <FilterGroup title="Size">
+            {options.sizes.map((size) => (
+              <FilterCheckbox
+                key={size}
+                label={size}
+                checked={filters.sizes.includes(size)}
+                onCheckedChange={() =>
+                  onChange({
+                    ...filters,
+                    sizes: toggleValue(filters.sizes, size) as SizeCategory[],
+                  })
+                }
+              />
+            ))}
+          </FilterGroup>
 
-      <FilterGroup title="Size">
-        {options.sizes.map((size) => (
-          <FilterCheckbox
-            key={size}
-            label={size}
-            checked={filters.sizes.includes(size)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                sizes: toggleValue(filters.sizes, size) as SizeCategory[],
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
+          <FilterGroup title="Format">
+            {options.formats.map((format) => (
+              <FilterCheckbox
+                key={format}
+                label={format}
+                checked={filters.formats.includes(format)}
+                onCheckedChange={() =>
+                  onChange({ ...filters, formats: toggleValue(filters.formats, format) })
+                }
+              />
+            ))}
+          </FilterGroup>
 
-      <FilterGroup title="Format">
-        {options.formats.map((format) => (
-          <FilterCheckbox
-            key={format}
-            label={format}
-            checked={filters.formats.includes(format)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                formats: toggleValue(filters.formats, format),
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
+          <FilterGroup title="API key required">
+            <FilterCheckbox
+              label="Yes"
+              checked={filters.apiKeyRequired === true}
+              onCheckedChange={(checked) =>
+                onChange({ ...filters, apiKeyRequired: checked ? true : null })
+              }
+            />
+            <FilterCheckbox
+              label="No"
+              checked={filters.apiKeyRequired === false}
+              onCheckedChange={(checked) =>
+                onChange({ ...filters, apiKeyRequired: checked ? false : null })
+              }
+            />
+          </FilterGroup>
 
-      <FilterGroup title="API key required">
-        <FilterCheckbox
-          label="Yes"
-          checked={filters.apiKeyRequired === true}
-          onCheckedChange={(checked) =>
-            onChange({
-              ...filters,
-              apiKeyRequired: checked ? true : null,
-            })
-          }
-        />
-        <FilterCheckbox
-          label="No"
-          checked={filters.apiKeyRequired === false}
-          onCheckedChange={(checked) =>
-            onChange({
-              ...filters,
-              apiKeyRequired: checked ? false : null,
-            })
-          }
-        />
-      </FilterGroup>
-
-      <FilterGroup title="Geography">
-        {options.geographies.map((geography) => (
-          <FilterCheckbox
-            key={geography}
-            label={geography}
-            checked={filters.geographies.includes(geography)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                geographies: toggleValue(filters.geographies, geography),
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
-    </aside>
+          <FilterGroup title="Geography">
+            {options.geographies.map((geography) => (
+              <FilterCheckbox
+                key={geography}
+                label={geography}
+                checked={filters.geographies.includes(geography)}
+                onCheckedChange={() =>
+                  onChange({
+                    ...filters,
+                    geographies: toggleValue(filters.geographies, geography),
+                  })
+                }
+              />
+            ))}
+          </FilterGroup>
+        </div>
+      </details>
+    </div>
   );
 }

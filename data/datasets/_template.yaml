@@ -44,3 +44,28 @@ source_type: academic
 # Allowed values: government | academic | nonprofit | company | community
 last_verified: 2026-08-10
 # ISO date YYYY-MM-DD — update when you verify the source is still live.
+
+getting_started:
+  overview: >
+    Explain in plain language why this dataset is a useful place to start.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+  access_steps:
+    - Open the official source using the link on the dataset page.
+    - Download the CSV file and save it beside your notebook.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      data = pd.read_csv("example.csv")
+      print(data.head())
+  first_project:
+    title: Explore the dataset
+    goal: Write one sentence describing the question the learner will answer.
+    steps:
+      - Inspect the columns, data types, and missing values.
+      - Create one useful summary or visualization.
+      - Record one conclusion and one follow-up question.

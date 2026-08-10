@@ -45,3 +45,37 @@ update_frequency: annual
 provider: World Bank
 source_type: government
 last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    World Development Indicators provides well-documented country-level time
+    series. Start with one indicator and a few countries before exploring the
+    full catalog.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection for the World Bank API
+  access_steps:
+    - Open the official source and choose one indicator to investigate.
+    - Use the API example below or download a CSV from DataBank.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import requests
+      import pandas as pd
+
+      url = "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD"
+      response = requests.get(url, params={"format": "json", "per_page": 20000}, timeout=30)
+      response.raise_for_status()
+      rows = response.json()[1]
+      gdp = pd.DataFrame(rows)[["countryiso3code", "date", "value"]]
+      print(gdp.dropna().head())
+  first_project:
+    title: Compare GDP per person over time
+    goal: Compare long-term GDP-per-capita trends for three countries.
+    steps:
+      - Filter the API result to three countries and convert year to an integer.
+      - Plot one line per country using only non-null values.
+      - Describe one shared trend and one meaningful difference.

@@ -42,3 +42,36 @@ update_frequency: occasional
 provider: Natural Earth
 source_type: community
 last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    Natural Earth offers small, public-domain map layers that are ideal for a
+    first geospatial notebook. The country boundaries make it easy to learn
+    coordinate systems, attributes, and choropleth maps.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A Python environment that can install GeoPandas
+  access_steps:
+    - Open Natural Earth and choose the 1:110m Admin 0 Countries layer.
+    - Download and extract the shapefile beside your notebook.
+  python:
+    packages:
+      - geopandas
+      - matplotlib
+    code: |
+      import geopandas as gpd
+      import matplotlib.pyplot as plt
+
+      countries = gpd.read_file("ne_110m_admin_0_countries.shp")
+      print(countries[["ADMIN", "CONTINENT", "geometry"]].head())
+      countries.plot(column="CONTINENT", legend=True, figsize=(12, 6))
+      plt.axis("off")
+      plt.show()
+  first_project:
+    title: Build a world regions map
+    goal: Create and explain a map that colors countries by continent.
+    steps:
+      - Inspect the layer's geometry type and coordinate reference system.
+      - Check for missing continent or geometry values.
+      - Create a labeled map and explain why the chosen projection matters.

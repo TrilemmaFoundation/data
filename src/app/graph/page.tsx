@@ -4,9 +4,9 @@ import { buildGraph } from "@/lib/graph";
 import { GraphExplorer } from "@/components/GraphExplorer";
 
 export const metadata = {
-  title: "Knowledge Graph",
+  title: "Connections",
   description:
-    "Explore relationships between datasets, domains, data types, tasks, and providers.",
+    "Explore accessible relationships between datasets, domains, data types, tasks, and providers.",
 };
 
 export default function GraphPage() {
@@ -16,8 +16,8 @@ export default function GraphPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">
-          Loading graph…
+        <div className="mx-auto max-w-7xl px-4 py-16 text-sm text-muted-foreground sm:px-6">
+          Preparing connections…
         </div>
       }
     >

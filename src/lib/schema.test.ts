@@ -24,6 +24,17 @@ const validDataset = {
   provider: "UCI Machine Learning Repository",
   source_type: "academic",
   last_verified: "2026-08-10",
+  getting_started: {
+    overview: "A friendly place to begin.",
+    prerequisites: ["Python 3.10 or newer"],
+    access_steps: ["Download the CSV."],
+    python: { packages: ["pandas"], code: "print('hello')" },
+    first_project: {
+      title: "Explore the data",
+      goal: "Understand its columns.",
+      steps: ["Inspect the first rows."],
+    },
+  },
 };
 
 describe("DatasetSchema", () => {
@@ -63,5 +74,20 @@ describe("DatasetSchema", () => {
       id: "Iris",
     });
     expect(result.success).toBe(false);
+  });
+
+  it("requires complete, non-empty getting-started guidance", () => {
+    const missing = { ...validDataset } as Record<string, unknown>;
+    delete missing.getting_started;
+    expect(DatasetSchema.safeParse(missing).success).toBe(false);
+
+    const emptyOverview = {
+      ...validDataset,
+      getting_started: {
+        ...validDataset.getting_started,
+        overview: "   ",
+      },
+    };
+    expect(DatasetSchema.safeParse(emptyOverview).success).toBe(false);
   });
 });

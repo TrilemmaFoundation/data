@@ -42,3 +42,38 @@ update_frequency: static
 provider: UCI Machine Learning Repository
 source_type: academic
 last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    This dataset introduces realistic sensor features while remaining small
+    enough for a laptop. The prepared train and test files let you focus on
+    classification rather than raw signal processing.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - Basic familiarity with rows, columns, and classification labels
+  access_steps:
+    - Open the official UCI source and download the dataset archive.
+    - Extract the download, then extract the nested UCI HAR Dataset.zip beside your notebook.
+  python:
+    packages:
+      - pandas
+      - scikit-learn
+    code: |
+      import pandas as pd
+
+      root = "UCI HAR Dataset"
+      features = pd.read_csv(f"{root}/features.txt", sep=r"\s+", header=None)[1]
+      X_train = pd.read_csv(f"{root}/train/X_train.txt", sep=r"\s+", header=None)
+      y_train = pd.read_csv(f"{root}/train/y_train.txt", header=None, names=["activity"])
+      X_train.columns = features
+
+      print(X_train.shape)
+      print(y_train["activity"].value_counts().sort_index())
+  first_project:
+    title: Classify everyday activities
+    goal: Build a baseline model that predicts the recorded activity from sensor features.
+    steps:
+      - Map the numeric activity labels using activity_labels.txt.
+      - Train a simple logistic regression or random forest classifier.
+      - Report accuracy and inspect which activities are most often confused.

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllDatasets, getDatasetById } from "@/lib/datasets";
-import { buildGraph, getSubgraph } from "@/lib/graph";
 import { DatasetPage } from "@/components/DatasetPage";
 
 export function generateStaticParams() {
@@ -33,10 +32,5 @@ export default async function DatasetDetailPage({
 
   if (!dataset) notFound();
 
-  const fullGraph = buildGraph(datasets);
-  const subgraph = getSubgraph(fullGraph, `dataset:${dataset.id}`, 1);
-
-  return (
-    <DatasetPage dataset={dataset} graph={subgraph} datasets={datasets} />
-  );
+  return <DatasetPage dataset={dataset} />;
 }

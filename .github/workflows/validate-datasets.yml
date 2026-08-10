@@ -41,6 +41,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run lint
+        run: npm run lint
+
   build:
     name: Build static site
     runs-on: ubuntu-latest

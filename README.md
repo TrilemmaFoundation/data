@@ -1,8 +1,8 @@
-# Open Dataset Knowledge Graph
+# Trilemma Data
 
-Discover **free, openly licensed datasets** for data science projects.
+Find **free, openly licensed datasets** and start a practical data science project.
 
-> Discover open datasets by understanding what they contain and what you can build with them.
+> Find a dataset, understand what it needs, and reach a first insight with a guided Python start.
 
 **Host:** [data.trilemma.foundation](https://data.trilemma.foundation)  
 **Stack:** Next.js + TypeScript + Vercel  
@@ -10,13 +10,16 @@ Discover **free, openly licensed datasets** for data science projects.
 
 The dataset files themselves are **not** redistributed or relicensed. This app stores metadata and links to the original authoritative source.
 
-## Core concept
+## Core experience
 
-The useful graph path is:
+Each dataset includes searchable metadata, authoritative source links, practical
+access instructions, a copyable Python example, and a small first project. An
+optional connections explorer shows the useful graph path:
 
 **Dataset ↔ Domain ↔ Data Type ↔ Task ↔ Provider**
 
-v1 optimizes for clarity, contribution simplicity, and dataset quality — not catalog size.
+The catalog optimizes for beginner clarity, contribution simplicity, and dataset
+quality — not catalog size.
 
 ## Architecture
 
@@ -52,6 +55,7 @@ Useful scripts:
 ```bash
 npm run validate-datasets          # schema + live URL checks
 npm run validate-datasets:offline  # schema only
+npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
 npm run build                      # static export to out/
 ```
@@ -65,7 +69,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Short version:
 1. Fork
 2. Copy `data/datasets/_template.yaml`
 3. Rename to `<dataset-id>.yaml`
-4. Fill in metadata
+4. Fill in metadata and the beginner `getting_started` guide
 5. Open a PR
 
 No application code changes required.

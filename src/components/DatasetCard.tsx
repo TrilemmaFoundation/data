@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, Network } from "lucide-react";
+import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { Dataset } from "@/lib/schema";
 import { formatSizeRange, getSizeCategory } from "@/lib/size";
 import { Badge } from "@/components/ui/badge";
@@ -14,84 +14,60 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-type DatasetCardProps = {
-  dataset: Dataset;
-};
-
-export function DatasetCard({ dataset }: DatasetCardProps) {
+export function DatasetCard({ dataset }: { dataset: Dataset }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
 
   return (
-    <Card className="flex h-full flex-col">
+    <Card className="group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
       <CardHeader>
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-xl">
-            <Link
-              href={`/datasets/${dataset.id}`}
-              className="hover:underline"
-            >
-              {dataset.name}
-            </Link>
-          </CardTitle>
-          <Badge variant="secondary" className="shrink-0 capitalize">
+        <div className="flex items-center justify-between gap-3">
+          <Badge variant="secondary" className="capitalize">
+            {dataset.difficulty === "beginner" && <Sparkles aria-hidden="true" />}
             {dataset.difficulty}
           </Badge>
+          <span className="text-xs font-medium text-muted-foreground">{sizeCategory}</span>
         </div>
-        <CardDescription className="line-clamp-3">
-          {dataset.description}
-        </CardDescription>
+        <CardTitle className="pt-2 text-xl font-semibold text-white">
+          <Link href={`/datasets/${dataset.id}`} className="rounded-sm hover:text-primary">
+            {dataset.name}
+          </Link>
+        </CardTitle>
+        <CardDescription className="line-clamp-3 leading-6">{dataset.description}</CardDescription>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <Badge variant="outline">
-            {sizeCategory}
-            <span className="ml-1 opacity-80">{sizeRange}</span>
-          </Badge>
-          <span>
-            {dataset.data_types.join(" · ")} · {dataset.formats.join(", ")}
-          </span>
+      <CardContent className="flex flex-1 flex-col gap-5">
+        <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/8 bg-white/[0.025] p-3 text-xs">
+          <div>
+            <p className="text-muted-foreground">Size</p>
+            <p className="mt-1 font-medium text-white">{sizeRange}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Format</p>
+            <p className="mt-1 font-medium text-white">{dataset.formats.join(", ")}</p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-sm">
-          <Badge variant={dataset.free_to_access ? "default" : "destructive"}>
-            Free {dataset.free_to_access ? "✓" : "✗"}
-          </Badge>
-          <Badge variant="outline">
-            API key {dataset.api_key_required ? "✓" : "✗"}
-          </Badge>
-          <Badge variant="outline">{dataset.license}</Badge>
-        </div>
-
-        <div className="space-y-2 text-sm">
+        <div>
           <div className="flex flex-wrap gap-1.5">
             {dataset.domains.map((domain) => (
-              <Badge key={domain} variant="secondary">
-                {domain}
-              </Badge>
+              <Badge key={domain} variant="outline">{domain}</Badge>
             ))}
           </div>
-          <p className="text-muted-foreground">{dataset.tasks.join(" · ")}</p>
+          <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
+            {dataset.tasks.join(" · ")}
+          </p>
         </div>
+
+        <p className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
+          <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
+          {dataset.api_key_required ? "Free API key required" : "No API key required"}
+        </p>
       </CardContent>
 
-      <CardFooter className="flex flex-wrap gap-2">
-        <a
-          href={dataset.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants())}
-        >
-          Open Dataset
-          <ExternalLink />
-        </a>
-        <Link
-          href={`/graph?dataset=${dataset.id}`}
-          className={cn(buttonVariants({ variant: "outline" }))}
-        >
-          Explore Graph
-          <Network />
+      <CardFooter className="border-white/10 bg-white/[0.025]">
+        <Link href={`/datasets/${dataset.id}`} className={cn(buttonVariants(), "w-full")}>
+          View guide <ArrowRight aria-hidden="true" />
         </Link>
       </CardFooter>
     </Card>

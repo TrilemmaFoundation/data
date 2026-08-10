@@ -40,3 +40,35 @@ update_frequency: static
 provider: UCI Machine Learning Repository
 source_type: academic
 last_verified: 2026-08-10
+
+getting_started:
+  overview: >
+    Wine Quality is a compact regression dataset with understandable numeric
+    features and a clear target score. It is useful for practicing exploratory
+    analysis before building a first predictive model.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+  access_steps:
+    - Open the official UCI source and download the dataset archive.
+    - Extract winequality-red.csv beside your notebook.
+  python:
+    packages:
+      - pandas
+      - matplotlib
+    code: |
+      import pandas as pd
+      import matplotlib.pyplot as plt
+
+      wine = pd.read_csv("winequality-red.csv", sep=";")
+      print(wine.head())
+      print(wine["quality"].value_counts().sort_index())
+      wine.plot.scatter(x="alcohol", y="quality", alpha=0.35)
+      plt.show()
+  first_project:
+    title: Investigate what relates to wine quality
+    goal: Identify the measurements with the strongest relationship to quality scores.
+    steps:
+      - Inspect the quality-score distribution and missing values.
+      - Calculate correlations between numeric features and quality.
+      - Plot the two strongest relationships and explain their limits.
