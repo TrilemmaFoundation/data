@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllDatasets, getDatasetById } from "@/lib/datasets";
+import { datasetJsonLd, datasetPath, serializeJsonLd } from "@/lib/seo";
 import { DatasetPage } from "@/components/DatasetPage";
 
 export function generateStaticParams() {
@@ -18,6 +19,16 @@ export async function generateMetadata({
   return {
     title: dataset.name,
     description: dataset.description,
+    alternates: { canonical: datasetPath(dataset.id) },
+    openGraph: {
+      title: dataset.name,
+      description: dataset.description,
+      url: datasetPath(dataset.id),
+    },
+    twitter: {
+      title: dataset.name,
+      description: dataset.description,
+    },
   };
 }
 
@@ -32,5 +43,13 @@ export default async function DatasetDetailPage({
 
   if (!dataset) notFound();
 
-  return <DatasetPage dataset={dataset} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(datasetJsonLd(dataset)) }}
+      />
+      <DatasetPage dataset={dataset} />
+    </>
+  );
 }

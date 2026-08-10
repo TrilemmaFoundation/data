@@ -38,7 +38,6 @@ export function formatSizeRange(min: number, max: number): string {
 }
 
 function formatGb(value: number): string {
-  if (value === 0) return "0";
   if (value < 0.001) return value.toExponential(0);
   if (value < 1) {
     const rounded = Number(value.toPrecision(2));

@@ -60,6 +60,7 @@ npm run validate-datasets          # schema + Python syntax + live URL checks
 npm run validate-datasets:offline  # schema + Python syntax, no URL checks
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
+npm run test:coverage              # 100% statement/branch/function/line coverage for src/lib
 npm run build                      # static export to out/
 npm run test:e2e                   # browser tests against the built export
 ```
@@ -75,8 +76,12 @@ npm run test:e2e
 ```
 
 The browser checks include initial JavaScript and CSS budgets for the catalog
-and the closed mobile Connections route. Raise a budget only with a documented
-before/after measurement and intentional review.
+and the closed mobile Connections route, plus automated WCAG checks for the
+catalog, dataset guides, and semantic Connections explorer. Raise a budget or
+accessibility exception only with a documented reason and intentional review.
+
+GitHub Actions also runs live source and license URL validation every Monday so
+link rot is detected even when the catalog has no recent code changes.
 
 ## Adding a dataset
 

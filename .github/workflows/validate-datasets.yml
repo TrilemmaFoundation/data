@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
 
 jobs:
   validate-datasets:
@@ -26,6 +28,7 @@ jobs:
 
   test:
     name: Unit tests
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,14 +41,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-
       - name: Run lint
         run: npm run lint
 
+      - name: Enforce 100% core coverage
+        run: npm run test:coverage
+
   build:
     name: Build static site
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

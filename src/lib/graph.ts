@@ -258,8 +258,6 @@ export function getDatasetsForConcept(
         return dataset.formats.includes(value);
       case "license":
         return dataset.license === value;
-      default:
-        return false;
     }
   });
 }

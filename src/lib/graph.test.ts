@@ -7,6 +7,7 @@ import {
   getSubgraph,
   groupGraphNodes,
   graphNodeHref,
+  parseConceptFocus,
   resolveGraphFocus,
 } from "./graph";
 import type { Dataset } from "./schema";
@@ -80,9 +81,36 @@ describe("buildGraph", () => {
     );
   });
 
+  it("traverses relationships in either direction and rejects missing focus", () => {
+    const graph = buildGraph([iris, wine]);
+    const conceptSubgraph = getSubgraph(graph, "task:Classification", 1);
+    expect(conceptSubgraph.nodes.map((node) => node.id)).toEqual(
+      expect.arrayContaining(["dataset:iris", "dataset:wine-quality"]),
+    );
+    expect(getSubgraph(graph, "task:missing")).toEqual({ nodes: [], edges: [] });
+  });
+
   it("finds datasets for a concept", () => {
     const matches = getDatasetsForConcept([iris, wine], "task", "Classification");
     expect(matches.map((d) => d.id).sort()).toEqual(["iris", "wine-quality"]);
+  });
+
+  it("matches every supported concept type", () => {
+    const cases = [
+      ["domain", "Biology", ["iris"]],
+      ["dataType", "Tabular", ["iris", "wine-quality"]],
+      ["task", "Regression", ["wine-quality"]],
+      ["provider", "UCI Machine Learning Repository", ["iris", "wine-quality"]],
+      ["geography", "Portugal", ["wine-quality"]],
+      ["format", "CSV", ["iris", "wine-quality"]],
+      ["license", "CC BY 4.0", ["iris", "wine-quality"]],
+    ] as const;
+
+    for (const [type, value, ids] of cases) {
+      expect(
+        getDatasetsForConcept([iris, wine], type, value).map((d) => d.id),
+      ).toEqual(ids);
+    }
   });
 
   it("keeps dataset and concept focus query links compatible", () => {
@@ -99,6 +127,23 @@ describe("buildGraph", () => {
       "task:Classification",
     );
     expect(resolveGraphFocus("missing", "not-valid", ["iris"], graph)).toBeNull();
+    expect(resolveGraphFocus(null, null, ["iris"], graph)).toBeNull();
+    expect(resolveGraphFocus(null, "task:missing", ["iris"], graph)).toBeNull();
+  });
+
+  it("parses concept focus values defensively", () => {
+    expect(parseConceptFocus("task:Classification")).toEqual({
+      type: "task",
+      value: "Classification",
+    });
+    expect(parseConceptFocus("task:value:with-colon")).toEqual({
+      type: "task",
+      value: "value:with-colon",
+    });
+    expect(parseConceptFocus("missing-separator")).toBeNull();
+    expect(parseConceptFocus(":missing-type")).toBeNull();
+    expect(parseConceptFocus("unknown:value")).toBeNull();
+    expect(parseConceptFocus("task:")).toBeNull();
   });
 
   it("derives explorer connections and related datasets", () => {
@@ -119,6 +164,8 @@ describe("buildGraph", () => {
       getRelatedDatasets([iris, wine], graph, "task:Classification").map((d) => d.id),
     ).toEqual(["iris", "wine-quality"]);
     expect(getRelatedDatasets([iris, wine], graph, "task:missing")).toEqual([]);
+    expect(getRelatedDatasets([iris, wine], graph, null)).toEqual([iris, wine]);
+    expect(getRelatedDatasets([iris, wine], graph, "missing:node")).toEqual([]);
   });
 
   it("groups focus options in stable label order", () => {

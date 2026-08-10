@@ -1,7 +1,7 @@
 import type { Dataset } from "./schema";
 
 const URL_TIMEOUT_MS = 10_000;
-const RETRY_DELAY_MS = 250;
+const RETRY_DELAYS_MS = [250, 750];
 const USER_AGENT =
   "OpenDatasetKnowledgeGraphValidator/1.0 (+https://data.trilemma.foundation)";
 
@@ -47,14 +47,14 @@ export async function checkUrl(
         },
       });
       await response.body?.cancel().catch(() => undefined);
+      clearTimeout(timer);
       return { status: response.status, message: null };
     } catch (error) {
+      clearTimeout(timer);
       return {
         status: null,
         message: `${method} ${url}: ${error instanceof Error ? error.message : String(error)}`,
       };
-    } finally {
-      clearTimeout(timer);
     }
   }
 
@@ -64,16 +64,16 @@ export async function checkUrl(
   let get = await attempt("GET");
   if (isReachable(get.status)) return { ok: true, messages: [] };
 
-  if (isTransient(get.status)) {
-    await delay(RETRY_DELAY_MS);
+  for (const retryDelay of RETRY_DELAYS_MS) {
+    if (!isTransient(get.status)) break;
+    await delay(retryDelay);
     get = await attempt("GET");
     if (isReachable(get.status)) return { ok: true, messages: [] };
   }
 
-  const message =
-    get.status === null
-      ? get.message ?? head.message ?? `Unable to reach ${url}`
-      : `${url} returned HTTP ${get.status}`;
+  const message = get.status === null
+    ? get.message!
+    : `${url} returned HTTP ${get.status}`;
   return { ok: false, messages: [message] };
 }
 
@@ -111,7 +111,7 @@ export async function validateDatasetUrls(
   const errorsByFile = new Map<string, string[]>();
   for (const [url, result] of results) {
     if (result.ok) continue;
-    for (const file of owners.get(url) ?? []) {
+    for (const file of owners.get(url)!) {
       errorsByFile.set(file, [
         ...(errorsByFile.get(file) ?? []),
         ...result.messages,

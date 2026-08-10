@@ -26,6 +26,115 @@ describe("checkUrl", () => {
     expect(delay).toHaveBeenCalledOnce();
   });
 
+  it("accepts a reachable HEAD response without a GET", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 301 }));
+    await expect(
+      checkUrl("https://example.com", { fetchImpl: fetchImpl as typeof fetch }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
+  it("accepts the first GET response", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 405 }))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }));
+    await expect(
+      checkUrl("https://example.com", { fetchImpl: fetchImpl as typeof fetch }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+  });
+
+  it("uses both retry delays before reporting a transient HTTP failure", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 405 }))
+      .mockResolvedValue(new Response(null, { status: 503 }));
+    const delay = vi.fn().mockResolvedValue(undefined);
+
+    await expect(
+      checkUrl("https://example.com/busy", {
+        fetchImpl: fetchImpl as typeof fetch,
+        delay,
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: ["https://example.com/busy returned HTTP 503"],
+    });
+    expect(delay.mock.calls).toEqual([[250], [750]]);
+  });
+
+  it("reports Error and non-Error network failures", async () => {
+    const errorFetch = vi.fn().mockRejectedValue(new Error("offline"));
+    const textFetch = vi.fn().mockRejectedValue("no route");
+    const delay = vi.fn().mockResolvedValue(undefined);
+
+    await expect(
+      checkUrl("https://example.com", {
+        fetchImpl: errorFetch as typeof fetch,
+        delay,
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: ["GET https://example.com: offline"],
+    });
+    await expect(
+      checkUrl("https://example.com", {
+        fetchImpl: textFetch as typeof fetch,
+        delay,
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: ["GET https://example.com: no route"],
+    });
+  });
+
+  it("ignores response-body cancellation failures", async () => {
+    const response = {
+      status: 204,
+      body: { cancel: vi.fn().mockRejectedValue(new Error("already closed")) },
+    } as unknown as Response;
+    const fetchImpl = vi.fn().mockResolvedValue(response);
+    await expect(
+      checkUrl("https://example.com", { fetchImpl: fetchImpl as typeof fetch }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+  });
+
+  it("uses the global fetch and default delay", async () => {
+    vi.useFakeTimers();
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 405 }))
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchImpl);
+    const result = checkUrl("https://example.com");
+    await vi.advanceTimersByTimeAsync(250);
+    await expect(result).resolves.toEqual({ ok: true, messages: [] });
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it("aborts requests that exceed the timeout", async () => {
+    vi.useFakeTimers();
+    const fetchImpl = vi.fn((_url: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(new Error("aborted")));
+      }),
+    );
+    const pending = checkUrl("https://example.com/slow", {
+      fetchImpl: fetchImpl as typeof fetch,
+      delay: vi.fn().mockResolvedValue(undefined),
+    });
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await vi.advanceTimersByTimeAsync(10_000);
+    }
+    await expect(pending).resolves.toEqual({
+      ok: false,
+      messages: ["GET https://example.com/slow: aborted"],
+    });
+    vi.useRealTimers();
+  });
+
   it("does not retry a permanent GET failure", async () => {
     const fetchImpl = vi
       .fn()
@@ -45,6 +154,19 @@ describe("checkUrl", () => {
 });
 
 describe("validateDatasetUrls", () => {
+  it("handles an empty catalog and normalizes zero concurrency", async () => {
+    await expect(validateDatasetUrls([])).resolves.toEqual(new Map());
+    const checker = vi.fn().mockResolvedValue({ ok: true, messages: [] });
+    const dataset = {
+      id: "one",
+      url: "https://example.com/one",
+      license_url: "https://example.com/license",
+    } as Dataset;
+    await expect(
+      validateDatasetUrls([dataset], { checker, concurrency: 0 }),
+    ).resolves.toEqual(new Map());
+    expect(checker).toHaveBeenCalledTimes(2);
+  });
   it("checks each unique current-catalog URL once", async () => {
     const datasets = getAllDatasets();
     const uniqueUrlCount = new Set(

@@ -47,6 +47,12 @@ describe("filter URL helpers", () => {
     expect(filters.apiKeyRequired).toBeNull();
   });
 
+  it("parses a required API key", () => {
+    expect(
+      parseFilters(new URLSearchParams("apiKey=true"), options).apiKeyRequired,
+    ).toBe(true);
+  });
+
   it("drops unknown and duplicate catalog values", () => {
     const filters = parseFilters(
       new URLSearchParams(
