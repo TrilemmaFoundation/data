@@ -10,6 +10,7 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
   await page.getByLabel("Search by topic, task, format, or provider").fill("flower");
   await expect(page).toHaveURL(/q=flower/);
   await expect(page.getByRole("link", { name: "Iris" })).toBeVisible();
+  await expect(page.getByRole("status")).toHaveText("1 dataset found");
 
   await page.getByRole("button", { name: "Beginner-friendly" }).click();
   await expect(page).toHaveURL(/difficulty=beginner/);
@@ -25,6 +26,23 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
     "aria-pressed",
     "true",
   );
+});
+
+test("mobile navigation overlays content and restores focus on Escape", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  const trigger = page.getByRole("button", { name: "Open navigation" });
+  const hero = page.getByRole("heading", { name: "Find your first dataset" });
+  const before = await hero.boundingBox();
+
+  await trigger.click();
+  await expect(page.getByRole("navigation", { name: "Mobile primary" })).toBeVisible();
+  expect((await hero.boundingBox())?.y).toBe(before?.y);
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("navigation", { name: "Mobile primary" })).toBeHidden();
+  await expect(trigger).toBeFocused();
 });
 
 test("mobile filters restore focus and the zero state recovers", async ({ page }) => {

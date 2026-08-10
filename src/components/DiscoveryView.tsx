@@ -125,26 +125,28 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
             />
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2">
+          <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center">
             <span className="mr-1 text-xs font-medium text-white/55">Quick starts</span>
-            <Button
-              variant="outline"
-              size="sm"
-              aria-pressed={beginnerActive}
-              className={beginnerActive ? "border-primary bg-primary/15 text-primary" : undefined}
-              onClick={() => updateFilters(applyQuickPreset(filters, "beginner"), "push")}
-            >
-              <Sparkles aria-hidden="true" /> Beginner-friendly
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              aria-pressed={smallCsvActive}
-              className={smallCsvActive ? "border-primary bg-primary/15 text-primary" : undefined}
-              onClick={() => updateFilters(applyQuickPreset(filters, "small-csv"), "push")}
-            >
-              Small CSVs
-            </Button>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Quick dataset filters">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-pressed={beginnerActive}
+                className={beginnerActive ? "border-primary bg-primary/15 text-primary" : undefined}
+                onClick={() => updateFilters(applyQuickPreset(filters, "beginner"), "push")}
+              >
+                <Sparkles aria-hidden="true" /> Beginner-friendly
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-pressed={smallCsvActive}
+                className={smallCsvActive ? "border-primary bg-primary/15 text-primary" : undefined}
+                onClick={() => updateFilters(applyQuickPreset(filters, "small-csv"), "push")}
+              >
+                Small CSVs
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -161,6 +163,9 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
               <h2 id="results-title" className="mt-1 text-2xl font-bold text-white">
                 {results.length} dataset{results.length === 1 ? "" : "s"}
               </h2>
+              <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+                {results.length} dataset{results.length === 1 ? "" : "s"} found
+              </p>
             </div>
             <Dialog.Trigger
               className={cn(buttonVariants({ variant: "outline" }), "lg:hidden")}

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const FOUNDATION_URL = "https://www.trilemma.foundation/";
 const CONTRIBUTE_URL =
@@ -18,6 +18,25 @@ const navigation = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
+  const isActive = (href: string) =>
+    href === "/"
+      ? pathname === "/" || pathname.startsWith("/datasets/")
+      : pathname.startsWith(href);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a0a14]/90 backdrop-blur-xl">
@@ -48,8 +67,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {navigation.map((item) => {
-            const active =
-              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
@@ -76,6 +94,7 @@ export function SiteHeader() {
         </nav>
 
         <button
+          ref={menuButtonRef}
           type="button"
           className="grid size-11 place-items-center rounded-lg text-white transition-colors hover:bg-white/10 md:hidden"
           aria-label={menuOpen ? "Close navigation" : "Open navigation"}
@@ -91,12 +110,11 @@ export function SiteHeader() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile primary"
-          className="border-t border-white/10 bg-[#0a0a14] px-4 py-3 md:hidden"
+          className="absolute inset-x-0 top-full border-b border-white/10 bg-[#0a0a14]/98 px-4 py-3 shadow-2xl backdrop-blur-xl md:hidden"
         >
           <div className="mx-auto grid max-w-7xl gap-1">
             {navigation.map((item) => {
-              const active =
-                item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+              const active = isActive(item.href);
               return (
                 <Link
                   key={item.href}

@@ -15,6 +15,20 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const ACCESS_TYPE_LABELS: Record<Dataset["access_type"][number], string> = {
+  download: "Download",
+  api: "API",
+  both: "Download and API",
+};
+
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function indefiniteArticle(value: string): "a" | "an" {
+  return /^[aeiou]/i.test(value) ? "an" : "a";
+}
+
 function ConceptPills({
   label,
   type,
@@ -59,10 +73,10 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
     ["Difficulty", difficulty],
     ["Size", `${sizeCategory} · ${sizeRange}`],
     ["Formats", dataset.formats.join(", ")],
-    ["Access", dataset.access_type.join(" or ")],
+    ["Access", dataset.access_type.map((type) => ACCESS_TYPE_LABELS[type]).join(" or ")],
     ["API key", dataset.api_key_required ? "Required" : "Not required"],
     ["Provider", dataset.provider],
-    ["Updates", dataset.update_frequency],
+    ["Updates", capitalize(dataset.update_frequency)],
     [
       "License",
       <a
@@ -198,7 +212,11 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               </div>
               <CopyButton value={`${installCommand}\n\n${guide.python.code}`} />
             </div>
-            <div className="overflow-x-auto bg-[#080910] p-5 sm:p-6">
+            <div
+              className="overflow-x-auto bg-[#080910] p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
+              tabIndex={0}
+              aria-label="Python example"
+            >
               <p className="mb-4 font-mono text-xs text-secondary">{installCommand}</p>
               <pre className="min-w-max font-mono text-[0.82rem] leading-6 text-white/85">
                 <code>{guide.python.code}</code>
@@ -211,7 +229,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 font-bold text-primary">
                 4
               </span>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2 text-primary">
                   <Lightbulb className="size-5" aria-hidden="true" />
                   <p className="text-xs font-bold tracking-wider uppercase">First project</p>
@@ -243,7 +261,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 Dataset details
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {dataset.provider} is a {dataset.source_type} source. Last verified {dataset.last_verified}. Temporal coverage: {dataset.temporal_coverage ?? "not applicable"}.
+                {dataset.provider} is {indefiniteArticle(dataset.source_type)} {dataset.source_type} source. Last verified {dataset.last_verified}. Temporal coverage: {dataset.temporal_coverage ?? "not applicable"}.
               </p>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
                 <ConceptPills label="Domains" type="domain" values={dataset.domains} />

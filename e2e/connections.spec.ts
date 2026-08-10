@@ -16,6 +16,7 @@ test("the mobile visual map loads only after its disclosure opens", async ({ pag
 
   await page.getByText("Show visual map", { exact: true }).click();
   await expect(page.locator("canvas")).toBeVisible();
+  await expect(page.getByText("Hide visual map", { exact: true })).toBeVisible();
   expect([...scripts].some((url) => !initialScripts.has(url))).toBe(true);
 });
 

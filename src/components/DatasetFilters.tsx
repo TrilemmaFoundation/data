@@ -57,6 +57,18 @@ function FilterCheckbox({
 
 export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersProps) {
   const options = useMemo(() => getFilterOptions(datasets), [datasets]);
+  const hasActiveFilters =
+    filters.query !== "" ||
+    filters.apiKeyRequired !== null ||
+    [
+      filters.domains,
+      filters.dataTypes,
+      filters.tasks,
+      filters.difficulties,
+      filters.sizes,
+      filters.formats,
+      filters.geographies,
+    ].some((values) => values.length > 0);
 
   return (
     <div className="space-y-6">
@@ -65,7 +77,12 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
           <p className="eyebrow">Refine</p>
           <h2 className="mt-1 text-lg font-semibold text-white">Filters</h2>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => onChange(EMPTY_FILTERS)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={!hasActiveFilters}
+          onClick={() => onChange(EMPTY_FILTERS)}
+        >
           Clear all
         </Button>
       </div>

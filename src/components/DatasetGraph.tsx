@@ -112,7 +112,7 @@ export function DatasetGraph({
       </div>
       <div
         ref={containerRef}
-        className="h-[420px] lg:h-[var(--graph-height)]"
+        className="h-[360px] lg:h-[var(--graph-height)]"
         style={{ "--graph-height": `${height}px` } as CSSProperties}
         aria-hidden="true"
       >
@@ -143,16 +143,21 @@ export function DatasetGraph({
               ctx.stroke();
             }
 
-            const showLabel =
-              item.type === "dataset" || item.id === hoveredId || (focusId !== null && highlightIds.has(item.id));
+            const showLabel = dimensions.width < 500
+              ? item.id === hoveredId || item.id === focusId
+              : item.type === "dataset" || item.id === hoveredId || (focusId !== null && highlightIds.has(item.id));
             if (!showLabel) return;
 
+            const maxLabelLength = dimensions.width < 500 ? 20 : 30;
+            const displayLabel = item.label.length > maxLabelLength
+              ? `${item.label.slice(0, maxLabelLength - 1).trimEnd()}…`
+              : item.label;
             const fontSize = 11 / globalScale;
             ctx.font = `600 ${fontSize}px Roboto, sans-serif`;
             ctx.textAlign = "center";
             ctx.textBaseline = "top";
             const labelY = (item.y ?? 0) + radius + 3 / globalScale;
-            const labelWidth = ctx.measureText(item.label).width;
+            const labelWidth = ctx.measureText(displayLabel).width;
             ctx.fillStyle = "rgba(10, 10, 20, 0.82)";
             ctx.fillRect(
               (item.x ?? 0) - labelWidth / 2 - 3 / globalScale,
@@ -161,7 +166,7 @@ export function DatasetGraph({
               fontSize + 4 / globalScale,
             );
             ctx.fillStyle = dimmed ? "#70758a" : "#ffffff";
-            ctx.fillText(item.label, item.x ?? 0, labelY);
+            ctx.fillText(displayLabel, item.x ?? 0, labelY);
           }}
           linkColor={() => "#4d536b"}
           linkWidth={(link) => {
@@ -173,6 +178,7 @@ export function DatasetGraph({
           linkDirectionalArrowRelPos={1}
           onNodeHover={(node) => setHoveredId(node ? String((node as GraphVizNode).id) : null)}
           onNodeClick={(node) => onNodeSelect(String((node as GraphVizNode).id))}
+          showPointerCursor
           onEngineStop={fitGraph}
           cooldownTicks={80}
         />

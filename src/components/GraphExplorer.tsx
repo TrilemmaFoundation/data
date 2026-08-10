@@ -46,6 +46,7 @@ export function GraphExplorer({
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [hasOpenedMap, setHasOpenedMap] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 1024px)");
@@ -207,11 +208,12 @@ export function GraphExplorer({
         ref={detailsRef}
         className="group mt-6"
         onToggle={(event) => {
+          setMapOpen(event.currentTarget.open);
           if (event.currentTarget.open) setHasOpenedMap(true);
         }}
       >
         <summary className="surface flex min-h-14 cursor-pointer list-none items-center justify-between px-5 font-semibold text-white marker:content-none lg:hidden">
-          <span className="flex items-center gap-2"><Network className="size-5 text-primary" aria-hidden="true" /> Show visual map</span>
+          <span className="flex items-center gap-2"><Network className="size-5 text-primary" aria-hidden="true" /> {mapOpen ? "Hide" : "Show"} visual map</span>
           <ChevronDown className="size-5 transition-transform group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="mt-3 hidden group-open:block lg:mt-0 lg:block">
@@ -224,7 +226,7 @@ export function GraphExplorer({
               onNodeSelect={selectNode}
             />
           ) : (
-            <div className="grid h-[420px] place-items-center rounded-2xl border border-white/10 bg-[#0d0f1a] text-sm text-muted-foreground lg:h-[640px]">
+            <div className="grid h-[360px] place-items-center rounded-2xl border border-white/10 bg-[#0d0f1a] text-sm text-muted-foreground lg:h-[640px]">
               Preparing visual map…
             </div>
           )}
