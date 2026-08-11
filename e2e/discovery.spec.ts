@@ -91,7 +91,7 @@ test("the hero has one CTA that focuses the catalog without changing URL state",
   await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(1);
   await page
     .getByRole("navigation", { name: siteCopy.primaryNavigationLabel })
-    .getByRole("link", { name: siteCopy.contributeLabel })
+    .getByRole("link", { name: siteCopy.datasetsNavigationLabel })
     .focus();
   await page.keyboard.press("Tab");
   await expect(cta).toBeFocused();
@@ -167,11 +167,7 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   await page.keyboard.press("Shift+Tab");
   await expect(trigger).toBeFocused();
   await page.keyboard.press("Shift+Tab");
-  await expect(
-    page
-      .getByRole("navigation", { name: siteCopy.mobileNavigationLabel })
-      .getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toBeFocused();
+  await expect(firstLink).toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(
@@ -219,12 +215,7 @@ test("header and footer expose the product and Foundation destinations", async (
   await expect(
     primary.getByRole("link", { name: siteCopy.datasetsNavigationLabel }),
   ).toHaveAttribute("aria-current", "page");
-  await expect(
-    primary.getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toHaveAttribute("href", CONTRIBUTE_URL);
-  await expect(
-    primary.getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toHaveAttribute("target", "_blank");
+  await expect(primary.getByRole("link")).toHaveCount(1);
 
   const dataLinks = page.getByRole("navigation", {
     name: siteCopy.footerDataNavigationLabel,

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -142,15 +142,6 @@ export function SiteHeader() {
           >
             {siteCopy.datasetsNavigationLabel}
           </Link>
-          <a
-            href={CONTRIBUTE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={buttonVariants()}
-          >
-            {siteCopy.contributeLabel}
-            <ExternalLink className="size-3.5" aria-hidden="true" />
-          </a>
         </nav>
 
         <button
@@ -191,15 +182,6 @@ export function SiteHeader() {
               >
                 {siteCopy.datasetsNavigationLabel}
               </Link>
-              <a
-                href={CONTRIBUTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(buttonVariants(), "w-full justify-start")}
-              >
-                {siteCopy.contributeLabel}
-                <ExternalLink className="size-3.5" aria-hidden="true" />
-              </a>
             </div>
           </nav>
           <button
