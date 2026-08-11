@@ -93,6 +93,15 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
   );
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeAtDesktop = () => {
+      if (desktop.matches) filterDialogRef.current?.close();
+    };
+    desktop.addEventListener("change", closeAtDesktop);
+    return () => desktop.removeEventListener("change", closeAtDesktop);
+  }, []);
+
+  useEffect(() => {
     const syncQuery = () => {
       if (searchRef.current) {
         searchRef.current.value =
@@ -262,7 +271,11 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
         aria-labelledby="filter-dialog-title"
         aria-describedby="filter-dialog-description"
         className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,26rem)] max-w-none border-0 border-l border-white/10 bg-[#0a0a14] p-0 text-white shadow-2xl backdrop:bg-[#0a0a14]/80 backdrop:backdrop-blur-sm"
-        onClose={() => filterTriggerRef.current?.focus()}
+        onClose={() => {
+          if (!window.matchMedia("(min-width: 1024px)").matches) {
+            filterTriggerRef.current?.focus();
+          }
+        }}
       >
           <div className="flex h-full flex-col">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a14]/95 px-5 py-4 backdrop-blur">

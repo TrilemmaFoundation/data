@@ -33,6 +33,21 @@ describe("filter URL helpers", () => {
     expect(parseFilters(filtersToParams(filters), options)).toEqual(filters);
   });
 
+  it("round-trips comma-containing values and repeated selections", () => {
+    const commaOptions = {
+      ...options,
+      domains: ["Climate, Energy", "Geography"],
+    };
+    const filters = {
+      ...EMPTY_FILTERS,
+      domains: ["Climate, Energy", "Geography"],
+    };
+    const params = filtersToParams(filters);
+
+    expect(params.getAll("domain")).toEqual(filters.domains);
+    expect(parseFilters(params, commaOptions).domains).toEqual(filters.domains);
+  });
+
   it("preserves whitespace while a multi-word query is being typed", () => {
     const filters = { ...EMPTY_FILTERS, query: "world " };
     expect(filtersToParams(filters).get("q")).toBe("world ");

@@ -109,7 +109,9 @@ export async function checkProviderContract(
   datasetId: string,
   options: ProviderValidationOptions = {},
 ): Promise<string[]> {
-  const contract = contracts[datasetId as keyof typeof contracts];
+  const contract = Object.hasOwn(contracts, datasetId)
+    ? contracts[datasetId as keyof typeof contracts]
+    : undefined;
   if (!contract) return [`no provider contract is defined for ${datasetId}`];
 
   const controller = new AbortController();
@@ -167,10 +169,12 @@ export async function validateProviderContracts(
   options: ProviderValidationOptions = {},
 ): Promise<Map<string, string[]>> {
   const results = await Promise.all(
-    datasets.map(async (dataset) => [
-      `${dataset.id}.yaml`,
-      await checkProviderContract(dataset.id, options),
-    ] as const),
+    datasets
+      .filter((dataset) => Object.hasOwn(contracts, dataset.id))
+      .map(async (dataset) => [
+        `${dataset.id}.yaml`,
+        await checkProviderContract(dataset.id, options),
+      ] as const),
   );
   return new Map(results.filter(([, errors]) => errors.length > 0));
 }

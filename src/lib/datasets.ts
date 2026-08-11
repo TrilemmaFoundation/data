@@ -42,7 +42,15 @@ export function loadDatasets(dir: string = DATASETS_DIR): DatasetLoadResult {
     };
   }
 
-  const files = listDatasetFiles(dir);
+  let files: string[];
+  try {
+    files = listDatasetFiles(dir);
+  } catch (error) {
+    return {
+      datasets: [],
+      errors: [{ file: dir, messages: [`Dataset directory error: ${String(error)}`] }],
+    };
+  }
   const datasets: Dataset[] = [];
   const errors: DatasetLoadError[] = [];
   const seenIds = new Map<string, string>();

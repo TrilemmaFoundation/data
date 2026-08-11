@@ -96,8 +96,9 @@ a documented reason and intentional review.
 Pull-request validation is deterministic and credential-free: it checks schema,
 the 90-day maintenance policy, Python syntax, controlled provider fixtures,
 lint, tests, and the static application. GitHub Actions runs bounded live source,
-data-terms, and provider-contract validation after pushes to `main`, every Monday,
-and on manual dispatch so drift is detected even without recent code changes.
+data-terms, and configured provider-contract validation after pushes to `main`,
+every Monday, and on manual dispatch so drift is detected even without recent code
+changes.
 Dataset URLs must use HTTPS without embedded credentials. Live validation
 rejects private or link-local destinations and revalidates every same-host
 redirect before requesting it.

@@ -104,17 +104,17 @@ Maintainers can also run the live checks:
 
 ```bash
 npm run validate-datasets  # source and data-terms page identity
-npm run validate-providers # bounded provider response contracts
+npm run validate-providers # configured provider response contracts
 ```
 
 Pull-request CI stays deterministic and does not execute contributed Python.
 It compiles examples for syntax and tests controlled provider fixtures instead.
 Live URL checks follow redirects, require the final page to remain on the
-intended host, and search the bounded response body for each YAML marker. URL
-and provider checks run after pushes to `main`, every Monday, and on manual
-workflow dispatch. A small code-owned allowlist may temporarily accept a
-bot-protected URL; every exception is exact, visible in validation output, and
-has an expiry date.
+intended host, and search the bounded response body for each YAML marker.
+Configured provider checks run after pushes to `main`, every Monday, and on
+manual workflow dispatch; a new YAML dataset does not require one. A small
+code-owned allowlist may temporarily accept a bot-protected URL; every exception
+is exact, visible in validation output, and has an expiry date.
 
 ## What happens after merge
 

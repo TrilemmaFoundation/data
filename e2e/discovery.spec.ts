@@ -29,7 +29,9 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
   );
 
   await page.getByRole("button", { name: catalogCopy.smallCsvPresetLabel }).click();
-  await expect(page).toHaveURL(/size=Tiny%2CSmall/);
+  await expect
+    .poll(() => new URL(page.url()).searchParams.getAll("size"))
+    .toEqual(["Tiny", "Small"]);
   await page.goBack();
   await expect(page.getByRole("button", { name: catalogCopy.beginnerPresetLabel })).toHaveAttribute(
     "aria-pressed",
@@ -117,6 +119,19 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
   await page.getByRole("dialog").getByRole("button").last().click();
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(trigger).toBeFocused();
+});
+
+test("mobile filter drawer closes at the desktop breakpoint", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: filterCopy.title, exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: catalogCopy.drawerTitle });
+  await expect(dialog).toBeVisible();
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(page.locator("aside")).toBeVisible();
+  await expect(dialog).toBeHidden();
 });
 
 test("application copy reflows across supported viewport widths", async ({ page }) => {

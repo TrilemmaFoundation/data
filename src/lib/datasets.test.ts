@@ -192,6 +192,24 @@ describe("loadDatasets", () => {
     );
   });
 
+  it("reports directory read failures without throwing", () => {
+    const dir = makeTempDir();
+    const read = vi.spyOn(fs, "readdirSync").mockImplementationOnce(() => {
+      throw new Error("permission denied");
+    });
+
+    expect(loadDatasets(dir)).toEqual({
+      datasets: [],
+      errors: [
+        {
+          file: dir,
+          messages: ["Dataset directory error: Error: permission denied"],
+        },
+      ],
+    });
+    read.mockRestore();
+  });
+
   it("exposes catalog helpers, stable sorting, and lookup", () => {
     expect(getDatasetsDir()).toMatch(/data\/datasets$/);
     expect(listDatasetFiles(path.join(makeTempDir(), "missing"))).toEqual([]);

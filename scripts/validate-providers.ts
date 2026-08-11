@@ -5,7 +5,7 @@ async function main() {
   const datasets = getAllDatasets();
   const errors = await validateProviderContracts(datasets);
   if (errors.size === 0) {
-    console.log(`✓ Validated ${datasets.length} provider contract(s).`);
+    console.log("✓ Configured provider contracts are valid.");
     return;
   }
 

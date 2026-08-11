@@ -65,11 +65,14 @@ describe("checkProviderContract", () => {
     await expect(checkProviderContract("nasa-firms")).resolves.toEqual([]);
   });
 
-  it("requires a contract for every dataset", async () => {
-    await expect(checkProviderContract("unknown")).resolves.toEqual([
-      "no provider contract is defined for unknown",
-    ]);
-  });
+  it.each(["unknown", "constructor"])(
+    "rejects a direct check without a configured provider contract: %s",
+    async (datasetId) => {
+      await expect(checkProviderContract(datasetId)).resolves.toEqual([
+        `no provider contract is defined for ${datasetId}`,
+      ]);
+    },
+  );
 
   it("reports HTTP, declared-size, actual-size, and content-type failures", async () => {
     await expect(
@@ -169,10 +172,11 @@ describe("checkProviderContract", () => {
 });
 
 describe("validateProviderContracts", () => {
-  it("returns only dataset-attributed failures", async () => {
+  it("validates configured contracts and skips unconfigured datasets", async () => {
     const datasets = [
       { id: "nasa-firms" },
       { id: "missing" },
+      { id: "constructor" },
     ] as Dataset[];
     const fetchImpl = vi.fn().mockResolvedValue(
       response(validBodies["nasa-firms"], contentTypes["nasa-firms"]),
@@ -180,8 +184,7 @@ describe("validateProviderContracts", () => {
 
     await expect(
       validateProviderContracts(datasets, { fetchImpl }),
-    ).resolves.toEqual(
-      new Map([["missing.yaml", ["no provider contract is defined for missing"]]]),
-    );
+    ).resolves.toEqual(new Map());
+    expect(fetchImpl).toHaveBeenCalledOnce();
   });
 });
