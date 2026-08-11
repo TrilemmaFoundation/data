@@ -1,9 +1,9 @@
 # Trilemma Data
 
-Explore **actively maintained, authoritative datasets** and follow a practical
-Python path from source to first analysis.
+Find **actively maintained, authoritative datasets** and test whether they can
+power a focused microproduct.
 
-> Choose a dataset. Build your first analysis.
+> Find data to build your next microproduct
 
 **Host:** [data.trilemma.foundation](https://data.trilemma.foundation)  
 **Stack:** Next.js + TypeScript + Vercel  
@@ -17,7 +17,8 @@ The dataset files themselves are **not** redistributed or relicensed. This app s
 ## Core experience
 
 Each dataset includes searchable metadata, authoritative source links, practical
-access instructions, a copyable Python example, and a small first project.
+access instructions, a copyable Python example, and a small project for testing
+a useful product signal.
 
 The catalog optimizes for beginner clarity, contribution simplicity, and dataset
 quality — not catalog size.
@@ -50,8 +51,9 @@ Content has two explicit sources of truth:
 - Dataset descriptions and beginner guides live with their metadata in the
   corresponding [`data/datasets/*.yaml`](data/datasets) file.
 
-Write in direct, practical language. Lead with the task a reader can complete,
-define provider-specific terms, and state the limitation that matters most.
+Write in direct, practical language. Lead with the microproduct use or decision
+the data could support, define provider-specific terms, and state the limitation
+that matters most.
 Avoid hype, unsupported claims, and generic encouragement. Shared copy is typed;
 dataset copy is validated by the existing YAML schema and validation commands.
 

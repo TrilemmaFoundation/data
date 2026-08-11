@@ -14,18 +14,18 @@ export const siteCopy = {
   skipLinkLabel: "Skip to content",
   hostLabel: "data.trilemma.foundation",
   metadataDescription:
-    "Explore actively maintained datasets and follow a practical Python path from source to first analysis.",
+    "Find actively maintained datasets and practical Python guides for building focused microproducts.",
   footerSummary:
-    "A focused catalog of actively maintained, authoritative datasets. Trilemma links to source data; it does not host or relicense it.",
+    "Authoritative, actively maintained data for building focused microproducts. Trilemma links to source data; it does not host or relicense it.",
   loadingLabel: "Preparing the dataset catalog…",
 } as const;
 
 export const catalogCopy = {
-  heroEyebrow: "Real data, practical starts",
-  heroTitle: "Choose a dataset. Build your first analysis.",
+  heroEyebrow: "Real data, useful products",
+  heroTitle: "Find data to build your next microproduct",
   heroDescription:
-    "Explore authoritative, actively maintained data. Each guide explains access, setup, and a focused Python project.",
-  searchLabel: "What do you want to analyze?",
+    "Explore authoritative, actively maintained data for a focused tool, alert, forecast, workflow, or decision aid. Each guide helps you test access, setup, and a useful signal before you build.",
+  searchLabel: "What does your microproduct need?",
   searchPlaceholder: "Search earthquakes, markets, maps, economics…",
   quickStartsLabel: "Start with",
   quickFiltersAriaLabel: "Quick dataset filters",
@@ -98,14 +98,14 @@ export const accessTypeLabels: Record<
 };
 
 export const difficultyDescriptions: Record<Dataset["difficulty"], string> = {
-  beginner: "Beginner — comfortable for a first project",
+  beginner: "Beginner — comfortable for a first prototype",
   intermediate: "Intermediate — some data preparation helps",
   advanced: "Advanced — expect specialized tools or domain knowledge",
 };
 
 export const datasetGuideCopy = {
   breadcrumbAriaLabel: "Breadcrumb",
-  guideEyebrow: "Practical dataset guide",
+  guideEyebrow: "Microproduct data guide",
   startGuideLabel: "Start the guide",
   officialSourceLabel: "Open official source",
   atAGlanceTitle: "At a glance",
@@ -123,14 +123,14 @@ export const datasetGuideCopy = {
   apiKeyNotRequiredLabel: "Not required",
   accessTypes: (types: Dataset["access_type"]) =>
     types.map((type) => accessTypeLabels[type]).join(" or "),
-  beginnerGuideEyebrow: "From source to first analysis",
-  guideTitle: "Build an analysis in four steps",
+  beginnerGuideEyebrow: "From source to product signal",
+  guideTitle: "Test a product idea in four steps",
   setupTitle: "Check the setup",
   accessTitle: "Access the data",
   pythonTitle: "Run the Python example",
   pythonDescription: "Install the packages, then run the notebook cell.",
   pythonExampleAriaLabel: "Python example",
-  firstProjectEyebrow: "Build a first project",
+  firstProjectEyebrow: "Test a useful signal",
   detailsTitle: "Dataset details",
   conceptLabels: {
     domains: "Domains",

@@ -6,7 +6,7 @@ id: replace-with-dataset-id
 name: Replace with dataset name
 description: >
   Replace this with one concise sentence that states what the source contains
-  and the practical analysis it supports.
+  and the practical microproduct use it could support.
 
 url: https://example.com/dataset
 access_type:
@@ -71,7 +71,7 @@ getting_started:
       print(data.head())
   first_project:
     title: Replace with a specific project title
-    goal: Replace with the single question the learner will answer.
+    goal: Replace with one question that could validate a useful product signal.
     steps:
       - Replace with a concrete data preparation step.
       - Replace with a focused analysis or visualization step.

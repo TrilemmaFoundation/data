@@ -1,7 +1,7 @@
 # Contributing
 
 Thank you for helping grow a beginner-friendly catalog of **actively maintained,
-authoritative datasets**.
+authoritative datasets for building focused microproducts**.
 
 You should **never** need to touch search code, TypeScript types, or UI to add a
 dataset. One YAML file is enough.
@@ -19,7 +19,8 @@ CI will automatically validate your YAML.
 ## Editing copy
 
 Dataset-specific copy belongs in the dataset's YAML file. Keep the description
-to one sentence covering what the source contains and what analysis it supports.
+to one sentence covering what the source contains and what useful product,
+decision, or workflow it could support.
 The `getting_started` overview should identify the smallest useful starting
 scope and the source's most important interpretation limit. Write access steps
 as direct actions and end the first project with an interpretation or limitation.
@@ -39,7 +40,7 @@ A dataset can be added only if:
 - Open reuse terms, public-domain status, or published provider API terms that permit the described analysis
 - An active update schedule or operational maintenance program
 - Accessible without paid infrastructure
-- Useful for data science
+- Useful for a focused, data-powered microproduct
 - Has an authoritative source URL
 - Metadata can be independently verified
 
