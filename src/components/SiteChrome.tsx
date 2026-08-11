@@ -42,7 +42,6 @@ export function SiteHeader() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);
   const menuOpen = openPathname === pathname;
-  const datasetsActive = pathname === "/" || pathname.startsWith("/datasets/");
 
   if (openPathname !== null && !menuOpen) setOpenPathname(null);
 
@@ -125,16 +124,6 @@ export function SiteHeader() {
           className="hidden items-center gap-3 md:flex"
           aria-label={siteCopy.primaryNavigationLabel}
         >
-          <Link
-            href="/"
-            aria-current={datasetsActive ? "page" : undefined}
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              !datasetsActive && "border-white/30 text-white",
-            )}
-          >
-            {siteCopy.datasetsNavigationLabel}
-          </Link>
           <a
             href={CONTRIBUTE_URL}
             target="_blank"
@@ -172,19 +161,8 @@ export function SiteHeader() {
             className="absolute inset-x-0 top-full z-50 border-t border-white/20 bg-linear-to-b from-brand-navy to-brand-black px-4 py-4 shadow-[0_4px_4px_rgba(10,10,20,0.65)] md:hidden"
           >
             <div className="mx-auto grid max-w-7xl gap-2">
-              <Link
-                ref={firstMenuLinkRef}
-                href="/"
-                onClick={() => setOpenPathname(null)}
-                aria-current={datasetsActive ? "page" : undefined}
-                className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "w-full justify-start",
-                )}
-              >
-                {siteCopy.datasetsNavigationLabel}
-              </Link>
               <a
+                ref={firstMenuLinkRef}
                 href={CONTRIBUTE_URL}
                 target="_blank"
                 rel="noopener noreferrer"

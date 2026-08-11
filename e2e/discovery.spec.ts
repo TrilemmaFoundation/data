@@ -160,7 +160,7 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   expect((await hero.boundingBox())?.y).toBe(before?.y);
   const firstLink = page
     .getByRole("navigation", { name: siteCopy.mobileNavigationLabel })
-    .getByRole("link", { name: siteCopy.datasetsNavigationLabel });
+    .getByRole("link", { name: siteCopy.contributeLabel });
   await expect(firstLink).toBeFocused();
   await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
 
@@ -219,7 +219,7 @@ test("header and footer expose the product and Foundation destinations", async (
   });
   await expect(
     primary.getByRole("link", { name: siteCopy.datasetsNavigationLabel }),
-  ).toHaveAttribute("aria-current", "page");
+  ).toHaveCount(0);
   await expect(
     primary.getByRole("link", { name: siteCopy.contributeLabel }),
   ).toHaveAttribute("href", CONTRIBUTE_URL);

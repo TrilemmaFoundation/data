@@ -3,7 +3,6 @@ import {
   copyButtonCopy,
   datasetCardCopy,
   datasetGuideCopy,
-  siteCopy,
 } from "../src/content/site-copy";
 
 test("a beginner can open and copy a complete dataset guide", async ({ page }) => {
@@ -11,10 +10,6 @@ test("a beginner can open and copy a complete dataset guide", async ({ page }) =
   await page.getByRole("link", { name: datasetCardCopy.viewGuideLabel }).first().click();
 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("link", { name: siteCopy.datasetsNavigationLabel, exact: true }).first()).toHaveAttribute(
-    "aria-current",
-    "page",
-  );
   await expect(page.getByRole("heading", { name: datasetGuideCopy.guideTitle })).toBeVisible();
   await expect(page.getByRole("link", { name: datasetGuideCopy.officialSourceLabel }).first()).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
