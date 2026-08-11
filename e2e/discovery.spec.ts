@@ -1,11 +1,15 @@
 import { expect, test } from "@playwright/test";
 import {
   catalogCopy,
+  datasetCardCopy,
   datasetGuideCopy,
   filterChipPrefixes,
   filterCopy,
   siteCopy,
 } from "../src/content/site-copy";
+import { getAllDatasets } from "../src/lib/datasets";
+
+const DATASET_COUNT = getAllDatasets().length;
 
 test("discovery keeps valid URL state and ignores unknown filters", async ({ page }) => {
   await page.goto("/?domain=Natural%20Hazards,Unknown&difficulty=novice");
@@ -21,18 +25,10 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
   await expect(page.getByRole("link", { name: "USGS Earthquake Catalog" })).toBeVisible();
   await expect(page.getByRole("status")).toHaveText(catalogCopy.resultStatus(1));
 
-  const wildfireIdea = catalogCopy.productIdeas.find((idea) => idea.id === "wildfire")!;
-  await page.getByRole("button", { name: wildfireIdea.label }).click();
-  await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe(wildfireIdea.query);
-  await expect(page.getByRole("button", { name: wildfireIdea.label })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.getByRole("link", { name: "NASA FIRMS Active Fire Data" })).toBeVisible();
+  await page.getByRole("link", { name: "USGS Earthquake Catalog" }).click();
+  await expect(page).toHaveURL(/\/datasets\/usgs-earthquakes\/?$/);
   await page.goBack();
   await expect(page.getByLabel(catalogCopy.searchLabel)).toHaveValue("earthquake");
-  await page.goForward();
-  await expect(page.getByLabel(catalogCopy.searchLabel)).toHaveValue(wildfireIdea.query);
 });
 
 test("search preserves typed spaces and finds dataset formats", async ({ page }) => {
@@ -44,58 +40,63 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
 
   await search.fill("GeoTIFF");
   await expect(page.getByRole("link", { name: "Natural Earth" })).toBeVisible();
+
+  await page.goto("/?q=wildfire");
+  await expect(page.getByRole("link", { name: "NASA FIRMS Active Fire Data" })).toBeVisible();
+  await page.goto("/?q=company+filings");
+  await expect(
+    page.getByRole("link", { name: "SEC EDGAR Submissions and Company Facts" }),
+  ).toBeVisible();
 });
 
-test("product ideas filter real datasets and the featured starter opens its guide", async ({
+test("the hero has one CTA that focuses the catalog without changing URL state", async ({
   page,
 }) => {
-  const expectedResults: Record<string, string[]> = {
-    wildfire: ["NASA FIRMS Active Fire Data"],
-    filings: ["SEC EDGAR Submissions and Company Facts"],
-    markets: ["Polymarket Public Market Data", "Kalshi Public Market Data"],
-    "market-sizing": ["American Community Survey 5-Year Estimates"],
-    electricity: ["EIA Hourly Electric Grid Data"],
-  };
+  await page.goto("/?q=earthquake");
+  const startingUrl = page.url();
+  const hero = page.getByRole("region", { name: catalogCopy.heroTitle });
+  const cta = hero.getByRole("button", {
+    name: catalogCopy.browseDatasets(DATASET_COUNT),
+  });
 
-  for (const idea of catalogCopy.productIdeas) {
-    await page.goto("/");
-    await page.getByRole("button", { name: idea.label }).click();
-    await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe(idea.query);
-    await expect(page.getByRole("button", { name: idea.label })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    for (const datasetName of expectedResults[idea.id]!) {
-      await expect(page.getByRole("link", { name: datasetName })).toBeVisible();
-    }
-    await expect(
-      page.getByRole("link", {
-        name: catalogCopy.resultsLink(expectedResults[idea.id]!.length),
-      }),
-    ).toHaveAttribute("href", "#results-title");
-  }
+  await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(1);
+  await page
+    .getByRole("navigation", { name: siteCopy.primaryNavigationLabel })
+    .getByRole("link", { name: siteCopy.contributeLabel })
+    .focus();
+  await page.keyboard.press("Tab");
+  await expect(cta).toBeFocused();
+  expect(await cta.evaluate((element) => element.matches(":focus-visible"))).toBe(true);
+  await page.keyboard.press("Enter");
 
-  await page.goto("/");
-  await page.getByRole("link", { name: catalogCopy.featuredStarter.ctaLabel }).click();
-  await expect(page).toHaveURL(/\/datasets\/nws-weather-api\/?$/);
+  await expect(page).toHaveURL(startingUrl);
+  await expect(page.getByRole("heading", { name: catalogCopy.resultCount(1) })).toBeFocused();
 });
 
-test("product ideas support visible keyboard focus and activation", async ({ page }) => {
+test("the catalog jump honors reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const idea = catalogCopy.productIdeas[0]!;
-  const search = page.getByLabel(catalogCopy.searchLabel);
 
-  await search.focus();
-  await page.keyboard.press("Tab");
-  await page.keyboard.press("Tab");
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior))
+    .toBe("auto");
+  await page
+    .getByRole("button", { name: catalogCopy.browseDatasets(DATASET_COUNT) })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: catalogCopy.resultCount(DATASET_COUNT) }),
+  ).toBeFocused();
+});
 
-  const button = page.getByRole("button", { name: idea.label });
-  await expect(button).toBeFocused();
-  expect(await button.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe("none");
+test("the recommended dataset leads the unfiltered catalog only", async ({ page }) => {
+  await page.goto("/");
+  const firstCard = page.locator('[data-slot="card"]').first();
+  await expect(firstCard).toContainText("National Weather Service API");
+  await expect(firstCard).toContainText(datasetCardCopy.goodFirstBuildLabel);
 
-  await page.keyboard.press("Enter");
-  await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe(idea.query);
-  await expect(button).toHaveAttribute("aria-pressed", "true");
+  await page.goto("/?q=weather");
+  await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
+  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toHaveCount(0);
 });
 
 test("long active filters do not create mobile horizontal scrolling", async ({ page }) => {
@@ -181,10 +182,14 @@ test("application copy reflows across supported viewport widths", async ({ page 
   for (const width of [360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: catalogCopy.heroTitle })).toBeVisible();
+    const heroTitle = page.getByRole("heading", { name: catalogCopy.heroTitle });
+    await expect(heroTitle).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: catalogCopy.featuredStarter.title }),
+      page.getByRole("button", { name: catalogCopy.browseDatasets(DATASET_COUNT) }),
     ).toBeVisible();
+    if (width >= 1024) {
+      await expect(heroTitle).toHaveCSS("white-space", "nowrap");
+    }
 
     const cards = page.locator('[data-slot="card"]');
     await expect(cards.first()).toBeVisible();
@@ -197,7 +202,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
       expect(first?.height).toBe(second?.height);
     }
     if (width === 1440) {
-      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(900);
+      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(700);
       expect((await cards.first().boundingBox())?.y).toBeLessThan(900);
     }
 

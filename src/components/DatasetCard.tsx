@@ -15,19 +15,37 @@ import {
 import { cn } from "@/lib/utils";
 import { datasetCardCopy } from "@/content/site-copy";
 
-export function DatasetCard({ dataset }: { dataset: Dataset }) {
+export function DatasetCard({
+  dataset,
+  featured = false,
+}: {
+  dataset: Dataset;
+  featured?: boolean;
+}) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
 
   return (
-    <Card className="group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+    <Card
+      className={cn(
+        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]",
+        featured && "border-primary/40 bg-[linear-gradient(145deg,rgba(255,153,64,0.08),rgba(17,19,29,0.95)_42%)]",
+      )}
+    >
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <Badge variant="secondary" className="capitalize">
             {dataset.difficulty === "beginner" && <Sparkles aria-hidden="true" />}
             {dataset.difficulty}
           </Badge>
-          <span className="text-xs font-medium text-muted-foreground">{sizeCategory}</span>
+          <span
+            className={cn(
+              "text-xs font-medium",
+              featured ? "font-bold text-primary" : "text-muted-foreground",
+            )}
+          >
+            {featured ? datasetCardCopy.goodFirstBuildLabel : sizeCategory}
+          </span>
         </div>
         <CardTitle className="pt-2 text-xl font-semibold text-white">
           <Link href={`/datasets/${dataset.id}`} className="rounded-sm hover:text-primary">

@@ -21,57 +21,18 @@ export const siteCopy = {
 } as const;
 
 export const catalogCopy = {
-  heroEyebrow: "From idea to signal",
+  heroEyebrow: "From idea to data",
   heroTitle: "Find data to build your next microproduct",
-  heroDescription:
-    "Start with a product outcome. Each source includes access instructions, working Python, and the caveat that matters before you ship.",
+  heroProofLabels: [
+    "Maintained sources",
+    "Working Python",
+    "Practical caveats",
+  ],
+  browseDatasets: (count: number) =>
+    `Browse ${count} dataset${count === 1 ? "" : "s"}`,
   searchLabel: "Search by topic, provider, or product use",
   searchPlaceholder: "Try “company filings” or “electricity demand”",
-  productIdeasLabel: "Or start with a product idea",
-  productIdeasAriaLabel: "Microproduct ideas",
-  productIdeas: [
-    {
-      id: "wildfire",
-      label: "Monitor wildfire hotspots",
-      query: "wildfire",
-    },
-    {
-      id: "filings",
-      label: "Track company filings",
-      query: "company filings",
-    },
-    {
-      id: "markets",
-      label: "Compare prediction markets",
-      query: "prediction markets",
-    },
-    {
-      id: "market-sizing",
-      label: "Size a local market",
-      query: "market sizing",
-    },
-    {
-      id: "electricity",
-      label: "Monitor electricity demand",
-      query: "electricity demand",
-    },
-  ],
-  featuredStarter: {
-    eyebrow: "Featured first build",
-    datasetId: "nws-weather-api",
-    title: "Build a local weather-risk alert",
-    description:
-      "Use the National Weather Service API to flag rain, storms, snow, or high winds for one location.",
-    steps: ["Choose a location", "Flag risky hours", "Send a timely alert"],
-    badges: ["Beginner", "No API key", "Live API"],
-    ctaLabel: "Open the weather guide",
-  },
-  trustPythonLabel: "Working Python examples",
-  trustVerificationLabel: "Verified within 90 days",
-  trustDatasetCount: (count: number) =>
-    `${count} curated source${count === 1 ? "" : "s"}`,
-  resultsLink: (count: number) =>
-    `${count} matching dataset${count === 1 ? "" : "s"} · View results`,
+  recommendedDatasetId: "nws-weather-api",
   catalogEyebrow: "Dataset catalog",
   activeFiltersAriaLabel: "Active filters",
   noApiKeyChipLabel: "No API key",
@@ -120,6 +81,7 @@ export const filterCopy = {
 export const datasetCardCopy = {
   sizeLabel: "Size",
   formatLabel: "Format",
+  goodFirstBuildLabel: "Good first build",
   apiKeyRequiredLabel: "Free API key required",
   noApiKeyLabel: "No API key required",
   viewGuideLabel: "View guide",

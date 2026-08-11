@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { catalogCopy } from "../content/site-copy";
 import { EMPTY_FILTERS } from "./search";
 import type { FilterOptions } from "./search";
 import {
@@ -85,10 +84,8 @@ describe("filter URL helpers", () => {
     });
   });
 
-  it("round-trips every product idea query", () => {
-    for (const idea of catalogCopy.productIdeas) {
-      const params = filtersToParams({ ...EMPTY_FILTERS, query: idea.query });
-      expect(parseFilters(params, options).query).toBe(idea.query);
-    }
+  it("round-trips a shared multiword query", () => {
+    const params = filtersToParams({ ...EMPTY_FILTERS, query: "company filings" });
+    expect(parseFilters(params, options).query).toBe("company filings");
   });
 });
