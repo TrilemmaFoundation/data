@@ -1,0 +1,90 @@
+id: sec-edgar-apis
+name: SEC EDGAR Submissions and Company Facts
+description: >
+  Real-time public-company filing histories and structured financial facts for
+  building disclosure alerts, research tools, and company monitors.
+
+url: https://www.sec.gov/search-filings/edgar-application-programming-interfaces
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 10
+formats:
+  - JSON
+  - ZIP
+  - XBRL
+license: SEC public-information and website-dissemination policy
+license_url: https://www.sec.gov/about/privacy-information
+url_checks:
+  source_marker: EDGAR Application Programming Interfaces
+  license_marker: Website Dissemination
+
+domains:
+  - Corporate Filings
+  - Finance
+  - Regulation
+data_types:
+  - Event Data
+  - Financial Statements
+  - Time Series
+tasks:
+  - Filing Monitoring
+  - Financial Analysis
+  - Company Research
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: 1994-present; structured XBRL primarily 2009-present
+update_frequency: continuous
+
+provider: U.S. Securities and Exchange Commission
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    EDGAR provides company submission histories and standardized XBRL facts
+    without an API key. Start with one company's recent filings and identify it
+    by its zero-padded CIK. Filing forms, amendments, reporting periods, units,
+    and company-specific taxonomy extensions must be interpreted before records
+    are compared.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A descriptive application name and contact address for the User-Agent header
+  access_steps:
+    - Read the EDGAR API documentation and fair-access guidance.
+    - Find one company's CIK and pad it to ten digits.
+    - Request its submissions JSON while staying below the published request limit.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      headers = {
+          "User-Agent": "TrilemmaDataGuide/1.0 contact@trilemma.foundation"
+      }
+      response = requests.get(
+          "https://data.sec.gov/submissions/CIK0000320193.json",
+          headers=headers,
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      filings = pd.DataFrame(payload["filings"]["recent"])
+      print(filings[["filingDate", "form", "accessionNumber", "primaryDocument"]].head())
+  first_project:
+    title: Build a material-filing watchlist
+    goal: Determine whether recent 8-K, 10-Q, and 10-K filings can power a timely company-disclosure alert.
+    steps:
+      - Filter the recent filing history to 8-K, 10-Q, 10-K, and amended versions of those forms.
+      - Sort by filing date and construct the official archive URL from each accession number and primary document.
+      - Inspect the latest filing and explain why its form type alone does not establish materiality or investment significance.

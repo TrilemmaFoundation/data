@@ -1,12 +1,19 @@
 import fs from "node:fs";
 import zlib from "node:zlib";
 import { expect, test, type Page } from "@playwright/test";
+import { getAllDatasets } from "../src/lib/datasets";
+
+const INITIAL_DATASET_COUNT = 5;
+const PER_DATASET_MARKUP_BUDGET = 3_000;
+const addedDatasetBudget =
+  Math.max(0, getAllDatasets().length - INITIAL_DATASET_COUNT) *
+  PER_DATASET_MARKUP_BUDGET;
 
 const BUDGETS = {
   javascript: 860_000,
   css: 76_000,
-  html: 32_000,
-  rsc: 22_000,
+  html: 32_000 + addedDatasetBudget,
+  rsc: 22_000 + addedDatasetBudget,
   gzipCode: 285_000,
 };
 

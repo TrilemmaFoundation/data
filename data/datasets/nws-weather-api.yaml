@@ -1,0 +1,91 @@
+id: nws-weather-api
+name: National Weather Service API
+description: >
+  Current U.S. forecasts, observations, and official weather alerts for
+  building local planning tools and operational warning products.
+
+url: https://www.weather.gov/documentation/services-web-api
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - GeoJSON
+  - JSON-LD
+  - CAP XML
+license: U.S. Public Domain / NWS usage policy
+license_url: https://www.weather.gov/disclaimer/
+url_checks:
+  source_marker: API Web Service
+  license_marker: public domain
+
+domains:
+  - Weather
+  - Emergency Management
+  - Transportation
+data_types:
+  - Geospatial
+  - Time Series
+  - Event Data
+tasks:
+  - Alerting
+  - Forecasting
+  - Operational Planning
+difficulty: beginner
+
+geography:
+  - United States
+temporal_coverage: current forecasts, observations, and recent alerts
+update_frequency: continuous
+
+provider: National Weather Service
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The National Weather Service API provides official U.S. forecasts,
+    observations, watches, warnings, and advisories. Start with one coordinate
+    and the hourly forecast returned for its grid point. Forecasts can change,
+    and an application must not present stale or transformed data as an active
+    official warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A descriptive application URL or email address for the required User-Agent header
+  access_steps:
+    - Read the API documentation and choose one U.S. coordinate.
+    - Send the coordinate to the points endpoint to discover its current hourly forecast URL.
+    - Request the forecast with a descriptive User-Agent and save its update timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      headers = {
+          "User-Agent": "TrilemmaDataGuide/1.0 (https://data.trilemma.foundation)"
+      }
+      point = requests.get(
+          "https://api.weather.gov/points/40.7128,-74.0060",
+          headers=headers,
+          timeout=30,
+      )
+      point.raise_for_status()
+      forecast_url = point.json()["properties"]["forecastHourly"]
+      forecast = requests.get(forecast_url, headers=headers, timeout=30)
+      forecast.raise_for_status()
+      hours = pd.json_normalize(forecast.json()["properties"]["periods"])
+      print(hours[["startTime", "temperature", "windSpeed", "shortForecast"]].head())
+  first_project:
+    title: Flag risky hours for an outdoor plan
+    goal: Test whether the hourly forecast can provide a useful weather-risk signal for one location.
+    steps:
+      - Convert forecast start times to timezone-aware timestamps and select the next 24 hours.
+      - Flag periods containing rain, storms, snow, or high winds in the forecast fields.
+      - Explain when the data was issued, how often the product must refresh it, and why users should still follow official alerts.

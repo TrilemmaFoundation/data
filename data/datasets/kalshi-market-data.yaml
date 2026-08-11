@@ -1,0 +1,85 @@
+id: kalshi-market-data
+name: Kalshi Public Market Data
+description: >
+  Live and historical event-contract markets, prices, volume, and order books
+  for building market monitors, alerts, and comparison tools.
+
+url: https://docs.kalshi.com/getting_started/quick_start_market_data
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - API
+license: Kalshi API Developer Agreement
+license_url: https://kalshi.com/developer-agreement
+url_checks:
+  source_marker: "Quick Start: Market Data"
+  license_marker: Developer Agreement
+
+domains:
+  - Prediction Markets
+  - Finance
+  - Current Events
+data_types:
+  - Event Data
+  - Time Series
+  - Order Book
+tasks:
+  - Market Monitoring
+  - Forecast Evaluation
+  - Event Analysis
+difficulty: intermediate
+
+geography:
+  - Global
+temporal_coverage: current and historical markets
+update_frequency: continuous
+
+provider: Kalshi
+source_type: company
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    Kalshi exposes public event, market, trade, and order-book data without
+    authentication. Start with one bounded page of open markets and record when
+    you retrieved it. Treat prices as changing market signals, and compare
+    contracts only after checking that their resolution rules match.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the market-data quick start and API Developer Agreement.
+    - Request one bounded page of open markets from the public REST API.
+    - Save the retrieval time and the market tickers used in your analysis.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import datetime, timezone
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://external-api.kalshi.com/trade-api/v2/markets",
+          params={"limit": 100, "status": "open"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      markets = pd.json_normalize(response.json()["markets"])
+      markets["retrieved_at"] = datetime.now(timezone.utc)
+      print(markets[["ticker", "title", "yes_bid_dollars", "volume_fp"]].head())
+  first_project:
+    title: Find active markets worth monitoring
+    goal: Identify liquid open markets whose price changes could support a useful event alert.
+    steps:
+      - Convert price, volume, and liquidity fields to numeric values and inspect missing data.
+      - Rank markets by trading activity and flag large differences between bid and ask prices.
+      - Read the rules for the leading contracts and explain why their prices should not be treated as guaranteed probabilities.

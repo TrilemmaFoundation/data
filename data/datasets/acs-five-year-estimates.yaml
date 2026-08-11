@@ -1,0 +1,96 @@
+id: acs-five-year-estimates
+name: American Community Survey 5-Year Estimates
+description: >
+  Annual U.S. demographic, housing, social, and economic estimates for building
+  local market-sizing, site-selection, and community comparison tools.
+
+url: https://www.census.gov/data/developers/data-sets/acs-5year.html
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 10
+formats:
+  - JSON
+  - CSV
+license: U.S. Census Bureau API Terms of Service
+license_url: https://www.census.gov/data/developers/about/terms-of-service.html
+url_checks:
+  source_marker: American Community Survey 5-Year Data
+  license_marker: Terms of Service Agreement
+
+domains:
+  - Demographics
+  - Housing
+  - Local Economics
+data_types:
+  - Tabular
+  - Geospatial
+  - Survey Estimates
+tasks:
+  - Market Sizing
+  - Site Selection
+  - Community Comparison
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: 2009-present
+update_frequency: annual
+
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    ACS 5-year products provide annual estimates for every U.S. community down
+    to small geographic areas. Start with a few documented variables at the
+    state level before moving to tracts or block groups. Every estimate must be
+    interpreted with its margin of error, and overlapping five-year periods are
+    not independent observations.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Census Data API key saved in the CENSUS_API_KEY environment variable
+  access_steps:
+    - Request a free key from the Census Data API page.
+    - Review the current ACS 5-year variable definitions and geography documentation.
+    - Request estimates and matching margin-of-error fields for all states.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      variables = [
+          "NAME",
+          "B01003_001E", "B01003_001M",
+          "B19013_001E", "B19013_001M",
+      ]
+      response = requests.get(
+          "https://api.census.gov/data/2024/acs/acs5",
+          params={
+              "get": ",".join(variables),
+              "for": "state:*",
+              "key": os.environ["CENSUS_API_KEY"],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      rows = response.json()
+      states = pd.DataFrame(rows[1:], columns=rows[0])
+      print(states.head())
+  first_project:
+    title: Screen states for a service-market hypothesis
+    goal: Test whether population and median household income can support an initial state-level market-sizing signal.
+    steps:
+      - Rename the selected estimate and margin-of-error variables and convert them to numeric values.
+      - Rank states using explicit population and income thresholds while retaining both margins of error.
+      - Explain why survey uncertainty, variable definitions, and statewide averages require validation with users and finer geography.

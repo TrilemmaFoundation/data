@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { siteCopy } from "../src/content/site-copy";
+import { getAllDatasets } from "../src/lib/datasets";
 
 test("public routes expose canonical and social metadata", async ({ page }) => {
   await page.goto("/");
@@ -61,8 +62,11 @@ test("robots and sitemap enumerate the public static application", async ({
   expect(sitemap.ok()).toBe(true);
   const body = await sitemap.text();
   expect(body).toContain("<loc>https://data.trilemma.foundation</loc>");
-  expect(body).toContain(
-    "<loc>https://data.trilemma.foundation/datasets/usgs-earthquakes</loc>",
-  );
-  expect(body.match(/<loc>/g)).toHaveLength(6);
+  const datasets = getAllDatasets();
+  for (const dataset of datasets) {
+    expect(body).toContain(
+      `<loc>https://data.trilemma.foundation/datasets/${dataset.id}</loc>`,
+    );
+  }
+  expect(body.match(/<loc>/g)).toHaveLength(datasets.length + 1);
 });

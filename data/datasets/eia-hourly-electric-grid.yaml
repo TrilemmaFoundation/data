@@ -1,0 +1,93 @@
+id: eia-hourly-electric-grid
+name: EIA Hourly Electric Grid Data
+description: >
+  Hourly U.S. electricity demand, forecasts, generation, and interchange for
+  building grid monitors, demand alerts, and energy forecasting tools.
+
+url: https://www.eia.gov/opendata/index.php/api
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0.001
+size_gb_max: 10
+formats:
+  - JSON
+  - CSV
+license: U.S. Public Domain with EIA source acknowledgment
+license_url: https://www.eia.gov/about/copyrights_reuse.php
+url_checks:
+  source_marker: OPEN DATA
+  license_marker: Public domain and use of EIA content
+
+domains:
+  - Energy
+  - Electricity
+  - Infrastructure
+data_types:
+  - Time Series
+  - Operational Data
+tasks:
+  - Demand Monitoring
+  - Forecast Evaluation
+  - Anomaly Detection
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: 2015-present
+update_frequency: continuous
+
+provider: U.S. Energy Information Administration
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    EIA's Hourly Electric Grid Monitor publishes demand, day-ahead forecasts,
+    net generation, and interchange by balancing authority. Start with one
+    authority and a bounded response. Values can be revised, and demand,
+    generation, forecasts, and interchange have different meanings that must
+    not be combined without checking their type and units.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free EIA API key saved in the EIA_API_KEY environment variable
+  access_steps:
+    - Register for a free key on the EIA Open Data site.
+    - Save the key in the EIA_API_KEY environment variable.
+    - Request a bounded hourly sample for one balancing authority and inspect its type fields.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.eia.gov/v2/electricity/rto/region-data/data/",
+          params={
+              "api_key": os.environ["EIA_API_KEY"],
+              "frequency": "hourly",
+              "data[0]": "value",
+              "facets[respondent][]": "CAL",
+              "length": 500,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      grid = pd.DataFrame(response.json()["response"]["data"])
+      grid["period"] = pd.to_datetime(grid["period"])
+      grid["value"] = pd.to_numeric(grid["value"], errors="coerce")
+      print(grid[["period", "respondent-name", "type-name", "value", "value-units"]].head())
+  first_project:
+    title: Monitor demand against the day-ahead forecast
+    goal: Test whether forecast errors for one balancing authority can trigger a useful grid-demand alert.
+    steps:
+      - Separate demand and day-ahead forecast rows by their documented type codes.
+      - Join matching hourly periods and calculate absolute and percentage forecast errors.
+      - Identify the largest errors and explain how revisions, missing hours, and balancing-authority boundaries limit the alert.
