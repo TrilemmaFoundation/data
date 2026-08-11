@@ -1,0 +1,85 @@
+id: nhtsa-vehicle-recalls
+name: NHTSA Vehicle Recalls
+description: >
+  Daily vehicle, tire, child-seat, and equipment recall records for building
+  safety lookups, fleet monitors, and owner notification tools.
+
+url: https://www.nhtsa.gov/nhtsa-datasets-and-apis
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - ZIP
+  - Text
+license: NHTSA public-information terms
+license_url: https://www.nhtsa.gov/about-nhtsa/terms-use
+url_checks:
+  source_marker: NHTSA Datasets and APIs
+  license_marker: may be distributed or copied
+
+domains:
+  - Transportation
+  - Vehicle Safety
+data_types:
+  - Event Data
+  - Tabular
+tasks:
+  - Recall Lookup
+  - Safety Monitoring
+  - Alerting
+difficulty: beginner
+
+geography:
+  - United States
+temporal_coverage: 1949-present
+update_frequency: daily
+
+provider: National Highway Traffic Safety Administration
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    NHTSA publishes safety recalls by vehicle year, make, model, campaign, and
+    affected component. Start with one exact year, make, and model and inspect
+    the returned campaigns. Manufacturer naming varies, and recall records are
+    different from consumer complaints, investigations, and general reliability
+    evidence.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An exact model year, make, and model to query
+  access_steps:
+    - Read the recalls API documentation and confirm the vehicle naming used by NHTSA.
+    - Request recalls for one model year, make, and model.
+    - Preserve the campaign number and official remedy fields when presenting a result.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.nhtsa.gov/recalls/recallsByVehicle",
+          params={"make": "Acura", "model": "RDX", "modelYear": 2012},
+          timeout=30,
+      )
+      response.raise_for_status()
+      recalls = pd.DataFrame(response.json()["results"])
+      recalls["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(recalls[["NHTSACampaignNumber", "Component", "ReportReceivedDate"]])
+  first_project:
+    title: Build a vehicle recall lookup
+    goal: Determine which safety campaigns apply to one exact vehicle configuration.
+    steps:
+      - Query one model year, make, and model and remove duplicate campaign numbers.
+      - Display each affected component, campaign date, consequence, and official remedy.
+      - Explain how naming mismatches and the separation between recalls, complaints, and investigations limit the lookup.

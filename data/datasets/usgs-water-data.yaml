@@ -1,0 +1,96 @@
+id: usgs-water-data
+name: USGS Water Data APIs
+description: >
+  Current and historical U.S. streamflow, groundwater, water-quality, and site
+  measurements for building gauge monitors and local water-analysis tools.
+
+url: https://api.waterdata.usgs.gov/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - GeoJSON
+  - JSON
+  - CSV
+license: U.S. Public Domain / USGS CC0 guidance
+license_url: https://www.usgs.gov/data-management/data-licensing
+url_checks:
+  source_marker: Water Data APIs
+  license_marker: Data Licensing
+
+domains:
+  - Water Resources
+  - Hydrology
+  - Natural Hazards
+data_types:
+  - Time Series
+  - Geospatial
+  - Operational Data
+tasks:
+  - Gauge Monitoring
+  - Trend Analysis
+  - Anomaly Detection
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: historical records and near-real-time measurements
+update_frequency: near real time
+
+provider: U.S. Geological Survey
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The USGS Water Data APIs provide observations and metadata from monitoring
+    locations across the United States. Start with recent discharge at one
+    gauge and compare the latest value with that same bounded sample.
+    Measurements may be provisional; coverage, qualifiers, units, and vertical
+    datum vary by station, and the result is not an official flood warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the OGC API documentation and confirm the station, parameter code, and unit.
+    - Request a bounded recent interval for one monitoring location and preserve its qualifiers.
+    - Check station metadata and official warning sources before giving the measurement operational meaning.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import datetime, timedelta, timezone
+      import pandas as pd
+      import requests
+
+      end = datetime.now(timezone.utc)
+      start = end - timedelta(days=7)
+      response = requests.get(
+          "https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items",
+          params={
+              "f": "json",
+              "limit": 1000,
+              "datetime": f"{start.isoformat()}/{end.isoformat()}",
+              "monitoring_location_id": "USGS-01646500",
+              "parameter_code": "00060",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      streamflow = pd.json_normalize(response.json()["features"])
+      streamflow["value"] = pd.to_numeric(streamflow["properties.value"], errors="coerce")
+      streamflow["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(streamflow[["properties.time", "value", "properties.unit_of_measure", "properties.approval_status", "properties.qualifier"]].tail())
+  first_project:
+    title: Compare current streamflow with its recent distribution
+    goal: Determine where the latest discharge measurement at one gauge falls within the returned seven-day sample.
+    steps:
+      - Confirm the station identifier, discharge parameter code, unit, datum context, and sample completeness.
+      - Compare the latest numeric value with the sample median and percentile range while retaining approval status and qualifiers.
+      - Explain how provisional measurements, station coverage, pagination, and the absence of an official warning threshold limit the result.

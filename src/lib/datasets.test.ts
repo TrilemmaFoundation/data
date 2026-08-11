@@ -78,6 +78,30 @@ getting_started:
 `;
 
 describe("loadDatasets", () => {
+  it("includes every dataset added in the 26-source expansion", () => {
+    const ids = new Set(getAllDatasets().map((dataset) => dataset.id));
+    for (const id of [
+      "cisa-known-exploited-vulnerabilities",
+      "nhtsa-vehicle-recalls",
+      "openfema-disaster-declarations",
+      "federal-register-documents",
+      "sam-gov-contract-opportunities",
+      "usaspending-federal-awards",
+      "openfda-drug-adverse-events",
+      "airnow-air-quality",
+      "usgs-water-data",
+      "noaa-tides-currents",
+      "noaa-ncei-daily-summaries",
+      "cdc-places",
+      "bls-public-data-api",
+      "usda-fooddata-central",
+      "treasury-securities-auctions",
+      "openalex-scholarly-works",
+    ]) {
+      expect(ids.has(id), id).toBe(true);
+    }
+  });
+
   it("loads valid yaml files and ignores templates", () => {
     const dir = makeTempDir();
     fs.writeFileSync(path.join(dir, "sample.yaml"), validYaml);

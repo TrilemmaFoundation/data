@@ -1,0 +1,97 @@
+id: treasury-securities-auctions
+name: Treasury Securities Auctions Data
+description: >
+  Announcements and results for marketable U.S. Treasury security auctions for
+  building issuance calendars and fixed-income auction monitors.
+
+url: https://fiscaldata.treasury.gov/datasets/treasury-securities-auctions-data/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Treasury Securities Auctions Data
+  license_marker: federal government materials
+
+domains:
+  - Fixed Income
+  - Public Finance
+  - Capital Markets
+data_types:
+  - Event Data
+  - Transaction Data
+tasks:
+  - Auction Monitoring
+  - Issuance Analysis
+  - Trend Analysis
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: 1979-present
+update_frequency: occasional
+
+provider: U.S. Department of the Treasury Bureau of the Fiscal Service
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    Fiscal Data publishes both announcements and results for marketable Treasury
+    security auctions. Start with a bounded recent date window and identify
+    result records by their populated auction metrics. Announcement records are
+    not completed results, and auction yields or discount rates are not live
+    secondary-market prices.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the dataset dictionary and distinguish announcement fields from competitive-result fields.
+    - Request a bounded recent auction-date window with only the fields needed for term-level summaries.
+    - Parse numeric result fields and retain record date, CUSIP, security type, and term.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      cutoff = date.today() - timedelta(days=90)
+      response = requests.get(
+          "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query",
+          params={
+              "fields": "record_date,cusip,security_type,security_term,auction_date,issue_date,high_yield,high_discnt_rate,bid_to_cover_ratio,total_accepted",
+              "filter": f"auction_date:gte:{cutoff.isoformat()}",
+              "sort": "-auction_date",
+              "page[size]": 100,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      auctions = pd.DataFrame(response.json()["data"])
+      for column in ["high_yield", "high_discnt_rate", "bid_to_cover_ratio", "total_accepted"]:
+          auctions[column] = pd.to_numeric(auctions[column], errors="coerce")
+      results = auctions[auctions["bid_to_cover_ratio"].notna()].copy()
+      results["result_rate"] = results["high_yield"].fillna(results["high_discnt_rate"])
+      results["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(results[["auction_date", "security_type", "security_term", "result_rate", "bid_to_cover_ratio"]].head(20))
+  first_project:
+    title: Summarize recent Treasury auction results
+    goal: Compare recent completed auction results by security term and identify which terms had the highest bid-to-cover ratios.
+    steps:
+      - Separate completed result records from announcements using populated result metrics and retain each CUSIP.
+      - Group the bounded results by security term and summarize result rate and bid-to-cover ratio without mixing bill discount rates with note or bond yields.
+      - Explain why announcements differ from results, records can be updated, and auction rates are not live secondary-market prices.

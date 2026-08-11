@@ -2,10 +2,68 @@ import { z } from "zod";
 import { readBoundedBody } from "./http-validation";
 import type { Dataset } from "./schema";
 
-const MAX_RESPONSE_BYTES = 1_000_000;
+const MAX_RESPONSE_BYTES = 2_000_000;
 const TIMEOUT_MS = 10_000;
 
 const contracts = {
+  "bls-public-data-api": {
+    url: "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2024&endyear=2025",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        status: z.literal("REQUEST_SUCCEEDED"),
+        Results: z.object({
+          series: z.array(
+            z.object({
+              seriesID: z.string(),
+              data: z.array(
+                z.object({
+                  year: z.string(),
+                  period: z.string(),
+                  value: z.string(),
+                }),
+              ).min(1),
+            }),
+          ).min(1),
+        }),
+      }),
+    ),
+  },
+  "cisa-known-exploited-vulnerabilities": {
+    url: "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        catalogVersion: z.string(),
+        dateReleased: z.string(),
+        vulnerabilities: z.array(
+          z.object({
+            cveID: z.string(),
+            vendorProject: z.string(),
+            product: z.string(),
+            dateAdded: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "federal-register-documents": {
+    url: "https://www.federalregister.gov/api/v1/documents.json?per_page=1&order=newest",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        count: z.number(),
+        results: z.array(
+          z.object({
+            document_number: z.string(),
+            title: z.string(),
+            type: z.string(),
+            publication_date: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
   "nasa-firms": {
     url: "https://firms.modaps.eosdis.nasa.gov/content/notebooks/sample_viirs_snpp_071223.csv",
     range: "bytes=0-65535",
@@ -28,6 +86,86 @@ const contracts = {
         ? null
         : "download is not a ZIP archive";
     },
+  },
+  "nhtsa-vehicle-recalls": {
+    url: "https://api.nhtsa.gov/recalls/recallsByVehicle?make=honda&model=accord&modelYear=2023",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        Count: z.number(),
+        results: z.array(
+          z.object({
+            NHTSACampaignNumber: z.string(),
+            Component: z.string(),
+            Summary: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "noaa-ncei-daily-summaries": {
+    url: "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00094728&startDate=2025-07-01&endDate=2025-07-01&dataTypes=TMAX,TMIN,PRCP&format=json&units=standard&includeAttributes=true&includeStationName=true",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          STATION: z.string(),
+          DATE: z.string(),
+          TMAX: z.string(),
+          TMIN: z.string(),
+        }),
+      ).min(1),
+    ),
+  },
+  "noaa-tides-currents": {
+    url: "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250101&end_date=20250101&station=9414290&product=hourly_height&datum=MLLW&time_zone=gmt&units=metric&application=TrilemmaDataValidator&format=json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        metadata: z.object({ id: z.string(), name: z.string() }),
+        data: z.array(
+          z.object({
+            t: z.string(),
+            v: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "openfda-drug-adverse-events": {
+    url: "https://api.fda.gov/drug/event.json?search=receivedate:%5B20230101+TO+20231231%5D&limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        meta: z.object({
+          last_updated: z.string(),
+          results: z.object({ total: z.number() }),
+        }),
+        results: z.array(
+          z.object({
+            safetyreportid: z.string(),
+            receivedate: z.string(),
+            patient: z.object({ reaction: z.array(z.object({ reactionmeddrapt: z.string() })).min(1) }),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "openfema-disaster-declarations": {
+    url: "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$top=1&$orderby=disasterNumber%20desc",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        DisasterDeclarationsSummaries: z.array(
+          z.object({
+            disasterNumber: z.number(),
+            declarationDate: z.string(),
+            state: z.string(),
+            declarationType: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
   },
   "polymarket-markets": {
     url: "https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=1",
@@ -56,6 +194,45 @@ const contracts = {
             }),
           }),
         ).min(1),
+      }),
+    ),
+  },
+  "usgs-water-data": {
+    url: "https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?f=json&limit=1&datetime=2025-01-01T00:00:00Z%2F2025-01-02T00:00:00Z&monitoring_location_id=USGS-01646500&parameter_code=00060",
+    contentTypes: ["application/geo+json", "application/json"],
+    validate: jsonValidator(
+      z.object({
+        type: z.literal("FeatureCollection"),
+        features: z.array(
+          z.object({
+            properties: z.object({
+              monitoring_location_id: z.string(),
+              parameter_code: z.string(),
+              time: z.string(),
+              value: z.string(),
+              unit_of_measure: z.string(),
+              approval_status: z.string(),
+            }),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "treasury-securities-auctions": {
+    url: "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?filter=auction_date:eq:2025-01-02&page%5Bsize%5D=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(
+          z.object({
+            record_date: z.string(),
+            cusip: z.string(),
+            security_type: z.string(),
+            security_term: z.string(),
+            auction_date: z.string(),
+          }),
+        ).min(1),
+        meta: z.object({ count: z.number() }),
       }),
     ),
   },

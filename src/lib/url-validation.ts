@@ -98,6 +98,30 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-09",
     },
   ],
+  [
+    "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
+    {
+      statuses: [403],
+      reason: "NHTSA blocks automated validation from some regions",
+      expires: "2026-11-09",
+    },
+  ],
+  [
+    "https://www.nhtsa.gov/about-nhtsa/terms-use",
+    {
+      statuses: [403],
+      reason: "NHTSA blocks automated validation from some regions",
+      expires: "2026-11-09",
+    },
+  ],
+  [
+    "https://www.noaa.gov/disclaimer",
+    {
+      statuses: [403],
+      reason: "NOAA blocks automated validation from some regions",
+      expires: "2026-11-09",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

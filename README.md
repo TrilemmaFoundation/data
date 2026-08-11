@@ -119,10 +119,12 @@ No application code changes required.
 
 ## Catalog
 
-The catalog currently contains ten operational datasets spanning natural
-hazards, Earth observation, prediction markets, weather, corporate filings,
-electricity, demographics, economics, and geospatial analysis. The YAML files
-in [`data/datasets`](data/datasets) are the source of truth for the current list.
+The catalog currently contains 26 operational datasets spanning natural
+hazards, weather, water, climate, public health, cybersecurity, government
+spending and procurement, labor and fixed-income markets, nutrition, scholarly
+research, demographics, corporate filings, electricity, prediction markets,
+and geospatial analysis. The YAML files in
+[`data/datasets`](data/datasets) are the source of truth for the current list.
 
 ## Deploy to Vercel
 

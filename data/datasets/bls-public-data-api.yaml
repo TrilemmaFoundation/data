@@ -1,0 +1,91 @@
+id: bls-public-data-api
+name: BLS Public Data API
+description: >
+  Official U.S. labor-market and price time series for building inflation,
+  employment, wage, and economic-release monitoring tools.
+
+url: https://www.bls.gov/developers/home.htm
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - XLSX
+license: BLS Public Data API Terms of Service
+license_url: https://www.bls.gov/developers/termsOfService.htm
+url_checks:
+  source_marker: Getting Started
+  license_marker: Terms of Service
+
+domains:
+  - Labor Economics
+  - Inflation
+  - Employment
+data_types:
+  - Time Series
+  - Economic Indicators
+tasks:
+  - Change Analysis
+  - Economic Monitoring
+  - Trend Analysis
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: series-dependent historical records through current releases
+update_frequency: monthly
+
+provider: U.S. Bureau of Labor Statistics
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The BLS Public Data API provides published time series from BLS programs.
+    Start with one documented series ID and a two-year response. Interpretation
+    depends on the series units, seasonal-adjustment status, release cadence,
+    and revisions, so record both the identifier and retrieval date.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A documented BLS series ID
+  access_steps:
+    - Use the BLS data tools and series documentation to confirm the identifier, units, and seasonal-adjustment status.
+    - Request a bounded two-year period through the keyless API signature.
+    - Save the retrieval timestamp and retain footnotes before calculating changes.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0",
+          params={"startyear": "2024", "endyear": "2025"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      if payload["status"] != "REQUEST_SUCCEEDED":
+          raise RuntimeError(payload["message"])
+      cpi = pd.DataFrame(payload["Results"]["series"][0]["data"])
+      cpi = cpi[cpi["period"].str.match(r"M\d{2}")].copy()
+      cpi["value"] = pd.to_numeric(cpi["value"], errors="coerce")
+      cpi["date"] = pd.to_datetime(cpi["year"] + "-" + cpi["period"].str[1:] + "-01")
+      cpi = cpi.sort_values("date")
+      cpi["change_12m_pct"] = cpi["value"].pct_change(12) * 100
+      cpi["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(cpi[["date", "value", "change_12m_pct", "retrieved_at_utc"]].tail(12))
+  first_project:
+    title: Calculate a 12-month CPI change
+    goal: Calculate the 12-month percentage change in the not-seasonally-adjusted U.S. city average CPI-U series.
+    steps:
+      - Confirm that CUUR0000SA0 is the intended CPI-U series and record its units and not-seasonally-adjusted status.
+      - Sort monthly observations, handle unavailable values and footnotes, and calculate changes against the same month one year earlier.
+      - Report the retrieval date and explain how release timing, revisions, seasonal adjustment, and index units limit comparisons.

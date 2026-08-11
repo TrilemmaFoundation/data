@@ -1,0 +1,93 @@
+id: sam-gov-contract-opportunities
+name: SAM.gov Contract Opportunities
+description: >
+  Current U.S. federal procurement notices for building opportunity monitors,
+  deadline alerts, and focused market-discovery tools.
+
+url: https://open.gsa.gov/api/get-opportunities-public-api/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: U.S. Government public data / GSA reuse guidance
+license_url: https://www.gsa.gov/website-information/website-policies
+url_checks:
+  source_marker: Get Opportunities API
+  license_marker: Reuse and copyright
+
+domains:
+  - Government Procurement
+  - Business
+data_types:
+  - Event Data
+  - Tabular
+tasks:
+  - Opportunity Monitoring
+  - Lead Discovery
+  - Alerting
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: current active and archived notices
+update_frequency: daily
+
+provider: U.S. General Services Administration
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The SAM.gov Opportunities API publishes federal procurement notices and
+    their current deadlines. Start with one NAICS code and a 30-day posting
+    window. Date windows are required, notices can be revised, deadlines can
+    change, and the public API exposes only the latest active version rather
+    than a complete revision history.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A SAM.gov public API key saved in the SAM_API_KEY environment variable
+  access_steps:
+    - Create a SAM.gov account and request a public API key from Account Details.
+    - Save the key in the SAM_API_KEY environment variable.
+    - Choose one documented NAICS code and request notices posted within a bounded date window.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      today = date.today()
+      response = requests.get(
+          "https://api.sam.gov/opportunities/v2/search",
+          params={
+              "api_key": os.environ["SAM_API_KEY"],
+              "postedFrom": (today - timedelta(days=30)).strftime("%m/%d/%Y"),
+              "postedTo": today.strftime("%m/%d/%Y"),
+              "ncode": "541511",
+              "limit": 100,
+              "offset": 0,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      opportunities = pd.DataFrame(response.json()["opportunitiesData"])
+      opportunities["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      columns = ["noticeId", "title", "postedDate", "responseDeadLine", "naicsCode", "active"]
+      print(opportunities.reindex(columns=columns).head(20))
+  first_project:
+    title: Monitor software contract opportunities
+    goal: Identify currently active notices for one NAICS code that still have time before their response deadline.
+    steps:
+      - Filter the bounded response to active notices and parse available response deadlines.
+      - Sort open notices by deadline and retain the notice ID and retrieval timestamp for refreshes.
+      - Recheck each notice in SAM.gov and explain how revisions, cancellations, missing deadlines, and latest-version-only access limit the monitor.

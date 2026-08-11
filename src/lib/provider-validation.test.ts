@@ -6,13 +6,92 @@ import {
 } from "./provider-validation";
 
 const validBodies = {
+  "bls-public-data-api": JSON.stringify({
+    status: "REQUEST_SUCCEEDED",
+    Results: {
+      series: [{ seriesID: "CUUR0000SA0", data: [{ year: "2025", period: "M01", value: "1" }] }],
+    },
+  }),
+  "cisa-known-exploited-vulnerabilities": JSON.stringify({
+    catalogVersion: "2026.08.11",
+    dateReleased: "2026-08-11",
+    vulnerabilities: [{
+      cveID: "CVE-2026-0001",
+      vendorProject: "Example",
+      product: "Example",
+      dateAdded: "2026-08-11",
+    }],
+  }),
+  "federal-register-documents": JSON.stringify({
+    count: 1,
+    results: [{
+      document_number: "2026-00001",
+      title: "Example",
+      type: "Rule",
+      publication_date: "2026-08-11",
+    }],
+  }),
   "nasa-firms": "latitude,longitude,acq_date,frp\n1,2,2026-08-10,3",
   "natural-earth": new Uint8Array([0x50, 0x4b, 0x03, 0x04]),
+  "nhtsa-vehicle-recalls": JSON.stringify({
+    Count: 1,
+    results: [{
+      NHTSACampaignNumber: "26V001",
+      Component: "EQUIPMENT",
+      Summary: "Example recall",
+    }],
+  }),
+  "noaa-ncei-daily-summaries": JSON.stringify([
+    { STATION: "USW00094728", DATE: "2025-07-01", TMAX: "89", TMIN: "72" },
+  ]),
+  "noaa-tides-currents": JSON.stringify({
+    metadata: { id: "9414290", name: "San Francisco" },
+    data: [{ t: "2025-01-01 00:00", v: "0.035" }],
+  }),
+  "openfda-drug-adverse-events": JSON.stringify({
+    meta: { last_updated: "2026-07-30", results: { total: 1 } },
+    results: [{
+      safetyreportid: "1",
+      receivedate: "20230101",
+      patient: { reaction: [{ reactionmeddrapt: "Example" }] },
+    }],
+  }),
+  "openfema-disaster-declarations": JSON.stringify({
+    DisasterDeclarationsSummaries: [{
+      disasterNumber: 1,
+      declarationDate: "2026-08-11T00:00:00.000Z",
+      state: "CA",
+      declarationType: "DR",
+    }],
+  }),
   "polymarket-markets": JSON.stringify([
     { question: "Will it rain?", volume: "10", liquidity: 5 },
   ]),
   "usgs-earthquakes": JSON.stringify({
     features: [{ properties: { mag: null, place: null, time: 1 } }],
+  }),
+  "usgs-water-data": JSON.stringify({
+    type: "FeatureCollection",
+    features: [{
+      properties: {
+        monitoring_location_id: "USGS-01646500",
+        parameter_code: "00060",
+        time: "2025-01-01T00:00:00+00:00",
+        value: "4510",
+        unit_of_measure: "ft^3/s",
+        approval_status: "Approved",
+      },
+    }],
+  }),
+  "treasury-securities-auctions": JSON.stringify({
+    data: [{
+      record_date: "2025-01-07",
+      cusip: "912797NF0",
+      security_type: "Bill",
+      security_term: "4-Week",
+      auction_date: "2025-01-02",
+    }],
+    meta: { count: 1 },
   }),
   "world-development-indicators": JSON.stringify([
     { page: 1, pages: 1, total: 1 },
@@ -21,10 +100,20 @@ const validBodies = {
 } as const;
 
 const contentTypes = {
+  "bls-public-data-api": "application/json",
+  "cisa-known-exploited-vulnerabilities": "application/json",
+  "federal-register-documents": "application/json",
   "nasa-firms": "text/csv; charset=utf-8",
   "natural-earth": "application/zip",
+  "nhtsa-vehicle-recalls": "application/json",
+  "noaa-ncei-daily-summaries": "application/json",
+  "noaa-tides-currents": "application/json",
+  "openfda-drug-adverse-events": "application/json",
+  "openfema-disaster-declarations": "application/json",
   "polymarket-markets": "application/json",
   "usgs-earthquakes": "application/json; charset=utf-8",
+  "usgs-water-data": "application/geo+json",
+  "treasury-securities-auctions": "application/json",
   "world-development-indicators": "application/json",
 } as const;
 
@@ -84,16 +173,16 @@ describe("checkProviderContract", () => {
     await expect(
       checkProviderContract("nasa-firms", {
         fetchImpl: vi.fn().mockResolvedValue(
-          response("no", "text/plain", 200, { "content-length": "1000001" }),
+          response("no", "text/plain", 200, { "content-length": "2000001" }),
         ),
       }),
-    ).resolves.toEqual(["provider response exceeds 1000000 bytes"]);
+    ).resolves.toEqual(["provider response exceeds 2000000 bytes"]);
 
     await expect(
       checkProviderContract("nasa-firms", {
-        fetchImpl: vi.fn().mockResolvedValue(response(new Uint8Array(1_000_001), "text/csv")),
+        fetchImpl: vi.fn().mockResolvedValue(response(new Uint8Array(2_000_001), "text/csv")),
       }),
-    ).resolves.toEqual(["provider response exceeds 1000000 bytes"]);
+    ).resolves.toEqual(["provider response exceeds 2000000 bytes"]);
 
     await expect(
       checkProviderContract("nasa-firms", {

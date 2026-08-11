@@ -1,0 +1,106 @@
+id: usaspending-federal-awards
+name: USAspending Federal Awards
+description: >
+  Federal contract, grant, loan, and other award records for building recipient
+  research, agency-spending, and public-market analysis tools.
+
+url: https://api.usaspending.gov/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: USAspending API
+  license_marker: federal government materials
+
+domains:
+  - Public Spending
+  - Government Procurement
+data_types:
+  - Transaction Data
+  - Tabular
+tasks:
+  - Award Analysis
+  - Recipient Research
+  - Market Sizing
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: fiscal year 2001-present, with endpoint-specific limits
+update_frequency: daily
+
+provider: U.S. Department of the Treasury
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    USAspending links federal awards, recipients, agencies, and transactions.
+    Start with one awarding agency, one fiscal period, and a small award result
+    page. Award amounts and transactions can represent obligations or outlays,
+    and records can be amended after their initial publication.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the award-search endpoint documentation and choose one awarding agency.
+    - Set a bounded fiscal-period filter and request only the fields needed for recipient ranking.
+    - Save the retrieval timestamp and inspect the spending measure before aggregating award amounts.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      payload = {
+          "filters": {
+              "time_period": [{"start_date": "2025-10-01", "end_date": "2026-09-30"}],
+              "award_type_codes": ["A", "B", "C", "D"],
+              "agencies": [{
+                  "type": "awarding",
+                  "tier": "toptier",
+                  "name": "Department of Energy",
+              }],
+          },
+          "fields": [
+              "Award ID",
+              "Recipient Name",
+              "Award Amount",
+              "Start Date",
+              "End Date",
+              "Awarding Agency",
+          ],
+          "page": 1,
+          "limit": 100,
+          "subawards": False,
+      }
+      response = requests.post(
+          "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+          json=payload,
+          timeout=30,
+      )
+      response.raise_for_status()
+      awards = pd.DataFrame(response.json()["results"])
+      awards["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(awards.head(20))
+  first_project:
+    title: Rank recipients for one federal agency
+    goal: Find which recipients account for the largest returned award amounts for one agency and fiscal period.
+    steps:
+      - Confirm the selected award types and whether the returned measure represents obligations or another spending concept.
+      - Group the bounded result page by recipient and rank summed award amounts.
+      - Explain why pagination, amendments, recipient normalization, and the distinction between obligations and outlays limit the ranking.

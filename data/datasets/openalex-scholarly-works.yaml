@@ -1,0 +1,95 @@
+id: openalex-scholarly-works
+name: OpenAlex Scholarly Works
+description: >
+  Open scholarly metadata linking works, authors, institutions, sources,
+  topics, and citations for building research-monitoring products.
+
+url: https://developers.openalex.org/api-reference/introduction
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - JSON Lines
+  - GZIP
+license: Creative Commons CC0 1.0 Universal
+license_url: https://help.openalex.org/hc/en-us/articles/24397762024087-Pricing
+url_checks:
+  source_marker: API Overview
+  license_marker: public-domain license
+
+domains:
+  - Research
+  - Scholarly Communication
+data_types:
+  - Knowledge Graph
+  - Bibliographic Data
+tasks:
+  - Literature Monitoring
+  - Topic Research
+  - Trend Analysis
+difficulty: intermediate
+
+geography:
+  - Global
+temporal_coverage: historical scholarly works through current indexing
+update_frequency: continuous
+
+provider: OurResearch
+source_type: nonprofit
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    OpenAlex indexes scholarly works and links them to authors, institutions,
+    venues, topics, and citations. Start with one clear research query, a
+    30-day publication window, and a single result page; the full public
+    snapshot is hundreds of gigabytes. Citation counts lag, source coverage
+    varies, and author, institution, and topic disambiguation is imperfect.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An OpenAlex API key saved in the OPENALEX_API_KEY environment variable
+  access_steps:
+    - Create a free OpenAlex API key and save it in the OPENALEX_API_KEY environment variable.
+    - Choose a specific research query and set a bounded publication-date filter.
+    - Request only needed fields, retain OpenAlex IDs, and record the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      start = date.today() - timedelta(days=30)
+      response = requests.get(
+          "https://api.openalex.org/works",
+          params={
+              "api_key": os.environ["OPENALEX_API_KEY"],
+              "search": "wildfire risk",
+              "filter": f"from_publication_date:{start.isoformat()}",
+              "sort": "publication_date:desc",
+              "per_page": 100,
+              "select": "id,display_name,publication_date,cited_by_count,primary_topic,authorships",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      works = pd.json_normalize(response.json()["results"])
+      works["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(works[["id", "display_name", "publication_date", "cited_by_count", "primary_topic.display_name"]].head(20))
+  first_project:
+    title: Track recent work on one research topic
+    goal: Identify newly indexed works about wildfire risk published during the last 30 days.
+    steps:
+      - Review the query and publication-date filter and retain stable OpenAlex IDs for deduplication.
+      - Summarize recent works by publication date and primary topic without treating citation count as immediate impact.
+      - Explain how indexing delay, source coverage, citation lag, and imperfect author, institution, and topic disambiguation limit the monitor.

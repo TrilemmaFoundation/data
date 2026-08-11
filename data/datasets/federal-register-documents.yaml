@@ -1,0 +1,86 @@
+id: federal-register-documents
+name: Federal Register Documents API
+description: >
+  Daily rules, proposed rules, notices, and presidential documents for building
+  focused regulatory-change and agency-publication monitors.
+
+url: https://catalog.data.gov/dataset/federalregister-gov-and-api
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: FederalRegister.gov and API
+  license_marker: federal government materials
+
+domains:
+  - Regulation
+  - Government
+data_types:
+  - Documents
+  - Event Data
+tasks:
+  - Regulatory Monitoring
+  - Alerting
+  - Document Search
+difficulty: beginner
+
+geography:
+  - United States
+temporal_coverage: 1994-present
+update_frequency: daily
+
+provider: Office of the Federal Register
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The Federal Register API exposes metadata and links for rules, proposed
+    rules, notices, and presidential documents. Start with a bounded page from
+    one agency and retain each official PDF link. FederalRegister.gov is an
+    informational rendition, so legal research and deadlines must be verified
+    against the official edition on GovInfo.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An agency slug from the Federal Register agency directory
+  access_steps:
+    - Read the API documentation and select one agency slug.
+    - Request a bounded page ordered by newest publication date.
+    - Retain the document number and GovInfo PDF URL for authoritative verification.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.federalregister.gov/api/v1/documents.json",
+          params={
+              "conditions[agencies][]": "environmental-protection-agency",
+              "order": "newest",
+              "per_page": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      documents = pd.DataFrame(response.json()["results"])
+      documents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(documents[["publication_date", "type", "title", "pdf_url"]].head())
+  first_project:
+    title: Monitor one agency's new publications
+    goal: Identify the latest rules, proposed rules, and notices published by one agency.
+    steps:
+      - Request the newest documents and group them by document type.
+      - Flag titles containing a narrow topic phrase and retain their document numbers and official PDF links.
+      - Verify one result on GovInfo and explain why the API rendition alone should not determine legal obligations or deadlines.

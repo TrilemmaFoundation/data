@@ -1,11 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
-import type { Dataset } from "@/lib/schema";
 import {
   EMPTY_FILTERS,
-  getFilterOptions,
   type DatasetFilters as Filters,
+  type FilterOptions,
 } from "@/lib/search";
 import type { SizeCategory } from "@/lib/size";
 import { Button } from "@/components/ui/button";
@@ -13,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { filterCopy } from "@/content/site-copy";
 
 type DatasetFiltersProps = {
-  datasets: Dataset[];
+  options: FilterOptions;
   filters: Filters;
   onChange: (filters: Filters) => void;
 };
@@ -56,8 +54,7 @@ function FilterCheckbox({
   );
 }
 
-export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersProps) {
-  const options = useMemo(() => getFilterOptions(datasets), [datasets]);
+export function DatasetFilters({ options, filters, onChange }: DatasetFiltersProps) {
   const hasActiveFilters =
     filters.query !== "" ||
     filters.apiKeyRequired !== null ||

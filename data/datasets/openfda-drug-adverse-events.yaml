@@ -1,0 +1,86 @@
+id: openfda-drug-adverse-events
+name: openFDA Drug Adverse Events
+description: >
+  FDA adverse-event reports for exploring reported drug reactions and building
+  bounded pharmacovigilance research tools.
+
+url: https://open.fda.gov/apis/drug/event/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - ZIP
+license: Creative Commons CC0 1.0 Universal, with noted third-party exceptions
+license_url: https://open.fda.gov/terms/
+url_checks:
+  source_marker: Drug Adverse Event Overview
+  license_marker: Creative Commons CC0 1.0 Universal
+
+domains:
+  - Pharmaceuticals
+  - Public Health
+data_types:
+  - Event Data
+  - Aggregated Data
+tasks:
+  - Safety Signal Analysis
+  - Trend Analysis
+difficulty: intermediate
+
+geography:
+  - Global
+temporal_coverage: 2004-present
+update_frequency: quarterly
+
+provider: U.S. Food and Drug Administration
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    The openFDA drug-event API provides searchable FDA Adverse Event Reporting
+    System records and server-side counts. Start with one drug name and a
+    bounded reporting period. These voluntary reports can help surface patterns
+    for investigation, but they cannot establish causality, incidence, or
+    comparative safety.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the drug-event field documentation and choose one unambiguous generic drug name.
+    - Query a bounded receive-date period and count reported reaction terms through the API.
+    - Preserve the exact query and retrieval timestamp before interpreting the returned counts.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.fda.gov/drug/event.json",
+          params={
+              "search": 'patient.drug.openfda.generic_name:"IBUPROFEN" AND receivedate:[20250101 TO 20251231]',
+              "count": "patient.reaction.reactionmeddrapt.exact",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      reactions = pd.DataFrame(response.json()["results"])
+      reactions["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(reactions.head(20))
+  first_project:
+    title: Summarize reported reactions for one drug
+    goal: Identify the most frequently reported reaction terms for one drug in a bounded calendar year.
+    steps:
+      - Review the generic-name query and confirm that the API returned reaction-term counts.
+      - Rank the bounded counts and note terms that may reflect duplicate, incomplete, or differently coded reports.
+      - State that spontaneous reports do not establish causality, incidence, or comparative safety and require qualified clinical review.

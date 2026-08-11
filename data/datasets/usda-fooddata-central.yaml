@@ -1,0 +1,103 @@
+id: usda-fooddata-central
+name: USDA FoodData Central
+description: >
+  USDA analytical and branded-food nutrient records for building nutrition
+  comparisons, ingredient research, and food-search products.
+
+url: https://fdc.nal.usda.gov/api-guide/
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - XLSX
+license: Creative Commons CC0 1.0 Universal
+license_url: https://fdc.nal.usda.gov/api-guide/
+url_checks:
+  source_marker: API Guide | USDA FoodData Central
+  license_marker: CC0 1.0 Universal
+
+domains:
+  - Nutrition
+  - Food Science
+data_types:
+  - Reference Data
+  - Tabular
+tasks:
+  - Nutrient Comparison
+  - Product Research
+  - Search
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: current releases with historical reference datasets
+update_frequency: monthly
+
+provider: U.S. Department of Agriculture Agricultural Research Service
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    FoodData Central combines USDA analytical food records with other data
+    types, including manufacturer-supplied branded records. Start with a bounded
+    search of Foundation and SR Legacy foods and one nutrient reported per 100
+    grams. Normalize units and keep each record's data type visible before
+    comparing values.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A data.gov API key saved in the FDC_API_KEY environment variable
+  access_steps:
+    - Request a data.gov API key and save it in the FDC_API_KEY environment variable.
+    - Read the FoodData Central data-type documentation and choose analytical or branded records intentionally.
+    - Search a bounded page and verify the nutrient name, unit, basis, and data type before comparison.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://api.nal.usda.gov/fdc/v1/foods/search",
+          params={"api_key": os.environ["FDC_API_KEY"]},
+          json={
+              "query": "lentils",
+              "dataType": ["Foundation", "SR Legacy"],
+              "pageSize": 25,
+              "pageNumber": 1,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      rows = []
+      for food in response.json()["foods"]:
+          for nutrient in food.get("foodNutrients", []):
+              if nutrient.get("nutrientName") == "Protein":
+                  rows.append({
+                      "fdcId": food["fdcId"],
+                      "description": food["description"],
+                      "dataType": food["dataType"],
+                      "protein_per_100g": nutrient.get("value"),
+                      "unit": nutrient.get("unitName"),
+                  })
+      protein = pd.DataFrame(rows)
+      protein["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(protein.sort_values("protein_per_100g", ascending=False).head(20))
+  first_project:
+    title: Compare protein across lentil records
+    goal: Compare protein per 100 grams across a bounded set of USDA analytical lentil search results.
+    steps:
+      - Retain FDC ID and data type and confirm that each selected protein value uses the same per-100-gram basis and unit.
+      - Remove duplicate or incomparable descriptions and rank the remaining Foundation and SR Legacy records.
+      - Explain how preparation state, moisture, analytical method, search matching, and manufacturer-supplied branded records can make nutrient comparisons misleading.

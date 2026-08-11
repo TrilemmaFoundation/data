@@ -140,3 +140,20 @@ export const DatasetSchema = z
   });
 
 export type Dataset = z.infer<typeof DatasetSchema>;
+
+export type CatalogDataset = Pick<
+  Dataset,
+  | "id"
+  | "name"
+  | "description"
+  | "provider"
+  | "domains"
+  | "tasks"
+  | "data_types"
+  | "formats"
+  | "difficulty"
+  | "geography"
+  | "size_gb_min"
+  | "size_gb_max"
+  | "api_key_required"
+>;

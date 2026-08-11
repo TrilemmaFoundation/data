@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
-import type { Dataset } from "@/lib/schema";
+import type { CatalogDataset } from "@/lib/schema";
 import { formatSizeRange, getSizeCategory } from "@/lib/size";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function DatasetCard({
   dataset,
   featured = false,
 }: {
-  dataset: Dataset;
+  dataset: CatalogDataset;
   featured?: boolean;
 }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);

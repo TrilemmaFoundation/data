@@ -1,0 +1,98 @@
+id: noaa-ncei-daily-summaries
+name: NOAA NCEI Daily Summaries
+description: >
+  Station-level daily temperature, precipitation, snow, and weather summaries
+  for building climate profiles and threshold-monitoring tools.
+
+url: https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - NetCDF
+license: U.S. Government public data / NOAA disclaimer
+license_url: https://www.noaa.gov/disclaimer
+url_checks:
+  source_marker: NCEI Data Service API User Documentation
+  license_marker: public domain
+
+domains:
+  - Climate
+  - Weather
+  - Environmental Science
+data_types:
+  - Time Series
+  - Station Data
+tasks:
+  - Climate Analysis
+  - Threshold Monitoring
+  - Trend Analysis
+difficulty: intermediate
+
+geography:
+  - Global
+temporal_coverage: station-dependent historical records through recent days
+update_frequency: daily
+
+provider: NOAA National Centers for Environmental Information
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    NCEI Daily Summaries provide weather observations aggregated by station and
+    day. Start with one documented station, one calendar year, and a few named
+    data types. Missing observations and quality attributes must be inspected
+    before a threshold count is interpreted as a climate pattern.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Confirm the station identifier, period of record, units, and daily-summary data types.
+    - Request one calendar year with station names and observation attributes included.
+    - Parse numeric values and inspect missing dates and quality attributes before calculating thresholds.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.ncei.noaa.gov/access/services/data/v1",
+          params={
+              "dataset": "daily-summaries",
+              "stations": "USW00094728",
+              "startDate": "2025-01-01",
+              "endDate": "2025-12-31",
+              "dataTypes": "TMAX,TMIN,PRCP",
+              "format": "json",
+              "units": "standard",
+              "includeAttributes": "true",
+              "includeStationName": "true",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      daily = pd.DataFrame(response.json())
+      daily["DATE"] = pd.to_datetime(daily["DATE"])
+      daily["TMAX"] = pd.to_numeric(daily["TMAX"], errors="coerce")
+      hot_days = daily[daily["TMAX"] >= 90]
+      hot_days = hot_days.assign(retrieved_at_utc=pd.Timestamp.now(tz="UTC"))
+      print(hot_days[["DATE", "TMAX", "TMAX_ATTRIBUTES"]].head(20))
+  first_project:
+    title: Count hot days at one weather station
+    goal: Count days with a maximum temperature of at least 90 degrees Fahrenheit at one station in 2025.
+    steps:
+      - Verify the station, standard-unit setting, calendar-year coverage, and temperature threshold.
+      - Reindex to the full year and count qualifying days only after identifying missing TMAX observations and quality attributes.
+      - Explain why one station, missing observations, quality flags, and a single year do not establish a regional or long-term climate trend.

@@ -1,0 +1,92 @@
+id: cdc-places
+name: CDC PLACES
+description: >
+  Modeled local health estimates for U.S. counties and smaller areas for
+  building community-health comparisons and resource-planning tools.
+
+url: https://www.cdc.gov/places/tools/data-portal.html
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - GeoJSON
+license: U.S. Public Domain with CDC attribution and use requirements
+license_url: https://www.cdc.gov/other/agencymaterials.html
+url_checks:
+  source_marker: PLACES Data Portal
+  license_marker: public domain
+
+domains:
+  - Public Health
+  - Community Health
+data_types:
+  - Modeled Estimates
+  - Geospatial
+  - Tabular
+tasks:
+  - Health Comparison
+  - Resource Planning
+  - Market Sizing
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: annual releases using recent survey and population inputs
+update_frequency: annual
+
+provider: Centers for Disease Control and Prevention
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    CDC PLACES provides consistently modeled health estimates for counties,
+    places, census tracts, and ZIP Code Tabulation Areas. Start with one measure
+    and a few counties from the current release. PLACES values are modeled
+    small-area estimates with uncertainty, not diagnoses or direct local case
+    counts.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - Three county FIPS codes for a bounded comparison
+  access_steps:
+    - Open the current PLACES release and record its year and county dataset identifier.
+    - Choose one documented measure and one prevalence type for a small set of county FIPS codes.
+    - Retain confidence limits and methodology context when comparing the modeled estimates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cdc.gov/resource/swc5-untb.json",
+          params={
+              "$select": "locationid,locationname,stateabbr,measureid,data_value,data_value_unit,low_confidence_limit,high_confidence_limit",
+              "$where": "measureid='DIABETES' AND data_value_type='Age-adjusted prevalence' AND locationid in('06037','06073','06075')",
+              "$limit": 10,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      counties = pd.DataFrame(response.json())
+      for column in ["data_value", "low_confidence_limit", "high_confidence_limit"]:
+          counties[column] = pd.to_numeric(counties[column], errors="coerce")
+      counties["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(counties.sort_values("data_value", ascending=False))
+  first_project:
+    title: Compare modeled diabetes prevalence across three counties
+    goal: Compare age-adjusted diagnosed-diabetes estimates and uncertainty for three California counties.
+    steps:
+      - Confirm the release year, DIABETES measure definition, county FIPS codes, and age-adjusted prevalence type.
+      - Rank the three estimates while showing their low and high confidence limits.
+      - Explain that overlapping uncertainty, model inputs, and small-area estimation prevent treating the values as diagnoses, direct counts, or program effects.

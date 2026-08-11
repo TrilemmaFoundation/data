@@ -1,0 +1,97 @@
+id: noaa-tides-currents
+name: NOAA Tides and Currents
+description: >
+  Official coastal water levels, tide predictions, currents, and station
+  metadata for building harbor, shoreline, and marine-planning tools.
+
+url: https://api.tidesandcurrents.noaa.gov/api/prod/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - XML
+license: U.S. Government public data / NOAA disclaimer
+license_url: https://www.noaa.gov/disclaimer
+url_checks:
+  source_marker: CO-OPS Data Retrieval API
+  license_marker: public domain
+
+domains:
+  - Coastal Data
+  - Water Resources
+  - Marine Operations
+data_types:
+  - Time Series
+  - Station Data
+tasks:
+  - Water-Level Monitoring
+  - Forecast Evaluation
+  - Operational Planning
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: station-dependent historical, current, and predicted conditions
+update_frequency: continuous
+
+provider: NOAA Center for Operational Oceanographic Products and Services
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    NOAA CO-OPS publishes observed and predicted water levels for supported
+    coastal stations. Start with one station and one UTC day, using the same
+    units and tidal datum for both series. Station coverage, time zone, units,
+    datum, and the distinction between an observation and a prediction must
+    remain explicit.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Use the station metadata tools to confirm that the station supports water levels and predictions.
+    - Request one day of observations and predictions with the same station, time zone, units, and tidal datum.
+    - Retain quality flags and label each series as observed or predicted before comparing values.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      base_url = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
+      common = {
+          "date": "today",
+          "station": "9414290",
+          "datum": "MLLW",
+          "time_zone": "gmt",
+          "units": "metric",
+          "application": "TrilemmaDataGuide",
+          "format": "json",
+      }
+      observed_response = requests.get(base_url, params={**common, "product": "water_level"}, timeout=30)
+      predicted_response = requests.get(base_url, params={**common, "product": "predictions"}, timeout=30)
+      observed_response.raise_for_status()
+      predicted_response.raise_for_status()
+      observed = pd.DataFrame(observed_response.json()["data"]).rename(columns={"t": "time", "v": "observed_m"})
+      predicted = pd.DataFrame(predicted_response.json()["predictions"]).rename(columns={"t": "time", "v": "predicted_m"})
+      comparison = observed.merge(predicted, on="time", how="inner")
+      comparison[["observed_m", "predicted_m"]] = comparison[["observed_m", "predicted_m"]].apply(pd.to_numeric)
+      comparison["difference_m"] = comparison["observed_m"] - comparison["predicted_m"]
+      comparison["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(comparison[["time", "observed_m", "predicted_m", "difference_m", "q"]].head())
+  first_project:
+    title: Compare observed and predicted water levels
+    goal: Find when observed water level differs most from the tide prediction at one station during one day.
+    steps:
+      - Confirm that both series use station 9414290, GMT, metric units, and the MLLW tidal datum.
+      - Match timestamps and rank the absolute observed-minus-predicted differences while retaining observation quality flags.
+      - Explain how preliminary observations, station coverage, datum, time zone, and prediction-versus-observation semantics limit the comparison.

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ArrowDown, Filter, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { Dataset } from "@/lib/schema";
+import type { CatalogDataset } from "@/lib/schema";
 import {
   EMPTY_FILTERS,
   filterDatasets,
@@ -63,7 +63,7 @@ function activeChips(filters: Filters): ActiveChip[] {
   return chips;
 }
 
-export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
+export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -172,7 +172,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
           aria-label={filterCopy.title}
           className="surface sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain p-5 [scrollbar-gutter:stable] lg:block"
         >
-          <DatasetFilters datasets={datasets} filters={filters} onChange={handleChange} />
+          <DatasetFilters options={filterOptions} filters={filters} onChange={handleChange} />
         </aside>
 
         <section
@@ -311,7 +311,7 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-5">
-              <DatasetFilters datasets={datasets} filters={filters} onChange={handleChange} />
+              <DatasetFilters options={filterOptions} filters={filters} onChange={handleChange} />
             </div>
             <div className="sticky bottom-0 border-t border-white/10 bg-[#0a0a14]/95 p-4 backdrop-blur">
               <button

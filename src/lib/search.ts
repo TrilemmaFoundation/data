@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import type { Dataset } from "./schema";
+import type { CatalogDataset } from "./schema";
 import {
   SIZE_CATEGORIES,
   sizeOverlapsCategory,
@@ -44,7 +44,7 @@ function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 }
 
-export function getFilterOptions(datasets: Dataset[]): FilterOptions {
+export function getFilterOptions(datasets: CatalogDataset[]): FilterOptions {
   return {
     domains: uniqueSorted(datasets.flatMap((d) => d.domains)),
     dataTypes: uniqueSorted(datasets.flatMap((d) => d.data_types)),
@@ -62,9 +62,9 @@ function matchesAny(selected: string[], values: string[]): boolean {
 }
 
 export function filterDatasets(
-  datasets: Dataset[],
+  datasets: CatalogDataset[],
   filters: DatasetFilters,
-): Dataset[] {
+): CatalogDataset[] {
   let results = datasets;
 
   if (filters.query.trim()) {

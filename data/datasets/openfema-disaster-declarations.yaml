@@ -1,0 +1,91 @@
+id: openfema-disaster-declarations
+name: OpenFEMA Disaster Declarations
+description: >
+  Federal disaster declarations, designated areas, incident periods, and
+  authorized programs for building local emergency and recovery trackers.
+
+url: https://www.fema.gov/about/openfema/disaster-declarations-summaries
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - JSON Lines
+  - Parquet
+license: OpenFEMA Terms and Conditions
+license_url: https://www.fema.gov/about/openfema/terms-conditions
+url_checks:
+  source_marker: Disaster Declarations Summaries
+  license_marker: OpenFEMA Terms and Conditions
+
+domains:
+  - Emergency Management
+  - Disaster Recovery
+data_types:
+  - Event Data
+  - Geospatial
+  - Tabular
+tasks:
+  - Disaster Monitoring
+  - Alerting
+  - Community Comparison
+difficulty: beginner
+
+geography:
+  - United States
+temporal_coverage: 1953-present
+update_frequency: near real time
+
+provider: Federal Emergency Management Agency
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    OpenFEMA records federal disaster declarations, incident periods,
+    designated areas, and declared assistance programs. Start with recent
+    declarations for one state. A declaration records federal action; it does
+    not measure local damage, event severity, or an individual's eligibility
+    for assistance.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A two-letter U.S. state or territory code
+  access_steps:
+    - Read the dataset description and OpenFEMA terms before using the API.
+    - Query the current v2 endpoint for a bounded set of declarations in one state.
+    - Preserve disaster numbers, designated areas, and program flags when presenting results.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries",
+          params={
+              "$filter": "state eq 'FL'",
+              "$orderby": "declarationDate desc",
+              "$top": 100,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      declarations = pd.DataFrame(response.json()["DisasterDeclarationsSummaries"])
+      declarations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(declarations[["disasterNumber", "declarationDate", "incidentType", "designatedArea"]].head())
+  first_project:
+    title: Track recent declarations for one state
+    goal: Summarize which incident types and designated areas appear in the latest declarations.
+    steps:
+      - Sort the bounded response by declaration date and deduplicate disaster-number and designated-area pairs.
+      - Count recent declarations by incident type and list the assistance programs declared for each event.
+      - Explain why declaration counts cannot be used as direct measures of damage, severity, or personal eligibility.

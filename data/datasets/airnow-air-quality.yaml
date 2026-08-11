@@ -1,0 +1,103 @@
+id: airnow-air-quality
+name: EPA AirNow Air Quality
+description: >
+  Preliminary real-time AQI observations and forecasts for building local
+  air-quality displays, relays, and operational awareness tools.
+
+url: https://docs.airnowapi.org/webservices
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - XML
+license: EPA AirNow Data Use Guidelines
+license_url: https://docs.airnowapi.org/account/request/
+url_checks:
+  source_marker: AirNow API - Web Services
+  license_marker: EPA AirNow Data Use Guidelines
+
+domains:
+  - Air Quality
+  - Public Health
+  - Weather
+data_types:
+  - Time Series
+  - Geospatial
+  - Operational Data
+tasks:
+  - Monitoring
+  - Alerting
+  - Operational Planning
+difficulty: intermediate
+
+geography:
+  - United States
+temporal_coverage: current and recent observations and forecasts
+update_frequency: near real time
+
+provider: U.S. Environmental Protection Agency AirNow Program
+source_type: government
+last_verified: 2026-08-11
+
+getting_started:
+  overview: >
+    AirNow distributes AQI observations and forecasts reported by participating
+    air-quality agencies. Start with the current monitoring-site service for a
+    small geographic box and preserve the official AQI values and categories.
+    Observations are preliminary, not regulatory data, and must not be altered
+    or presented as independent health or regulatory advice.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An AirNow API key saved in the AIRNOW_API_KEY environment variable
+  access_steps:
+    - Request an AirNow account, accept the Data Use Guidelines, and save the key in AIRNOW_API_KEY.
+    - Open the current Observations by Monitoring Site query documentation and choose a small bounding box.
+    - Request a short time window and retain AirNow's values, units, categories, timestamps, and source attribution unchanged.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      from datetime import datetime, timedelta, timezone
+      import pandas as pd
+      import requests
+
+      end = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+      start = end - timedelta(hours=2)
+      response = requests.get(
+          "https://www.airnowapi.org/aq/data/",
+          params={
+              "startDate": start.strftime("%Y-%m-%dT%H"),
+              "endDate": end.strftime("%Y-%m-%dT%H"),
+              "parameters": "O3,PM25",
+              "BBOX": "-77.20,38.80,-76.80,39.10",
+              "dataType": "A",
+              "format": "application/json",
+              "verbose": 1,
+              "monitorType": 0,
+              "includerawconcentrations": 0,
+              "API_KEY": os.environ["AIRNOW_API_KEY"],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      observations = pd.DataFrame(response.json())
+      observations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      columns = ["UTC", "Parameter", "AQI", "Category", "Latitude", "Longitude"]
+      print(observations.reindex(columns=columns).head(20))
+  first_project:
+    title: Relay official AQI observations for one area
+    goal: Display the latest official AirNow AQI values and categories returned for a small geographic area.
+    steps:
+      - Keep the most recent observation per monitoring site and pollutant without recalculating its AQI or category.
+      - Display the observation time, preliminary status, AirNow attribution, and reporting agency where available.
+      - Explain that AirNow observations are preliminary and must not be used as regulatory data or transformed into independent health advice.

@@ -409,6 +409,27 @@ describe("checkUrl", () => {
       "2026-11-09",
       4,
     ],
+    [
+      "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
+      403,
+      "NHTSA blocks automated validation from some regions",
+      "2026-11-09",
+      2,
+    ],
+    [
+      "https://www.nhtsa.gov/about-nhtsa/terms-use",
+      403,
+      "NHTSA blocks automated validation from some regions",
+      "2026-11-09",
+      2,
+    ],
+    [
+      "https://www.noaa.gov/disclaimer",
+      403,
+      "NOAA blocks automated validation from some regions",
+      "2026-11-09",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {
@@ -607,10 +628,16 @@ describe("validateDatasetUrls", () => {
     ).resolves.toEqual({ errors: new Map(), warnings: new Map() });
     expect(checker).toHaveBeenCalledTimes(2);
   });
-  it("checks each unique current-catalog URL once", async () => {
+  it("checks each unique current-catalog URL and marker pair once", async () => {
     const datasets = getAllDatasets();
-    const uniqueUrlCount = new Set(
-      datasets.flatMap((dataset) => [dataset.url, dataset.license_url]),
+    const uniquePageCheckCount = new Set(
+      datasets.flatMap((dataset) => [
+        JSON.stringify([dataset.url, dataset.url_checks.source_marker]),
+        JSON.stringify([
+          dataset.license_url,
+          dataset.url_checks.license_marker,
+        ]),
+      ]),
     ).size;
     const calls: Array<[string, string]> = [];
     const result = await validateDatasetUrls(datasets, {
@@ -620,8 +647,10 @@ describe("validateDatasetUrls", () => {
       },
     });
 
-    expect(calls).toHaveLength(uniqueUrlCount);
-    expect(new Set(calls.map((call) => JSON.stringify(call))).size).toBe(uniqueUrlCount);
+    expect(calls).toHaveLength(uniquePageCheckCount);
+    expect(new Set(calls.map((call) => JSON.stringify(call))).size).toBe(
+      uniquePageCheckCount,
+    );
     expect(calls.every(([, marker]) => marker.length > 0)).toBe(true);
     expect(result).toEqual({ errors: new Map(), warnings: new Map() });
   });
