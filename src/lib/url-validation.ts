@@ -90,6 +90,14 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-08",
     },
   ],
+  [
+    "https://kalshi.com/developer-agreement",
+    {
+      statuses: [429],
+      reason: "Kalshi rate-limits automated validation from GitHub Actions",
+      expires: "2026-11-09",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

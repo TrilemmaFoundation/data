@@ -390,18 +390,31 @@ describe("checkUrl", () => {
   it.each([
     [
       "https://www.usgs.gov/data-management/data-licensing",
+      403,
       "USGS CloudFront blocks automated validation from some regions",
+      "2026-11-08",
+      2,
     ],
     [
       "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
+      403,
       "NASA Earthdata blocks automated validation from GitHub Actions",
+      "2026-11-08",
+      2,
+    ],
+    [
+      "https://kalshi.com/developer-agreement",
+      429,
+      "Kalshi rate-limits automated validation from GitHub Actions",
+      "2026-11-09",
+      4,
     ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
-    async (url, reason) => {
+    async (url, status, reason, expires, expectedAttempts) => {
       const fetchImpl = vi
         .fn()
-        .mockResolvedValue(new Response(null, { status: 403 }));
+        .mockResolvedValue(new Response(null, { status }));
       await expect(
         checkUrl(url, {
           fetchImpl: fetchImpl as typeof fetch,
@@ -411,10 +424,10 @@ describe("checkUrl", () => {
         ok: true,
         messages: [],
         warnings: [
-          `${url} returned HTTP 403; allowed until 2026-11-08: ${reason}`,
+          `${url} returned HTTP ${status}; allowed until ${expires}: ${reason}`,
         ],
       });
-      expect(fetchImpl).toHaveBeenCalledTimes(2);
+      expect(fetchImpl).toHaveBeenCalledTimes(expectedAttempts);
     },
   );
 
