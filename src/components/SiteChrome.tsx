@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ExternalLink, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -119,13 +119,6 @@ export function SiteHeader() {
               className="h-6 w-auto transition-transform group-hover:scale-105 sm:h-8"
             />
           </a>
-          <span className="h-6 w-px bg-white/20" aria-hidden="true" />
-          <Link
-            href="/"
-            className="truncate rounded-sm text-sm font-semibold tracking-wide text-white"
-          >
-            {siteCopy.productLabel}
-          </Link>
         </div>
 
         <nav
@@ -142,6 +135,15 @@ export function SiteHeader() {
           >
             {siteCopy.datasetsNavigationLabel}
           </Link>
+          <a
+            href={CONTRIBUTE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants()}
+          >
+            {siteCopy.contributeLabel}
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+          </a>
         </nav>
 
         <button
@@ -182,6 +184,15 @@ export function SiteHeader() {
               >
                 {siteCopy.datasetsNavigationLabel}
               </Link>
+              <a
+                href={CONTRIBUTE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(buttonVariants(), "w-full justify-start")}
+              >
+                {siteCopy.contributeLabel}
+                <ExternalLink className="size-3.5" aria-hidden="true" />
+              </a>
             </div>
           </nav>
           <button
