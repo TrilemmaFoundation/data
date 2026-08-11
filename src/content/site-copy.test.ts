@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getAllDatasets } from "../lib/datasets";
 import {
   accessTypeLabels,
   catalogCopy,
@@ -42,10 +43,27 @@ describe("site copy", () => {
     expect(catalogCopy.resultCount(1)).toBe("1 dataset");
     expect(catalogCopy.resultCount(5)).toBe("5 datasets");
     expect(catalogCopy.resultStatus(1)).toBe("1 dataset found");
+    expect(catalogCopy.resultsLink(0)).toBe("0 matching datasets · View results");
+    expect(catalogCopy.resultsLink(1)).toBe("1 matching dataset · View results");
+    expect(catalogCopy.resultsLink(5)).toBe("5 matching datasets · View results");
+    expect(catalogCopy.trustDatasetCount(1)).toBe("1 curated source");
+    expect(catalogCopy.trustDatasetCount(10)).toBe("10 curated sources");
     expect(catalogCopy.showResults(5)).toBe("Show 5 datasets");
     expect(catalogCopy.removeFilter("Domain: Economics")).toBe(
       "Remove Domain: Economics filter",
     );
+  });
+
+  it("keeps product ideas unique and the featured dataset resolvable", () => {
+    const labels = catalogCopy.productIdeas.map((idea) => idea.label);
+    const queries = catalogCopy.productIdeas.map((idea) => idea.query);
+    expect(new Set(labels).size).toBe(labels.length);
+    expect(new Set(queries).size).toBe(queries.length);
+    expect(
+      getAllDatasets().some(
+        (dataset) => dataset.id === catalogCopy.featuredStarter.datasetId,
+      ),
+    ).toBe(true);
   });
 
   it("covers every access type and difficulty", () => {

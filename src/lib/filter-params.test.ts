@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { catalogCopy } from "../content/site-copy";
 import { EMPTY_FILTERS } from "./search";
 import type { FilterOptions } from "./search";
 import {
-  applyQuickPreset,
   filtersToParams,
   parseFilters,
 } from "./filter-params";
@@ -85,18 +85,10 @@ describe("filter URL helpers", () => {
     });
   });
 
-  it("builds deterministic presets while preserving search", () => {
-    const source = { ...EMPTY_FILTERS, query: "flowers", domains: ["Biology"] };
-    expect(applyQuickPreset(source, "beginner")).toMatchObject({
-      query: "flowers",
-      domains: [],
-      difficulties: ["beginner"],
-    });
-    expect(applyQuickPreset(source, "small-csv")).toMatchObject({
-      query: "flowers",
-      sizes: ["Tiny", "Small"],
-      formats: ["CSV"],
-      apiKeyRequired: false,
-    });
+  it("round-trips every product idea query", () => {
+    for (const idea of catalogCopy.productIdeas) {
+      const params = filtersToParams({ ...EMPTY_FILTERS, query: idea.query });
+      expect(parseFilters(params, options).query).toBe(idea.query);
+    }
   });
 });

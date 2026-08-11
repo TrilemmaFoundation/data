@@ -1,8 +1,4 @@
-import {
-  EMPTY_FILTERS,
-  type DatasetFilters,
-  type FilterOptions,
-} from "./search";
+import type { DatasetFilters, FilterOptions } from "./search";
 import {
   SIZE_CATEGORIES,
   type SizeCategory,
@@ -56,22 +52,4 @@ export function filtersToParams(filters: DatasetFilters): URLSearchParams {
   if (filters.apiKeyRequired !== null) params.set("apiKey", String(filters.apiKeyRequired));
   appendList(params, "geography", filters.geographies);
   return params;
-}
-
-export type QuickPreset = "beginner" | "small-csv";
-
-export function applyQuickPreset(
-  filters: DatasetFilters,
-  preset: QuickPreset,
-): DatasetFilters {
-  if (preset === "beginner") {
-    return { ...EMPTY_FILTERS, query: filters.query, difficulties: ["beginner"] };
-  }
-  return {
-    ...EMPTY_FILTERS,
-    query: filters.query,
-    sizes: ["Tiny", "Small"],
-    formats: ["CSV"],
-    apiKeyRequired: false,
-  };
 }

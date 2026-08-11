@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Filter, Search, Sparkles, X } from "lucide-react";
+import { ArrowDown, ArrowRight, CloudRain, Filter, Search, X } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Dataset } from "@/lib/schema";
 import {
@@ -10,16 +11,13 @@ import {
   getFilterOptions,
   type DatasetFilters as Filters,
 } from "@/lib/search";
-import {
-  applyQuickPreset,
-  filtersToParams,
-  parseFilters,
-} from "@/lib/filter-params";
+import { filtersToParams, parseFilters } from "@/lib/filter-params";
 import { DatasetCard } from "@/components/DatasetCard";
 import { DatasetFilters } from "@/components/DatasetFilters";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { datasetPath } from "@/lib/seo";
 import { catalogCopy, filterChipPrefixes, filterCopy } from "@/content/site-copy";
 
 type ActiveChip = {
@@ -120,80 +118,151 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
     [updateFilters],
   );
 
-  const beginnerActive =
-    filters.difficulties.length === 1 && filters.difficulties[0] === "beginner";
-  const smallCsvActive =
-    filters.sizes.includes("Tiny") &&
-    filters.sizes.includes("Small") &&
-    filters.formats.includes("CSV") &&
-    filters.apiKeyRequired === false;
+  const selectIdea = useCallback(
+    (query: string) => {
+      if (searchRef.current) searchRef.current.value = query;
+      updateFilters({ ...EMPTY_FILTERS, query }, "push");
+    },
+    [updateFilters],
+  );
 
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#1e1e44] px-5 py-9 shadow-[0_28px_90px_rgba(0,0,0,0.3)] sm:px-8 sm:py-12 lg:px-12">
-        <div className="pointer-events-none absolute -top-24 -right-20 size-72 rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
-        <div className="relative max-w-3xl">
-          <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
-          <h1 className="mt-3 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            {catalogCopy.heroTitle}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-white/70 sm:text-lg">
-            {catalogCopy.heroDescription}
-          </p>
+      <div className="mx-auto w-full max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
+      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#1e1e44] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.3)] sm:px-8 sm:py-9 lg:px-10">
+        <div className="pointer-events-none absolute -top-36 -right-24 size-80 rounded-full bg-primary/12 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-44 left-1/3 size-80 rounded-full bg-secondary/10 blur-3xl" aria-hidden="true" />
 
-          <label htmlFor="dataset-search" className="mt-8 block text-sm font-semibold text-white">
-            {catalogCopy.searchLabel}
-          </label>
-          <div className="relative mt-2 max-w-2xl">
-            <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <Input
-              id="dataset-search"
-              ref={searchRef}
-              type="search"
-              defaultValue={filters.query}
-              onChange={(event) => {
-                updateFilters({ ...filters, query: event.target.value });
-              }}
-              placeholder={catalogCopy.searchPlaceholder}
-              className="h-13 rounded-xl border-white/15 bg-[#0a0a14]/70 pr-4 pl-12 text-base shadow-lg placeholder:text-white/40"
-            />
-          </div>
+        <div className="relative grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)] lg:items-stretch xl:gap-10">
+          <div className="min-w-0">
+            <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
+            <h1 className="mt-3 max-w-3xl font-heading text-4xl font-bold leading-[1.04] tracking-tight text-white sm:text-5xl lg:text-[3.5rem]">
+              {catalogCopy.heroTitle}
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/70 sm:text-lg">
+              {catalogCopy.heroDescription}
+            </p>
 
-          <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center">
-            <span className="mr-1 text-xs font-medium text-white/55">
-              {catalogCopy.quickStartsLabel}
-            </span>
-            <div
-              className="flex flex-wrap gap-2"
-              role="group"
-              aria-label={catalogCopy.quickFiltersAriaLabel}
+            <label htmlFor="dataset-search" className="mt-6 block text-sm font-semibold text-white">
+              {catalogCopy.searchLabel}
+            </label>
+            <div className="relative mt-2 max-w-2xl">
+              <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <Input
+                id="dataset-search"
+                ref={searchRef}
+                type="search"
+                defaultValue={filters.query}
+                onChange={(event) => {
+                  updateFilters({ ...filters, query: event.target.value });
+                }}
+                placeholder={catalogCopy.searchPlaceholder}
+                className="h-13 rounded-xl border-white/15 bg-[#0a0a14]/70 pr-4 pl-12 text-base shadow-lg placeholder:text-white/40"
+              />
+            </div>
+
+            <a
+              href="#results-title"
+              className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-secondary transition-colors hover:text-white"
             >
-              <Button
-                variant="outline"
-                size="sm"
-                aria-pressed={beginnerActive}
-                className={beginnerActive ? "border-primary bg-primary/15 text-primary" : undefined}
-                onClick={() => updateFilters(applyQuickPreset(filters, "beginner"), "push")}
+              <ArrowDown className="size-4" aria-hidden="true" />
+              {catalogCopy.resultsLink(results.length)}
+            </a>
+
+            <div className="mt-4">
+              <p className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+                {catalogCopy.productIdeasLabel}
+              </p>
+              <div
+                className="mt-2 flex flex-wrap gap-2"
+                role="group"
+                aria-label={catalogCopy.productIdeasAriaLabel}
               >
-                <Sparkles aria-hidden="true" /> {catalogCopy.beginnerPresetLabel}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                aria-pressed={smallCsvActive}
-                className={smallCsvActive ? "border-primary bg-primary/15 text-primary" : undefined}
-                onClick={() => updateFilters(applyQuickPreset(filters, "small-csv"), "push")}
-              >
-                {catalogCopy.smallCsvPresetLabel}
-              </Button>
+                {catalogCopy.productIdeas.map((idea) => {
+                  const active = filters.query === idea.query;
+                  return (
+                    <Button
+                      key={idea.id}
+                      variant="outline"
+                      size="sm"
+                      aria-pressed={active}
+                      className={cn(
+                        "justify-start whitespace-normal",
+                        active && "border-primary bg-primary/15 text-primary",
+                      )}
+                      onClick={() => selectIdea(idea.query)}
+                    >
+                      {idea.label}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </div>
+
+          <aside
+            aria-labelledby="featured-starter-title"
+            className="relative overflow-hidden rounded-2xl border border-primary/30 bg-[linear-gradient(145deg,rgba(255,153,64,0.13),rgba(108,168,228,0.08)_58%,rgba(10,10,20,0.45))] p-5 shadow-[0_18px_45px_rgba(0,0,0,0.22)] sm:p-6"
+          >
+            <div className="flex items-start gap-4">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/15 text-primary">
+                <CloudRain className="size-6" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="eyebrow">{catalogCopy.featuredStarter.eyebrow}</p>
+                <h2 id="featured-starter-title" className="mt-2 text-2xl font-bold leading-tight text-white">
+                  {catalogCopy.featuredStarter.title}
+                </h2>
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-white/70 sm:text-base">
+              {catalogCopy.featuredStarter.description}
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {catalogCopy.featuredStarter.badges.map((badge) => (
+                <span key={badge} className="rounded-full border border-white/12 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/75">
+                  {badge}
+                </span>
+              ))}
+            </div>
+
+            <ol className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              {catalogCopy.featuredStarter.steps.map((step, index) => (
+                <li key={step} className="rounded-xl border border-white/10 bg-[#0a0a14]/35 p-3 text-sm font-medium text-white/85">
+                  <span className="mb-2 block text-xs font-bold text-primary">0{index + 1}</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+
+            <Link
+              href={datasetPath(catalogCopy.featuredStarter.datasetId)}
+              className={cn(buttonVariants({ size: "lg" }), "mt-5 w-full sm:w-auto")}
+            >
+              {catalogCopy.featuredStarter.ctaLabel}
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </aside>
         </div>
+
+        <ul className="relative mt-7 grid gap-3 border-t border-white/10 pt-5 text-sm font-medium text-white/70 sm:grid-cols-3 sm:gap-5">
+          {[
+            catalogCopy.trustDatasetCount(datasets.length),
+            catalogCopy.trustPythonLabel,
+            catalogCopy.trustVerificationLabel,
+          ].map((label) => (
+            <li key={label} className="flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
+              {label}
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside className="surface sticky top-24 hidden h-fit p-5 lg:block">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr]">
+        <aside aria-label={filterCopy.title} className="surface sticky top-24 hidden h-fit p-5 lg:block">
           <DatasetFilters datasets={datasets} filters={filters} onChange={handleChange} />
         </aside>
 

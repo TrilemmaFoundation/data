@@ -21,16 +21,57 @@ export const siteCopy = {
 } as const;
 
 export const catalogCopy = {
-  heroEyebrow: "Real data, useful products",
+  heroEyebrow: "From idea to signal",
   heroTitle: "Find data to build your next microproduct",
   heroDescription:
-    "Explore authoritative, actively maintained data for a focused tool, alert, forecast, workflow, or decision aid. Each guide helps you test access, setup, and a useful signal before you build.",
-  searchLabel: "What does your microproduct need?",
-  searchPlaceholder: "Search earthquakes, markets, maps, economics…",
-  quickStartsLabel: "Start with",
-  quickFiltersAriaLabel: "Quick dataset filters",
-  beginnerPresetLabel: "Beginner-friendly",
-  smallCsvPresetLabel: "Small CSVs",
+    "Start with a product outcome. Each source includes access instructions, working Python, and the caveat that matters before you ship.",
+  searchLabel: "Search by topic, provider, or product use",
+  searchPlaceholder: "Try “company filings” or “electricity demand”",
+  productIdeasLabel: "Or start with a product idea",
+  productIdeasAriaLabel: "Microproduct ideas",
+  productIdeas: [
+    {
+      id: "wildfire",
+      label: "Monitor wildfire hotspots",
+      query: "wildfire",
+    },
+    {
+      id: "filings",
+      label: "Track company filings",
+      query: "company filings",
+    },
+    {
+      id: "markets",
+      label: "Compare prediction markets",
+      query: "prediction markets",
+    },
+    {
+      id: "market-sizing",
+      label: "Size a local market",
+      query: "market sizing",
+    },
+    {
+      id: "electricity",
+      label: "Monitor electricity demand",
+      query: "electricity demand",
+    },
+  ],
+  featuredStarter: {
+    eyebrow: "Featured first build",
+    datasetId: "nws-weather-api",
+    title: "Build a local weather-risk alert",
+    description:
+      "Use the National Weather Service API to flag rain, storms, snow, or high winds for one location.",
+    steps: ["Choose a location", "Flag risky hours", "Send a timely alert"],
+    badges: ["Beginner", "No API key", "Live API"],
+    ctaLabel: "Open the weather guide",
+  },
+  trustPythonLabel: "Working Python examples",
+  trustVerificationLabel: "Verified within 90 days",
+  trustDatasetCount: (count: number) =>
+    `${count} curated source${count === 1 ? "" : "s"}`,
+  resultsLink: (count: number) =>
+    `${count} matching dataset${count === 1 ? "" : "s"} · View results`,
   catalogEyebrow: "Dataset catalog",
   activeFiltersAriaLabel: "Active filters",
   noApiKeyChipLabel: "No API key",
