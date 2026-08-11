@@ -109,10 +109,10 @@ export async function checkProviderContract(
   datasetId: string,
   options: ProviderValidationOptions = {},
 ): Promise<string[]> {
-  const contract = Object.hasOwn(contracts, datasetId)
-    ? contracts[datasetId as keyof typeof contracts]
-    : undefined;
-  if (!contract) return [`no provider contract is defined for ${datasetId}`];
+  if (!Object.hasOwn(contracts, datasetId)) {
+    return [`no provider contract is defined for ${datasetId}`];
+  }
+  const contract = contracts[datasetId as keyof typeof contracts];
 
   const controller = new AbortController();
   const timer = setTimeout(
