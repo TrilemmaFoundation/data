@@ -168,7 +168,10 @@ export function DiscoveryView({ datasets }: { datasets: Dataset[] }) {
       </section>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside aria-label={filterCopy.title} className="surface sticky top-24 hidden h-fit p-5 lg:block">
+        <aside
+          aria-label={filterCopy.title}
+          className="surface sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain p-5 [scrollbar-gutter:stable] lg:block"
+        >
           <DatasetFilters datasets={datasets} filters={filters} onChange={handleChange} />
         </aside>
 

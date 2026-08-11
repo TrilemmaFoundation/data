@@ -202,6 +202,29 @@ test("mobile filter drawer closes at the desktop breakpoint", async ({ page }) =
   await expect(dialog).toBeHidden();
 });
 
+test("desktop filters stay within the viewport and remain fully reachable", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const filters = page.getByRole("complementary", {
+    name: filterCopy.title,
+    exact: true,
+  });
+  const dimensions = await filters.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }));
+  expect(dimensions.clientHeight).toBeLessThanOrEqual(900 - 112);
+  expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight);
+
+  await filters.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  const moreFilters = filters.locator("summary");
+  await expect(moreFilters).toContainText(filterCopy.moreFiltersLabel);
+  await expect(moreFilters).toBeVisible();
+});
+
 test("application copy reflows across supported viewport widths", async ({ page }) => {
   for (const width of [360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
