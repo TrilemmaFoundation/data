@@ -42,6 +42,27 @@ Vercel → data.trilemma.foundation
 
 No database, authentication, admin panel, backend service, or dataset storage.
 
+## Brand contract
+
+Trilemma Data is a product extension of the main
+[Trilemma Foundation website](https://www.trilemma.foundation/), not a separate
+brand. The main website is the canonical visual reference; this alignment was
+reviewed against website revision `1beb70d`.
+
+The shared foundation is intentionally small:
+
+- Navy `#1E1E44` for the page canvas
+- Black `#0A0A14` for chrome, cards, menus, and code
+- Orange `#FF9940` for primary actions and focus
+- Blue `#6CA8E4` for secondary information
+- White `#FFFFFF` and muted gray `#BDBDBD` for content
+- Roboto typography and the canonical `public/foundation-white.webp` logo
+
+Controls use 10px corners, 44–48px targets, compact hard shadows, and visible
+orange focus rings. Content surfaces use restrained 12–16px corners and
+elevation. Update the documented values, logo, and brand-contract test together
+when the canonical website changes.
+
 ## Editing content
 
 Content has two explicit sources of truth:

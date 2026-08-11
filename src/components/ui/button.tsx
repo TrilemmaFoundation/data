@@ -4,15 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-semibold whitespace-nowrap transition-all duration-200 outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/35 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-[10px] border border-transparent bg-clip-padding text-sm font-bold whitespace-nowrap shadow-[0_4px_4px_0_#0a0a14] transition-all duration-200 outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/35 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-[0_7px_18px_rgba(255,153,64,0.16)] hover:bg-[#ffad66]",
+        default: "bg-primary text-primary-foreground hover:bg-[#ffad66]",
         outline:
-          "border-white/15 bg-white/[0.025] text-white hover:border-primary/55 hover:bg-white/8 hover:text-white aria-expanded:bg-muted aria-expanded:text-foreground",
+          "border-primary/70 bg-transparent text-primary hover:bg-primary/15 hover:text-white aria-expanded:bg-muted aria-expanded:text-foreground",
         ghost:
-          "text-white/75 hover:bg-white/8 hover:text-white aria-expanded:bg-muted aria-expanded:text-foreground",
+          "border-transparent bg-transparent text-white/75 shadow-none hover:bg-white/8 hover:text-white aria-expanded:bg-muted aria-expanded:text-foreground",
       },
       size: {
         default:

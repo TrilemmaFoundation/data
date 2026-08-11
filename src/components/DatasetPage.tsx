@@ -40,7 +40,7 @@ function ConceptPills({
           <Badge
             key={value}
             variant="outline"
-            className="h-auto max-w-full justify-start whitespace-normal"
+            className="h-auto max-w-full justify-start rounded-full whitespace-normal"
           >
             {value}
           </Badge>
@@ -221,7 +221,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               <CopyButton value={guide.python.code} />
             </div>
             <div
-              className="overflow-x-auto bg-[#080910] p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
+              className="overflow-x-auto bg-brand-black p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
               tabIndex={0}
               aria-label={datasetGuideCopy.pythonExampleAriaLabel}
             >
@@ -248,7 +248,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.first_project.goal}</p>
                 <ol className="mt-5 grid gap-3 sm:grid-cols-3">
                   {guide.first_project.steps.map((step, index) => (
-                    <li key={step} className="rounded-xl border border-white/10 bg-white/[0.025] p-4 text-sm leading-6 text-white/80">
+                    <li key={step} className="rounded-lg border border-white/10 bg-brand-black/25 p-4 text-sm leading-6 text-white/80">
                       <span className="mb-2 block font-mono text-xs font-bold text-secondary">
                         {String(index + 1).padStart(2, "0")}
                       </span>

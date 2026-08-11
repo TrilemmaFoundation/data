@@ -2,6 +2,12 @@ import type { Dataset } from "./schema";
 
 export const SITE_URL = "https://data.trilemma.foundation";
 export const FOUNDATION_URL = "https://www.trilemma.foundation/";
+export const FOUNDATION_PROJECTS_URL = `${FOUNDATION_URL}projects`;
+export const FOUNDATION_TOURNAMENTS_URL = `${FOUNDATION_URL}tournaments`;
+export const FOUNDATION_TEAM_URL = `${FOUNDATION_URL}team`;
+export const FOUNDATION_CHARTER_URL = `${FOUNDATION_URL}charter`;
+export const FOUNDATION_PRIVACY_URL = `${FOUNDATION_URL}privacy`;
+export const FOUNDATION_TERMS_URL = `${FOUNDATION_URL}terms`;
 export const CONTRIBUTE_URL =
   "https://github.com/TrilemmaFoundation/data/blob/main/CONTRIBUTING.md";
 

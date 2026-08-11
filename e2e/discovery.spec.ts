@@ -9,6 +9,16 @@ import {
   siteCopy,
 } from "../src/content/site-copy";
 import { getAllDatasets } from "../src/lib/datasets";
+import {
+  CONTRIBUTE_URL,
+  FOUNDATION_CHARTER_URL,
+  FOUNDATION_PRIVACY_URL,
+  FOUNDATION_PROJECTS_URL,
+  FOUNDATION_TEAM_URL,
+  FOUNDATION_TERMS_URL,
+  FOUNDATION_TOURNAMENTS_URL,
+  FOUNDATION_URL,
+} from "../src/lib/seo";
 
 const DATASET_COUNT = getAllDatasets().length;
 
@@ -139,7 +149,7 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  const trigger = page.getByRole("button", { name: siteCopy.openNavigationLabel });
+  const trigger = page.locator('button[aria-controls="mobile-navigation"]');
   const hero = page.getByRole("heading", { name: catalogCopy.heroTitle });
   const before = await hero.boundingBox();
 
@@ -148,12 +158,112 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
     page.getByRole("navigation", { name: siteCopy.mobileNavigationLabel }),
   ).toBeVisible();
   expect((await hero.boundingBox())?.y).toBe(before?.y);
+  const firstLink = page
+    .getByRole("navigation", { name: siteCopy.mobileNavigationLabel })
+    .getByRole("link", { name: siteCopy.datasetsNavigationLabel });
+  await expect(firstLink).toBeFocused();
+  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+
+  await page.keyboard.press("Shift+Tab");
+  await expect(trigger).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(
+    page
+      .getByRole("navigation", { name: siteCopy.mobileNavigationLabel })
+      .getByRole("link", { name: siteCopy.contributeLabel }),
+  ).toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("navigation", { name: siteCopy.mobileNavigationLabel }),
   ).toBeHidden();
   await expect(trigger).toBeFocused();
+  await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+});
+
+test("mobile navigation closes from its backdrop and on route changes", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/datasets/nws-weather-api/");
+
+  const trigger = page.getByRole("button", {
+    name: siteCopy.openNavigationLabel,
+  });
+  const navigation = page.getByRole("navigation", {
+    name: siteCopy.mobileNavigationLabel,
+  });
+
+  await trigger.click();
+  await page.locator("[data-mobile-menu-backdrop]").click({ position: { x: 5, y: 300 } });
+  await expect(navigation).toBeHidden();
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await page.getByRole("link", { name: siteCopy.productLabel, exact: true }).click();
+  await expect(page).toHaveURL((url) => url.pathname === "/");
+  await expect(navigation).toBeHidden();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/datasets\/nws-weather-api\/?$/);
+  await expect(navigation).toBeHidden();
+});
+
+test("header and footer expose the product and Foundation destinations", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const primary = page.getByRole("navigation", {
+    name: siteCopy.primaryNavigationLabel,
+  });
+  await expect(
+    primary.getByRole("link", { name: siteCopy.datasetsNavigationLabel }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    primary.getByRole("link", { name: siteCopy.contributeLabel }),
+  ).toHaveAttribute("href", CONTRIBUTE_URL);
+  await expect(
+    primary.getByRole("link", { name: siteCopy.contributeLabel }),
+  ).toHaveAttribute("target", "_blank");
+
+  const dataLinks = page.getByRole("navigation", {
+    name: siteCopy.footerDataNavigationLabel,
+  });
+  await expect(
+    dataLinks.getByRole("link", { name: siteCopy.datasetsNavigationLabel }),
+  ).toHaveAttribute("href", "/");
+  await expect(
+    dataLinks.getByRole("link", { name: siteCopy.contributeLabel }),
+  ).toHaveAttribute("href", CONTRIBUTE_URL);
+
+  const foundationLinks = page.getByRole("navigation", {
+    name: siteCopy.footerFoundationNavigationLabel,
+  });
+  for (const [name, href] of [
+    [siteCopy.foundationHomeLabel, FOUNDATION_URL],
+    [siteCopy.projectsLabel, FOUNDATION_PROJECTS_URL],
+    [siteCopy.tournamentsLabel, FOUNDATION_TOURNAMENTS_URL],
+    [siteCopy.teamLabel, FOUNDATION_TEAM_URL],
+  ] as const) {
+    await expect(foundationLinks.getByRole("link", { name })).toHaveAttribute(
+      "href",
+      href,
+    );
+  }
+
+  const legalLinks = page.getByRole("navigation", {
+    name: siteCopy.footerLegalNavigationLabel,
+  });
+  for (const [name, href] of [
+    [siteCopy.charterLabel, FOUNDATION_CHARTER_URL],
+    [siteCopy.privacyLabel, FOUNDATION_PRIVACY_URL],
+    [siteCopy.termsLabel, FOUNDATION_TERMS_URL],
+  ] as const) {
+    await expect(legalLinks.getByRole("link", { name })).toHaveAttribute(
+      "href",
+      href,
+    );
+  }
 });
 
 test("mobile navigation stays closed after crossing the desktop breakpoint", async ({ page }) => {

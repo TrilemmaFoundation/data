@@ -9,6 +9,17 @@ export const siteCopy = {
   mobileNavigationLabel: "Mobile primary",
   datasetsNavigationLabel: "Datasets",
   contributeLabel: "Contribute",
+  foundationLinksLabel: "Foundation",
+  foundationHomeLabel: "Home",
+  projectsLabel: "Projects",
+  tournamentsLabel: "Tournaments",
+  teamLabel: "Team",
+  charterLabel: "Charter",
+  privacyLabel: "Privacy Policy",
+  termsLabel: "Participation Terms",
+  footerDataNavigationLabel: "Data links",
+  footerFoundationNavigationLabel: "Foundation links",
+  footerLegalNavigationLabel: "Legal links",
   openNavigationLabel: "Open navigation",
   closeNavigationLabel: "Close navigation",
   skipLinkLabel: "Skip to content",
@@ -17,6 +28,8 @@ export const siteCopy = {
     "Find actively maintained datasets and practical Python guides for building focused microproducts.",
   footerSummary:
     "Authoritative, actively maintained data for building focused microproducts. Trilemma links to source data; it does not host or relicense it.",
+  copyright: (year: number) =>
+    `© ${year} Trilemma Foundation. All rights reserved.`,
   loadingLabel: "Preparing the dataset catalog…",
 } as const;
 

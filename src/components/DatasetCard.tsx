@@ -28,8 +28,8 @@ export function DatasetCard({
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]",
-        featured && "border-primary/40 bg-[linear-gradient(145deg,rgba(255,153,64,0.08),rgba(17,19,29,0.95)_42%)]",
+        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:border-primary/50 hover:bg-card",
+        featured && "border-primary/50",
       )}
     >
       <CardHeader>
@@ -56,7 +56,7 @@ export function DatasetCard({
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col gap-5">
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/8 bg-white/[0.025] p-3 text-xs">
+        <div className="grid grid-cols-2 gap-3 rounded-lg border border-white/8 bg-brand-black/25 p-3 text-xs">
           <div>
             <p className="text-muted-foreground">{datasetCardCopy.sizeLabel}</p>
             <p className="mt-1 font-medium text-white">{sizeRange}</p>
@@ -70,7 +70,9 @@ export function DatasetCard({
         <div>
           <div className="flex flex-wrap gap-1.5">
             {dataset.domains.map((domain) => (
-              <Badge key={domain} variant="outline">{domain}</Badge>
+              <Badge key={domain} variant="outline" className="rounded-full">
+                {domain}
+              </Badge>
             ))}
           </div>
           <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
@@ -84,7 +86,7 @@ export function DatasetCard({
         </p>
       </CardContent>
 
-      <CardFooter className="border-white/10 bg-white/[0.025]">
+      <CardFooter className="border-white/10 bg-brand-black/25">
         <Link href={`/datasets/${dataset.id}`} className={cn(buttonVariants(), "w-full")}>
           {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />
         </Link>

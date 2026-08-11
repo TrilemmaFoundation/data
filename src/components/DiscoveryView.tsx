@@ -138,48 +138,50 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
-      <section
-        aria-labelledby="catalog-hero-title"
-        className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#1e1e44] px-5 py-11 text-center shadow-[0_28px_90px_rgba(0,0,0,0.3)] sm:px-8 sm:py-14 lg:px-10 lg:py-16"
-      >
-        <div
-          className="pointer-events-none absolute -top-36 left-1/2 size-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
-          aria-hidden="true"
-        />
-
-        <div className="relative mx-auto max-w-6xl">
-          <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
-          <h1
-            id="catalog-hero-title"
-            className="mt-3 font-heading text-4xl font-bold leading-[1.04] tracking-tight text-white sm:text-5xl lg:text-[clamp(3rem,3.9vw,3.5rem)] lg:whitespace-nowrap"
-          >
-            {catalogCopy.heroTitle}
-          </h1>
-
-          <Button size="lg" className="mt-7" onClick={browseCatalog}>
-            {catalogCopy.browseDatasets(datasets.length)}
-            <ArrowDown aria-hidden="true" />
-          </Button>
-
-          <ul className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/65">
-            {catalogCopy.heroProofLabels.map((label) => (
-              <li key={label} className="flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside
-          aria-label={filterCopy.title}
-          className="surface sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain p-5 [scrollbar-gutter:stable] lg:block"
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+        <section
+          aria-labelledby="catalog-hero-title"
+          className="px-1 py-8 text-center sm:px-8 sm:py-12 lg:py-14"
         >
-          <DatasetFilters options={filterOptions} filters={filters} onChange={handleChange} />
-        </aside>
+          <div className="mx-auto max-w-6xl">
+            <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
+            <h1
+              id="catalog-hero-title"
+              className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl lg:whitespace-nowrap"
+            >
+              {catalogCopy.heroTitle}
+            </h1>
+
+            <Button size="lg" className="mt-7" onClick={browseCatalog}>
+              {catalogCopy.browseDatasets(datasets.length)}
+              <ArrowDown aria-hidden="true" />
+            </Button>
+
+            <ul className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/80">
+              {catalogCopy.heroProofLabels.map((label) => (
+                <li key={label} className="flex items-center gap-2">
+                  <span
+                    className="size-1.5 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <div className="mt-4 grid gap-8 border-t border-white/20 pt-8 sm:mt-6 sm:pt-10 lg:grid-cols-[260px_1fr]">
+          <aside
+            aria-label={filterCopy.title}
+            className="surface sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain p-5 [scrollbar-gutter:stable] lg:block"
+          >
+            <DatasetFilters
+              options={filterOptions}
+              filters={filters}
+              onChange={handleChange}
+            />
+          </aside>
 
         <section
           id="dataset-catalog"
@@ -233,7 +235,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
                 updateFilters({ ...filtersRef.current, query: event.target.value });
               }}
               placeholder={catalogCopy.searchPlaceholder}
-              className="h-13 rounded-xl border-white/15 bg-[#0a0a14]/70 pr-4 pl-12 text-base shadow-lg placeholder:text-white/40"
+              className="h-13 border-white/15 pr-4 pl-12 text-base shadow-[0_4px_4px_rgba(10,10,20,0.45)] placeholder:text-white/40"
             />
           </div>
 
@@ -247,7 +249,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
                   key={chip.key}
                   type="button"
                   onClick={() => handleChange(chip.next)}
-                  className="inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-left text-xs font-medium break-all whitespace-normal text-white/80 transition-colors hover:border-primary/60 hover:text-white"
+                  className="inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full border border-white/10 bg-card/80 px-3 text-left text-xs font-medium break-all whitespace-normal text-white/80 transition-colors hover:border-primary/60 hover:text-white"
                   aria-label={catalogCopy.removeFilter(chip.label)}
                 >
                   {chip.label} <X className="size-3.5 shrink-0" aria-hidden="true" />
@@ -281,54 +283,57 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               ))}
             </div>
           )}
-        </section>
-      </div>
-
+          </section>
+        </div>
       </div>
 
       <dialog
         ref={filterDialogRef}
         aria-labelledby="filter-dialog-title"
         aria-describedby="filter-dialog-description"
-        className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,26rem)] max-w-none border-0 border-l border-white/10 bg-[#0a0a14] p-0 text-white shadow-2xl backdrop:bg-[#0a0a14]/80 backdrop:backdrop-blur-sm"
+        className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,26rem)] max-w-none border-0 border-l border-white/10 bg-brand-black p-0 text-white shadow-[0_4px_4px_rgba(10,10,20,0.65)] backdrop:bg-brand-black/80 backdrop:backdrop-blur-sm"
         onClose={() => {
           if (!window.matchMedia("(min-width: 1024px)").matches) {
             filterTriggerRef.current?.focus();
           }
         }}
       >
-          <div className="flex h-full flex-col">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a14]/95 px-5 py-4 backdrop-blur">
-              <div>
-                <h2 id="filter-dialog-title" className="text-lg font-semibold">
-                  {catalogCopy.drawerTitle}
-                </h2>
-                <p id="filter-dialog-description" className="sr-only">
-                  {catalogCopy.drawerDescription}
-                </p>
-              </div>
-              <button
-                type="button"
-                className="grid size-11 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white"
-                aria-label={catalogCopy.closeFiltersLabel}
-                onClick={() => filterDialogRef.current?.close()}
-              >
-                <X aria-hidden="true" />
-              </button>
+        <div className="flex h-full flex-col">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-brand-black/95 px-5 py-4 backdrop-blur">
+            <div>
+              <h2 id="filter-dialog-title" className="text-lg font-semibold">
+                {catalogCopy.drawerTitle}
+              </h2>
+              <p id="filter-dialog-description" className="sr-only">
+                {catalogCopy.drawerDescription}
+              </p>
             </div>
-            <div className="flex-1 overflow-y-auto p-5">
-              <DatasetFilters options={filterOptions} filters={filters} onChange={handleChange} />
-            </div>
-            <div className="sticky bottom-0 border-t border-white/10 bg-[#0a0a14]/95 p-4 backdrop-blur">
-              <button
-                type="button"
-                className={cn(buttonVariants({ size: "lg" }), "w-full")}
-                onClick={() => filterDialogRef.current?.close()}
-              >
-                {catalogCopy.showResults(results.length)}
-              </button>
-            </div>
+            <button
+              type="button"
+              className="grid size-11 place-items-center rounded-[10px] text-white/80 hover:bg-white/10 hover:text-white"
+              aria-label={catalogCopy.closeFiltersLabel}
+              onClick={() => filterDialogRef.current?.close()}
+            >
+              <X aria-hidden="true" />
+            </button>
           </div>
+          <div className="flex-1 overflow-y-auto p-5">
+            <DatasetFilters
+              options={filterOptions}
+              filters={filters}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="sticky bottom-0 border-t border-white/10 bg-brand-black/95 p-4 backdrop-blur">
+            <button
+              type="button"
+              className={cn(buttonVariants({ size: "lg" }), "w-full")}
+              onClick={() => filterDialogRef.current?.close()}
+            >
+              {catalogCopy.showResults(results.length)}
+            </button>
+          </div>
+        </div>
       </dialog>
     </>
   );

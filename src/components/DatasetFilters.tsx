@@ -47,7 +47,7 @@ function FilterCheckbox({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white">
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white">
       <Checkbox checked={checked} onCheckedChange={(value) => onCheckedChange(value === true)} />
       <span>{label}</span>
     </label>
@@ -129,7 +129,7 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
         ))}
       </FilterGroup>
 
-      <details className="group rounded-xl border border-white/10 bg-white/[0.025] p-4">
+      <details className="group rounded-lg border border-white/10 bg-brand-black/25 p-4">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
           {filterCopy.moreFiltersLabel}
           <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>

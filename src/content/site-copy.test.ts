@@ -50,6 +50,9 @@ describe("site copy", () => {
     expect(catalogCopy.removeFilter("Domain: Economics")).toBe(
       "Remove Domain: Economics filter",
     );
+    expect(siteCopy.copyright(2026)).toBe(
+      "© 2026 Trilemma Foundation. All rights reserved.",
+    );
   });
 
   it("keeps the recommended dataset resolvable", () => {
