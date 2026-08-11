@@ -2,6 +2,7 @@ import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
 import { validateDatasetUrls } from "../src/lib/url-validation";
 import { validatePythonSyntax } from "../src/lib/python-validation";
 import { validateDatasetPolicy } from "../src/lib/catalog-validation";
+import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
 async function main() {
   const offline = process.argv.slice(2).includes("--offline");
@@ -31,7 +32,9 @@ async function main() {
   }
 
   for (const [file, warnings] of urlValidation.warnings) {
-    for (const warning of warnings) console.warn(`! ${file}: ${warning}`);
+    for (const warning of warnings) {
+      console.warn(sanitizeDiagnostic(`! ${file}: ${warning}`));
+    }
   }
 
   if (allErrors.length === 0) {
@@ -43,9 +46,9 @@ async function main() {
 
   console.error(`✗ Dataset validation failed:\n`);
   for (const error of allErrors) {
-    console.error(`${error.file}`);
+    console.error(sanitizeDiagnostic(error.file));
     for (const message of error.messages) {
-      console.error(`  - ${message}`);
+      console.error(`  - ${sanitizeDiagnostic(message)}`);
     }
     console.error("");
   }
@@ -53,6 +56,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error);
+  console.error(sanitizeDiagnostic(String(error)));
   process.exit(1);
 });

@@ -72,6 +72,7 @@ Do **not** add:
 - `url_checks` must provide a short, page-specific text marker for the source
   and license pages; matching is case-insensitive after redirects
 - Text values are trimmed and must not be blank
+- Metadata text and URLs must not contain control characters; Python examples remain multiline
 - List values such as domains, tasks, formats, and geographies must not contain duplicates
 - `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form and
   must be refreshed after a substantive review at least every 90 days

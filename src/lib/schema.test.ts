@@ -196,11 +196,34 @@ describe("DatasetSchema", () => {
     const missing = { ...validDataset } as Record<string, unknown>;
     delete missing.url_checks;
     expect(DatasetSchema.safeParse(missing).success).toBe(false);
-    for (const source_marker of ["line one\nline two", "unsafe\u001b[31m"]) {
+    for (const source_marker of [
+      "unsafe\u0000marker",
+      "line one\nline two",
+      "unsafe\u001b[31m",
+      "unsafe\u007fmarker",
+      "unsafe\u009bmarker",
+    ]) {
       expect(
         DatasetSchema.safeParse({
           ...validDataset,
           url_checks: { ...validDataset.url_checks, source_marker },
+        }).success,
+      ).toBe(false);
+    }
+  });
+
+  it("rejects control characters in metadata and URLs", () => {
+    for (const control of ["\u0000", "\n", "\u001b", "\u007f", "\u009b"]) {
+      expect(
+        DatasetSchema.safeParse({
+          ...validDataset,
+          name: `Unsafe${control}name`,
+        }).success,
+      ).toBe(false);
+      expect(
+        DatasetSchema.safeParse({
+          ...validDataset,
+          url: `https://example.com/unsafe${control}path`,
         }).success,
       ).toBe(false);
     }

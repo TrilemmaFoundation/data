@@ -1,6 +1,7 @@
 # Copy this file to <dataset-id>.yaml and fill in every field.
 # Filename (without .yaml) MUST match the `id` field.
 # Do not add fields beyond those listed here.
+# Metadata text and URLs must not contain control characters.
 
 id: replace-with-dataset-id
 name: Replace with dataset name

@@ -30,11 +30,18 @@ export const MAX_TEXT_LENGTH = 2_000;
 export const MAX_PYTHON_LENGTH = 20_000;
 export const MAX_URL_LENGTH = 2_048;
 
-const NonEmptyStringSchema = z.string().trim().min(1).max(MAX_TEXT_LENGTH);
+const NO_CONTROL_CHARACTERS = /^[^\u0000-\u001f\u007f-\u009f]+$/u;
+const NonEmptyStringSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(MAX_TEXT_LENGTH)
+  .regex(NO_CONTROL_CHARACTERS, "must not contain control characters");
 const PythonCodeSchema = z.string().trim().min(1).max(MAX_PYTHON_LENGTH);
 const HttpsUrlSchema = z
   .string()
   .max(MAX_URL_LENGTH)
+  .regex(NO_CONTROL_CHARACTERS, "must not contain control characters")
   .url()
   .refine((value) => {
     try {
@@ -44,10 +51,7 @@ const HttpsUrlSchema = z
       return false;
     }
   }, "must be an HTTPS URL without embedded credentials");
-const PageMarkerSchema = NonEmptyStringSchema.max(200).regex(
-  /^[^\r\n\u001b]+$/,
-  "must be a single line without terminal control sequences",
-);
+const PageMarkerSchema = NonEmptyStringSchema.max(200);
 const UpdateFrequencySchema = z.enum(UPDATE_FREQUENCIES);
 
 function uniqueStrings(min = 1) {

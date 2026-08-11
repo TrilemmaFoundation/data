@@ -1,5 +1,6 @@
 import { getAllDatasets } from "../src/lib/datasets";
 import { validateProviderContracts } from "../src/lib/provider-validation";
+import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
 async function main() {
   const datasets = getAllDatasets();
@@ -11,13 +12,15 @@ async function main() {
 
   console.error("✗ Provider contract validation failed:\n");
   for (const [file, messages] of errors) {
-    console.error(file);
-    for (const message of messages) console.error(`  - ${message}`);
+    console.error(sanitizeDiagnostic(file));
+    for (const message of messages) {
+      console.error(`  - ${sanitizeDiagnostic(message)}`);
+    }
   }
   process.exitCode = 1;
 }
 
 main().catch((error) => {
-  console.error(error);
+  console.error(sanitizeDiagnostic(String(error)));
   process.exitCode = 1;
 });

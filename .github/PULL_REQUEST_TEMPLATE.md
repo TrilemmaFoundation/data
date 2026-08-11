@@ -18,6 +18,7 @@ Thank you for contributing an operational dataset!
 - [ ] `url_checks` contains page-specific source and license text markers
 - [ ] `last_verified` is today's real calendar date (`YYYY-MM-DD`)
 - [ ] Lists contain no duplicate values and text fields are not blank
+- [ ] Metadata text and URLs contain no control characters
 - [ ] Metadata can be independently verified against the source
 - [ ] `getting_started` includes complete prerequisites and access steps
 - [ ] The Python example is valid, concise, credential-free, and matches the described download
