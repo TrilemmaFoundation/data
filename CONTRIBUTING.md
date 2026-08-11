@@ -65,6 +65,7 @@ Do **not** add:
 - `free_to_access` must be `true`
 - `size_gb_min` must be ≤ `size_gb_max`
 - `difficulty` must be `beginner`, `intermediate`, or `advanced`
+- `access_type` may list `download` and `api` together; `both` must be used alone
 - `source_type` must be one of: `government`, `intergovernmental`, `academic`,
   `nonprofit`, `company`, `community`
 - `license` and `license_url` are required

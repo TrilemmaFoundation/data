@@ -50,6 +50,24 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
   ).toBeVisible();
 });
 
+test("search preserves a filter selected during pending URL navigation", async ({ page }) => {
+  await page.goto("/");
+
+  await page
+    .getByRole("complementary", { name: filterCopy.title, exact: true })
+    .getByLabel("Cybersecurity")
+    .click();
+  await page.getByLabel(catalogCopy.searchLabel).fill("vulnerability");
+
+  await expect(page).toHaveURL((url) =>
+    url.searchParams.get("q") === "vulnerability" &&
+    url.searchParams.getAll("domain").includes("Cybersecurity"),
+  );
+  await expect(
+    page.getByRole("link", { name: "CISA Known Exploited Vulnerabilities Catalog" }),
+  ).toBeVisible();
+});
+
 test("the hero has one CTA that focuses the catalog without changing URL state", async ({
   page,
 }) => {

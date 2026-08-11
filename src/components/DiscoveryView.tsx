@@ -72,6 +72,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     () => parseFilters(new URLSearchParams(searchParams.toString()), filterOptions),
     [filterOptions, searchParams],
   );
+  const filtersRef = useRef(filters);
   const searchRef = useRef<HTMLInputElement>(null);
   const resultsTitleRef = useRef<HTMLHeadingElement>(null);
   const filterDialogRef = useRef<HTMLDialogElement>(null);
@@ -90,12 +91,17 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   const updateFilters = useCallback(
     (next: Filters) => {
+      filtersRef.current = next;
       const query = filtersToParams(next).toString();
       const href = query ? `${pathname}?${query}` : pathname;
       router.replace(href, { scroll: false });
     },
     [pathname, router],
   );
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)");
@@ -224,7 +230,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               type="search"
               defaultValue={filters.query}
               onChange={(event) => {
-                updateFilters({ ...filters, query: event.target.value });
+                updateFilters({ ...filtersRef.current, query: event.target.value });
               }}
               placeholder={catalogCopy.searchPlaceholder}
               className="h-13 rounded-xl border-white/15 bg-[#0a0a14]/70 pr-4 pl-12 text-base shadow-lg placeholder:text-white/40"

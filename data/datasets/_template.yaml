@@ -13,6 +13,7 @@ url: https://example.com/dataset
 access_type:
   - download
 # Allowed values: download | api | both
+# Use both by itself; otherwise list download and api separately.
 api_key_required: false
 free_to_access: true
 # Must be true — paid datasets are not accepted.

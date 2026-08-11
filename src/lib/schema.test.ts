@@ -57,6 +57,22 @@ describe("DatasetSchema", () => {
   });
 
   it.each([
+    ["download"],
+    ["api"],
+    ["both"],
+    ["download", "api"],
+  ])("accepts coherent access types: %s", (...access_type) => {
+    expect(DatasetSchema.safeParse({ ...validDataset, access_type }).success).toBe(true);
+  });
+
+  it.each([
+    ["download", "both"],
+    ["api", "both"],
+  ])("rejects contradictory access types: %s", (...access_type) => {
+    expect(DatasetSchema.safeParse({ ...validDataset, access_type }).success).toBe(false);
+  });
+
+  it.each([
     "http://example.com/data",
     "ftp://example.com/data",
     "file:///etc/passwd",

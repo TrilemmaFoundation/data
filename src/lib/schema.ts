@@ -80,6 +80,9 @@ const UniqueAccessTypesSchema = z
   .min(1)
   .refine((values) => new Set(values).size === values.length, {
     message: "access types must be unique",
+  })
+  .refine((values) => !values.includes("both") || values.length === 1, {
+    message: '"both" cannot be combined with another access type',
   });
 
 export const GettingStartedSchema = z.strictObject({
