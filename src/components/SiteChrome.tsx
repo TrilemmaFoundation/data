@@ -26,6 +26,16 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeAtDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+
+    desktop.addEventListener("change", closeAtDesktop);
+    return () => desktop.removeEventListener("change", closeAtDesktop);
+  }, []);
+
   const datasetsActive = pathname === "/" || pathname.startsWith("/datasets/");
 
   return (

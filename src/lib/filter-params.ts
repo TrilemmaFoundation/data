@@ -27,7 +27,7 @@ export function parseFilters(
   const sizes = parseList(params.getAll("size"), SIZE_CATEGORIES) as SizeCategory[];
 
   return {
-    query: params.get("q") ?? "",
+    query: (params.get("q") ?? "").trim(),
     domains: parseList(params.getAll("domain"), options.domains),
     dataTypes: parseList(params.getAll("dataType"), options.dataTypes),
     tasks: parseList(params.getAll("task"), options.tasks),

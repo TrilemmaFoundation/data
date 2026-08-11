@@ -37,3 +37,16 @@ test("guide metadata preserves API terminology", async ({ page }) => {
     }),
   ).toBeVisible();
 });
+
+test("repeated copies retain feedback for the latest action", async ({ page }) => {
+  await page.goto("/datasets/nws-weather-api");
+
+  await page.getByRole("button", { name: copyButtonCopy.idleLabel }).click();
+  await page.waitForTimeout(1_000);
+  await page.getByRole("button", { name: copyButtonCopy.copiedLabel }).click();
+  await page.waitForTimeout(1_100);
+
+  await expect(
+    page.getByRole("button", { name: copyButtonCopy.copiedLabel }),
+  ).toBeVisible();
+});

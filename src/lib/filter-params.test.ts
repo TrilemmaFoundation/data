@@ -88,4 +88,11 @@ describe("filter URL helpers", () => {
     const params = filtersToParams({ ...EMPTY_FILTERS, query: "company filings" });
     expect(parseFilters(params, options).query).toBe("company filings");
   });
+
+  it("normalizes whitespace-only and padded shared queries", () => {
+    expect(parseFilters(new URLSearchParams("q=+++"), options).query).toBe("");
+    expect(
+      parseFilters(new URLSearchParams("q=+company+filings+"), options).query,
+    ).toBe("company filings");
+  });
 });

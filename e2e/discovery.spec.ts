@@ -138,6 +138,29 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   await expect(trigger).toBeFocused();
 });
 
+test("mobile navigation stays closed after crossing the desktop breakpoint", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: siteCopy.openNavigationLabel }).click();
+  const navigation = page.getByRole("navigation", {
+    name: siteCopy.mobileNavigationLabel,
+  });
+  await expect(navigation).toBeVisible();
+
+  await page.setViewportSize({ width: 768, height: 900 });
+  await expect(navigation).toBeHidden();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(navigation).toBeHidden();
+});
+
+test("whitespace-only shared queries remain unfiltered", async ({ page }) => {
+  await page.goto("/?q=+++");
+
+  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toBeVisible();
+  await expect(page.getByLabel(catalogCopy.activeFiltersAriaLabel)).toHaveCount(0);
+});
+
 test("mobile filters restore focus and the zero state recovers", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/?q=no-such-dataset-anywhere");
