@@ -10,6 +10,7 @@ import {
 import type { SizeCategory } from "@/lib/size";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { filterCopy } from "@/content/site-copy";
 
 type DatasetFiltersProps = {
   datasets: Dataset[];
@@ -74,8 +75,10 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="eyebrow">Refine</p>
-          <h2 className="mt-1 text-lg font-semibold text-white">Filters</h2>
+          <p className="eyebrow">{filterCopy.eyebrow}</p>
+          <h2 className="mt-1 text-lg font-semibold text-white">
+            {filterCopy.title}
+          </h2>
         </div>
         <Button
           variant="ghost"
@@ -83,11 +86,11 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
           disabled={!hasActiveFilters}
           onClick={() => onChange(EMPTY_FILTERS)}
         >
-          Clear all
+          {filterCopy.clearAllLabel}
         </Button>
       </div>
 
-      <FilterGroup title="Difficulty">
+      <FilterGroup title={filterCopy.difficultyLabel}>
         {options.difficulties.map((difficulty) => (
           <FilterCheckbox
             key={difficulty}
@@ -103,7 +106,7 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
         ))}
       </FilterGroup>
 
-      <FilterGroup title="Domain">
+      <FilterGroup title={filterCopy.domainLabel}>
         {options.domains.map((domain) => (
           <FilterCheckbox
             key={domain}
@@ -116,7 +119,7 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
         ))}
       </FilterGroup>
 
-      <FilterGroup title="Data type">
+      <FilterGroup title={filterCopy.dataTypeLabel}>
         {options.dataTypes.map((dataType) => (
           <FilterCheckbox
             key={dataType}
@@ -131,11 +134,11 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
 
       <details className="group rounded-xl border border-white/10 bg-white/[0.025] p-4">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
-          More filters
+          {filterCopy.moreFiltersLabel}
           <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>
         </summary>
         <div className="mt-5 space-y-6 border-t border-white/10 pt-5">
-          <FilterGroup title="Task">
+          <FilterGroup title={filterCopy.taskLabel}>
             {options.tasks.map((task) => (
               <FilterCheckbox
                 key={task}
@@ -148,7 +151,7 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
             ))}
           </FilterGroup>
 
-          <FilterGroup title="Size">
+          <FilterGroup title={filterCopy.sizeLabel}>
             {options.sizes.map((size) => (
               <FilterCheckbox
                 key={size}
@@ -164,7 +167,7 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
             ))}
           </FilterGroup>
 
-          <FilterGroup title="Format">
+          <FilterGroup title={filterCopy.formatLabel}>
             {options.formats.map((format) => (
               <FilterCheckbox
                 key={format}
@@ -177,16 +180,16 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
             ))}
           </FilterGroup>
 
-          <FilterGroup title="API key required">
+          <FilterGroup title={filterCopy.apiKeyLabel}>
             <FilterCheckbox
-              label="Yes"
+              label={filterCopy.yesLabel}
               checked={filters.apiKeyRequired === true}
               onCheckedChange={(checked) =>
                 onChange({ ...filters, apiKeyRequired: checked ? true : null })
               }
             />
             <FilterCheckbox
-              label="No"
+              label={filterCopy.noLabel}
               checked={filters.apiKeyRequired === false}
               onCheckedChange={(checked) =>
                 onChange({ ...filters, apiKeyRequired: checked ? false : null })
@@ -194,7 +197,7 @@ export function DatasetFilters({ datasets, filters, onChange }: DatasetFiltersPr
             />
           </FilterGroup>
 
-          <FilterGroup title="Geography">
+          <FilterGroup title={filterCopy.geographyLabel}>
             {options.geographies.map((geography) => (
               <FilterCheckbox
                 key={geography}

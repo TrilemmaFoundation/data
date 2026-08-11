@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllDatasets, getDatasetById } from "@/lib/datasets";
 import { datasetJsonLd, datasetPath, serializeJsonLd } from "@/lib/seo";
 import { DatasetPage } from "@/components/DatasetPage";
+import { notFoundCopy } from "@/content/site-copy";
 
 export function generateStaticParams() {
   return getAllDatasets().map((dataset) => ({ id: dataset.id }));
@@ -15,7 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const dataset = getDatasetById(id);
-  if (!dataset) return { title: "Dataset not found" };
+  if (!dataset) return { title: notFoundCopy.title };
   return {
     title: dataset.name,
     description: dataset.description,

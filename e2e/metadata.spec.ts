@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { siteCopy } from "../src/content/site-copy";
 
 test("public routes expose canonical and social metadata", async ({ page }) => {
   await page.goto("/");
@@ -12,7 +13,7 @@ test("public routes expose canonical and social metadata", async ({ page }) => {
   );
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
     "content",
-    "Trilemma Data",
+    siteCopy.name,
   );
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
     "content",

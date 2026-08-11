@@ -1,0 +1,170 @@
+import type { Dataset } from "@/lib/schema";
+
+export const siteCopy = {
+  name: "Trilemma Data",
+  productLabel: "Data",
+  foundationName: "Trilemma Foundation",
+  foundationAriaLabel: "Trilemma Foundation main website",
+  primaryNavigationLabel: "Primary",
+  mobileNavigationLabel: "Mobile primary",
+  datasetsNavigationLabel: "Datasets",
+  contributeLabel: "Contribute",
+  openNavigationLabel: "Open navigation",
+  closeNavigationLabel: "Close navigation",
+  skipLinkLabel: "Skip to content",
+  hostLabel: "data.trilemma.foundation",
+  metadataDescription:
+    "Explore actively maintained datasets and follow a practical Python path from source to first analysis.",
+  footerSummary:
+    "A focused catalog of actively maintained, authoritative datasets. Trilemma links to source data; it does not host or relicense it.",
+  loadingLabel: "Preparing the dataset catalog…",
+} as const;
+
+export const catalogCopy = {
+  heroEyebrow: "Real data, practical starts",
+  heroTitle: "Choose a dataset. Build your first analysis.",
+  heroDescription:
+    "Explore authoritative, actively maintained data. Each guide explains access, setup, and a focused Python project.",
+  searchLabel: "What do you want to analyze?",
+  searchPlaceholder: "Search earthquakes, markets, maps, economics…",
+  quickStartsLabel: "Start with",
+  quickFiltersAriaLabel: "Quick dataset filters",
+  beginnerPresetLabel: "Beginner-friendly",
+  smallCsvPresetLabel: "Small CSVs",
+  catalogEyebrow: "Dataset catalog",
+  activeFiltersAriaLabel: "Active filters",
+  noApiKeyChipLabel: "No API key",
+  emptyTitle: "No datasets match those filters",
+  emptyDescription: "Broaden your search or remove a filter to see more sources.",
+  clearFiltersLabel: "Clear filters",
+  drawerTitle: "Filter datasets",
+  drawerDescription:
+    "Refine the catalog by difficulty, topic, format, access, and size.",
+  closeFiltersLabel: "Close filters",
+  resultCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
+  resultStatus: (count: number) =>
+    `${catalogCopy.resultCount(count)} found`,
+  showResults: (count: number) => `Show ${catalogCopy.resultCount(count)}`,
+  removeFilter: (label: string) => `Remove ${label} filter`,
+} as const;
+
+export const filterChipPrefixes = {
+  query: "Search",
+  domains: "Domain",
+  dataTypes: "Type",
+  tasks: "Task",
+  difficulties: "Level",
+  sizes: "Size",
+  formats: "Format",
+  geographies: "Place",
+} as const;
+
+export const filterCopy = {
+  eyebrow: "Refine results",
+  title: "Filters",
+  clearAllLabel: "Clear all",
+  difficultyLabel: "Difficulty",
+  domainLabel: "Domain",
+  dataTypeLabel: "Data type",
+  moreFiltersLabel: "More filters",
+  taskLabel: "Task",
+  sizeLabel: "Size",
+  formatLabel: "Format",
+  apiKeyLabel: "API key required",
+  yesLabel: "Yes",
+  noLabel: "No",
+  geographyLabel: "Geography",
+} as const;
+
+export const datasetCardCopy = {
+  sizeLabel: "Size",
+  formatLabel: "Format",
+  apiKeyRequiredLabel: "Free API key required",
+  noApiKeyLabel: "No API key required",
+  viewGuideLabel: "View guide",
+  apiKeyStatus: (required: boolean) =>
+    required
+      ? datasetCardCopy.apiKeyRequiredLabel
+      : datasetCardCopy.noApiKeyLabel,
+} as const;
+
+export const accessTypeLabels: Record<
+  Dataset["access_type"][number],
+  string
+> = {
+  download: "Download",
+  api: "API",
+  both: "Download and API",
+};
+
+export const difficultyDescriptions: Record<Dataset["difficulty"], string> = {
+  beginner: "Beginner — comfortable for a first project",
+  intermediate: "Intermediate — some data preparation helps",
+  advanced: "Advanced — expect specialized tools or domain knowledge",
+};
+
+export const datasetGuideCopy = {
+  breadcrumbAriaLabel: "Breadcrumb",
+  guideEyebrow: "Practical dataset guide",
+  startGuideLabel: "Start the guide",
+  officialSourceLabel: "Open official source",
+  atAGlanceTitle: "At a glance",
+  factLabels: {
+    difficulty: "Difficulty",
+    size: "Size",
+    formats: "Formats",
+    access: "Access",
+    apiKey: "API key",
+    provider: "Provider",
+    updates: "Updates",
+    dataTerms: "Data terms",
+  },
+  apiKeyRequiredLabel: "Required",
+  apiKeyNotRequiredLabel: "Not required",
+  accessTypes: (types: Dataset["access_type"]) =>
+    types.map((type) => accessTypeLabels[type]).join(" or "),
+  beginnerGuideEyebrow: "From source to first analysis",
+  guideTitle: "Build an analysis in four steps",
+  setupTitle: "Check the setup",
+  accessTitle: "Access the data",
+  pythonTitle: "Run the Python example",
+  pythonDescription: "Install the packages, then run the notebook cell.",
+  pythonExampleAriaLabel: "Python example",
+  firstProjectEyebrow: "Build a first project",
+  detailsTitle: "Dataset details",
+  conceptLabels: {
+    domains: "Domains",
+    dataTypes: "Data types",
+    tasks: "Tasks",
+    geography: "Geography",
+  },
+  detailsSummary: ({
+    provider,
+    sourceType,
+    lastVerified,
+    temporalCoverage,
+  }: {
+    provider: string;
+    sourceType: Dataset["source_type"];
+    lastVerified: string;
+    temporalCoverage: string | null;
+  }) => {
+    const article = /^[aeiou]/i.test(sourceType) ? "an" : "a";
+    return `${provider} is ${article} ${sourceType} source. Last verified ${lastVerified}. Temporal coverage: ${temporalCoverage ?? "not applicable"}.`;
+  },
+} as const;
+
+export const copyButtonCopy = {
+  idleLabel: "Copy Python",
+  copiedLabel: "Copied",
+  errorLabel: "Try again",
+  copiedAnnouncement: "Python code copied to clipboard.",
+  errorAnnouncement: "Copy failed. Select the code and copy it manually.",
+} as const;
+
+export const notFoundCopy = {
+  eyebrow: "404",
+  title: "Dataset not found",
+  description: "This dataset is not in the catalog. It may have been renamed or removed.",
+  backLabel: "Back to datasets",
+} as const;

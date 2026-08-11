@@ -16,6 +16,21 @@ dataset. One YAML file is enough.
 
 CI will automatically validate your YAML.
 
+## Editing copy
+
+Dataset-specific copy belongs in the dataset's YAML file. Keep the description
+to one sentence covering what the source contains and what analysis it supports.
+The `getting_started` overview should identify the smallest useful starting
+scope and the source's most important interpretation limit. Write access steps
+as direct actions and end the first project with an interpretation or limitation.
+
+Shared product, navigation, accessibility, and SEO copy lives in
+[`src/content/site-copy.ts`](src/content/site-copy.ts). Changes there are
+application changes and should be submitted separately from a new dataset.
+Keep shared copy concise, practical, and free of hype. Dynamic phrases such as
+result counts stay in the typed helper functions in that file so singular,
+plural, and accessibility wording remain consistent.
+
 ## Inclusion rules
 
 A dataset can be added only if:

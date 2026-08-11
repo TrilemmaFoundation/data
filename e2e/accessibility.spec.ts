@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { filterCopy } from "../src/content/site-copy";
 
 async function expectNoAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page })
@@ -13,7 +14,7 @@ test("catalog and mobile filter drawer pass automated accessibility checks", asy
   await page.goto("/");
   await expectNoAccessibilityViolations(page);
 
-  await page.getByRole("button", { name: /^Filters/ }).click();
+  await page.getByRole("button", { name: filterCopy.title, exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expectNoAccessibilityViolations(page);
 });

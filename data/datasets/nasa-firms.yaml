@@ -1,8 +1,8 @@
 id: nasa-firms
 name: NASA FIRMS Active Fire Data
 description: >
-  Near-real-time satellite detections of active fires and thermal anomalies,
-  useful for wildfire monitoring, emergency response, and geospatial analysis.
+  Near-real-time satellite detections of active fires and thermal anomalies for
+  monitoring hotspots, mapping risk, and supporting emergency analysis.
 
 url: https://firms.modaps.eosdis.nasa.gov/api/area/
 access_type:
@@ -48,17 +48,18 @@ last_verified: 2026-08-10
 
 getting_started:
   overview: >
-    FIRMS turns satellite observations into frequently refreshed fire-detection
-    points. Begin with one sensor and one recent day before expanding the area
-    or time window.
+    FIRMS publishes frequently refreshed thermal-anomaly detections from Earth-
+    observing satellites. Start with one sensor and one recent day before
+    expanding the area or time window. Each point is a satellite detection, not
+    confirmation of a fire on the ground.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
-    - A free NASA FIRMS MAP_KEY stored in the NASA_FIRMS_MAP_KEY environment variable
+    - A free NASA FIRMS MAP_KEY saved in the NASA_FIRMS_MAP_KEY environment variable
   access_steps:
-    - Request a free MAP_KEY from the FIRMS API page.
-    - Store the key in the NASA_FIRMS_MAP_KEY environment variable.
-    - Run the example to request the latest global VIIRS NOAA-20 detections.
+    - Request a free MAP_KEY from the official FIRMS API page.
+    - Save the key in the NASA_FIRMS_MAP_KEY environment variable.
+    - Run the example to retrieve the latest global VIIRS NOAA-20 detections.
   python:
     packages:
       - pandas
@@ -74,9 +75,9 @@ getting_started:
       fires = pd.read_csv(url)
       print(fires[["latitude", "longitude", "acq_date", "frp"]].head())
   first_project:
-    title: Map today's strongest fire detections
-    goal: Identify and map the highest-radiative-power detections from the latest day.
+    title: Locate today's strongest thermal anomalies
+    goal: Find where the latest day's highest-radiative-power detections cluster without treating them as confirmed fires.
     steps:
       - Convert acquisition date and time into one timestamp column.
       - Filter detections above the 90th percentile of fire radiative power.
-      - Plot the remaining coordinates and describe the largest visible clusters.
+      - Plot the remaining coordinates, describe the largest clusters, and state why detections require confirmation.

@@ -1,8 +1,9 @@
 # Trilemma Data
 
-Find **actively maintained, authoritative datasets** and start a practical data science project.
+Explore **actively maintained, authoritative datasets** and follow a practical
+Python path from source to first analysis.
 
-> Find a dataset, understand what it needs, and reach a first insight with a guided Python start.
+> Choose a dataset. Build your first analysis.
 
 **Host:** [data.trilemma.foundation](https://data.trilemma.foundation)  
 **Stack:** Next.js + TypeScript + Vercel  
@@ -39,6 +40,20 @@ Vercel → data.trilemma.foundation
 ```
 
 No database, authentication, admin panel, backend service, or dataset storage.
+
+## Editing content
+
+Content has two explicit sources of truth:
+
+- Shared application, navigation, accessibility, and SEO copy lives in
+  [`src/content/site-copy.ts`](src/content/site-copy.ts).
+- Dataset descriptions and beginner guides live with their metadata in the
+  corresponding [`data/datasets/*.yaml`](data/datasets) file.
+
+Write in direct, practical language. Lead with the task a reader can complete,
+define provider-specific terms, and state the limitation that matters most.
+Avoid hype, unsupported claims, and generic encouragement. Shared copy is typed;
+dataset copy is validated by the existing YAML schema and validation commands.
 
 ## Local development
 

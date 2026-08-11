@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { datasetCardCopy } from "@/content/site-copy";
 
 export function DatasetCard({ dataset }: { dataset: Dataset }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
@@ -39,11 +40,11 @@ export function DatasetCard({ dataset }: { dataset: Dataset }) {
       <CardContent className="flex flex-1 flex-col gap-5">
         <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/8 bg-white/[0.025] p-3 text-xs">
           <div>
-            <p className="text-muted-foreground">Size</p>
+            <p className="text-muted-foreground">{datasetCardCopy.sizeLabel}</p>
             <p className="mt-1 font-medium text-white">{sizeRange}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">Format</p>
+            <p className="text-muted-foreground">{datasetCardCopy.formatLabel}</p>
             <p className="mt-1 font-medium text-white">{dataset.formats.join(", ")}</p>
           </div>
         </div>
@@ -61,13 +62,13 @@ export function DatasetCard({ dataset }: { dataset: Dataset }) {
 
         <p className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
           <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
-          {dataset.api_key_required ? "Free API key required" : "No API key required"}
+          {datasetCardCopy.apiKeyStatus(dataset.api_key_required)}
         </p>
       </CardContent>
 
       <CardFooter className="border-white/10 bg-white/[0.025]">
         <Link href={`/datasets/${dataset.id}`} className={cn(buttonVariants(), "w-full")}>
-          View guide <ArrowRight aria-hidden="true" />
+          {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />
         </Link>
       </CardFooter>
     </Card>

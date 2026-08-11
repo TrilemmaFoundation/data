@@ -1,6 +1,9 @@
 import type { Dataset } from "./schema";
 
 export const SITE_URL = "https://data.trilemma.foundation";
+export const FOUNDATION_URL = "https://www.trilemma.foundation/";
+export const CONTRIBUTE_URL =
+  "https://github.com/TrilemmaFoundation/data/blob/main/CONTRIBUTING.md";
 
 export function datasetPath(id: string): string {
   return `/datasets/${id}`;

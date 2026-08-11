@@ -1,8 +1,8 @@
 id: natural-earth
 name: Natural Earth
 description: >
-  Public-domain vector and raster map data at multiple scales for building
-  maps and performing spatial analysis.
+  Public-domain vector and raster layers at multiple scales for building maps,
+  comparing regions, and learning practical geospatial analysis.
 
 url: https://www.naturalearthdata.com/
 access_type:
@@ -50,16 +50,17 @@ last_verified: 2026-08-10
 
 getting_started:
   overview: >
-    Natural Earth offers small, public-domain map layers that are ideal for a
-    first geospatial notebook. The country boundaries make it easy to learn
-    coordinate systems, attributes, and choropleth maps.
+    Natural Earth provides compact, public-domain layers designed for clear
+    small-scale maps. Start with the 1:110m country boundaries to learn
+    attributes, coordinate systems, and thematic mapping. These generalized
+    boundaries are not authoritative for precise local or legal analysis.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
-    - A Python environment that can install GeoPandas
+    - A Python environment where GeoPandas and Matplotlib can be installed
   access_steps:
-    - Open Natural Earth and choose the 1:110m Admin 0 Countries layer.
-    - Download and extract the shapefile beside your notebook.
+    - Open the official Natural Earth site and select the 1:110m Admin 0 Countries layer.
+    - Download the layer and extract the shapefile beside your notebook.
   python:
     packages:
       - geopandas
@@ -74,9 +75,9 @@ getting_started:
       plt.axis("off")
       plt.show()
   first_project:
-    title: Build a world regions map
-    goal: Create and explain a map that colors countries by continent.
+    title: Compare world regions on one map
+    goal: Build a continent map and explain how geometry and projection choices affect its interpretation.
     steps:
       - Inspect the layer's geometry type and coordinate reference system.
       - Check for missing continent or geometry values.
-      - Create a labeled map and explain why the chosen projection matters.
+      - Create the map and explain how generalized boundaries and the chosen projection limit its use.

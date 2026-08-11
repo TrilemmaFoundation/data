@@ -1,8 +1,8 @@
 id: world-development-indicators
 name: World Development Indicators
 description: >
-  Comprehensive collection of development indicators covering countries and
-  regions over time, useful for economic analysis and forecasting.
+  Country and regional development indicators spanning economics, health,
+  education, and infrastructure for comparing change over time.
 
 url: https://databank.worldbank.org/source/world-development-indicators
 access_type:
@@ -51,16 +51,18 @@ last_verified: 2026-08-10
 
 getting_started:
   overview: >
-    World Development Indicators provides well-documented country-level time
-    series. Start with one indicator and a few countries before exploring the
-    full catalog.
+    World Development Indicators provides documented country-level time series
+    across many development topics. Start with one indicator and three countries
+    before exploring the wider catalog. Check the indicator definition and
+    missing values before comparing places or drawing conclusions.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection for the World Bank API
   access_steps:
-    - Open the official source and choose one indicator to investigate.
-    - Use the API example below or download a CSV from DataBank.
+    - Open the official source and review the definition and units for GDP per capita.
+    - Use the API example below or export GDP per capita from DataBank.
+    - Check country coverage and missing years before starting the comparison.
   python:
     packages:
       - pandas
@@ -77,8 +79,8 @@ getting_started:
       print(gdp.dropna().head())
   first_project:
     title: Compare GDP per person over time
-    goal: Compare long-term GDP-per-capita trends for three countries.
+    goal: Compare long-term GDP-per-capita patterns for three countries while accounting for missing observations.
     steps:
       - Filter the API result to three countries and convert year to an integer.
       - Plot one line per country using only non-null values.
-      - Describe one shared trend and one meaningful difference.
+      - Describe one shared pattern, one meaningful difference, and one limitation in the comparison.

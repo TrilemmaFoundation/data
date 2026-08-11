@@ -2,11 +2,11 @@
 # Filename (without .yaml) MUST match the `id` field.
 # Do not add fields beyond those listed here.
 
-id: example-dataset
-name: Example Dataset
+id: replace-with-dataset-id
+name: Replace with dataset name
 description: >
-  One or two sentences describing what the dataset contains and why it is
-  useful for data science projects.
+  Replace this with one concise sentence that states what the source contains
+  and the practical analysis it supports.
 
 url: https://example.com/dataset
 access_type:
@@ -20,19 +20,19 @@ size_gb_min: 0
 size_gb_max: 0.001
 formats:
   - CSV
-license: Provider data-use terms
+license: Replace with the provider's data-use terms
 license_url: https://example.com/data-terms
 # Case-insensitive text that uniquely identifies the intended HTML pages.
 url_checks:
-  source_marker: Example Dataset Downloads
-  license_marker: Example Provider Data Terms
+  source_marker: Replace with source page marker
+  license_marker: Replace with data-terms page marker
 
 domains:
-  - Biology
+  - Replace with domain
 data_types:
-  - Tabular
+  - Replace with data type
 tasks:
-  - Classification
+  - Replace with analysis task
 difficulty: beginner
 # Allowed values: beginner | intermediate | advanced
 
@@ -44,33 +44,35 @@ update_frequency: continuous
 # Allowed: continuous | near real time | daily | weekly | monthly | quarterly | annual | occasional
 # Static, archived, and discontinued datasets are not accepted.
 
-provider: Example Provider
+provider: Replace with provider name
 source_type: academic
 # Allowed values: government | intergovernmental | academic | nonprofit | company | community
-last_verified: 2026-08-10
+last_verified: YYYY-MM-DD
 # ISO date YYYY-MM-DD — re-verify the source and guide at least every 90 days.
 
 getting_started:
   overview: >
-    Explain in plain language why this dataset is a useful place to start.
+    Explain what the source provides, the smallest useful starting scope, and
+    the main limitation a beginner must understand. Use direct, practical
+    language and avoid unsupported claims.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
   access_steps:
-    - Open the official source using the link on the dataset page.
-    - Download the CSV file and save it beside your notebook.
+    - Replace with one imperative action that opens or authenticates with the source.
+    - Replace with one imperative action that retrieves a bounded sample.
   python:
     packages:
       - pandas
     code: |
       import pandas as pd
 
-      data = pd.read_csv("example.csv")
+      data = pd.read_csv("replace-with-filename.csv")
       print(data.head())
   first_project:
-    title: Explore the dataset
-    goal: Write one sentence describing the question the learner will answer.
+    title: Replace with a specific project title
+    goal: Replace with the single question the learner will answer.
     steps:
-      - Inspect the columns, data types, and missing values.
-      - Create one useful summary or visualization.
-      - Record one conclusion and one follow-up question.
+      - Replace with a concrete data preparation step.
+      - Replace with a focused analysis or visualization step.
+      - Replace with an interpretation step that states a limitation.

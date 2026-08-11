@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Roboto } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { SITE_URL } from "@/lib/seo";
+import { FOUNDATION_URL, SITE_URL } from "@/lib/seo";
+import { siteCopy } from "@/content/site-copy";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -18,38 +19,35 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Trilemma Data",
-    template: "%s · Trilemma Data",
+    default: siteCopy.name,
+    template: `%s · ${siteCopy.name}`,
   },
-  description:
-    "Find actively maintained, authoritative datasets and start a practical data science project.",
+  description: siteCopy.metadataDescription,
   referrer: "strict-origin-when-cross-origin",
-  applicationName: "Trilemma Data",
-  authors: [{ name: "Trilemma Foundation", url: "https://www.trilemma.foundation/" }],
-  creator: "Trilemma Foundation",
-  publisher: "Trilemma Foundation",
+  applicationName: siteCopy.name,
+  authors: [{ name: siteCopy.foundationName, url: FOUNDATION_URL }],
+  creator: siteCopy.foundationName,
+  publisher: siteCopy.foundationName,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
-    siteName: "Trilemma Data",
-    title: "Trilemma Data",
-    description:
-      "Find actively maintained, authoritative datasets and start a practical data science project.",
+    siteName: siteCopy.name,
+    title: siteCopy.name,
+    description: siteCopy.metadataDescription,
     images: [
       {
         url: "/foundation-white.webp",
         width: 1500,
         height: 303,
-        alt: "Trilemma Foundation",
+        alt: siteCopy.foundationName,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Trilemma Data",
-    description:
-      "Find actively maintained, authoritative datasets and start a practical data science project.",
+    title: siteCopy.name,
+    description: siteCopy.metadataDescription,
     images: ["/foundation-white.webp"],
   },
   icons: {
@@ -66,7 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <a href="#main-content" className="skip-link">
-          Skip to content
+          {siteCopy.skipLinkLabel}
         </a>
         <SiteHeader />
         <main id="main-content" className="flex-1" tabIndex={-1}>

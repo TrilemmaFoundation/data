@@ -2,7 +2,7 @@ id: polymarket-markets
 name: Polymarket Public Market Data
 description: >
   Continuously updated prediction-market questions, prices, liquidity, volume,
-  trades, and order books for studying forecasts and event-driven markets.
+  trades, and order books for analyzing forecasts and event-driven markets.
 
 url: https://docs.polymarket.com/market-data/overview
 access_type:
@@ -46,17 +46,18 @@ last_verified: 2026-08-10
 
 getting_started:
   overview: >
-    Polymarket's public Gamma API exposes live market metadata without an API
-    key. Start with a bounded page of active markets and treat prices as market
-    signals rather than guaranteed probabilities.
+    Polymarket's public Gamma API exposes current market metadata without an API
+    key. Start with a bounded page of active markets and save when the response
+    was retrieved. Treat prices as changing market signals, not guaranteed or
+    independently calibrated probabilities.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection
   access_steps:
-    - Read the official market-data overview and provider terms.
-    - Request a small page of active markets from the public Gamma API.
-    - Cache the response with a retrieval timestamp before analyzing it.
+    - Read the official market-data overview and provider terms before using the API.
+    - Request a bounded page of active markets from the public Gamma API.
+    - Attach a retrieval timestamp to the response before comparing markets.
   python:
     packages:
       - pandas
@@ -77,9 +78,9 @@ getting_started:
       markets["retrieved_at"] = datetime.now(timezone.utc)
       print(markets[["question", "volume", "liquidity"]].head())
   first_project:
-    title: Compare active market liquidity
-    goal: Find which active questions attract the deepest and most active markets.
+    title: Compare liquidity across active markets
+    goal: Identify which active questions have the deepest markets and test whether liquidity and volume tell the same story.
     steps:
       - Convert volume and liquidity fields to numeric values and inspect missing data.
       - Rank markets by liquidity and compare that ranking with trading volume.
-      - Explain why market price, liquidity, and forecast quality are different concepts.
+      - Explain why price, liquidity, trading volume, and forecast quality are different concepts.

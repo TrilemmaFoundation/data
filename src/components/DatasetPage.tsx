@@ -13,19 +13,14 @@ import { CopyButton } from "@/components/CopyButton";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const ACCESS_TYPE_LABELS: Record<Dataset["access_type"][number], string> = {
-  download: "Download",
-  api: "API",
-  both: "Download and API",
-};
+import {
+  datasetGuideCopy,
+  difficultyDescriptions,
+  siteCopy,
+} from "@/content/site-copy";
 
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-function indefiniteArticle(value: string): "a" | "an" {
-  return /^[aeiou]/i.test(value) ? "an" : "a";
 }
 
 function ConceptPills({
@@ -57,21 +52,25 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
   const guide = dataset.getting_started;
   const installCommand = `python -m pip install ${guide.python.packages.join(" ")}`;
 
-  const difficulty = {
-    beginner: "Beginner — comfortable for a first project",
-    intermediate: "Intermediate — some data preparation helps",
-    advanced: "Advanced — expect specialized tools or domain knowledge",
-  }[dataset.difficulty];
+  const difficulty = difficultyDescriptions[dataset.difficulty];
   const facts: Array<[string, ReactNode]> = [
-    ["Difficulty", difficulty],
-    ["Size", `${sizeCategory} · ${sizeRange}`],
-    ["Formats", dataset.formats.join(", ")],
-    ["Access", dataset.access_type.map((type) => ACCESS_TYPE_LABELS[type]).join(" or ")],
-    ["API key", dataset.api_key_required ? "Required" : "Not required"],
-    ["Provider", dataset.provider],
-    ["Updates", capitalize(dataset.update_frequency)],
+    [datasetGuideCopy.factLabels.difficulty, difficulty],
+    [datasetGuideCopy.factLabels.size, `${sizeCategory} · ${sizeRange}`],
+    [datasetGuideCopy.factLabels.formats, dataset.formats.join(", ")],
     [
-      "Data terms",
+      datasetGuideCopy.factLabels.access,
+      datasetGuideCopy.accessTypes(dataset.access_type),
+    ],
+    [
+      datasetGuideCopy.factLabels.apiKey,
+      dataset.api_key_required
+        ? datasetGuideCopy.apiKeyRequiredLabel
+        : datasetGuideCopy.apiKeyNotRequiredLabel,
+    ],
+    [datasetGuideCopy.factLabels.provider, dataset.provider],
+    [datasetGuideCopy.factLabels.updates, capitalize(dataset.update_frequency)],
+    [
+      datasetGuideCopy.factLabels.dataTerms,
       <a
         key="license"
         href={dataset.license_url}
@@ -86,11 +85,14 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <nav aria-label="Breadcrumb" className="mb-7 text-sm text-muted-foreground">
+      <nav
+        aria-label={datasetGuideCopy.breadcrumbAriaLabel}
+        className="mb-7 text-sm text-muted-foreground"
+      >
         <ol className="flex flex-wrap items-center gap-2">
           <li>
             <Link href="/" className="rounded-sm hover:text-primary">
-              Datasets
+              {siteCopy.datasetsNavigationLabel}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
@@ -102,7 +104,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
 
       <header className="max-w-4xl">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="eyebrow">Dataset guide</span>
+          <span className="eyebrow">{datasetGuideCopy.guideEyebrow}</span>
           <Badge variant="secondary" className="capitalize">
             {dataset.difficulty}
           </Badge>
@@ -115,7 +117,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           <a href="#getting-started" className={cn(buttonVariants({ size: "lg" }))}>
-            Start with this dataset <ArrowDown aria-hidden="true" />
+            {datasetGuideCopy.startGuideLabel} <ArrowDown aria-hidden="true" />
           </a>
           <a
             href={dataset.url}
@@ -123,14 +125,14 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             rel="noopener noreferrer"
             className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
           >
-            Official source <ExternalLink aria-hidden="true" />
+            {datasetGuideCopy.officialSourceLabel} <ExternalLink aria-hidden="true" />
           </a>
         </div>
       </header>
 
       <section className="surface mt-10 p-5 sm:p-7" aria-labelledby="at-a-glance">
         <h2 id="at-a-glance" className="text-xl font-semibold text-white">
-          At a glance
+          {datasetGuideCopy.atAGlanceTitle}
         </h2>
         <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
           {facts.map(([label, value]) => (
@@ -146,9 +148,9 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
 
       <section id="getting-started" className="scroll-mt-24 pt-16" aria-labelledby="guide-title">
         <div className="max-w-3xl">
-          <p className="eyebrow">Beginner guide</p>
+          <p className="eyebrow">{datasetGuideCopy.beginnerGuideEyebrow}</p>
           <h2 id="guide-title" className="mt-2 text-3xl font-bold text-white sm:text-4xl">
-            Get started in four steps
+            {datasetGuideCopy.guideTitle}
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">{guide.overview}</p>
         </div>
@@ -158,7 +160,9 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-primary">
               1
             </span>
-            <h3 className="mt-5 text-xl font-semibold text-white">Before you start</h3>
+            <h3 className="mt-5 text-xl font-semibold text-white">
+              {datasetGuideCopy.setupTitle}
+            </h3>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               {guide.prerequisites.map((item) => (
                 <li key={item} className="flex gap-3">
@@ -173,7 +177,9 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-primary">
               2
             </span>
-            <h3 className="mt-5 text-xl font-semibold text-white">Get the data</h3>
+            <h3 className="mt-5 text-xl font-semibold text-white">
+              {datasetGuideCopy.accessTitle}
+            </h3>
             <ol className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               {guide.access_steps.map((item, index) => (
                 <li key={item} className="flex gap-3">
@@ -188,7 +194,8 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               rel="noopener noreferrer"
               className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-semibold text-primary hover:text-white"
             >
-              Open official source <ExternalLink className="size-4" aria-hidden="true" />
+              {datasetGuideCopy.officialSourceLabel}{" "}
+              <ExternalLink className="size-4" aria-hidden="true" />
             </a>
           </article>
 
@@ -199,8 +206,12 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                   3
                 </span>
                 <div>
-                  <h3 className="font-semibold text-white">Load it in Python</h3>
-                  <p className="text-xs text-muted-foreground">Install the packages, then run the notebook cell.</p>
+                  <h3 className="font-semibold text-white">
+                    {datasetGuideCopy.pythonTitle}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {datasetGuideCopy.pythonDescription}
+                  </p>
                 </div>
               </div>
               <CopyButton value={guide.python.code} />
@@ -208,7 +219,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             <div
               className="overflow-x-auto bg-[#080910] p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
               tabIndex={0}
-              aria-label="Python example"
+              aria-label={datasetGuideCopy.pythonExampleAriaLabel}
             >
               <p className="mb-4 font-mono text-xs text-secondary">{installCommand}</p>
               <pre className="min-w-max font-mono text-[0.82rem] leading-6 text-white/85">
@@ -225,7 +236,9 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-primary">
                   <Lightbulb className="size-5" aria-hidden="true" />
-                  <p className="text-xs font-bold tracking-wider uppercase">First project</p>
+                  <p className="text-xs font-bold tracking-wider uppercase">
+                    {datasetGuideCopy.firstProjectEyebrow}
+                  </p>
                 </div>
                 <h3 className="mt-2 text-xl font-semibold text-white">{guide.first_project.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.first_project.goal}</p>
@@ -251,19 +264,45 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             <TerminalSquare className="mt-1 size-6 shrink-0 text-secondary" aria-hidden="true" />
             <div>
               <h2 id="explore-title" className="text-xl font-semibold text-white">
-                Dataset details
+                {datasetGuideCopy.detailsTitle}
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {dataset.provider} is {indefiniteArticle(dataset.source_type)} {dataset.source_type} source. Last verified {dataset.last_verified}. Temporal coverage: {dataset.temporal_coverage ?? "not applicable"}.
+                {datasetGuideCopy.detailsSummary({
+                  provider: dataset.provider,
+                  sourceType: dataset.source_type,
+                  lastVerified: dataset.last_verified,
+                  temporalCoverage: dataset.temporal_coverage,
+                })}
               </p>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                <ConceptPills label="Domains" values={dataset.domains} />
-                <ConceptPills label="Data types" values={dataset.data_types} />
-                <ConceptPills label="Tasks" values={dataset.tasks} />
-                <ConceptPills label="Geography" values={dataset.geography} />
-                <ConceptPills label="Formats" values={dataset.formats} />
-                <ConceptPills label="Provider" values={[dataset.provider]} />
-                <ConceptPills label="Data terms" values={[dataset.license]} />
+                <ConceptPills
+                  label={datasetGuideCopy.conceptLabels.domains}
+                  values={dataset.domains}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.conceptLabels.dataTypes}
+                  values={dataset.data_types}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.conceptLabels.tasks}
+                  values={dataset.tasks}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.conceptLabels.geography}
+                  values={dataset.geography}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.factLabels.formats}
+                  values={dataset.formats}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.factLabels.provider}
+                  values={[dataset.provider]}
+                />
+                <ConceptPills
+                  label={datasetGuideCopy.factLabels.dataTerms}
+                  values={[dataset.license]}
+                />
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@ id: usgs-earthquakes
 name: USGS Earthquake Catalog
 description: >
   Continuously updated earthquake locations, magnitudes, depths, timestamps,
-  and review status for seismic monitoring and geospatial risk analysis.
+  and review status for monitoring seismic activity and spatial patterns.
 
 url: https://earthquake.usgs.gov/fdsnws/event/1/
 access_type:
@@ -50,16 +50,17 @@ last_verified: 2026-08-10
 getting_started:
   overview: >
     The USGS Event Web Service provides current and historical earthquake
-    records through bounded queries. A recent seven-day window is small enough
-    for a first notebook while still reflecting real operational data.
+    records through bounded queries. Start with a recent seven-day window that
+    is small enough to inspect in one notebook. Conclusions from that short,
+    changing sample should not be treated as long-term seismic trends.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection
   access_steps:
-    - Open the official API documentation and review the query limits.
-    - Request GeoJSON for a recent bounded time window.
-    - Preserve the response metadata and retrieval time with your analysis.
+    - Open the official API documentation and review its query parameters and limits.
+    - Request GeoJSON for a recent seven-day window.
+    - Record the seven-day query window and note when you ran the analysis.
   python:
     packages:
       - pandas
@@ -81,8 +82,8 @@ getting_started:
       print(earthquakes[["properties.mag", "properties.place", "properties.time"]].head())
   first_project:
     title: Profile the past week's earthquakes
-    goal: Describe where and how strongly earthquakes occurred during the last seven days.
+    goal: Describe where earthquakes were recorded during the last seven days and how their reported magnitudes were distributed.
     steps:
       - Convert event timestamps from milliseconds to UTC datetimes.
       - Plot the magnitude distribution and map events with magnitude 4 or greater.
-      - Summarize the strongest event and note the limits of a seven-day sample.
+      - Summarize the strongest reported event and explain why a seven-day sample cannot establish a long-term trend.
