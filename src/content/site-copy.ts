@@ -167,7 +167,7 @@ export const copyButtonCopy = {
 
 export const notFoundCopy = {
   eyebrow: "404",
-  title: "Dataset not found",
-  description: "This dataset is not in the catalog. It may have been renamed or removed.",
+  title: "Page not found",
+  description: "This page is not available. Browse the catalog to find a maintained dataset.",
   backLabel: "Back to datasets",
 } as const;

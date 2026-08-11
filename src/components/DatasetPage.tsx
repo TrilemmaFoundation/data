@@ -37,7 +37,11 @@ function ConceptPills({
       </h3>
       <div className="mt-2 flex flex-wrap gap-2">
         {values.map((value) => (
-          <Badge key={value} variant="outline">
+          <Badge
+            key={value}
+            variant="outline"
+            className="h-auto max-w-full justify-start whitespace-normal"
+          >
             {value}
           </Badge>
         ))}
@@ -262,7 +266,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
         <div className="surface p-6 sm:p-7">
           <div className="flex items-start gap-4">
             <TerminalSquare className="mt-1 size-6 shrink-0 text-secondary" aria-hidden="true" />
-            <div>
+            <div className="min-w-0 flex-1">
               <h2 id="explore-title" className="text-xl font-semibold text-white">
                 {datasetGuideCopy.detailsTitle}
               </h2>

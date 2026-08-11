@@ -5,6 +5,7 @@ import {
   datasetGuideCopy,
   filterChipPrefixes,
   filterCopy,
+  notFoundCopy,
   siteCopy,
 } from "../src/content/site-copy";
 import { getAllDatasets } from "../src/lib/datasets";
@@ -222,4 +223,35 @@ test("application copy reflows across supported viewport widths", async ({ page 
     }));
     expect(documentWidth.scroll).toBe(documentWidth.client);
   }
+});
+
+test("every dataset guide reflows on a mobile viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 900 });
+
+  for (const dataset of getAllDatasets()) {
+    await page.goto(`/datasets/${dataset.id}`);
+    await expect(
+      page.getByRole("heading", { level: 1, name: dataset.name }),
+    ).toBeVisible();
+
+    const widths = await page.evaluate(() => ({
+      client: document.documentElement.clientWidth,
+      scroll: document.documentElement.scrollWidth,
+    }));
+    expect(widths.scroll, `${dataset.id} should not scroll horizontally`).toBe(
+      widths.client,
+    );
+  }
+});
+
+test("the global not-found page offers route-neutral recovery", async ({ page }) => {
+  await page.goto("/missing-page");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: notFoundCopy.title }),
+  ).toBeVisible();
+  await expect(page.getByText(notFoundCopy.description)).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: notFoundCopy.backLabel }),
+  ).toHaveAttribute("href", "/");
 });

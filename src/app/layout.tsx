@@ -51,7 +51,6 @@ export const metadata: Metadata = {
     images: ["/foundation-white.webp"],
   },
   icons: {
-    icon: "/favicon-32x32.png",
     apple: "/apple-touch-icon.png",
   },
 };
