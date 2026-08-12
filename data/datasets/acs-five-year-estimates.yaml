@@ -4,6 +4,7 @@ description: >
   Annual U.S. demographic, housing, social, and economic estimates for building
   local market-sizing, site-selection, and community comparison tools.
 
+theme: Demographics & Development
 url: https://www.census.gov/data/developers/data-sets/acs-5year.html
 access_type:
   - api

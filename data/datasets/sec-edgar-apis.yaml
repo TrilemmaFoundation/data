@@ -4,6 +4,7 @@ description: >
   Real-time public-company filing histories and structured financial facts for
   building disclosure alerts, research tools, and company monitors.
 
+theme: Markets & Economics
 url: https://www.sec.gov/search-filings/edgar-application-programming-interfaces
 access_type:
   - api

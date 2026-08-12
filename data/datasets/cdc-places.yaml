@@ -4,6 +4,7 @@ description: >
   Modeled local health estimates for U.S. counties and smaller areas for
   building community-health comparisons and resource-planning tools.
 
+theme: Health, Food & Safety
 url: https://www.cdc.gov/places/tools/data-portal.html
 access_type:
   - api

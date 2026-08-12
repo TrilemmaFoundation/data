@@ -68,13 +68,9 @@ export function DatasetCard({
         </div>
 
         <div>
-          <div className="flex flex-wrap gap-1.5">
-            {dataset.domains.map((domain) => (
-              <Badge key={domain} variant="outline" className="rounded-full">
-                {domain}
-              </Badge>
-            ))}
-          </div>
+          <Badge variant="outline" className="h-auto rounded-full whitespace-normal">
+            {dataset.theme}
+          </Badge>
           <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
             {dataset.tasks.join(" · ")}
           </p>

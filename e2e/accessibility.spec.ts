@@ -9,7 +9,14 @@ async function expectNoAccessibilityViolations(page: Page) {
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 
-test("catalog and mobile filter drawer pass automated accessibility checks", async ({ page }) => {
+test("desktop catalog table passes automated accessibility checks", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await expect(page.getByRole("table")).toBeVisible();
+  await expectNoAccessibilityViolations(page);
+});
+
+test("mobile catalog and filter drawer pass automated accessibility checks", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expectNoAccessibilityViolations(page);
@@ -23,7 +30,7 @@ test("catalog and mobile filter drawer pass automated accessibility checks", asy
   await expectNoAccessibilityViolations(page);
   await page.keyboard.press("Escape");
 
-  await page.getByRole("button", { name: filterCopy.title, exact: true }).click();
+  await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expectNoAccessibilityViolations(page);
 });

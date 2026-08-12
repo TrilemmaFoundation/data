@@ -4,6 +4,7 @@ description: >
   FDA adverse-event reports for exploring reported drug reactions and building
   bounded pharmacovigilance research tools.
 
+theme: Health, Food & Safety
 url: https://open.fda.gov/apis/drug/event/
 access_type:
   - api

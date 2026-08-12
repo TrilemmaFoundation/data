@@ -4,6 +4,7 @@ description: >
   Daily vehicle, tire, child-seat, and equipment recall records for building
   safety lookups, fleet monitors, and owner notification tools.
 
+theme: Health, Food & Safety
 url: https://www.nhtsa.gov/nhtsa-datasets-and-apis
 access_type:
   - api

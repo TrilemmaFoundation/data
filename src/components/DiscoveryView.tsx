@@ -8,11 +8,14 @@ import {
   EMPTY_FILTERS,
   filterDatasets,
   getFilterOptions,
+  sortDatasets,
+  type CatalogSort,
   type DatasetFilters as Filters,
 } from "@/lib/search";
-import { filtersToParams, parseFilters } from "@/lib/filter-params";
+import { filtersToParams, parseFilters, parseSort } from "@/lib/filter-params";
 import { DatasetCard } from "@/components/DatasetCard";
-import { DatasetFilters } from "@/components/DatasetFilters";
+import { DatasetFilters, DatasetQuickFilters } from "@/components/DatasetFilters";
+import { DatasetTable } from "@/components/DatasetTable";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -33,11 +36,32 @@ function activeChips(filters: Filters): ActiveChip[] {
       next: { ...filters, query: "" },
     });
   }
+  if (filters.theme) {
+    chips.push({
+      key: "theme",
+      label: `${filterChipPrefixes.theme}: ${filters.theme}`,
+      next: { ...filters, theme: null },
+    });
+  }
+  if (filters.accessMethod) {
+    const access = filters.accessMethod === "api" ? "API" : "Download";
+    chips.push({
+      key: "access",
+      label: `${filterChipPrefixes.accessMethod}: ${access}`,
+      next: { ...filters, accessMethod: null },
+    });
+  }
+  if (filters.difficulty) {
+    chips.push({
+      key: "difficulty",
+      label: `${filterChipPrefixes.difficulty}: ${filters.difficulty}`,
+      next: { ...filters, difficulty: null },
+    });
+  }
   const groups: Array<[keyof Filters, string[], string]> = [
     ["domains", filters.domains, filterChipPrefixes.domains],
     ["dataTypes", filters.dataTypes, filterChipPrefixes.dataTypes],
     ["tasks", filters.tasks, filterChipPrefixes.tasks],
-    ["difficulties", filters.difficulties, filterChipPrefixes.difficulties],
     ["sizes", filters.sizes, filterChipPrefixes.sizes],
     ["formats", filters.formats, filterChipPrefixes.formats],
     ["geographies", filters.geographies, filterChipPrefixes.geographies],
@@ -63,16 +87,49 @@ function activeChips(filters: Filters): ActiveChip[] {
   return chips;
 }
 
+function reconcileFilterChange(
+  rendered: Filters,
+  next: Filters,
+  latest: Filters,
+): Filters {
+  if (next === EMPTY_FILTERS) return EMPTY_FILTERS;
+  return {
+    query: next.query !== rendered.query ? next.query : latest.query,
+    theme: next.theme !== rendered.theme ? next.theme : latest.theme,
+    accessMethod: next.accessMethod !== rendered.accessMethod
+      ? next.accessMethod
+      : latest.accessMethod,
+    difficulty: next.difficulty !== rendered.difficulty
+      ? next.difficulty
+      : latest.difficulty,
+    domains: next.domains !== rendered.domains ? next.domains : latest.domains,
+    dataTypes: next.dataTypes !== rendered.dataTypes ? next.dataTypes : latest.dataTypes,
+    tasks: next.tasks !== rendered.tasks ? next.tasks : latest.tasks,
+    sizes: next.sizes !== rendered.sizes ? next.sizes : latest.sizes,
+    formats: next.formats !== rendered.formats ? next.formats : latest.formats,
+    apiKeyRequired: next.apiKeyRequired !== rendered.apiKeyRequired
+      ? next.apiKeyRequired
+      : latest.apiKeyRequired,
+    geographies: next.geographies !== rendered.geographies
+      ? next.geographies
+      : latest.geographies,
+  };
+}
+
 export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const filterOptions = useMemo(() => getFilterOptions(datasets), [datasets]);
-  const filters = useMemo(
-    () => parseFilters(new URLSearchParams(searchParams.toString()), filterOptions),
-    [filterOptions, searchParams],
+  const params = useMemo(
+    () => new URLSearchParams(searchParams.toString()),
+    [searchParams],
   );
+  const filters = useMemo(() => parseFilters(params, filterOptions), [filterOptions, params]);
+  const sort = useMemo(() => parseSort(params), [params]);
   const filtersRef = useRef(filters);
+  const sortRef = useRef<CatalogSort>(sort);
+  const searchUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const resultsTitleRef = useRef<HTMLHeadingElement>(null);
   const filterDialogRef = useRef<HTMLDialogElement>(null);
@@ -88,20 +145,29 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     if (!recommended || results[0] === recommended) return results;
     return [recommended, ...results.filter((dataset) => dataset !== recommended)];
   }, [isUnfiltered, results]);
+  const mobileResults = useMemo(
+    () => sortDatasets(displayedResults, sort),
+    [displayedResults, sort],
+  );
 
-  const updateFilters = useCallback(
-    (next: Filters) => {
-      filtersRef.current = next;
-      const query = filtersToParams(next).toString();
-      const href = query ? `${pathname}?${query}` : pathname;
-      router.replace(href, { scroll: false });
+  const updateState = useCallback(
+    (nextFilters: Filters, nextSort: CatalogSort) => {
+      filtersRef.current = nextFilters;
+      sortRef.current = nextSort;
+      const query = filtersToParams(nextFilters, nextSort).toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
     [pathname, router],
   );
 
   useEffect(() => {
     filtersRef.current = filters;
-  }, [filters]);
+    sortRef.current = sort;
+  }, [filters, sort]);
+
+  useEffect(() => () => {
+    if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
+  }, []);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)");
@@ -114,9 +180,10 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   useEffect(() => {
     const syncQuery = () => {
+      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
+      searchUpdateRef.current = null;
       if (searchRef.current) {
-        searchRef.current.value =
-          new URLSearchParams(window.location.search).get("q") ?? "";
+        searchRef.current.value = new URLSearchParams(window.location.search).get("q") ?? "";
       }
     };
     window.addEventListener("popstate", syncQuery);
@@ -125,10 +192,30 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   const handleChange = useCallback(
     (next: Filters) => {
-      if (searchRef.current) searchRef.current.value = next.query;
-      updateFilters(next);
+      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
+      searchUpdateRef.current = null;
+      const synchronized = reconcileFilterChange(filters, next, filtersRef.current);
+      if (searchRef.current) searchRef.current.value = synchronized.query;
+      updateState(synchronized, sortRef.current);
     },
-    [updateFilters],
+    [filters, updateState],
+  );
+
+  const handleSearchChange = useCallback(
+    (query: string) => {
+      filtersRef.current = { ...filtersRef.current, query };
+      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
+      searchUpdateRef.current = setTimeout(() => {
+        searchUpdateRef.current = null;
+        updateState(filtersRef.current, sortRef.current);
+      }, 150);
+    },
+    [updateState],
+  );
+
+  const handleSortChange = useCallback(
+    (next: CatalogSort) => updateState(filtersRef.current, next),
+    [updateState],
   );
 
   const browseCatalog = useCallback(() => {
@@ -151,19 +238,14 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
             >
               {catalogCopy.heroTitle}
             </h1>
-
             <Button size="lg" className="mt-7" onClick={browseCatalog}>
               {catalogCopy.browseDatasets(datasets.length)}
               <ArrowDown aria-hidden="true" />
             </Button>
-
             <ul className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/80">
               {catalogCopy.heroProofLabels.map((label) => (
                 <li key={label} className="flex items-center gap-2">
-                  <span
-                    className="size-1.5 rounded-full bg-primary"
-                    aria-hidden="true"
-                  />
+                  <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {label}
                 </li>
               ))}
@@ -171,22 +253,10 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
           </div>
         </section>
 
-        <div className="mt-4 grid gap-8 border-t border-white/20 pt-8 sm:mt-6 sm:pt-10 lg:grid-cols-[260px_1fr]">
-          <aside
-            aria-label={filterCopy.title}
-            className="surface sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain p-5 [scrollbar-gutter:stable] lg:block"
-          >
-            <DatasetFilters
-              options={filterOptions}
-              filters={filters}
-              onChange={handleChange}
-            />
-          </aside>
-
         <section
           id="dataset-catalog"
           aria-labelledby="results-title"
-          className="scroll-mt-24"
+          className="mt-4 scroll-mt-24 border-t border-white/20 pt-8 sm:mt-6 sm:pt-10"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -203,19 +273,26 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
                 {catalogCopy.resultStatus(results.length)}
               </p>
             </div>
-            <button
-              ref={filterTriggerRef}
-              type="button"
-              className={cn(buttonVariants({ variant: "outline" }), "lg:hidden")}
-              onClick={() => filterDialogRef.current?.showModal()}
-            >
-              <Filter aria-hidden="true" /> {filterCopy.title}
+            <div className="flex flex-wrap items-center gap-2">
               {chips.length > 0 && (
-                <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
-                  {chips.length}
-                </span>
+                <Button variant="ghost" onClick={() => handleChange(EMPTY_FILTERS)}>
+                  {filterCopy.clearAllLabel}
+                </Button>
               )}
-            </button>
+              <button
+                ref={filterTriggerRef}
+                type="button"
+                className={cn(buttonVariants({ variant: "outline" }))}
+                onClick={() => filterDialogRef.current?.showModal()}
+              >
+                <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
+                {chips.length > 0 && (
+                  <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
+                    {chips.length}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           <label htmlFor="dataset-search" className="mt-5 block text-sm font-semibold text-white">
@@ -231,19 +308,22 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               ref={searchRef}
               type="search"
               defaultValue={filters.query}
-              onChange={(event) => {
-                updateFilters({ ...filtersRef.current, query: event.target.value });
-              }}
+              onChange={(event) => handleSearchChange(event.target.value)}
               placeholder={catalogCopy.searchPlaceholder}
               className="h-13 border-white/15 pr-4 pl-12 text-base shadow-[0_4px_4px_rgba(10,10,20,0.45)] placeholder:text-white/40"
             />
           </div>
 
+          <DatasetQuickFilters
+            idPrefix="desktop"
+            options={filterOptions}
+            filters={filters}
+            onChange={handleChange}
+            className="mt-5 hidden lg:grid"
+          />
+
           {chips.length > 0 && (
-            <div
-              className="mt-5 flex flex-wrap gap-2"
-              aria-label={catalogCopy.activeFiltersAriaLabel}
-            >
+            <div className="mt-5 flex flex-wrap gap-2" aria-label={catalogCopy.activeFiltersAriaLabel}>
               {chips.map((chip) => (
                 <button
                   key={chip.key}
@@ -260,53 +340,48 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
           {results.length === 0 ? (
             <div className="surface mt-6 px-6 py-14 text-center">
-              <h3 className="text-xl font-semibold text-white">
-                {catalogCopy.emptyTitle}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {catalogCopy.emptyDescription}
-              </p>
+              <h3 className="text-xl font-semibold text-white">{catalogCopy.emptyTitle}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{catalogCopy.emptyDescription}</p>
               <Button className="mt-5" onClick={() => handleChange(EMPTY_FILTERS)}>
                 {catalogCopy.clearFiltersLabel}
               </Button>
             </div>
           ) : (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {displayedResults.map((dataset) => (
-                <DatasetCard
-                  key={dataset.id}
-                  dataset={dataset}
-                  featured={
-                    isUnfiltered && dataset.id === catalogCopy.recommendedDatasetId
-                  }
+            <>
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:hidden">
+                {mobileResults.map((dataset) => (
+                  <DatasetCard
+                    key={dataset.id}
+                    dataset={dataset}
+                    featured={isUnfiltered && dataset.id === catalogCopy.recommendedDatasetId}
+                  />
+                ))}
+              </div>
+              <div className="mt-6 hidden lg:block">
+                <DatasetTable
+                  datasets={displayedResults}
+                  sort={sort}
+                  onSortChange={handleSortChange}
+                  featuredId={isUnfiltered ? catalogCopy.recommendedDatasetId : undefined}
                 />
-              ))}
-            </div>
+              </div>
+            </>
           )}
-          </section>
-        </div>
+        </section>
       </div>
 
       <dialog
         ref={filterDialogRef}
         aria-labelledby="filter-dialog-title"
         aria-describedby="filter-dialog-description"
-        className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,26rem)] max-w-none border-0 border-l border-white/10 bg-brand-black p-0 text-white shadow-[0_4px_4px_rgba(10,10,20,0.65)] backdrop:bg-brand-black/80 backdrop:backdrop-blur-sm"
-        onClose={() => {
-          if (!window.matchMedia("(min-width: 1024px)").matches) {
-            filterTriggerRef.current?.focus();
-          }
-        }}
+        className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,28rem)] max-w-none border-0 border-l border-white/10 bg-brand-black p-0 text-white shadow-[0_4px_4px_rgba(10,10,20,0.65)] backdrop:bg-brand-black/80 backdrop:backdrop-blur-sm"
+        onClose={() => filterTriggerRef.current?.focus()}
       >
         <div className="flex h-full flex-col">
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-brand-black/95 px-5 py-4 backdrop-blur">
             <div>
-              <h2 id="filter-dialog-title" className="text-lg font-semibold">
-                {catalogCopy.drawerTitle}
-              </h2>
-              <p id="filter-dialog-description" className="sr-only">
-                {catalogCopy.drawerDescription}
-              </p>
+              <h2 id="filter-dialog-title" className="text-lg font-semibold">{catalogCopy.drawerTitle}</h2>
+              <p id="filter-dialog-description" className="sr-only">{catalogCopy.drawerDescription}</p>
             </div>
             <button
               type="button"
@@ -317,12 +392,15 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               <X aria-hidden="true" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-5">
-            <DatasetFilters
+          <div className="flex-1 space-y-7 overflow-y-auto p-5">
+            <DatasetQuickFilters
+              idPrefix="drawer"
               options={filterOptions}
               filters={filters}
               onChange={handleChange}
+              className="lg:hidden"
             />
+            <DatasetFilters options={filterOptions} filters={filters} onChange={handleChange} />
           </div>
           <div className="sticky bottom-0 border-t border-white/10 bg-brand-black/95 p-4 backdrop-blur">
             <button

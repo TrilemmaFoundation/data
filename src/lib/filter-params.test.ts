@@ -4,10 +4,13 @@ import type { FilterOptions } from "./search";
 import {
   filtersToParams,
   parseFilters,
+  parseSort,
 } from "./filter-params";
 
 describe("filter URL helpers", () => {
   const options: FilterOptions = {
+    themes: ["Environment & Hazards", "Research & Reference"],
+    accessMethods: ["api", "download"],
     domains: ["Biology", "Geography"],
     dataTypes: ["Geospatial", "Tabular"],
     tasks: ["Classification", "GIS"],
@@ -20,10 +23,12 @@ describe("filter URL helpers", () => {
   it("round-trips every supported filter", () => {
     const filters = {
       query: "maps",
+      theme: "Research & Reference" as const,
+      accessMethod: "download" as const,
+      difficulty: "beginner" as const,
       domains: ["Geography"],
       dataTypes: ["Geospatial"],
       tasks: ["GIS"],
-      difficulties: ["beginner"],
       sizes: ["Tiny" as const],
       formats: ["CSV"],
       apiKeyRequired: false,
@@ -78,7 +83,7 @@ describe("filter URL helpers", () => {
       domains: ["Biology"],
       dataTypes: [],
       tasks: ["GIS"],
-      difficulties: [],
+      difficulty: null,
       formats: ["CSV"],
       geographies: ["Global"],
     });
@@ -94,5 +99,14 @@ describe("filter URL helpers", () => {
     expect(
       parseFilters(new URLSearchParams("q=+company+filings+"), options).query,
     ).toBe("company filings");
+  });
+
+  it("round-trips validated sorting and rejects unknown values", () => {
+    const sort = { id: "updates" as const, desc: true };
+    const params = filtersToParams(EMPTY_FILTERS, sort);
+    expect(parseSort(params)).toEqual(sort);
+    expect(parseSort(new URLSearchParams("sort=name"))).toEqual({ id: "name", desc: false });
+    expect(parseSort(new URLSearchParams("sort=unknown&order=desc"))).toBeNull();
+    expect(parseSort(new URLSearchParams("sort=name&order=sideways"))).toBeNull();
   });
 });

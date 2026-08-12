@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
 import {
   copyButtonCopy,
-  datasetCardCopy,
   datasetGuideCopy,
 } from "../src/content/site-copy";
 
 test("a beginner can open and copy a complete dataset guide", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: datasetCardCopy.viewGuideLabel }).first().click();
+  await page.getByRole("table").getByRole("link").first().click();
 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { name: datasetGuideCopy.guideTitle })).toBeVisible();

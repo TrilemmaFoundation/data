@@ -4,6 +4,7 @@ description: >
   Official coastal water levels, tide predictions, currents, and station
   metadata for building harbor, shoreline, and marine-planning tools.
 
+theme: Environment & Hazards
 url: https://api.tidesandcurrents.noaa.gov/api/prod/
 access_type:
   - api

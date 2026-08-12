@@ -6,6 +6,17 @@ export const DifficultySchema = z.enum([
   "intermediate",
   "advanced",
 ]);
+export const DATASET_THEMES = [
+  "Environment & Hazards",
+  "Government & Policy",
+  "Markets & Economics",
+  "Health, Food & Safety",
+  "Geospatial & Infrastructure",
+  "Research & Reference",
+  "Technology & Cybersecurity",
+  "Demographics & Development",
+] as const;
+export const DatasetThemeSchema = z.enum(DATASET_THEMES);
 export const SourceTypeSchema = z.enum([
   "government",
   "intergovernmental",
@@ -110,6 +121,7 @@ export const DatasetSchema = z
     id: z.string().max(100).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
     name: NonEmptyStringSchema,
     description: NonEmptyStringSchema,
+    theme: DatasetThemeSchema,
 
     url: HttpsUrlSchema,
     access_type: UniqueAccessTypesSchema,
@@ -143,13 +155,17 @@ export const DatasetSchema = z
   });
 
 export type Dataset = z.infer<typeof DatasetSchema>;
+export type DatasetTheme = z.infer<typeof DatasetThemeSchema>;
 
 export type CatalogDataset = Pick<
   Dataset,
   | "id"
   | "name"
   | "description"
+  | "theme"
   | "provider"
+  | "access_type"
+  | "update_frequency"
   | "domains"
   | "tasks"
   | "data_types"

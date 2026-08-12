@@ -4,6 +4,7 @@ description: >
   Live and historical event-contract markets, prices, volume, and order books
   for building market monitors, alerts, and comparison tools.
 
+theme: Markets & Economics
 url: https://docs.kalshi.com/getting_started/quick_start_market_data
 access_type:
   - api

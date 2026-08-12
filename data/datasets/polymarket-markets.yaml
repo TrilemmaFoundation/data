@@ -4,6 +4,7 @@ description: >
   Continuously updated prediction-market questions, prices, liquidity, volume,
   trades, and order books for analyzing forecasts and event-driven markets.
 
+theme: Markets & Economics
 url: https://docs.polymarket.com/market-data/overview
 access_type:
   - api

@@ -10,6 +10,7 @@ const validDataset = {
   id: "live-events",
   name: "Live Events",
   description: "Continuously updated operational event data.",
+  theme: "Environment & Hazards",
   url: "https://example.com/live-events",
   access_type: ["download"],
   api_key_required: false,
@@ -161,6 +162,15 @@ describe("DatasetSchema", () => {
       difficulty: "expert",
     });
     expect(result.success).toBe(false);
+  });
+
+  it("requires a supported catalog theme", () => {
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, theme: "Everything" }).success,
+    ).toBe(false);
+    const missing = { ...validDataset } as Record<string, unknown>;
+    delete missing.theme;
+    expect(DatasetSchema.safeParse(missing).success).toBe(false);
   });
 
   it("rejects static benchmark datasets", () => {

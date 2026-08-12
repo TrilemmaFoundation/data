@@ -72,6 +72,9 @@ Content has two explicit sources of truth:
 - Dataset descriptions and beginner guides live with their metadata in the
   corresponding [`data/datasets/*.yaml`](data/datasets) file.
 
+Each dataset selects one broad catalog theme. Detailed domains and tasks remain
+searchable tags and guide-page metadata.
+
 Write in direct, practical language. Lead with the microproduct use or decision
 the data could support, define provider-specific terms, and state the limitation
 that matters most.

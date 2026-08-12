@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
+import type { CatalogDataset } from "./schema";
 import { getAllDatasets } from "./datasets";
-import { EMPTY_FILTERS, filterDatasets, getFilterOptions } from "./search";
+import {
+  EMPTY_FILTERS,
+  filterDatasets,
+  getDatasetAccessMethods,
+  getFilterOptions,
+  sortDatasets,
+} from "./search";
 
 const datasets = getAllDatasets();
 const earthquakeCatalog = datasets.find(
@@ -17,9 +24,20 @@ describe("filterDatasets", () => {
     expect(results.map((dataset) => dataset.id)).toContain("natural-earth");
   });
 
+  it("searches broad themes and retained detailed tags", () => {
+    expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query: "cybersecurity" }))
+      .toContainEqual(expect.objectContaining({ id: "cisa-known-exploited-vulnerabilities" }));
+    expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query: "seismology" }))
+      .toContainEqual(expect.objectContaining({ id: "usgs-earthquakes" }));
+    expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query: "hazard monitoring" }))
+      .toContainEqual(expect.objectContaining({ id: "usgs-earthquakes" }));
+  });
+
   it("builds sorted, de-duplicated filter options", () => {
     const options = getFilterOptions(datasets);
     expect(options.domains).toContain("Natural Hazards");
+    expect(options.themes).toContain("Environment & Hazards");
+    expect(options.themes).toEqual([...options.themes].sort((a, b) => a.localeCompare(b)));
     expect(options.sizes).toEqual([
       "Tiny",
       "Small",
@@ -36,11 +54,14 @@ describe("filterDatasets", () => {
   it("combines all filters and supports blank search text", () => {
     expect(
       filterDatasets(datasets, {
+        ...EMPTY_FILTERS,
         query: "   ",
+        theme: earthquakeCatalog.theme,
+        accessMethod: "api",
         domains: [earthquakeCatalog.domains[0]!],
         dataTypes: [earthquakeCatalog.data_types[0]!],
         tasks: [earthquakeCatalog.tasks[0]!],
-        difficulties: [earthquakeCatalog.difficulty],
+        difficulty: earthquakeCatalog.difficulty,
         sizes: ["Small"],
         formats: [earthquakeCatalog.formats[0]!],
         apiKeyRequired: false,
@@ -51,10 +72,11 @@ describe("filterDatasets", () => {
 
   it("rejects each mismatched filter independently", () => {
     const mismatches = [
+      { theme: "Government & Policy" as const },
       { domains: ["does-not-exist"] },
       { dataTypes: ["does-not-exist"] },
       { tasks: ["does-not-exist"] },
-      { difficulties: ["does-not-exist"] },
+      { difficulty: "intermediate" as const },
       { formats: ["does-not-exist"] },
       { geographies: ["does-not-exist"] },
       { sizes: ["Large" as const] },
@@ -66,5 +88,22 @@ describe("filterDatasets", () => {
         filterDatasets([earthquakeCatalog], { ...EMPTY_FILTERS, ...mismatch }),
       ).toEqual([]);
     }
+  });
+
+  it("normalizes both access encodings", () => {
+    const both: CatalogDataset = { ...earthquakeCatalog, access_type: ["both"] };
+    expect(getDatasetAccessMethods(earthquakeCatalog)).toEqual(["api", "download"]);
+    expect(getDatasetAccessMethods(both)).toEqual(["api", "download"]);
+    const apiOnly = datasets.find((dataset) => dataset.id === "nws-weather-api")!;
+    expect(filterDatasets([apiOnly], { ...EMPTY_FILTERS, accessMethod: "download" }))
+      .toEqual([]);
+  });
+
+  it("sorts with semantic ordering and stable name tie-breakers", () => {
+    const sorted = sortDatasets(datasets, { id: "difficulty", desc: false });
+    expect(sorted[0]?.difficulty).toBe("beginner");
+    expect(sorted.at(-1)?.difficulty).toBe("intermediate");
+    const reversed = sortDatasets(datasets, { id: "name", desc: true });
+    expect(reversed[0]?.name.localeCompare(reversed.at(-1)!.name)).toBeGreaterThan(0);
   });
 });

@@ -4,6 +4,7 @@ description: >
   Current U.S. federal procurement notices for building opportunity monitors,
   deadline alerts, and focused market-discovery tools.
 
+theme: Government & Policy
 url: https://open.gsa.gov/api/get-opportunities-public-api/
 access_type:
   - api

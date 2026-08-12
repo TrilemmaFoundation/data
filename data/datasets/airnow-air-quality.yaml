@@ -4,6 +4,7 @@ description: >
   Preliminary real-time AQI observations and forecasts for building local
   air-quality displays, relays, and operational awareness tools.
 
+theme: Environment & Hazards
 url: https://docs.airnowapi.org/webservices
 access_type:
   - api

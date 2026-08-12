@@ -280,6 +280,10 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
               </p>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
                 <ConceptPills
+                  label={datasetGuideCopy.conceptLabels.theme}
+                  values={[dataset.theme]}
+                />
+                <ConceptPills
                   label={datasetGuideCopy.conceptLabels.domains}
                   values={dataset.domains}
                 />

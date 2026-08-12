@@ -4,6 +4,7 @@ description: >
   Daily rules, proposed rules, notices, and presidential documents for building
   focused regulatory-change and agency-publication monitors.
 
+theme: Government & Policy
 url: https://catalog.data.gov/dataset/federalregister-gov-and-api
 access_type:
   - api

@@ -29,6 +29,7 @@ const validYaml = `
 id: sample
 name: Sample
 description: A sample dataset.
+theme: Research & Reference
 url: https://example.com/sample
 access_type:
   - download
@@ -100,6 +101,26 @@ describe("loadDatasets", () => {
     ]) {
       expect(ids.has(id), id).toBe(true);
     }
+  });
+
+  it("assigns every dataset to the curated catalog theme", () => {
+    const themes = Object.fromEntries(
+      getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
+    );
+    const groups = {
+      "Environment & Hazards": ["airnow-air-quality", "nasa-firms", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
+      "Government & Policy": ["federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
+      "Markets & Economics": ["bls-public-data-api", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
+      "Health, Food & Safety": ["cdc-places", "nhtsa-vehicle-recalls", "openfda-drug-adverse-events", "usda-fooddata-central"],
+      "Geospatial & Infrastructure": ["eia-hourly-electric-grid", "natural-earth"],
+      "Research & Reference": ["openalex-scholarly-works"],
+      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities"],
+      "Demographics & Development": ["acs-five-year-estimates", "world-development-indicators"],
+    } as const;
+    for (const [theme, ids] of Object.entries(groups)) {
+      for (const id of ids) expect(themes[id], id).toBe(theme);
+    }
+    expect(Object.keys(themes)).toHaveLength(26);
   });
 
   it("loads valid yaml files and ignores templates", () => {

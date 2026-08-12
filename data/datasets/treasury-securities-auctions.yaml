@@ -4,6 +4,7 @@ description: >
   Announcements and results for marketable U.S. Treasury security auctions for
   building issuance calendars and fixed-income auction monitors.
 
+theme: Markets & Economics
 url: https://fiscaldata.treasury.gov/datasets/treasury-securities-auctions-data/
 access_type:
   - api

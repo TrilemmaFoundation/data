@@ -4,6 +4,7 @@ description: >
   Federal disaster declarations, designated areas, incident periods, and
   authorized programs for building local emergency and recovery trackers.
 
+theme: Environment & Hazards
 url: https://www.fema.gov/about/openfema/disaster-declarations-summaries
 access_type:
   - api

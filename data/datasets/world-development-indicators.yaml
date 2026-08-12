@@ -4,6 +4,7 @@ description: >
   Country and regional development indicators spanning economics, health,
   education, and infrastructure for comparing change over time.
 
+theme: Demographics & Development
 url: https://databank.worldbank.org/source/world-development-indicators
 access_type:
   - download

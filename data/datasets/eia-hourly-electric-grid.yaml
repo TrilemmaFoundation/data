@@ -4,6 +4,7 @@ description: >
   Hourly U.S. electricity demand, forecasts, generation, and interchange for
   building grid monitors, demand alerts, and energy forecasting tools.
 
+theme: Geospatial & Infrastructure
 url: https://www.eia.gov/opendata/index.php/api
 access_type:
   - api

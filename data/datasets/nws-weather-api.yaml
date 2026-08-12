@@ -4,6 +4,7 @@ description: >
   Current U.S. forecasts, observations, and official weather alerts for
   building local planning tools and operational warning products.
 
+theme: Environment & Hazards
 url: https://www.weather.gov/documentation/services-web-api
 access_type:
   - api

@@ -4,6 +4,7 @@ description: >
   Continuously updated earthquake locations, magnitudes, depths, timestamps,
   and review status for monitoring seismic activity and spatial patterns.
 
+theme: Environment & Hazards
 url: https://earthquake.usgs.gov/fdsnws/event/1/
 access_type:
   - download

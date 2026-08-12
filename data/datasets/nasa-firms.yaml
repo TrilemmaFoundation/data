@@ -4,6 +4,7 @@ description: >
   Near-real-time satellite detections of active fires and thermal anomalies for
   monitoring hotspots, mapping risk, and supporting emergency analysis.
 
+theme: Environment & Hazards
 url: https://firms.modaps.eosdis.nasa.gov/api/area/
 access_type:
   - download

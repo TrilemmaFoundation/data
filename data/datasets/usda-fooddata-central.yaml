@@ -4,6 +4,7 @@ description: >
   USDA analytical and branded-food nutrient records for building nutrition
   comparisons, ingredient research, and food-search products.
 
+theme: Health, Food & Safety
 url: https://fdc.nal.usda.gov/api-guide/
 access_type:
   - api

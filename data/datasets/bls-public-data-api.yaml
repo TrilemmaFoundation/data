@@ -4,6 +4,7 @@ description: >
   Official U.S. labor-market and price time series for building inflation,
   employment, wage, and economic-release monitoring tools.
 
+theme: Markets & Economics
 url: https://www.bls.gov/developers/home.htm
 access_type:
   - api

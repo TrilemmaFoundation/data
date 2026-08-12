@@ -7,6 +7,7 @@ import {
   filterCopy,
   notFoundCopy,
   siteCopy,
+  tableCopy,
 } from "../src/content/site-copy";
 import { getAllDatasets } from "../src/lib/datasets";
 import {
@@ -60,18 +61,17 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
   ).toBeVisible();
 });
 
-test("search preserves a filter selected during pending URL navigation", async ({ page }) => {
+test("rapid controls preserve filters selected during pending URL navigation", async ({ page }) => {
   await page.goto("/");
 
-  await page
-    .getByRole("complementary", { name: filterCopy.title, exact: true })
-    .getByLabel("Cybersecurity")
-    .click();
+  await page.locator("#desktop-dataset-theme").selectOption("Technology & Cybersecurity");
+  await page.locator("#desktop-dataset-difficulty").selectOption("beginner");
   await page.getByLabel(catalogCopy.searchLabel).fill("vulnerability");
 
   await expect(page).toHaveURL((url) =>
     url.searchParams.get("q") === "vulnerability" &&
-    url.searchParams.getAll("domain").includes("Cybersecurity"),
+    url.searchParams.get("theme") === "Technology & Cybersecurity" &&
+    url.searchParams.get("difficulty") === "beginner",
   );
   await expect(
     page.getByRole("link", { name: "CISA Known Exploited Vulnerabilities Catalog" }),
@@ -119,9 +119,9 @@ test("the catalog jump honors reduced motion", async ({ page }) => {
 
 test("the recommended dataset leads the unfiltered catalog only", async ({ page }) => {
   await page.goto("/");
-  const firstCard = page.locator('[data-slot="card"]').first();
-  await expect(firstCard).toContainText("National Weather Service API");
-  await expect(firstCard).toContainText(datasetCardCopy.goodFirstBuildLabel);
+  const firstRow = page.getByRole("table", { name: tableCopy.caption }).getByRole("row").nth(1);
+  await expect(firstRow).toContainText("National Weather Service API");
+  await expect(firstRow).toContainText(datasetCardCopy.goodFirstBuildLabel);
 
   await page.goto("/?q=weather");
   await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
@@ -289,7 +289,9 @@ test("mobile navigation stays closed after crossing the desktop breakpoint", asy
 test("whitespace-only shared queries remain unfiltered", async ({ page }) => {
   await page.goto("/?q=+++");
 
-  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toBeVisible();
+  await expect(
+    page.getByRole("table", { name: tableCopy.caption }).getByText(datasetCardCopy.goodFirstBuildLabel),
+  ).toBeVisible();
   await expect(page.getByLabel(catalogCopy.activeFiltersAriaLabel)).toHaveCount(0);
 });
 
@@ -301,7 +303,7 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
   await page.getByRole("button", { name: catalogCopy.clearFiltersLabel }).click();
   await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 
-  const trigger = page.getByRole("button", { name: filterCopy.title, exact: true });
+  const trigger = page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true });
   await trigger.click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
@@ -319,42 +321,93 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
   await expect(trigger).toBeFocused();
 });
 
+test("catalog uses a desktop table and mobile cards at the lg breakpoint", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await expect(page.getByRole("table", { name: tableCopy.caption })).toBeVisible();
+  await expect(page.locator('[data-slot="card"]').first()).toBeHidden();
+
+  await page.setViewportSize({ width: 768, height: 900 });
+  await expect(page.getByRole("table", { name: tableCopy.caption })).toBeHidden();
+  await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+});
+
+test("desktop quick facets filter by theme, access, difficulty, and API key", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+
+  await page.locator("#desktop-dataset-theme").selectOption("Technology & Cybersecurity");
+  await expect(page).toHaveURL((url) => url.searchParams.get("theme") === "Technology & Cybersecurity");
+  await expect(page.getByRole("link", { name: "CISA Known Exploited Vulnerabilities Catalog" })).toBeVisible();
+
+  await page.locator("#desktop-dataset-access").selectOption("api");
+  await expect(page.getByRole("heading", { name: catalogCopy.emptyTitle })).toBeVisible();
+  await page.locator("#desktop-dataset-access").selectOption("download");
+  await page.locator("#desktop-dataset-difficulty").selectOption("beginner");
+  await page.locator("#desktop-dataset-api-key").selectOption("false");
+  await expect(page.getByRole("link", { name: "CISA Known Exploited Vulnerabilities Catalog" })).toBeVisible();
+});
+
+test("desktop sorting is shareable, reversible, and restores the promoted order", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const table = page.getByRole("table", { name: tableCopy.caption });
+  const firstDataRow = () => table.getByRole("row").nth(1);
+  await expect(firstDataRow()).toContainText("National Weather Service API");
+
+  await page.getByRole("button", { name: "Sort Dataset ascending" }).click();
+  await expect(page).toHaveURL((url) =>
+    url.searchParams.get("sort") === "name" && url.searchParams.get("order") === "asc",
+  );
+  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
+
+  await page.getByRole("button", { name: "Sort Dataset descending" }).click();
+  await expect(page).toHaveURL((url) => url.searchParams.get("order") === "desc");
+  await expect(firstDataRow()).not.toContainText("American Community Survey 5-Year Estimates");
+
+  await page.getByRole("button", { name: "Restore default order" }).click();
+  await expect(page).toHaveURL((url) => !url.searchParams.has("sort"));
+  await expect(firstDataRow()).toContainText("National Weather Service API");
+
+  await page.goto("/?sort=updates&order=asc");
+  await page.getByRole("link", { name: "National Weather Service API" }).click();
+  await expect(page).toHaveURL(/\/datasets\/nws-weather-api\/?$/);
+  await page.goBack();
+  await expect(page).toHaveURL((url) => url.searchParams.get("sort") === "updates");
+});
+
 test("mobile filter drawer closes at the desktop breakpoint", async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 900 });
   await page.goto("/");
 
-  await page.getByRole("button", { name: filterCopy.title, exact: true }).click();
+  await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
   const dialog = page.getByRole("dialog", { name: catalogCopy.drawerTitle });
   await expect(dialog).toBeVisible();
 
   await page.setViewportSize({ width: 1024, height: 900 });
-  await expect(
-    page.getByRole("complementary", { name: filterCopy.title, exact: true }),
-  ).toBeVisible();
   await expect(dialog).toBeHidden();
+  await expect(page.locator("#desktop-dataset-theme")).toBeVisible();
 });
 
-test("desktop filters stay within the viewport and remain fully reachable", async ({ page }) => {
+test("advanced desktop filters stay within the drawer and remain fully reachable", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-
-  const filters = page.getByRole("complementary", {
-    name: filterCopy.title,
-    exact: true,
-  });
-  const dimensions = await filters.evaluate((element) => ({
+  await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: catalogCopy.drawerTitle });
+  const scroller = dialog.locator(".overflow-y-auto");
+  await dialog.locator("summary").filter({ hasText: filterCopy.formatLabel }).click();
+  const dimensions = await scroller.evaluate((element) => ({
     clientHeight: element.clientHeight,
     scrollHeight: element.scrollHeight,
   }));
-  expect(dimensions.clientHeight).toBeLessThanOrEqual(900 - 112);
+  expect(dimensions.clientHeight).toBeLessThanOrEqual(900);
   expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight);
-
-  await filters.evaluate((element) => {
+  await scroller.evaluate((element) => {
     element.scrollTop = element.scrollHeight;
   });
-  const moreFilters = filters.locator("summary");
-  await expect(moreFilters).toContainText(filterCopy.moreFiltersLabel);
-  await expect(moreFilters).toBeVisible();
+  await expect(
+    dialog.locator("summary").filter({ hasText: filterCopy.geographyLabel }),
+  ).toBeVisible();
 });
 
 test("application copy reflows across supported viewport widths", async ({ page }) => {
@@ -371,8 +424,13 @@ test("application copy reflows across supported viewport widths", async ({ page 
     }
 
     const cards = page.locator('[data-slot="card"]');
-    await expect(cards.first()).toBeVisible();
-    if (width >= 768) {
+    if (width < 1024) {
+      await expect(cards.first()).toBeVisible();
+    } else {
+      await expect(page.getByRole("table", { name: tableCopy.caption })).toBeVisible();
+      await expect(cards.first()).toBeHidden();
+    }
+    if (width >= 768 && width < 1024) {
       const [first, second] = await Promise.all([
         cards.nth(0).boundingBox(),
         cards.nth(1).boundingBox(),
@@ -382,7 +440,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
     }
     if (width === 1440) {
       expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(700);
-      expect((await cards.first().boundingBox())?.y).toBeLessThan(900);
+      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(900);
     }
 
     let documentWidth = await page.evaluate(() => ({

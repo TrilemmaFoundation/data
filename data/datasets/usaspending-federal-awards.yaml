@@ -4,6 +4,7 @@ description: >
   Federal contract, grant, loan, and other award records for building recipient
   research, agency-spending, and public-market analysis tools.
 
+theme: Government & Policy
 url: https://api.usaspending.gov/
 access_type:
   - api

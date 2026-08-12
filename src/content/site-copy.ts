@@ -54,7 +54,7 @@ export const catalogCopy = {
   clearFiltersLabel: "Clear filters",
   drawerTitle: "Filter datasets",
   drawerDescription:
-    "Refine the catalog by difficulty, topic, format, access, and size.",
+    "Refine the catalog by theme, difficulty, access, type, format, geography, and size.",
   closeFiltersLabel: "Close filters",
   resultCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
   resultStatus: (count: number) =>
@@ -65,10 +65,12 @@ export const catalogCopy = {
 
 export const filterChipPrefixes = {
   query: "Search",
+  theme: "Theme",
+  accessMethod: "Access",
   domains: "Domain",
   dataTypes: "Type",
   tasks: "Task",
-  difficulties: "Level",
+  difficulty: "Level",
   sizes: "Size",
   formats: "Format",
   geographies: "Place",
@@ -76,19 +78,41 @@ export const filterChipPrefixes = {
 
 export const filterCopy = {
   eyebrow: "Refine results",
-  title: "Filters",
   clearAllLabel: "Clear all",
   difficultyLabel: "Difficulty",
-  domainLabel: "Domain",
+  allDifficultiesLabel: "All levels",
+  themeLabel: "Theme",
+  allThemesLabel: "All themes",
+  accessMethodLabel: "Access method",
+  allAccessMethodsLabel: "Any method",
   dataTypeLabel: "Data type",
   moreFiltersLabel: "More filters",
-  taskLabel: "Task",
   sizeLabel: "Size",
   formatLabel: "Format",
   apiKeyLabel: "API key required",
+  anyApiKeyLabel: "Any key setup",
   yesLabel: "Yes",
   noLabel: "No",
   geographyLabel: "Geography",
+} as const;
+
+export const tableCopy = {
+  caption: "Compare available datasets",
+  datasetLabel: "Dataset",
+  themeLabel: "Theme",
+  accessLabel: "Access",
+  formatsLabel: "Formats",
+  difficultyLabel: "Difficulty",
+  updatesLabel: "Updates",
+  freeKeyLabel: "Free key",
+  noKeyLabel: "No key",
+  moreFormats: (count: number) => `${count} more format${count === 1 ? "" : "s"}`,
+  sortBy: (column: string, current: false | "asc" | "desc") =>
+    current === "asc"
+      ? `Sort ${column} descending`
+      : current === "desc"
+        ? `Restore default order`
+        : `Sort ${column} ascending`,
 } as const;
 
 export const datasetCardCopy = {
@@ -149,6 +173,7 @@ export const datasetGuideCopy = {
   firstProjectEyebrow: "Test a useful signal",
   detailsTitle: "Dataset details",
   conceptLabels: {
+    theme: "Theme",
     domains: "Domains",
     dataTypes: "Data types",
     tasks: "Tasks",

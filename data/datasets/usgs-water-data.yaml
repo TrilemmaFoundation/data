@@ -4,6 +4,7 @@ description: >
   Current and historical U.S. streamflow, groundwater, water-quality, and site
   measurements for building gauge monitors and local water-analysis tools.
 
+theme: Environment & Hazards
 url: https://api.waterdata.usgs.gov/
 access_type:
   - api

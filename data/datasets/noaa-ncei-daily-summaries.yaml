@@ -4,6 +4,7 @@ description: >
   Station-level daily temperature, precipitation, snow, and weather summaries
   for building climate profiles and threshold-monitoring tools.
 
+theme: Environment & Hazards
 url: https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation
 access_type:
   - api

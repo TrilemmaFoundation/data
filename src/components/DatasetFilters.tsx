@@ -1,7 +1,9 @@
 "use client";
 
+import type { Dataset } from "@/lib/schema";
 import {
   EMPTY_FILTERS,
+  type AccessMethod,
   type DatasetFilters as Filters,
   type FilterOptions,
 } from "@/lib/search";
@@ -9,6 +11,7 @@ import type { SizeCategory } from "@/lib/size";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { filterCopy } from "@/content/site-copy";
+import { cn } from "@/lib/utils";
 
 type DatasetFiltersProps = {
   options: FilterOptions;
@@ -20,21 +23,6 @@ function toggleValue(list: string[], value: string): string[] {
   return list.includes(value)
     ? list.filter((item) => item !== value)
     : [...list, value];
-}
-
-function FilterGroup({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <fieldset>
-      <legend className="mb-3 text-sm font-semibold text-white">{title}</legend>
-      <div className="space-y-1">{children}</div>
-    </fieldset>
-  );
 }
 
 function FilterCheckbox({
@@ -54,27 +42,142 @@ function FilterCheckbox({
   );
 }
 
+function FilterSelect({
+  id,
+  label,
+  value,
+  onChange,
+  children,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <label htmlFor={id} className="block min-w-0 text-sm font-semibold text-white">
+      {label}
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 px-3 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]"
+      >
+        {children}
+      </select>
+    </label>
+  );
+}
+
+export function DatasetQuickFilters({
+  options,
+  filters,
+  onChange,
+  className,
+  idPrefix,
+}: DatasetFiltersProps & { className?: string; idPrefix: string }) {
+  return (
+    <div className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-4", className)}>
+      <FilterSelect
+        id={`${idPrefix}-dataset-theme`}
+        label={filterCopy.themeLabel}
+        value={filters.theme ?? ""}
+        onChange={(theme) => onChange({
+          ...filters,
+          theme: (theme || null) as Filters["theme"],
+        })}
+      >
+        <option value="">{filterCopy.allThemesLabel}</option>
+        {options.themes.map((theme) => <option key={theme}>{theme}</option>)}
+      </FilterSelect>
+
+      <FilterSelect
+        id={`${idPrefix}-dataset-difficulty`}
+        label={filterCopy.difficultyLabel}
+        value={filters.difficulty ?? ""}
+        onChange={(difficulty) => onChange({
+          ...filters,
+          difficulty: (difficulty || null) as Dataset["difficulty"] | null,
+        })}
+      >
+        <option value="">{filterCopy.allDifficultiesLabel}</option>
+        {options.difficulties.map((difficulty) => (
+          <option key={difficulty} value={difficulty}>
+            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+          </option>
+        ))}
+      </FilterSelect>
+
+      <FilterSelect
+        id={`${idPrefix}-dataset-access`}
+        label={filterCopy.accessMethodLabel}
+        value={filters.accessMethod ?? ""}
+        onChange={(accessMethod) => onChange({
+          ...filters,
+          accessMethod: (accessMethod || null) as AccessMethod | null,
+        })}
+      >
+        <option value="">{filterCopy.allAccessMethodsLabel}</option>
+        {options.accessMethods.map((method) => (
+          <option key={method} value={method}>
+            {method === "api" ? "API" : "Download"}
+          </option>
+        ))}
+      </FilterSelect>
+
+      <FilterSelect
+        id={`${idPrefix}-dataset-api-key`}
+        label={filterCopy.apiKeyLabel}
+        value={filters.apiKeyRequired === null ? "" : String(filters.apiKeyRequired)}
+        onChange={(value) => onChange({
+          ...filters,
+          apiKeyRequired: value === "true" ? true : value === "false" ? false : null,
+        })}
+      >
+        <option value="">{filterCopy.anyApiKeyLabel}</option>
+        <option value="false">{filterCopy.noLabel}</option>
+        <option value="true">{filterCopy.yesLabel}</option>
+      </FilterSelect>
+    </div>
+  );
+}
+
+function AdvancedGroup({
+  title,
+  count,
+  children,
+}: {
+  title: string;
+  count: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group rounded-lg border border-white/10 bg-brand-black/25 p-4">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
+        <span>{title}{count > 0 ? ` (${count})` : ""}</span>
+        <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>
+      </summary>
+      <fieldset className="mt-4 border-t border-white/10 pt-3">
+        <legend className="sr-only">{title}</legend>
+        <div className="space-y-1">{children}</div>
+      </fieldset>
+    </details>
+  );
+}
+
 export function DatasetFilters({ options, filters, onChange }: DatasetFiltersProps) {
-  const hasActiveFilters =
-    filters.query !== "" ||
-    filters.apiKeyRequired !== null ||
-    [
-      filters.domains,
-      filters.dataTypes,
-      filters.tasks,
-      filters.difficulties,
-      filters.sizes,
-      filters.formats,
-      filters.geographies,
-    ].some((values) => values.length > 0);
+  const hasActiveFilters = Object.entries(filters).some(([key, value]) =>
+    key === "query" ? value !== "" : Array.isArray(value) ? value.length > 0 : value !== null,
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="eyebrow">{filterCopy.eyebrow}</p>
           <h2 className="mt-1 text-lg font-semibold text-white">
-            {filterCopy.title}
+            {filterCopy.moreFiltersLabel}
           </h2>
         </div>
         <Button
@@ -87,130 +190,61 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
         </Button>
       </div>
 
-      <FilterGroup title={filterCopy.difficultyLabel}>
-        {options.difficulties.map((difficulty) => (
-          <FilterCheckbox
-            key={difficulty}
-            label={difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-            checked={filters.difficulties.includes(difficulty)}
-            onCheckedChange={() =>
-              onChange({
-                ...filters,
-                difficulties: toggleValue(filters.difficulties, difficulty),
-              })
-            }
-          />
-        ))}
-      </FilterGroup>
-
-      <FilterGroup title={filterCopy.domainLabel}>
-        {options.domains.map((domain) => (
-          <FilterCheckbox
-            key={domain}
-            label={domain}
-            checked={filters.domains.includes(domain)}
-            onCheckedChange={() =>
-              onChange({ ...filters, domains: toggleValue(filters.domains, domain) })
-            }
-          />
-        ))}
-      </FilterGroup>
-
-      <FilterGroup title={filterCopy.dataTypeLabel}>
+      <AdvancedGroup title={filterCopy.dataTypeLabel} count={filters.dataTypes.length}>
         {options.dataTypes.map((dataType) => (
           <FilterCheckbox
             key={dataType}
             label={dataType}
             checked={filters.dataTypes.includes(dataType)}
-            onCheckedChange={() =>
-              onChange({ ...filters, dataTypes: toggleValue(filters.dataTypes, dataType) })
-            }
+            onCheckedChange={() => onChange({
+              ...filters,
+              dataTypes: toggleValue(filters.dataTypes, dataType),
+            })}
           />
         ))}
-      </FilterGroup>
+      </AdvancedGroup>
 
-      <details className="group rounded-lg border border-white/10 bg-brand-black/25 p-4">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
-          {filterCopy.moreFiltersLabel}
-          <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>
-        </summary>
-        <div className="mt-5 space-y-6 border-t border-white/10 pt-5">
-          <FilterGroup title={filterCopy.taskLabel}>
-            {options.tasks.map((task) => (
-              <FilterCheckbox
-                key={task}
-                label={task}
-                checked={filters.tasks.includes(task)}
-                onCheckedChange={() =>
-                  onChange({ ...filters, tasks: toggleValue(filters.tasks, task) })
-                }
-              />
-            ))}
-          </FilterGroup>
+      <AdvancedGroup title={filterCopy.sizeLabel} count={filters.sizes.length}>
+        {options.sizes.map((size) => (
+          <FilterCheckbox
+            key={size}
+            label={size}
+            checked={filters.sizes.includes(size)}
+            onCheckedChange={() => onChange({
+              ...filters,
+              sizes: toggleValue(filters.sizes, size) as SizeCategory[],
+            })}
+          />
+        ))}
+      </AdvancedGroup>
 
-          <FilterGroup title={filterCopy.sizeLabel}>
-            {options.sizes.map((size) => (
-              <FilterCheckbox
-                key={size}
-                label={size}
-                checked={filters.sizes.includes(size)}
-                onCheckedChange={() =>
-                  onChange({
-                    ...filters,
-                    sizes: toggleValue(filters.sizes, size) as SizeCategory[],
-                  })
-                }
-              />
-            ))}
-          </FilterGroup>
+      <AdvancedGroup title={filterCopy.formatLabel} count={filters.formats.length}>
+        {options.formats.map((format) => (
+          <FilterCheckbox
+            key={format}
+            label={format}
+            checked={filters.formats.includes(format)}
+            onCheckedChange={() => onChange({
+              ...filters,
+              formats: toggleValue(filters.formats, format),
+            })}
+          />
+        ))}
+      </AdvancedGroup>
 
-          <FilterGroup title={filterCopy.formatLabel}>
-            {options.formats.map((format) => (
-              <FilterCheckbox
-                key={format}
-                label={format}
-                checked={filters.formats.includes(format)}
-                onCheckedChange={() =>
-                  onChange({ ...filters, formats: toggleValue(filters.formats, format) })
-                }
-              />
-            ))}
-          </FilterGroup>
-
-          <FilterGroup title={filterCopy.apiKeyLabel}>
-            <FilterCheckbox
-              label={filterCopy.yesLabel}
-              checked={filters.apiKeyRequired === true}
-              onCheckedChange={(checked) =>
-                onChange({ ...filters, apiKeyRequired: checked ? true : null })
-              }
-            />
-            <FilterCheckbox
-              label={filterCopy.noLabel}
-              checked={filters.apiKeyRequired === false}
-              onCheckedChange={(checked) =>
-                onChange({ ...filters, apiKeyRequired: checked ? false : null })
-              }
-            />
-          </FilterGroup>
-
-          <FilterGroup title={filterCopy.geographyLabel}>
-            {options.geographies.map((geography) => (
-              <FilterCheckbox
-                key={geography}
-                label={geography}
-                checked={filters.geographies.includes(geography)}
-                onCheckedChange={() =>
-                  onChange({
-                    ...filters,
-                    geographies: toggleValue(filters.geographies, geography),
-                  })
-                }
-              />
-            ))}
-          </FilterGroup>
-        </div>
-      </details>
+      <AdvancedGroup title={filterCopy.geographyLabel} count={filters.geographies.length}>
+        {options.geographies.map((geography) => (
+          <FilterCheckbox
+            key={geography}
+            label={geography}
+            checked={filters.geographies.includes(geography)}
+            onCheckedChange={() => onChange({
+              ...filters,
+              geographies: toggleValue(filters.geographies, geography),
+            })}
+          />
+        ))}
+      </AdvancedGroup>
     </div>
   );
 }

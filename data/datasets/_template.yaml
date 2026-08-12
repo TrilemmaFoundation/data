@@ -8,6 +8,10 @@ name: Replace with dataset name
 description: >
   Replace this with one concise sentence that states what the source contains
   and the practical microproduct use it could support.
+theme: Environment & Hazards
+# Allowed: Environment & Hazards | Government & Policy | Markets & Economics |
+# Health, Food & Safety | Geospatial & Infrastructure | Research & Reference |
+# Technology & Cybersecurity | Demographics & Development
 
 url: https://example.com/dataset
 access_type:

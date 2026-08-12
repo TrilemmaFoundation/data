@@ -4,6 +4,7 @@ description: >
   Public-domain vector and raster layers at multiple scales for building maps,
   comparing regions, and learning practical geospatial analysis.
 
+theme: Geospatial & Infrastructure
 url: https://www.naturalearthdata.com/
 access_type:
   - download

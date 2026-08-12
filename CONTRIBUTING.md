@@ -65,6 +65,7 @@ Do **not** add:
 - `free_to_access` must be `true`
 - `size_gb_min` must be ≤ `size_gb_max`
 - `difficulty` must be `beginner`, `intermediate`, or `advanced`
+- `theme` must be one of the eight broad catalog themes listed in the dataset template
 - `access_type` may list `download` and `api` together; `both` must be used alone
 - `source_type` must be one of: `government`, `intergovernmental`, `academic`,
   `nonprofit`, `company`, `community`

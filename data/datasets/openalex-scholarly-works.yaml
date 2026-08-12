@@ -4,6 +4,7 @@ description: >
   Open scholarly metadata linking works, authors, institutions, sources,
   topics, and citations for building research-monitoring products.
 
+theme: Research & Reference
 url: https://developers.openalex.org/api-reference/introduction
 access_type:
   - api
