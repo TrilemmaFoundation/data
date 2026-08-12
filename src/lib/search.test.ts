@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CatalogDataset } from "./schema";
 import { getAllDatasets } from "./datasets";
 import {
+  compareDatasets,
   EMPTY_FILTERS,
   filterDatasets,
   getDatasetAccessMethods,
@@ -49,6 +50,7 @@ describe("filterDatasets", () => {
     for (const values of Object.values(options)) {
       expect(values).toEqual([...new Set(values)]);
     }
+    expect(getFilterOptions([]).accessMethods).toEqual([]);
   });
 
   it("combines all filters and supports blank search text", () => {
@@ -95,14 +97,23 @@ describe("filterDatasets", () => {
     expect(getDatasetAccessMethods(earthquakeCatalog)).toEqual(["api", "download"]);
     expect(getDatasetAccessMethods(both)).toEqual(["api", "download"]);
     const apiOnly = datasets.find((dataset) => dataset.id === "nws-weather-api")!;
+    expect(getDatasetAccessMethods(apiOnly)).toEqual(["api"]);
+    const downloadOnly = datasets.find(
+      (dataset) => dataset.id === "cisa-known-exploited-vulnerabilities",
+    )!;
+    expect(getDatasetAccessMethods(downloadOnly)).toEqual(["download"]);
     expect(filterDatasets([apiOnly], { ...EMPTY_FILTERS, accessMethod: "download" }))
       .toEqual([]);
   });
 
   it("sorts with semantic ordering and stable name tie-breakers", () => {
-    const sorted = sortDatasets(datasets, { id: "difficulty", desc: false });
-    expect(sorted[0]?.difficulty).toBe("beginner");
-    expect(sorted.at(-1)?.difficulty).toBe("intermediate");
+    expect(sortDatasets(datasets, null)).toBe(datasets);
+    for (const column of ["name", "theme", "access", "difficulty", "updates"] as const) {
+      const sorted = sortDatasets(datasets, { id: column, desc: false });
+      for (let index = 1; index < sorted.length; index += 1) {
+        expect(compareDatasets(sorted[index - 1]!, sorted[index]!, column)).toBeLessThanOrEqual(0);
+      }
+    }
     const reversed = sortDatasets(datasets, { id: "name", desc: true });
     expect(reversed[0]?.name.localeCompare(reversed.at(-1)!.name)).toBeGreaterThan(0);
   });

@@ -108,5 +108,7 @@ describe("filter URL helpers", () => {
     expect(parseSort(new URLSearchParams("sort=name"))).toEqual({ id: "name", desc: false });
     expect(parseSort(new URLSearchParams("sort=unknown&order=desc"))).toBeNull();
     expect(parseSort(new URLSearchParams("sort=name&order=sideways"))).toBeNull();
+    expect(filtersToParams(EMPTY_FILTERS, { id: "name", desc: false }).get("order"))
+      .toBe("asc");
   });
 });
