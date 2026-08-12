@@ -112,8 +112,8 @@ export function SiteHeader() {
             <Image
               src="/foundation-white.webp"
               alt=""
-              width={120}
-              height={32}
+              width={1500}
+              height={303}
               priority
               className="h-6 w-auto transition-transform group-hover:scale-105 sm:h-8"
             />
@@ -212,8 +212,8 @@ export function SiteFooter() {
                 <Image
                   src="/foundation-white.webp"
                   alt={siteCopy.foundationName}
-                  width={120}
-                  height={32}
+                  width={1500}
+                  height={303}
                   className="h-6 w-auto sm:h-8"
                 />
               </a>

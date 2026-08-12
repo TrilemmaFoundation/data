@@ -332,6 +332,20 @@ test("catalog uses a desktop table and mobile cards at the lg breakpoint", async
   await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 });
 
+test("the sticky table header meets the site header without exposing rows", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+
+  const table = page.getByRole("table", { name: tableCopy.caption });
+  await table.getByRole("row").nth(4).scrollIntoViewIfNeeded();
+
+  const siteHeader = await page.locator("header").first().boundingBox();
+  const tableHeader = await table.getByRole("columnheader").first().boundingBox();
+  expect(siteHeader).not.toBeNull();
+  expect(tableHeader).not.toBeNull();
+  expect(tableHeader!.y).toBeCloseTo(siteHeader!.y + siteHeader!.height, 0);
+});
+
 test("desktop quick facets filter by theme, access, difficulty, and API key", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");

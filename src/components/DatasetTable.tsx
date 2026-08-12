@@ -192,7 +192,7 @@ export function DatasetTable({
                     key={header.id}
                     scope="col"
                     className={cn(
-                      "sticky top-20 z-10 bg-card/95 backdrop-blur",
+                      "sticky top-16 z-10 bg-card/95 backdrop-blur",
                       header.column.id === "name" && "w-[36%]",
                     )}
                     aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
