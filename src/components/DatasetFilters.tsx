@@ -1,13 +1,10 @@
 "use client";
 
-import type { Dataset } from "@/lib/schema";
 import {
   EMPTY_FILTERS,
-  type AccessMethod,
   type DatasetFilters as Filters,
   type FilterOptions,
 } from "@/lib/search";
-import type { SizeCategory } from "@/lib/size";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { filterCopy } from "@/content/site-copy";
@@ -19,7 +16,7 @@ type DatasetFiltersProps = {
   onChange: (filters: Filters) => void;
 };
 
-function toggleValue(list: string[], value: string): string[] {
+function toggleValue<T>(list: T[], value: T): T[] {
   return list.includes(value)
     ? list.filter((item) => item !== value)
     : [...list, value];
@@ -98,7 +95,7 @@ export function DatasetQuickFilters({
         value={filters.difficulty ?? ""}
         onChange={(difficulty) => onChange({
           ...filters,
-          difficulty: (difficulty || null) as Dataset["difficulty"] | null,
+          difficulty: (difficulty || null) as Filters["difficulty"],
         })}
       >
         <option value="">{filterCopy.allDifficultiesLabel}</option>
@@ -115,7 +112,7 @@ export function DatasetQuickFilters({
         value={filters.accessMethod ?? ""}
         onChange={(accessMethod) => onChange({
           ...filters,
-          accessMethod: (accessMethod || null) as AccessMethod | null,
+          accessMethod: (accessMethod || null) as Filters["accessMethod"],
         })}
       >
         <option value="">{filterCopy.allAccessMethodsLabel}</option>
@@ -212,7 +209,7 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
             checked={filters.sizes.includes(size)}
             onCheckedChange={() => onChange({
               ...filters,
-              sizes: toggleValue(filters.sizes, size) as SizeCategory[],
+              sizes: toggleValue(filters.sizes, size),
             })}
           />
         ))}
