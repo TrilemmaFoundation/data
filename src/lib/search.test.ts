@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CatalogDataset } from "./schema";
 import { getAllDatasets } from "./datasets";
 import {
+  CATALOG_PAGE_SIZE,
   compareDatasets,
   EMPTY_FILTERS,
   filterDatasets,
@@ -139,9 +140,13 @@ describe("filterDatasets", () => {
     expect(paginate([], 99)).toEqual({
       items: [], page: 1, totalPages: 1, start: 0, end: 0,
     });
-    expect(paginate(datasets, 1)).toMatchObject({ page: 1, start: 1, end: 10 });
+    expect(paginate(datasets, 1)).toMatchObject({
+      page: 1,
+      start: 1,
+      end: CATALOG_PAGE_SIZE,
+    });
     const last = paginate(datasets, 99);
-    expect(last.page).toBe(Math.ceil(datasets.length / 10));
+    expect(last.page).toBe(Math.ceil(datasets.length / CATALOG_PAGE_SIZE));
     expect(last.end).toBe(datasets.length);
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { ArrowDown, Filter, Search, X } from "lucide-react";
+import { Filter, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { CatalogDataset } from "@/lib/schema";
 import { activeChips, reconcileFilterChange } from "@/lib/catalog-chips";
@@ -149,11 +149,6 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     [updateState],
   );
 
-  const browseCatalog = useCallback(() => {
-    resultsTitleRef.current?.scrollIntoView({ block: "start" });
-    resultsTitleRef.current?.focus({ preventScroll: true });
-  }, []);
-
   const openFilters = useCallback((trigger: HTMLButtonElement) => {
     activeFilterTriggerRef.current = trigger;
     filterDialogRef.current?.showModal();
@@ -169,29 +164,23 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
         <section
           aria-labelledby="catalog-hero-title"
-          className="px-1 py-4 text-center sm:px-8 sm:py-5 lg:py-6"
+          className="px-1 pb-3 pt-1 text-center sm:px-8 sm:pb-4"
         >
-          <div className="mx-auto max-w-6xl">
-            <h1
-              id="catalog-hero-title"
-              className="font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
-            >
-              {catalogCopy.heroTitle}
-            </h1>
-            <Button size="lg" className="mt-5" onClick={browseCatalog}>
-              {catalogCopy.browseDatasets(datasets.length)}
-              <ArrowDown aria-hidden="true" />
-            </Button>
-          </div>
+          <h1
+            id="catalog-hero-title"
+            className="font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
+          >
+            {catalogCopy.heroTitle}
+          </h1>
         </section>
 
         <section
           id="dataset-catalog"
           aria-labelledby="results-title"
-          className="scroll-mt-24 border-t border-white/20 pt-5 sm:pt-6"
+          className="scroll-mt-24 border-t border-white/20 pt-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>

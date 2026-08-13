@@ -318,8 +318,7 @@ describe("loadDatasets", () => {
     const dir = makeTempDir();
     const file = path.join(dir, "sample.yaml");
     fs.writeFileSync(file, validYaml);
-    const previous = process.env.NODE_ENV;
-    process.env.NODE_ENV = "development";
+    vi.stubEnv("NODE_ENV", "development");
     const read = vi.spyOn(fs, "readFileSync");
 
     try {
@@ -329,7 +328,7 @@ describe("loadDatasets", () => {
         read.mock.calls.filter(([target]) => String(target) === file),
       ).toHaveLength(2);
     } finally {
-      process.env.NODE_ENV = previous;
+      vi.unstubAllEnvs();
       read.mockRestore();
     }
   });

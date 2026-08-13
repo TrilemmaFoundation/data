@@ -35,8 +35,6 @@ export const siteCopy = {
 
 export const catalogCopy = {
   heroTitle: "Find data to build your next microproduct",
-  browseDatasets: (count: number) =>
-    `Browse ${count} dataset${count === 1 ? "" : "s"}`,
   searchLabel: "Search by topic, provider, or product use",
   searchPlaceholder: "Try “company filings” or “electricity demand”",
   recommendedDatasetId: "nws-weather-api",

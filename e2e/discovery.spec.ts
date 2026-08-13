@@ -10,6 +10,7 @@ import {
   tableCopy,
 } from "../src/content/site-copy";
 import { getAllDatasets } from "../src/lib/datasets";
+import { CATALOG_PAGE_SIZE } from "../src/lib/search";
 import {
   CONTRIBUTE_URL,
   FOUNDATION_CHARTER_URL,
@@ -22,6 +23,8 @@ import {
 } from "../src/lib/seo";
 
 const DATASET_COUNT = getAllDatasets().length;
+const CATALOG_PAGES = Math.ceil(DATASET_COUNT / CATALOG_PAGE_SIZE);
+const LAST_PAGE_ITEMS = DATASET_COUNT % CATALOG_PAGE_SIZE || CATALOG_PAGE_SIZE;
 
 test("discovery keeps valid URL state and ignores unknown filters", async ({ page }) => {
   await page.goto("/?domain=Natural%20Hazards,Unknown&difficulty=novice");
@@ -78,43 +81,18 @@ test("rapid controls preserve filters selected during pending URL navigation", a
   ).toBeVisible();
 });
 
-test("the hero has one CTA that focuses the catalog without changing URL state", async ({
-  page,
-}) => {
-  await page.goto("/?q=earthquake");
-  const startingUrl = page.url();
-  const hero = page.getByRole("region", { name: catalogCopy.heroTitle });
-  const cta = hero.getByRole("button", {
-    name: catalogCopy.browseDatasets(DATASET_COUNT),
-  });
-
-  await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(1);
-  await page
-    .getByRole("navigation", { name: siteCopy.primaryNavigationLabel })
-    .getByRole("link", { name: siteCopy.contributeLabel })
-    .focus();
-  await page.keyboard.press("Tab");
-  await expect(cta).toBeFocused();
-  expect(await cta.evaluate((element) => element.matches(":focus-visible"))).toBe(true);
-  await page.keyboard.press("Enter");
-
-  await expect(page).toHaveURL(startingUrl);
-  await expect(page.getByRole("heading", { name: catalogCopy.resultCount(1) })).toBeFocused();
-});
-
-test("the catalog jump honors reduced motion", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("the hero title leads into the catalog without a jump CTA", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
-  await expect
-    .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior))
-    .toBe("auto");
-  await page
-    .getByRole("button", { name: catalogCopy.browseDatasets(DATASET_COUNT) })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: catalogCopy.resultCount(DATASET_COUNT) }),
-  ).toBeFocused();
+  const hero = page.getByRole("region", { name: catalogCopy.heroTitle });
+  await expect(hero.getByRole("heading", { name: catalogCopy.heroTitle })).toBeVisible();
+  await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(0);
+
+  const firstRow = page.getByRole("table", { name: tableCopy.caption }).getByRole("row").nth(1);
+  const bounds = await firstRow.boundingBox();
+  expect(bounds?.y).toBeLessThan(560);
+  expect(bounds ? bounds.y + bounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
 });
 
 test("the recommended dataset leads the unfiltered catalog only", async ({ page }) => {
@@ -134,33 +112,44 @@ test("catalog pagination keeps global order and canonical URL state", async ({ p
   const table = page.getByRole("table", { name: tableCopy.caption });
   const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
 
-  await expect(table.getByRole("row")).toHaveCount(11);
+  await expect(table.getByRole("row")).toHaveCount(CATALOG_PAGE_SIZE + 1);
   await expect(pagination.getByRole("button", { name: catalogCopy.previousPageLabel })).toBeDisabled();
   await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(1) })).toHaveAttribute("aria-current", "page");
 
-  await pagination.getByRole("button", { name: catalogCopy.pageLabel(5) }).click();
-  await expect(page).toHaveURL(/page=5/);
-  await expect(table.getByRole("row")).toHaveCount(3);
-  await expect(pagination).toContainText(catalogCopy.pageStatus(5, 5, 41, 42, 42));
+  await pagination.getByRole("button", { name: catalogCopy.pageLabel(CATALOG_PAGES) }).click();
+  await expect(page).toHaveURL(new RegExp(`page=${CATALOG_PAGES}`));
+  await expect(table.getByRole("row")).toHaveCount(LAST_PAGE_ITEMS + 1);
+  await expect(pagination).toContainText(
+    catalogCopy.pageStatus(
+      CATALOG_PAGES,
+      CATALOG_PAGES,
+      DATASET_COUNT - LAST_PAGE_ITEMS + 1,
+      DATASET_COUNT,
+      DATASET_COUNT,
+    ),
+  );
 
   await page.reload();
-  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(5) })).toHaveAttribute("aria-current", "page");
+  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(CATALOG_PAGES) })).toHaveAttribute("aria-current", "page");
   await page.goBack();
   await expect(page).not.toHaveURL(/page=/);
-  await expect(table.getByRole("row")).toHaveCount(11);
+  await expect(table.getByRole("row")).toHaveCount(CATALOG_PAGE_SIZE + 1);
 
   await page.goto("/?page=999");
-  await expect(page).toHaveURL(/page=5/);
+  await expect(page).toHaveURL(new RegExp(`page=${CATALOG_PAGES}`));
   await page.goto("/?page=invalid");
   await expect(page).not.toHaveURL(/page=/);
 });
 
 test("deep catalog links show page context and a result above the fold", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/?page=4");
+  const pageNumber = Math.min(4, CATALOG_PAGES);
+  const start = (pageNumber - 1) * CATALOG_PAGE_SIZE + 1;
+  const end = Math.min(pageNumber * CATALOG_PAGE_SIZE, DATASET_COUNT);
+  await page.goto(`/?page=${pageNumber}`);
 
   await expect(
-    page.getByText(catalogCopy.pageSummary(4, Math.ceil(DATASET_COUNT / 10), 31, 40)),
+    page.getByText(catalogCopy.pageSummary(pageNumber, CATALOG_PAGES, start, end)),
   ).toBeVisible();
   const firstResult = page
     .getByRole("table", { name: tableCopy.caption })
@@ -176,7 +165,7 @@ test("deep catalog links show page context and a result above the fold", async (
 test("pagination resets for catalog changes and restores through guide history", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/?page=2");
-  await expect(page.locator('[data-slot="card"]')).toHaveCount(10);
+  await expect(page.locator('[data-slot="card"]')).toHaveCount(CATALOG_PAGE_SIZE);
 
   await page.getByLabel(catalogCopy.searchLabel).fill("legislation");
   await expect(page).not.toHaveURL(/page=/);
@@ -189,7 +178,7 @@ test("pagination resets for catalog changes and restores through guide history",
   await expect(page.getByRole("heading", { level: 1, name: guideName })).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/page=2/);
-  await expect(page.locator('[data-slot="card"]')).toHaveCount(10);
+  await expect(page.locator('[data-slot="card"]')).toHaveCount(CATALOG_PAGE_SIZE);
 });
 
 test("long active filters do not create mobile horizontal scrolling", async ({ page }) => {
@@ -514,9 +503,6 @@ test("application copy reflows across supported viewport widths", async ({ page 
     await page.goto("/");
     const heroTitle = page.getByRole("heading", { name: catalogCopy.heroTitle });
     await expect(heroTitle).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: catalogCopy.browseDatasets(DATASET_COUNT) }),
-    ).toBeVisible();
     if (width >= 1024) {
       await expect(heroTitle).toHaveCSS("white-space", "nowrap");
     }
@@ -537,8 +523,8 @@ test("application copy reflows across supported viewport widths", async ({ page 
       expect(first?.height).toBe(second?.height);
     }
     if (width === 1440) {
-      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(700);
-      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(900);
+      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(420);
+      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(560);
     }
 
     let documentWidth = await page.evaluate(() => ({

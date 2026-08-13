@@ -43,7 +43,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 }
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
-  return <td data-slot="table-cell" className={cn("px-4 py-4 align-top", className)} {...props} />;
+  return <td data-slot="table-cell" className={cn("px-4 py-3 align-top", className)} {...props} />;
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {

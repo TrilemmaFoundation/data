@@ -43,9 +43,6 @@ describe("site copy", () => {
     expect(catalogCopy.resultCount(1)).toBe("1 dataset");
     expect(catalogCopy.resultCount(5)).toBe("5 datasets");
     expect(catalogCopy.resultStatus(1)).toBe("1 dataset found");
-    expect(catalogCopy.browseDatasets(0)).toBe("Browse 0 datasets");
-    expect(catalogCopy.browseDatasets(1)).toBe("Browse 1 dataset");
-    expect(catalogCopy.browseDatasets(10)).toBe("Browse 10 datasets");
     expect(catalogCopy.showResults(5)).toBe("Show 5 datasets");
     expect(catalogCopy.removeFilter("Domain: Economics")).toBe(
       "Remove Domain: Economics filter",
