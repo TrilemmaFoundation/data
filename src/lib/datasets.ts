@@ -21,20 +21,10 @@ export function listDatasetFiles(dir: string = DATASETS_DIR): string[] {
     .sort();
 }
 
-export type DatasetLoadError = {
-  file: string;
-  messages: string[];
-};
-
-export type DatasetLoadResult = {
-  datasets: Dataset[];
-  errors: DatasetLoadError[];
-};
-
 /**
  * Load and validate every dataset YAML. Does not throw — returns structured errors.
  */
-export function loadDatasets(dir: string = DATASETS_DIR): DatasetLoadResult {
+export function loadDatasets(dir: string = DATASETS_DIR) {
   if (!fs.existsSync(dir)) {
     return {
       datasets: [],
@@ -52,7 +42,7 @@ export function loadDatasets(dir: string = DATASETS_DIR): DatasetLoadResult {
     };
   }
   const datasets: Dataset[] = [];
-  const errors: DatasetLoadError[] = [];
+  const errors: Array<{ file: string; messages: string[] }> = [];
   const seenIds = new Map<string, string>();
 
   if (files.length === 0) {

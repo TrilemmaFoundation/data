@@ -11,7 +11,7 @@ const RETRY_DELAYS_MS = [250, 750];
 const USER_AGENT =
   "TrilemmaDataCatalogValidator/1.0 (+https://data.trilemma.foundation)";
 
-export type UrlCheckResult = {
+type UrlCheckResult = {
   ok: boolean;
   messages: string[];
   warnings?: string[];

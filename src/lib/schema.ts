@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const AccessTypeSchema = z.enum(["download", "api", "both"]);
-export const DifficultySchema = z.enum([
+const AccessTypeSchema = z.enum(["download", "api", "both"]);
+const DifficultySchema = z.enum([
   "beginner",
   "intermediate",
   "advanced",
@@ -16,8 +16,8 @@ export const DATASET_THEMES = [
   "Technology & Cybersecurity",
   "Demographics & Development",
 ] as const;
-export const DatasetThemeSchema = z.enum(DATASET_THEMES);
-export const SourceTypeSchema = z.enum([
+const DatasetThemeSchema = z.enum(DATASET_THEMES);
+const SourceTypeSchema = z.enum([
   "government",
   "intergovernmental",
   "academic",
@@ -96,7 +96,7 @@ const UniqueAccessTypesSchema = z
     message: '"both" cannot be combined with another access type',
   });
 
-export const GettingStartedSchema = z.strictObject({
+const GettingStartedSchema = z.strictObject({
   overview: NonEmptyStringSchema,
   prerequisites: uniqueStrings(),
   access_steps: uniqueStrings(),
@@ -111,7 +111,7 @@ export const GettingStartedSchema = z.strictObject({
   }),
 });
 
-export const UrlChecksSchema = z.strictObject({
+const UrlChecksSchema = z.strictObject({
   source_marker: PageMarkerSchema,
   license_marker: PageMarkerSchema,
 });

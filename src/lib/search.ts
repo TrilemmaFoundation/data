@@ -10,7 +10,7 @@ import {
   type SizeCategory,
 } from "./size";
 
-export const ACCESS_METHODS = ["api", "download"] as const;
+const ACCESS_METHODS = ["api", "download"] as const;
 export type AccessMethod = (typeof ACCESS_METHODS)[number];
 
 export const SORT_COLUMNS = [
@@ -25,15 +25,7 @@ export type CatalogSort = { id: SortColumn; desc: boolean } | null;
 
 export const CATALOG_PAGE_SIZE = 10;
 
-export type CatalogPage<T> = {
-  items: T[];
-  page: number;
-  totalPages: number;
-  start: number;
-  end: number;
-};
-
-export function paginate<T>(items: T[], requestedPage: number): CatalogPage<T> {
+export function paginate<T>(items: T[], requestedPage: number) {
   const totalPages = Math.max(1, Math.ceil(items.length / CATALOG_PAGE_SIZE));
   const page = Math.min(Math.max(requestedPage, 1), totalPages);
   const offset = (page - 1) * CATALOG_PAGE_SIZE;
