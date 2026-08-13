@@ -12,7 +12,6 @@ export type SizeCategory = (typeof SIZE_CATEGORIES)[number];
 /**
  * Categorize by size_gb_max — the practical "you'll need up to this much space" signal.
  *
- * Boundaries match the v1 spec:
  * Tiny <0.1, Small 0.1–1, Medium 1–10, Large 10–100,
  * Very Large 100–1,000, Massive >1,000.
  * Shared lower bounds go to the higher bucket (e.g. exactly 1 GB → Medium).

@@ -23,7 +23,7 @@ export const SORT_COLUMNS = [
 export type SortColumn = (typeof SORT_COLUMNS)[number];
 export type CatalogSort = { id: SortColumn; desc: boolean } | null;
 
-export const CATALOG_PAGE_SIZE = 10;
+const CATALOG_PAGE_SIZE = 10;
 
 export function paginate<T>(items: T[], requestedPage: number) {
   const totalPages = Math.max(1, Math.ceil(items.length / CATALOG_PAGE_SIZE));

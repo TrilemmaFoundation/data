@@ -6,7 +6,7 @@ const DifficultySchema = z.enum([
   "intermediate",
   "advanced",
 ]);
-export const DATASET_THEMES = [
+const DATASET_THEMES = [
   "Environment & Hazards",
   "Government & Policy",
   "Markets & Economics",
