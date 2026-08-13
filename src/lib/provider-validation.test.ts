@@ -322,4 +322,29 @@ describe("validateProviderContracts", () => {
     ).resolves.toEqual(new Map());
     expect(fetchImpl).toHaveBeenCalledOnce();
   });
+
+  it("runs provider checks with bounded concurrency", async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      inFlight += 1;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      inFlight -= 1;
+      const url = String(input);
+      if (url.includes("naturalearth")) {
+        return response(validBodies["natural-earth"], contentTypes["natural-earth"]);
+      }
+      return response(validBodies["nasa-firms"], contentTypes["nasa-firms"]);
+    });
+
+    await expect(
+      validateProviderContracts(
+        [{ id: "nasa-firms" }, { id: "natural-earth" }] as Dataset[],
+        { fetchImpl, concurrency: 1 },
+      ),
+    ).resolves.toEqual(new Map());
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(maxInFlight).toBe(1);
+  });
 });

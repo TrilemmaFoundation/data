@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { readBoundedBody } from "./http-validation";
+import { mapPool } from "./async-pool";
 import type { Dataset } from "./schema";
 
 const MAX_RESPONSE_BYTES = 2_000_000;
@@ -392,6 +393,7 @@ const contracts = {
 type ProviderValidationOptions = {
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
+  concurrency?: number;
 };
 
 function jsonValidator(schema: z.ZodType) {
@@ -472,13 +474,10 @@ export async function validateProviderContracts(
   datasets: Dataset[],
   options: ProviderValidationOptions = {},
 ): Promise<Map<string, string[]>> {
-  const results = await Promise.all(
-    datasets
-      .filter((dataset) => Object.hasOwn(contracts, dataset.id))
-      .map(async (dataset) => [
-        `${dataset.id}.yaml`,
-        await checkProviderContract(dataset.id, options),
-      ] as const),
-  );
+  const jobs = datasets.filter((dataset) => Object.hasOwn(contracts, dataset.id));
+  const results = await mapPool(jobs, options.concurrency ?? 3, async (dataset) => [
+    `${dataset.id}.yaml`,
+    await checkProviderContract(dataset.id, options),
+  ] as const);
   return new Map(results.filter(([, errors]) => errors.length > 0));
 }

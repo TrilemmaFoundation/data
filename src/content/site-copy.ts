@@ -48,7 +48,7 @@ export const catalogCopy = {
   clearFiltersLabel: "Clear filters",
   drawerTitle: "Filter datasets",
   drawerDescription:
-    "Refine the catalog by theme, difficulty, access, type, format, geography, and size.",
+    "Refine the catalog by theme, difficulty, access, type, domain, task, size, format, and geography.",
   closeFiltersLabel: "Close filters",
   resultCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
   resultStatus: (count: number) =>
@@ -88,6 +88,8 @@ export const filterCopy = {
   accessMethodLabel: "Access method",
   allAccessMethodsLabel: "Any method",
   dataTypeLabel: "Data type",
+  domainLabel: "Domain",
+  taskLabel: "Task",
   moreFiltersLabel: "More filters",
   sizeLabel: "Size",
   formatLabel: "Format",

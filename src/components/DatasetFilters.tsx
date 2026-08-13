@@ -201,6 +201,34 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
         ))}
       </AdvancedGroup>
 
+      <AdvancedGroup title={filterCopy.domainLabel} count={filters.domains.length}>
+        {options.domains.map((domain) => (
+          <FilterCheckbox
+            key={domain}
+            label={domain}
+            checked={filters.domains.includes(domain)}
+            onCheckedChange={() => onChange({
+              ...filters,
+              domains: toggleValue(filters.domains, domain),
+            })}
+          />
+        ))}
+      </AdvancedGroup>
+
+      <AdvancedGroup title={filterCopy.taskLabel} count={filters.tasks.length}>
+        {options.tasks.map((task) => (
+          <FilterCheckbox
+            key={task}
+            label={task}
+            checked={filters.tasks.includes(task)}
+            onCheckedChange={() => onChange({
+              ...filters,
+              tasks: toggleValue(filters.tasks, task),
+            })}
+          />
+        ))}
+      </AdvancedGroup>
+
       <AdvancedGroup title={filterCopy.sizeLabel} count={filters.sizes.length}>
         {options.sizes.map((size) => (
           <FilterCheckbox

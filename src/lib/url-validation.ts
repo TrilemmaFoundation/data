@@ -3,6 +3,7 @@ import { BlockList, type LookupFunction } from "node:net";
 import { Agent } from "undici";
 import type { Dataset } from "./schema";
 import { readBoundedBody } from "./http-validation";
+import { mapPool } from "./async-pool";
 
 const URL_TIMEOUT_MS = 10_000;
 const MAX_PAGE_BYTES = 1_000_000;
@@ -75,58 +76,47 @@ export function createPinnedLookup(
 
 const STATUS_EXCEPTIONS = new Map([
   [
-    "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
-    {
-      statuses: [403],
-      reason: "NASA Earthdata blocks automated validation from GitHub Actions",
-      expires: "2026-11-08",
-    },
-  ],
-  [
-    "https://www.usgs.gov/data-management/data-licensing",
-    {
-      statuses: [403],
-      reason: "USGS CloudFront blocks automated validation from some regions",
-      expires: "2026-11-08",
-    },
-  ],
-  [
     "https://kalshi.com/developer-agreement",
     {
       statuses: [429],
-      reason: "Kalshi rate-limits automated validation from GitHub Actions",
-      expires: "2026-11-09",
+      reason:
+        "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-08-13",
+      expires: "2026-11-11",
     },
   ],
   [
     "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
     {
       statuses: [403],
-      reason: "NHTSA blocks automated validation from some regions",
-      expires: "2026-11-09",
+      reason:
+        "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      expires: "2026-11-11",
     },
   ],
   [
     "https://www.nhtsa.gov/about-nhtsa/terms-use",
     {
       statuses: [403],
-      reason: "NHTSA blocks automated validation from some regions",
-      expires: "2026-11-09",
+      reason:
+        "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      expires: "2026-11-11",
     },
   ],
   [
     "https://www.noaa.gov/disclaimer",
     {
       statuses: [403],
-      reason: "NOAA blocks automated validation from some regions",
-      expires: "2026-11-09",
+      reason:
+        "NOAA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      expires: "2026-11-11",
     },
   ],
   [
     "https://www.transit.dot.gov/ntd/monthly-ridership",
     {
       statuses: [403],
-      reason: "FTA blocks automated validation from some regions",
+      reason:
+        "FTA blocks automated validation from some regions; reconfirmed 2026-08-13",
       expires: "2026-11-13",
     },
   ],
@@ -134,7 +124,8 @@ const STATUS_EXCEPTIONS = new Map([
     "https://www.gbif.org/terms",
     {
       statuses: [403],
-      reason: "GBIF blocks automated validation from some regions",
+      reason:
+        "GBIF blocks automated validation from some regions; reconfirmed 2026-08-13",
       expires: "2026-11-13",
     },
   ],
@@ -142,15 +133,8 @@ const STATUS_EXCEPTIONS = new Map([
     "https://www.imf.org/en/about/copyright-and-terms",
     {
       statuses: [403],
-      reason: "IMF blocks automated validation from some regions",
-      expires: "2026-11-13",
-    },
-  ],
-  [
-    "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
-    {
-      statuses: [403],
-      reason: "UNHCR blocks automated validation from some regions",
+      reason:
+        "IMF blocks automated validation from some regions; reconfirmed 2026-08-13",
       expires: "2026-11-13",
     },
   ],
@@ -397,20 +381,16 @@ export async function validateDatasetUrls(
   }
 
   const jobs = [...owners.entries()];
-  const results = new Map<string, UrlCheckResult>();
   const checker = options.checker ?? ((url, expectedMarker) =>
     checkUrl(url, { expectedMarker, resolveHost: options.resolveHost }));
-  const concurrency = Math.max(1, Math.min(options.concurrency ?? 3, jobs.length || 1));
-  let nextIndex = 0;
-
-  async function worker() {
-    while (nextIndex < jobs.length) {
-      const [key, job] = jobs[nextIndex++];
-      results.set(key, await checker(job.url, job.expectedMarker));
-    }
-  }
-
-  await Promise.all(Array.from({ length: concurrency }, () => worker()));
+  const results = new Map(
+    await mapPool(
+      jobs,
+      options.concurrency ?? 3,
+      async ([key, job]) =>
+        [key, await checker(job.url, job.expectedMarker)] as const,
+    ),
+  );
 
   const errorsByFile = new Map<string, string[]>();
   const warningsByFile = new Map<string, string[]>();

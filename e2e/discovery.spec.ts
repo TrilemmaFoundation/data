@@ -477,6 +477,7 @@ test("advanced desktop filters stay within the drawer and remain fully reachable
   await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
   const dialog = page.getByRole("dialog", { name: catalogCopy.drawerTitle });
   const scroller = dialog.locator(".overflow-y-auto");
+  await dialog.locator("summary").filter({ hasText: filterCopy.domainLabel }).click();
   await dialog.locator("summary").filter({ hasText: filterCopy.formatLabel }).click();
   const dimensions = await scroller.evaluate((element) => ({
     clientHeight: element.clientHeight,
@@ -490,6 +491,21 @@ test("advanced desktop filters stay within the drawer and remain fully reachable
   await expect(
     dialog.locator("summary").filter({ hasText: filterCopy.geographyLabel }),
   ).toBeVisible();
+});
+
+test("the filter drawer can apply a domain filter", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: catalogCopy.drawerTitle });
+  await dialog.locator("summary").filter({ hasText: filterCopy.domainLabel }).click();
+  await dialog.locator("label").filter({ hasText: "Natural Hazards" }).click();
+  await expect(page).toHaveURL((url) =>
+    url.searchParams.getAll("domain").includes("Natural Hazards"),
+  );
+  await expect(page.getByLabel(catalogCopy.activeFiltersAriaLabel)).toContainText(
+    `${filterChipPrefixes.domains}: Natural Hazards`,
+  );
 });
 
 test("application copy reflows across supported viewport widths", async ({ page }) => {

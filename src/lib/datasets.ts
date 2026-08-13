@@ -6,6 +6,21 @@ import { DatasetSchema, type Dataset } from "./schema";
 const DATASETS_DIR = path.join(process.cwd(), "data", "datasets");
 export const MAX_DATASET_FILE_BYTES = 64 * 1024;
 
+type LoadResult = {
+  datasets: Dataset[];
+  errors: Array<{ file: string; messages: string[] }>;
+};
+
+const loadCache = new Map<string, LoadResult>();
+
+function cacheKey(dir: string): string {
+  return path.resolve(dir);
+}
+
+export function clearDatasetCacheForTests(): void {
+  loadCache.clear();
+}
+
 export function getDatasetsDir(): string {
   return DATASETS_DIR;
 }
@@ -24,7 +39,19 @@ export function listDatasetFiles(dir: string = DATASETS_DIR): string[] {
 /**
  * Load and validate every dataset YAML. Does not throw — returns structured errors.
  */
-export function loadDatasets(dir: string = DATASETS_DIR) {
+export function loadDatasets(dir: string = DATASETS_DIR): LoadResult {
+  const key = cacheKey(dir);
+  const cached = loadCache.get(key);
+  if (cached) return cached;
+
+  const result = readDatasets(dir);
+  if (process.env.NODE_ENV !== "development") {
+    loadCache.set(key, result);
+  }
+  return result;
+}
+
+function readDatasets(dir: string): LoadResult {
   if (!fs.existsSync(dir)) {
     return {
       datasets: [],
@@ -138,7 +165,7 @@ export function getAllDatasets(dir: string = DATASETS_DIR): Dataset[] {
     throw new Error(`Invalid dataset metadata:\n${details}`);
   }
 
-  return datasets.sort((a, b) => a.name.localeCompare(b.name));
+  return [...datasets].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function getDatasetById(

@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  clearDatasetCacheForTests,
   getAllDatasets,
   getDatasetById,
   getDatasetsDir,
@@ -20,6 +21,7 @@ function makeTempDir(): string {
 }
 
 afterEach(() => {
+  clearDatasetCacheForTests();
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -296,6 +298,40 @@ describe("loadDatasets", () => {
     ]);
     expect(getDatasetById("alpha", dir)?.name).toBe("Zulu");
     expect(getDatasetById("missing", dir)).toBeUndefined();
+  });
+
+  it("reuses one catalog read for repeated lookups in the same process", () => {
+    const dir = makeTempDir();
+    const file = path.join(dir, "sample.yaml");
+    fs.writeFileSync(file, validYaml);
+    const read = vi.spyOn(fs, "readFileSync");
+
+    expect(getDatasetById("sample", dir)?.id).toBe("sample");
+    expect(getDatasetById("sample", dir)?.name).toBe("Sample");
+    expect(
+      read.mock.calls.filter(([target]) => String(target) === file),
+    ).toHaveLength(1);
+    read.mockRestore();
+  });
+
+  it("does not cache catalog reads during development", () => {
+    const dir = makeTempDir();
+    const file = path.join(dir, "sample.yaml");
+    fs.writeFileSync(file, validYaml);
+    const previous = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+    const read = vi.spyOn(fs, "readFileSync");
+
+    try {
+      expect(getDatasetById("sample", dir)?.id).toBe("sample");
+      expect(getDatasetById("sample", dir)?.name).toBe("Sample");
+      expect(
+        read.mock.calls.filter(([target]) => String(target) === file),
+      ).toHaveLength(2);
+    } finally {
+      process.env.NODE_ENV = previous;
+      read.mockRestore();
+    }
   });
 
   it("throws one actionable error for an invalid catalog", () => {

@@ -1,6 +1,6 @@
 import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
 import { validateDatasetUrls } from "../src/lib/url-validation";
-import { validatePythonSyntax } from "../src/lib/python-validation";
+import { validatePythonSyntaxBatch } from "../src/lib/python-validation";
 import { validateDatasetPolicy } from "../src/lib/catalog-validation";
 import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
@@ -12,14 +12,17 @@ async function main() {
     : await validateDatasetUrls(datasets);
 
   const allErrors: { file: string; messages: string[] }[] = [...errors];
+  const pythonErrors = validatePythonSyntaxBatch(
+    datasets.map((dataset) => dataset.getting_started.python.code),
+  );
 
-  for (const dataset of datasets) {
+  for (const [index, dataset] of datasets.entries()) {
     const file = `${dataset.id}.yaml`;
     const messages: string[] = [];
 
     messages.push(...validateDatasetPolicy(dataset));
 
-    const pythonError = validatePythonSyntax(dataset.getting_started.python.code);
+    const pythonError = pythonErrors[index];
     if (pythonError) {
       messages.push(`getting_started.python.code: ${pythonError}`);
     }

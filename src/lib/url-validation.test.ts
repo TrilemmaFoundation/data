@@ -389,72 +389,51 @@ describe("checkUrl", () => {
 
   it.each([
     [
-      "https://www.usgs.gov/data-management/data-licensing",
-      403,
-      "USGS CloudFront blocks automated validation from some regions",
-      "2026-11-08",
-      2,
-    ],
-    [
-      "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
-      403,
-      "NASA Earthdata blocks automated validation from GitHub Actions",
-      "2026-11-08",
-      2,
-    ],
-    [
       "https://kalshi.com/developer-agreement",
       429,
-      "Kalshi rate-limits automated validation from GitHub Actions",
-      "2026-11-09",
+      "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-08-13",
+      "2026-11-11",
       4,
     ],
     [
       "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
       403,
-      "NHTSA blocks automated validation from some regions",
-      "2026-11-09",
+      "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "2026-11-11",
       2,
     ],
     [
       "https://www.nhtsa.gov/about-nhtsa/terms-use",
       403,
-      "NHTSA blocks automated validation from some regions",
-      "2026-11-09",
+      "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "2026-11-11",
       2,
     ],
     [
       "https://www.noaa.gov/disclaimer",
       403,
-      "NOAA blocks automated validation from some regions",
-      "2026-11-09",
+      "NOAA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "2026-11-11",
       2,
     ],
     [
       "https://www.transit.dot.gov/ntd/monthly-ridership",
       403,
-      "FTA blocks automated validation from some regions",
+      "FTA blocks automated validation from some regions; reconfirmed 2026-08-13",
       "2026-11-13",
       2,
     ],
     [
       "https://www.gbif.org/terms",
       403,
-      "GBIF blocks automated validation from some regions",
+      "GBIF blocks automated validation from some regions; reconfirmed 2026-08-13",
       "2026-11-13",
       2,
     ],
     [
       "https://www.imf.org/en/about/copyright-and-terms",
       403,
-      "IMF blocks automated validation from some regions",
-      "2026-11-13",
-      2,
-    ],
-    [
-      "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
-      403,
-      "UNHCR blocks automated validation from some regions",
+      "IMF blocks automated validation from some regions; reconfirmed 2026-08-13",
       "2026-11-13",
       2,
     ],
@@ -481,12 +460,12 @@ describe("checkUrl", () => {
   );
 
   it("rejects an expired protected-URL exception", async () => {
-    const url = "https://www.usgs.gov/data-management/data-licensing";
+    const url = "https://www.nhtsa.gov/nhtsa-datasets-and-apis";
     const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 403 }));
     await expect(
       checkUrl(url, {
         fetchImpl: fetchImpl as typeof fetch,
-        today: new Date("2026-11-09T00:00:00Z"),
+        today: new Date("2026-11-12T00:00:00Z"),
       }),
     ).resolves.toEqual({
       ok: false,
