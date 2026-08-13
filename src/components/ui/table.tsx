@@ -36,14 +36,14 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
-      className={cn("h-12 px-4 text-left align-middle text-xs font-bold tracking-wider text-muted-foreground uppercase", className)}
+      className={cn("h-8 px-3 text-left align-middle text-[0.7rem] font-semibold tracking-wider text-muted-foreground uppercase", className)}
       {...props}
     />
   );
 }
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
-  return <td data-slot="table-cell" className={cn("px-4 py-3 align-top", className)} {...props} />;
+  return <td data-slot="table-cell" className={cn("px-3 py-4 align-middle", className)} {...props} />;
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {

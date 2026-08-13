@@ -11,6 +11,7 @@ import {
   filterCopy,
   notFoundCopy,
   siteCopy,
+  tableCopy,
 } from "./site-copy";
 
 function collectStrings(value: unknown): string[] {
@@ -32,6 +33,7 @@ describe("site copy", () => {
       datasetGuideCopy,
       copyButtonCopy,
       notFoundCopy,
+      tableCopy,
     ]);
 
     expect(values.length).toBeGreaterThan(0);
@@ -75,6 +77,14 @@ describe("site copy", () => {
       "Download or API",
     );
     expect(datasetGuideCopy.accessTypes(["both"])).toBe("Download and API");
+  });
+
+  it("keeps table theme labels short and complete", () => {
+    const themes = [...new Set(getAllDatasets().map((dataset) => dataset.theme))];
+    expect(Object.keys(tableCopy.themeShort).sort()).toEqual([...themes].sort());
+    for (const theme of themes) {
+      expect(tableCopy.themeShort[theme].length).toBeLessThan(theme.length);
+    }
   });
 
   it("formats API-key and dataset-detail states", () => {

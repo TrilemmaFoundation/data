@@ -194,15 +194,8 @@ export function SiteFooter() {
   const copyrightYear = new Date().getFullYear();
 
   return (
-    <>
-      <div
-        className="flex justify-center bg-background py-6 sm:py-8"
-        aria-hidden="true"
-      >
-        <div className="w-4/5 border-t border-white/20 sm:w-2/3" />
-      </div>
-      <footer className="bg-linear-to-b from-brand-navy to-brand-black">
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+    <footer className="mt-4 border-t border-white/20 bg-linear-to-b from-brand-navy to-brand-black">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
             <div className="space-y-4 sm:col-span-2">
               <a
@@ -265,7 +258,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="mt-8 border-t border-white/20 pt-6 sm:mt-12 sm:pt-8">
+          <div className="mt-6 border-t border-white/20 pt-5 sm:mt-8 sm:pt-6">
             <div className="flex flex-col items-center justify-between gap-3 text-xs text-white/80 sm:flex-row sm:text-sm">
               <div className="text-center sm:text-left">
                 <p>{siteCopy.copyright(copyrightYear)}</p>
@@ -289,8 +282,7 @@ export function SiteFooter() {
               </nav>
             </div>
           </div>
-        </div>
-      </footer>
-    </>
+      </div>
+    </footer>
   );
 }

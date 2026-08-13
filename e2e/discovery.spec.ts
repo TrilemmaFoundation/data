@@ -65,6 +65,7 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
 });
 
 test("rapid controls preserve filters selected during pending URL navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
 
   await page.locator("#desktop-dataset-theme").selectOption("Technology & Cybersecurity");
@@ -89,10 +90,29 @@ test("the hero title leads into the catalog without a jump CTA", async ({ page }
   await expect(hero.getByRole("heading", { name: catalogCopy.heroTitle })).toBeVisible();
   await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(0);
 
-  const firstRow = page.getByRole("table", { name: tableCopy.caption }).getByRole("row").nth(1);
-  const bounds = await firstRow.boundingBox();
-  expect(bounds?.y).toBeLessThan(560);
-  expect(bounds ? bounds.y + bounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
+  const table = page.getByRole("table", { name: tableCopy.caption });
+  const headerRow = table.getByRole("row").nth(0);
+  const firstRow = table.getByRole("row").nth(1);
+  const lastRow = table.getByRole("row").nth(CATALOG_PAGE_SIZE);
+  const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
+  const headerBounds = await headerRow.boundingBox();
+  const firstBounds = await firstRow.boundingBox();
+  const lastBounds = await lastRow.boundingBox();
+  const paginationBounds = await pagination.boundingBox();
+  expect(firstBounds?.y).toBeLessThan(280);
+  expect(firstBounds?.height ?? 0).toBeGreaterThan(headerBounds?.height ?? Number.POSITIVE_INFINITY);
+  expect(firstBounds?.height ?? 0).toBeGreaterThan(paginationBounds?.height ?? Number.POSITIVE_INFINITY);
+  expect(firstBounds ? firstBounds.y + firstBounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
+  expect(lastBounds ? lastBounds.y + lastBounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
+  expect(
+    paginationBounds
+      ? paginationBounds.y + paginationBounds.height
+      : Number.POSITIVE_INFINITY,
+  ).toBeLessThan(900);
+
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const laptopLast = await lastRow.boundingBox();
+  expect(laptopLast ? laptopLast.y + laptopLast.height : Number.POSITIVE_INFINITY).toBeLessThan(800);
 });
 
 test("the recommended dataset leads the unfiltered catalog only", async ({ page }) => {
@@ -139,6 +159,44 @@ test("catalog pagination keeps global order and canonical URL state", async ({ p
   await expect(page).toHaveURL(new RegExp(`page=${CATALOG_PAGES}`));
   await page.goto("/?page=invalid");
   await expect(page).not.toHaveURL(/page=/);
+});
+
+test("pagination previous and next stay put when the page list changes", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
+  const previous = pagination.getByRole("button", { name: catalogCopy.previousPageLabel });
+  const next = pagination.getByRole("button", { name: catalogCopy.nextPageLabel });
+  const before = {
+    previous: await previous.boundingBox(),
+    next: await next.boundingBox(),
+  };
+
+  await pagination.getByRole("button", { name: catalogCopy.pageLabel(2) }).click();
+  const after = {
+    previous: await previous.boundingBox(),
+    next: await next.boundingBox(),
+  };
+
+  expect(after.previous?.x).toBeCloseTo(before.previous?.x ?? Number.NaN, 0);
+  expect(after.next?.x).toBeCloseTo(before.next?.x ?? Number.NaN, 0);
+});
+
+test("pagination next and previous keep the window scroll position", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await page.locator("footer").scrollIntoViewIfNeeded();
+  const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
+  const before = await page.evaluate(() => window.scrollY);
+  expect(before).toBeGreaterThan(0);
+
+  await pagination.getByRole("button", { name: catalogCopy.nextPageLabel }).click();
+  await expect(page).toHaveURL(/page=2/);
+  expect(await page.evaluate(() => window.scrollY)).toBe(before);
+
+  await pagination.getByRole("button", { name: catalogCopy.previousPageLabel }).click();
+  await expect(page).not.toHaveURL(/page=/);
+  expect(await page.evaluate(() => window.scrollY)).toBe(before);
 });
 
 test("deep catalog links show page context and a result above the fold", async ({ page }) => {
@@ -357,8 +415,10 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
   await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 
   const trigger = page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true });
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await trigger.click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(trigger).toBeFocused();
@@ -390,7 +450,7 @@ test("the sticky table header meets the site header without exposing rows", asyn
   await page.goto("/");
 
   const table = page.getByRole("table", { name: tableCopy.caption });
-  await table.getByRole("row").nth(4).scrollIntoViewIfNeeded();
+  await page.locator("footer").scrollIntoViewIfNeeded();
 
   const siteHeader = await page.locator("header").first().boundingBox();
   const tableHeader = await table.getByRole("columnheader").first().boundingBox();
@@ -523,8 +583,8 @@ test("application copy reflows across supported viewport widths", async ({ page 
       expect(first?.height).toBe(second?.height);
     }
     if (width === 1440) {
-      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(420);
-      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(560);
+      expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(160);
+      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(280);
     }
 
     let documentWidth = await page.evaluate(() => ({

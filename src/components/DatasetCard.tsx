@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { CatalogDataset } from "@/lib/schema";
-import { formatSizeRange, getSizeCategory } from "@/lib/size";
+import { getSizeCategory } from "@/lib/size";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { datasetCardCopy } from "@/content/site-copy";
+import { datasetCardCopy, tableCopy } from "@/content/site-copy";
 
 export function DatasetCard({
   dataset,
@@ -23,12 +23,11 @@ export function DatasetCard({
   featured?: boolean;
 }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
-  const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
 
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 hover:border-primary/50 hover:bg-card",
+        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
         featured && "border-primary/50",
       )}
     >
@@ -47,39 +46,31 @@ export function DatasetCard({
             {featured ? datasetCardCopy.goodFirstBuildLabel : sizeCategory}
           </span>
         </div>
-        <CardTitle className="pt-2 text-xl font-semibold text-white">
+        <CardTitle className="pt-1 text-lg font-semibold text-white">
           <Link href={`/datasets/${dataset.id}`} className="rounded-sm hover:text-primary">
             {dataset.name}
           </Link>
         </CardTitle>
-        <CardDescription className="line-clamp-3 leading-6">{dataset.description}</CardDescription>
+        <CardDescription className="line-clamp-2 leading-5">{dataset.description}</CardDescription>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col gap-5">
-        <div className="grid grid-cols-2 gap-3 rounded-lg border border-white/8 bg-brand-black/25 p-3 text-xs">
-          <div>
-            <p className="text-muted-foreground">{datasetCardCopy.sizeLabel}</p>
-            <p className="mt-1 font-medium text-white">{sizeRange}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">{datasetCardCopy.formatLabel}</p>
-            <p className="mt-1 font-medium text-white">{dataset.formats.join(", ")}</p>
-          </div>
-        </div>
-
-        <div>
-          <Badge variant="outline" className="h-auto rounded-full whitespace-normal">
-            {dataset.theme}
+      <CardContent className="flex flex-1 flex-col justify-end">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+          <Badge variant="outline" className="rounded-full" title={dataset.theme}>
+            {tableCopy.themeShort[dataset.theme]}
           </Badge>
-          <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
-            {dataset.tasks.join(" · ")}
-          </p>
+          <span className="whitespace-nowrap text-white/80">
+            {dataset.formats[0]}
+            {dataset.formats.length > 1 ? ` +${dataset.formats.length - 1}` : ""}
+          </span>
+          <span
+            className="ml-auto flex items-center gap-1 whitespace-nowrap text-muted-foreground"
+            title={datasetCardCopy.apiKeyStatus(dataset.api_key_required)}
+          >
+            <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
+            {dataset.api_key_required ? tableCopy.freeKeyLabel : tableCopy.noKeyLabel}
+          </span>
         </div>
-
-        <p className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
-          <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
-          {datasetCardCopy.apiKeyStatus(dataset.api_key_required)}
-        </p>
       </CardContent>
 
       <CardFooter className="border-white/10 bg-brand-black/25">

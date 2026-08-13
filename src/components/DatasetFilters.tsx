@@ -44,22 +44,33 @@ function FilterSelect({
   label,
   value,
   onChange,
+  compact = false,
   children,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
+  compact?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <label htmlFor={id} className="block min-w-0 text-sm font-semibold text-white">
-      {label}
+    <label
+      htmlFor={id}
+      className={cn(
+        "min-w-0 font-semibold text-white",
+        compact ? "flex-1 text-xs" : "block text-sm",
+      )}
+    >
+      <span className={compact ? "sr-only" : "block"}>{label}</span>
       <select
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 px-3 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]"
+        className={cn(
+          "h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 px-3 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]",
+          compact ? "mt-0" : "mt-1.5",
+        )}
       >
         {children}
       </select>
@@ -73,12 +84,21 @@ export function DatasetQuickFilters({
   onChange,
   className,
   idPrefix,
-}: DatasetFiltersProps & { className?: string; idPrefix: string }) {
+  compact = false,
+}: DatasetFiltersProps & { className?: string; idPrefix: string; compact?: boolean }) {
   return (
-    <div className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-4", className)}>
+    <div
+      className={cn(
+        compact
+          ? "flex min-w-0 flex-1 gap-2"
+          : "grid gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-3",
+        className,
+      )}
+    >
       <FilterSelect
         id={`${idPrefix}-dataset-theme`}
         label={filterCopy.themeLabel}
+        compact={compact}
         value={filters.theme ?? ""}
         onChange={(theme) => onChange({
           ...filters,
@@ -92,6 +112,7 @@ export function DatasetQuickFilters({
       <FilterSelect
         id={`${idPrefix}-dataset-difficulty`}
         label={filterCopy.difficultyLabel}
+        compact={compact}
         value={filters.difficulty ?? ""}
         onChange={(difficulty) => onChange({
           ...filters,
@@ -108,7 +129,8 @@ export function DatasetQuickFilters({
 
       <FilterSelect
         id={`${idPrefix}-dataset-access`}
-        label={filterCopy.accessMethodLabel}
+        label={compact ? filterCopy.accessMethodShortLabel : filterCopy.accessMethodLabel}
+        compact={compact}
         value={filters.accessMethod ?? ""}
         onChange={(accessMethod) => onChange({
           ...filters,
@@ -125,7 +147,8 @@ export function DatasetQuickFilters({
 
       <FilterSelect
         id={`${idPrefix}-dataset-api-key`}
-        label={filterCopy.apiKeyLabel}
+        label={compact ? filterCopy.apiKeyShortLabel : filterCopy.apiKeyLabel}
+        compact={compact}
         value={filters.apiKeyRequired === null ? "" : String(filters.apiKeyRequired)}
         onChange={(value) => onChange({
           ...filters,
@@ -171,12 +194,9 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="eyebrow">{filterCopy.eyebrow}</p>
-          <h2 className="mt-1 text-lg font-semibold text-white">
-            {filterCopy.moreFiltersLabel}
-          </h2>
-        </div>
+        <p className="text-sm font-semibold text-white">
+          {filterCopy.advancedFiltersLabel}
+        </p>
         <Button
           variant="ghost"
           size="sm"

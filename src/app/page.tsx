@@ -27,7 +27,7 @@ export default function HomePage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-7xl px-4 py-16 text-sm text-muted-foreground sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-8 text-sm text-muted-foreground sm:px-6">
           {siteCopy.loadingLabel}
         </div>
       }

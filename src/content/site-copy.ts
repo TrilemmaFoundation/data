@@ -1,4 +1,4 @@
-import type { Dataset } from "@/lib/schema";
+import type { Dataset, DatasetTheme } from "@/lib/schema";
 
 export const siteCopy = {
   name: "Trilemma Data",
@@ -77,22 +77,24 @@ export const filterChipPrefixes = {
 } as const;
 
 export const filterCopy = {
-  eyebrow: "Refine results",
   clearAllLabel: "Clear all",
   difficultyLabel: "Difficulty",
   allDifficultiesLabel: "All levels",
   themeLabel: "Theme",
   allThemesLabel: "All themes",
   accessMethodLabel: "Access method",
+  accessMethodShortLabel: "Access",
   allAccessMethodsLabel: "Any method",
   dataTypeLabel: "Data type",
   domainLabel: "Domain",
   taskLabel: "Task",
   moreFiltersLabel: "More filters",
+  advancedFiltersLabel: "Advanced filters",
   sizeLabel: "Size",
   formatLabel: "Format",
   apiKeyLabel: "API key required",
-  anyApiKeyLabel: "Any key setup",
+  apiKeyShortLabel: "API key",
+  anyApiKeyLabel: "Any key",
   yesLabel: "Yes",
   noLabel: "No",
   geographyLabel: "Geography",
@@ -106,8 +108,21 @@ export const tableCopy = {
   formatsLabel: "Formats",
   difficultyLabel: "Difficulty",
   updatesLabel: "Updates",
-  freeKeyLabel: "Free key",
+  freeKeyLabel: "Key",
   noKeyLabel: "No key",
+  accessApiLabel: "API",
+  accessDownloadLabel: "Download",
+  accessBothLabel: "API+DL",
+  themeShort: {
+    "Environment & Hazards": "Environment",
+    "Government & Policy": "Government",
+    "Markets & Economics": "Markets",
+    "Health, Food & Safety": "Health",
+    "Geospatial & Infrastructure": "Geospatial",
+    "Research & Reference": "Research",
+    "Technology & Cybersecurity": "Technology",
+    "Demographics & Development": "Demographics",
+  } satisfies Record<DatasetTheme, string>,
   moreFormats: (count: number) => `${count} more format${count === 1 ? "" : "s"}`,
   sortBy: (column: string, current: false | "asc" | "desc") =>
     current === "asc"
@@ -118,8 +133,6 @@ export const tableCopy = {
 } as const;
 
 export const datasetCardCopy = {
-  sizeLabel: "Size",
-  formatLabel: "Format",
   goodFirstBuildLabel: "Good first build",
   apiKeyRequiredLabel: "Free API key required",
   noApiKeyLabel: "No API key required",

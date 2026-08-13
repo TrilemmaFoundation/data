@@ -59,7 +59,8 @@ The shared foundation is intentionally small:
 - Roboto typography and the canonical `public/foundation-white.webp` logo
 
 Controls use 10px corners, 44–48px targets, compact hard shadows, and visible
-orange focus rings. Content surfaces use restrained 12–16px corners and
+orange focus rings. Catalog pagination uses denser 32px controls so dataset
+rows stay the visual priority. Content surfaces use restrained 12–16px corners and
 elevation. Update the documented values, logo, and brand-contract test together
 when the canonical website changes.
 

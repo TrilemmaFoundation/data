@@ -48,14 +48,14 @@ function SortableHeader<TValue>({
   return (
     <button
       type="button"
-      className="inline-flex min-h-11 items-center gap-1.5 rounded-sm text-left hover:text-white"
+      className="inline-flex min-h-8 items-center gap-1 rounded-sm text-left hover:text-white"
       onClick={column.getToggleSortingHandler()}
       aria-label={tableCopy.sortBy(children, sorted)}
     >
       {children}
-      {sorted === "asc" ? <ArrowUp className="size-4" aria-hidden="true" />
-        : sorted === "desc" ? <ArrowDown className="size-4" aria-hidden="true" />
-          : <ArrowUpDown className="size-4 text-white/50" aria-hidden="true" />}
+      {sorted === "asc" ? <ArrowUp className="size-3.5" aria-hidden="true" />
+        : sorted === "desc" ? <ArrowDown className="size-3.5" aria-hidden="true" />
+          : <ArrowUpDown className="size-3.5 text-white/50" aria-hidden="true" />}
     </button>
   );
 }
@@ -85,18 +85,20 @@ export function DatasetTable({
         const dataset = row.original;
         const featured = dataset.id === featuredId;
         return (
-          <div className="min-w-72 max-w-xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                href={`/datasets/${dataset.id}`}
-                className="rounded-sm text-base font-semibold text-white hover:text-primary"
-              >
-                {dataset.name}
-              </Link>
-              {featured && <Badge variant="secondary">{datasetCardCopy.goodFirstBuildLabel}</Badge>}
-            </div>
-            <p className="mt-1 text-xs font-medium text-secondary">{dataset.provider}</p>
-            <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{dataset.description}</p>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Link
+              href={`/datasets/${dataset.id}`}
+              className="min-w-0 truncate whitespace-nowrap rounded-sm text-[0.9375rem] font-semibold text-white hover:text-primary"
+              title={`${dataset.description} — ${dataset.provider}`}
+            >
+              {dataset.name}
+              <span className="font-normal text-xs text-secondary"> · {dataset.provider}</span>
+            </Link>
+            {featured && (
+              <Badge variant="secondary" className="shrink-0">
+                {datasetCardCopy.goodFirstBuildLabel}
+              </Badge>
+            )}
           </div>
         );
       },
@@ -106,8 +108,8 @@ export function DatasetTable({
       sortFn: sortFn("theme"),
       header: ({ column }) => <SortableHeader column={column}>{tableCopy.themeLabel}</SortableHeader>,
       cell: ({ row }) => (
-        <span className="text-sm font-medium leading-5 text-white/75">
-          {row.original.theme}
+        <span className="text-xs whitespace-nowrap text-white/75" title={row.original.theme}>
+          {tableCopy.themeShort[row.original.theme]}
         </span>
       ),
     }),
@@ -119,17 +121,20 @@ export function DatasetTable({
         header: ({ column }) => <SortableHeader column={column}>{tableCopy.accessLabel}</SortableHeader>,
         cell: ({ row }) => {
           const dataset = row.original;
-          const methods = getDatasetAccessMethods(dataset)
-            .map((method) => method === "api" ? "API" : "Download")
-            .join(" + ");
+          const methods = getDatasetAccessMethods(dataset);
+          const access = methods.length > 1
+            ? tableCopy.accessBothLabel
+            : methods[0] === "api"
+              ? tableCopy.accessApiLabel
+              : tableCopy.accessDownloadLabel;
+          const key = dataset.api_key_required ? tableCopy.freeKeyLabel : tableCopy.noKeyLabel;
           return (
-            <div className="min-w-28">
-              <p className="font-medium text-white">{methods}</p>
-              <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
-                {dataset.api_key_required ? tableCopy.freeKeyLabel : tableCopy.noKeyLabel}
-              </p>
-            </div>
+            <p className="flex items-center gap-1 text-xs whitespace-nowrap text-white">
+              <span className="font-medium">{access}</span>
+              <span className="text-white/40" aria-hidden="true">·</span>
+              <KeyRound className="size-3 shrink-0 text-secondary" aria-hidden="true" />
+              <span className="text-muted-foreground">{key}</span>
+            </p>
           );
         },
       },
@@ -137,15 +142,17 @@ export function DatasetTable({
     columnHelper.accessor("formats", {
       id: "formats",
       enableSorting: false,
-      header: tableCopy.formatsLabel,
+      header: () => (
+        <span className="inline-flex min-h-8 items-center">{tableCopy.formatsLabel}</span>
+      ),
       cell: ({ row }) => {
         const formats = row.original.formats;
         return (
-          <p className="min-w-24 text-sm text-white/85">
-            {formats.slice(0, 2).join(", ")}
-            {formats.length > 2 && (
-              <span className="text-muted-foreground" aria-label={tableCopy.moreFormats(formats.length - 2)}>
-                {` +${formats.length - 2}`}
+          <p className="text-xs whitespace-nowrap text-white/85">
+            {formats[0]}
+            {formats.length > 1 && (
+              <span className="text-muted-foreground" aria-label={tableCopy.moreFormats(formats.length - 1)}>
+                {` +${formats.length - 1}`}
               </span>
             )}
           </p>
@@ -156,13 +163,13 @@ export function DatasetTable({
       id: "difficulty",
       sortFn: sortFn("difficulty"),
       header: ({ column }) => <SortableHeader column={column}>{tableCopy.difficultyLabel}</SortableHeader>,
-      cell: ({ row }) => <span className="font-medium capitalize text-white/85">{row.original.difficulty}</span>,
+      cell: ({ row }) => <span className="text-xs font-medium capitalize whitespace-nowrap text-white/85">{row.original.difficulty}</span>,
     }),
     columnHelper.accessor("update_frequency", {
       id: "updates",
       sortFn: sortFn("updates"),
       header: ({ column }) => <SortableHeader column={column}>{tableCopy.updatesLabel}</SortableHeader>,
-      cell: ({ row }) => <span className="font-medium capitalize text-white/85">{row.original.update_frequency}</span>,
+      cell: ({ row }) => <span className="text-xs font-medium capitalize whitespace-nowrap text-white/85">{row.original.update_frequency}</span>,
     }),
   ]), [featuredId]);
 
@@ -182,46 +189,44 @@ export function DatasetTable({
   });
 
   return (
-    <div className="surface">
-      <Table className="min-w-[950px] table-fixed">
-        <TableCaption className="sr-only">{tableCopy.caption}</TableCaption>
-        <colgroup>
-          <col style={{ width: "38%" }} />
-          <col style={{ width: "13%" }} />
-          <col style={{ width: "14%" }} />
-          <col style={{ width: "12%" }} />
-          <col style={{ width: "11%" }} />
-          <col style={{ width: "12%" }} />
-        </colgroup>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent">
-              {headerGroup.headers.map((header) => {
-                const sorted = header.column.getIsSorted();
-                return (
-                  <TableHead
-                    key={header.id}
-                    scope="col"
-                    className="sticky top-16 z-10 bg-card/95 backdrop-blur"
-                    aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
-                  >
-                    {header.isPlaceholder ? null : <table.FlexRender header={header} />}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getAllCells().map((cell) => (
-                <TableCell key={cell.id}><table.FlexRender cell={cell} /></TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <Table className="table-fixed">
+      <TableCaption className="sr-only">{tableCopy.caption}</TableCaption>
+      <colgroup>
+        <col style={{ width: "38%" }} />
+        <col style={{ width: "14%" }} />
+        <col style={{ width: "14%" }} />
+        <col style={{ width: "14%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "10%" }} />
+      </colgroup>
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id} className="hover:bg-transparent">
+            {headerGroup.headers.map((header) => {
+              const sorted = header.column.getIsSorted();
+              return (
+                <TableHead
+                  key={header.id}
+                  scope="col"
+                  className="sticky top-16 z-[1] bg-card"
+                  aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
+                >
+                  {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id}>
+            {row.getAllCells().map((cell) => (
+              <TableCell key={cell.id}><table.FlexRender cell={cell} /></TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
