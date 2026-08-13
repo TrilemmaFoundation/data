@@ -269,10 +269,9 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
           className="px-1 py-4 text-center sm:px-8 sm:py-5 lg:py-6"
         >
           <div className="mx-auto max-w-6xl">
-            <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
             <h1
               id="catalog-hero-title"
-              className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
+              className="font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
             >
               {catalogCopy.heroTitle}
             </h1>
@@ -280,14 +279,6 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               {catalogCopy.browseDatasets(datasets.length)}
               <ArrowDown aria-hidden="true" />
             </Button>
-            <ul className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/80">
-              {catalogCopy.heroProofLabels.map((label) => (
-                <li key={label} className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
-                  {label}
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 

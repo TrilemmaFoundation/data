@@ -34,13 +34,7 @@ export const siteCopy = {
 } as const;
 
 export const catalogCopy = {
-  heroEyebrow: "From idea to data",
   heroTitle: "Find data to build your next microproduct",
-  heroProofLabels: [
-    "Maintained sources",
-    "Working Python",
-    "Practical caveats",
-  ],
   browseDatasets: (count: number) =>
     `Browse ${count} dataset${count === 1 ? "" : "s"}`,
   searchLabel: "Search by topic, provider, or product use",
