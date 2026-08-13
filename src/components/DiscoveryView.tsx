@@ -8,11 +8,13 @@ import {
   EMPTY_FILTERS,
   filterDatasets,
   getFilterOptions,
+  paginate,
   sortDatasets,
   type CatalogSort,
   type DatasetFilters as Filters,
 } from "@/lib/search";
-import { filtersToParams, parseFilters, parseSort } from "@/lib/filter-params";
+import { filtersToParams, parseFilters, parsePage, parseSort } from "@/lib/filter-params";
+import { CatalogPagination } from "@/components/CatalogPagination";
 import { DatasetCard } from "@/components/DatasetCard";
 import { DatasetFilters, DatasetQuickFilters } from "@/components/DatasetFilters";
 import { DatasetTable } from "@/components/DatasetTable";
@@ -127,6 +129,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
   );
   const filters = useMemo(() => parseFilters(params, filterOptions), [filterOptions, params]);
   const sort = useMemo(() => parseSort(params), [params]);
+  const requestedPage = useMemo(() => parsePage(params), [params]);
   const filtersRef = useRef(filters);
   const sortRef = useRef<CatalogSort>(sort);
   const searchUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -145,17 +148,21 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     if (!recommended || results[0] === recommended) return results;
     return [recommended, ...results.filter((dataset) => dataset !== recommended)];
   }, [isUnfiltered, results]);
-  const mobileResults = useMemo(
+  const orderedResults = useMemo(
     () => sortDatasets(displayedResults, sort),
     [displayedResults, sort],
   );
+  const paginated = useMemo(
+    () => paginate(orderedResults, requestedPage),
+    [orderedResults, requestedPage],
+  );
 
   const updateState = useCallback(
-    (nextFilters: Filters, nextSort: CatalogSort) => {
+    (nextFilters: Filters, nextSort: CatalogSort, nextPage = 1, push = false) => {
       filtersRef.current = nextFilters;
       sortRef.current = nextSort;
-      const query = filtersToParams(nextFilters, nextSort).toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      const query = filtersToParams(nextFilters, nextSort, nextPage).toString();
+      router[push ? "push" : "replace"](query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
     [pathname, router],
   );
@@ -164,6 +171,14 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     filtersRef.current = filters;
     sortRef.current = sort;
   }, [filters, sort]);
+
+  useEffect(() => {
+    const pageValues = params.getAll("page");
+    const canonical = paginated.page === 1
+      ? pageValues.length === 0
+      : pageValues.length === 1 && pageValues[0] === String(paginated.page);
+    if (!canonical) updateState(filters, sort, paginated.page);
+  }, [filters, paginated.page, params, sort, updateState]);
 
   useEffect(() => () => {
     if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
@@ -215,6 +230,15 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   const handleSortChange = useCallback(
     (next: CatalogSort) => updateState(filtersRef.current, next),
+    [updateState],
+  );
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      updateState(filtersRef.current, sortRef.current, page, true);
+      resultsTitleRef.current?.scrollIntoView({ block: "start" });
+      resultsTitleRef.current?.focus({ preventScroll: true });
+    },
     [updateState],
   );
 
@@ -349,7 +373,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
           ) : (
             <>
               <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:hidden">
-                {mobileResults.map((dataset) => (
+                {paginated.items.map((dataset) => (
                   <DatasetCard
                     key={dataset.id}
                     dataset={dataset}
@@ -359,12 +383,20 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               </div>
               <div className="mt-6 hidden lg:block">
                 <DatasetTable
-                  datasets={displayedResults}
+                  datasets={paginated.items}
                   sort={sort}
                   onSortChange={handleSortChange}
                   featuredId={isUnfiltered ? catalogCopy.recommendedDatasetId : undefined}
                 />
               </div>
+              <CatalogPagination
+                page={paginated.page}
+                totalPages={paginated.totalPages}
+                start={paginated.start}
+                end={paginated.end}
+                total={results.length}
+                onPageChange={handlePageChange}
+              />
             </>
           )}
         </section>

@@ -23,6 +23,30 @@ export const SORT_COLUMNS = [
 export type SortColumn = (typeof SORT_COLUMNS)[number];
 export type CatalogSort = { id: SortColumn; desc: boolean } | null;
 
+export const CATALOG_PAGE_SIZE = 10;
+
+export type CatalogPage<T> = {
+  items: T[];
+  page: number;
+  totalPages: number;
+  start: number;
+  end: number;
+};
+
+export function paginate<T>(items: T[], requestedPage: number): CatalogPage<T> {
+  const totalPages = Math.max(1, Math.ceil(items.length / CATALOG_PAGE_SIZE));
+  const page = Math.min(Math.max(requestedPage, 1), totalPages);
+  const offset = (page - 1) * CATALOG_PAGE_SIZE;
+  const pageItems = items.slice(offset, offset + CATALOG_PAGE_SIZE);
+  return {
+    items: pageItems,
+    page,
+    totalPages,
+    start: pageItems.length === 0 ? 0 : offset + 1,
+    end: offset + pageItems.length,
+  };
+}
+
 export type DatasetFilters = {
   query: string;
   theme: DatasetTheme | null;

@@ -128,6 +128,52 @@ test("the recommended dataset leads the unfiltered catalog only", async ({ page 
   await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toHaveCount(0);
 });
 
+test("catalog pagination keeps global order and canonical URL state", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const table = page.getByRole("table", { name: tableCopy.caption });
+  const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
+
+  await expect(table.getByRole("row")).toHaveCount(11);
+  await expect(pagination.getByRole("button", { name: catalogCopy.previousPageLabel })).toBeDisabled();
+  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(1) })).toHaveAttribute("aria-current", "page");
+
+  await pagination.getByRole("button", { name: catalogCopy.pageLabel(5) }).click();
+  await expect(page).toHaveURL(/page=5/);
+  await expect(table.getByRole("row")).toHaveCount(3);
+  await expect(pagination).toContainText(catalogCopy.pageStatus(5, 5, 41, 42, 42));
+
+  await page.reload();
+  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(5) })).toHaveAttribute("aria-current", "page");
+  await page.goBack();
+  await expect(page).not.toHaveURL(/page=/);
+  await expect(table.getByRole("row")).toHaveCount(11);
+
+  await page.goto("/?page=999");
+  await expect(page).toHaveURL(/page=5/);
+  await page.goto("/?page=invalid");
+  await expect(page).not.toHaveURL(/page=/);
+});
+
+test("pagination resets for catalog changes and restores through guide history", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?page=2");
+  await expect(page.locator('[data-slot="card"]')).toHaveCount(10);
+
+  await page.getByLabel(catalogCopy.searchLabel).fill("legislation");
+  await expect(page).not.toHaveURL(/page=/);
+  await expect(page.getByRole("link", { name: "Congress.gov Legislation API" }).first()).toBeVisible();
+
+  await page.goto("/?page=2");
+  const guide = page.locator('[data-slot="card"] a').first();
+  const guideName = await guide.innerText();
+  await guide.click();
+  await expect(page.getByRole("heading", { level: 1, name: guideName })).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/page=2/);
+  await expect(page.locator('[data-slot="card"]')).toHaveCount(10);
+});
+
 test("long active filters do not create mobile horizontal scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const query = "x".repeat(200);
@@ -355,6 +401,7 @@ test("desktop quick facets filter by theme, access, difficulty, and API key", as
   await expect(page.getByRole("link", { name: "CISA Known Exploited Vulnerabilities Catalog" })).toBeVisible();
 
   await page.locator("#desktop-dataset-access").selectOption("api");
+  await page.locator("#desktop-dataset-api-key").selectOption("true");
   await expect(page.getByRole("heading", { name: catalogCopy.emptyTitle })).toBeVisible();
   await page.locator("#desktop-dataset-access").selectOption("download");
   await page.locator("#desktop-dataset-difficulty").selectOption("beginner");

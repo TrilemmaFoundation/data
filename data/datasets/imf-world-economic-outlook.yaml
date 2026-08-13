@@ -1,0 +1,77 @@
+id: imf-world-economic-outlook
+name: IMF World Economic Outlook
+description: >
+  Comparable national growth, inflation, labor, fiscal, trade, and forecast
+  indicators for building international outlook and revision tools.
+theme: Markets & Economics
+url: https://data.imf.org/Datasets/WEO
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - XLSX
+license: IMF website and data terms and conditions
+license_url: https://www.imf.org/en/about/copyright-and-terms
+url_checks:
+  source_marker: World Economic Outlook
+  license_marker: The Use of IMF Data
+domains:
+  - International Economics
+  - Macroeconomics
+data_types:
+  - Time Series
+  - Forecast Data
+tasks:
+  - Country Comparison
+  - Forecast Analysis
+  - Economic Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: 1980-present with projections for approximately five years
+update_frequency: occasional
+provider: International Monetary Fund
+source_type: intergovernmental
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    The World Economic Outlook provides comparable historical estimates and
+    projections for countries and groups. Start with real GDP growth, three
+    countries, and a short period. Projected years are not observations, and
+    releases revise both forecasts and historical estimates.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Check the current WEO release date and indicator definition.
+    - Request one indicator for three countries and a bounded year range.
+    - Label historical and projected periods and retain the release name with the data.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH/USA/DEU/JPN",
+          timeout=30,
+      )
+      response.raise_for_status()
+      values = response.json()["values"]["NGDP_RPCH"]
+      growth = pd.DataFrame(values).sort_index()
+      print(growth.tail(10))
+  first_project:
+    title: Compare three country growth outlooks
+    goal: Compare recent and projected real GDP growth for the United States, Germany, and Japan.
+    steps:
+      - Record the WEO release and retrieve only the real GDP growth indicator for three countries.
+      - Mark which years are estimates or projections before comparing paths.
+      - Explain how forecast uncertainty, revisions, missing values, and country definitions limit conclusions.

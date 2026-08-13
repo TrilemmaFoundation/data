@@ -1,0 +1,88 @@
+id: nasa-power-daily
+name: NASA POWER Daily Meteorology and Solar Data
+description: >
+  Global gridded daily meteorology and solar estimates for building renewable
+  energy, agriculture, climate, and infrastructure planning tools.
+theme: Environment & Hazards
+url: https://power.larc.nasa.gov/docs/services/api/temporal/daily/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - NetCDF
+license: NASA Earth science data and information policy
+license_url: https://www.earthdata.nasa.gov/engage/open-data-services-and-software/data-and-information-policy
+url_checks:
+  source_marker: Daily API
+  license_marker: full and open sharing
+domains:
+  - Climate
+  - Renewable Energy
+data_types:
+  - Gridded Data
+  - Time Series
+tasks:
+  - Site Screening
+  - Trend Analysis
+  - Resource Assessment
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 1981-present for daily meteorology with parameter-specific coverage
+update_frequency: near real time
+provider: NASA Langley Research Center
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    POWER serves analysis-ready solar and meteorological estimates for selected
+    coordinates. Start with one point, two parameters, and one month. Values
+    represent model or satellite grid cells rather than a site sensor, latency
+    differs by parameter, and recent meteorology is later quality-replaced.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A longitude and latitude for the location being tested
+  access_steps:
+    - Use the parameter dictionary to confirm names, units, source, and temporal availability.
+    - Request one point, no more than two parameters, and a one-month daily period.
+    - Record coordinate, time standard, spatial resolution, and retrieval date with the response.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://power.larc.nasa.gov/api/temporal/daily/point",
+          params={
+              "parameters": "T2M,ALLSKY_SFC_SW_DWN",
+              "community": "RE",
+              "longitude": -112.074,
+              "latitude": 33.4484,
+              "start": "20250701",
+              "end": "20250731",
+              "format": "JSON",
+              "time-standard": "UTC",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      daily = pd.DataFrame(response.json()["properties"]["parameter"])
+      daily.index = pd.to_datetime(daily.index)
+      print(daily.head())
+  first_project:
+    title: Profile daily solar resource at one location
+    goal: Compare daily solar radiation and temperature for Phoenix during July 2025.
+    steps:
+      - Confirm parameter units and retrieve one month for a single coordinate in UTC.
+      - Plot daily solar radiation and temperature and flag missing values.
+      - Explain how grid resolution, modeled values, latency, and later quality replacement limit site decisions.

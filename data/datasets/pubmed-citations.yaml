@@ -1,0 +1,91 @@
+id: pubmed-citations
+name: PubMed Citation Records
+description: >
+  Curated biomedical citation records for building topic alerts, evidence
+  discovery tools, publication monitors, and research trend summaries.
+theme: Research & Reference
+url: https://www.ncbi.nlm.nih.gov/home/develop/api/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - XML
+license: NCBI database and copyright policies
+license_url: https://www.ncbi.nlm.nih.gov/home/about/policies/
+url_checks:
+  source_marker: E-utilities
+  license_marker: Copyright
+domains:
+  - Biomedical Research
+  - Scholarly Communication
+data_types:
+  - Bibliographic Data
+  - Text
+tasks:
+  - Literature Monitoring
+  - Topic Research
+  - Alerting
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 1946-present
+update_frequency: daily
+provider: U.S. National Library of Medicine
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    PubMed indexes biomedical and life-sciences citations with controlled
+    vocabulary and publication metadata. Start with one query and records
+    added during the last 30 days. Indexing can lag publication, query wording
+    changes results, and a citation record is not an appraisal of evidence.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Test one bounded PubMed query in the web interface before automating it.
+    - Use ESearch to retrieve a small list of PubMed identifiers added recently.
+    - Fetch summaries for those identifiers and retain the retrieval date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      start = date.today() - timedelta(days=30)
+      search = requests.get(
+          "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+          params={
+              "db": "pubmed",
+              "term": f'wildfire smoke AND ("{start:%Y/%m/%d}"[Date - Entry] : "3000"[Date - Entry])',
+              "retmax": 50,
+              "retmode": "json",
+          },
+          timeout=30,
+      )
+      search.raise_for_status()
+      ids = search.json()["esearchresult"]["idlist"]
+      summaries = requests.get(
+          "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
+          params={"db": "pubmed", "id": ",".join(ids), "retmode": "json"},
+          timeout=30,
+      )
+      summaries.raise_for_status()
+      records = summaries.json()["result"]
+      articles = pd.DataFrame([records[item] for item in ids])
+      print(articles[["uid", "title", "pubdate"]].head(20))
+  first_project:
+    title: Track newly indexed biomedical articles
+    goal: Find PubMed records about wildfire smoke added during the last 30 days.
+    steps:
+      - Save the exact query and retrieve no more than 50 recent PubMed identifiers.
+      - Summarize the returned titles and publication dates without inferring study quality.
+      - Explain how indexing delay, query vocabulary, and missing abstracts affect the result.

@@ -1,0 +1,71 @@
+id: epa-airdata-daily-summaries
+name: EPA AirData Daily Summaries
+description: >
+  Quality-assured daily ambient air-monitor measurements for building
+  historical pollution, compliance-context, and station comparison tools.
+theme: Environment & Hazards
+url: https://aqs.epa.gov/aqsweb/airdata/download_files.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 1
+formats:
+  - CSV
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Daily Summary Data
+  license_marker: federal government materials
+domains:
+  - Air Quality
+  - Environmental Health
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Trend Analysis
+  - Monitoring
+  - Station Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual pollutant files from 1980-present with parameter-specific coverage
+update_frequency: daily
+provider: U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    AirData publishes daily summaries from EPA's regulatory Air Quality System.
+    Start with one pollutant, one year, and one state. Monitor coverage and
+    methods change, recent values may not be certified, and these historical
+    regulatory records differ from preliminary operational AirNow data.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - Enough memory for one annual pollutant ZIP file
+  access_steps:
+    - Open AirData and select one daily pollutant file and year.
+    - Read the file-format documentation and retain site, parameter, standard, and method identifiers.
+    - Filter immediately to one state and record the file update date.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      url = "https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip"
+      daily = pd.read_csv(url, dtype={"State Code": "string", "County Code": "string", "Site Num": "string"})
+      california = daily[daily["State Code"] == "06"].copy()
+      california["Date Local"] = pd.to_datetime(california["Date Local"])
+      print(california[["Date Local", "County Code", "Site Num", "Arithmetic Mean", "Units of Measure"]].head(20))
+  first_project:
+    title: Compare daily PM2.5 summaries within one state
+    goal: Review 2025 daily PM2.5 summaries for California monitoring sites.
+    steps:
+      - Filter the annual file to California and construct a stable site identifier from state, county, and site codes.
+      - Summarize completeness and arithmetic means by site without mixing units or standards.
+      - Explain how monitor placement, methods, completeness, certification timing, and AirNow differences limit conclusions.

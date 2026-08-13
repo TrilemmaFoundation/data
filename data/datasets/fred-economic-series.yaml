@@ -1,0 +1,86 @@
+id: fred-economic-series
+name: FRED and ALFRED Economic Series
+description: >
+  Normalized macroeconomic and regional time series with historical vintages
+  for building release monitors, dashboards, and revision trackers.
+theme: Markets & Economics
+url: https://fred.stlouisfed.org/docs/api/fred/overview.html
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - XML
+license: FRED API terms of use and series-specific source rights
+license_url: https://fred.stlouisfed.org/docs/api/terms_of_use.html
+url_checks:
+  source_marker: FRED API
+  license_marker: API Terms of Use
+domains:
+  - Macroeconomics
+  - Regional Economics
+data_types:
+  - Time Series
+tasks:
+  - Economic Monitoring
+  - Revision Analysis
+  - Alerting
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: varies by series with historical vintages available through ALFRED
+update_frequency: daily
+provider: Federal Reserve Bank of St. Louis
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    FRED normalizes economic series from many publishers, while ALFRED exposes
+    historical vintages. Start with two explicit series and their metadata.
+    Units, frequency, seasonal adjustment, revisions, and reuse rights vary by
+    upstream source and must travel with any comparison.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free FRED API key saved in the FRED_API_KEY environment variable
+  access_steps:
+    - Create a free FRED API key and save it in the FRED_API_KEY environment variable.
+    - Open each series page and record its source, units, frequency, adjustment, and notes.
+    - Request a bounded observation window and retain the retrieval and real-time dates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      def observations(series_id):
+          response = requests.get(
+              "https://api.stlouisfed.org/fred/series/observations",
+              params={
+                  "api_key": os.environ["FRED_API_KEY"],
+                  "file_type": "json",
+                  "series_id": series_id,
+                  "observation_start": "2024-01-01",
+              },
+              timeout=30,
+          )
+          response.raise_for_status()
+          return pd.DataFrame(response.json()["observations"])
+
+      unemployment = observations("UNRATE")
+      inflation = observations("CPIAUCSL")
+      print(unemployment[["date", "value", "realtime_start"]].tail(12))
+      print(inflation[["date", "value", "realtime_start"]].tail(12))
+  first_project:
+    title: Build a two-series economic release monitor
+    goal: Track recent unemployment and consumer-price observations with their metadata and vintage dates.
+    steps:
+      - Record each series source, units, frequency, seasonal adjustment, and permitted use.
+      - Retrieve matched recent windows and flag newly released or revised observations.
+      - Explain why different units, release schedules, transformations, and vintages prevent naive comparison.

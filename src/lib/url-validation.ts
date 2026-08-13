@@ -122,6 +122,38 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-09",
     },
   ],
+  [
+    "https://www.transit.dot.gov/ntd/monthly-ridership",
+    {
+      statuses: [403],
+      reason: "FTA blocks automated validation from some regions",
+      expires: "2026-11-13",
+    },
+  ],
+  [
+    "https://www.gbif.org/terms",
+    {
+      statuses: [403],
+      reason: "GBIF blocks automated validation from some regions",
+      expires: "2026-11-13",
+    },
+  ],
+  [
+    "https://www.imf.org/en/about/copyright-and-terms",
+    {
+      statuses: [403],
+      reason: "IMF blocks automated validation from some regions",
+      expires: "2026-11-13",
+    },
+  ],
+  [
+    "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
+    {
+      statuses: [403],
+      reason: "UNHCR blocks automated validation from some regions",
+      expires: "2026-11-13",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

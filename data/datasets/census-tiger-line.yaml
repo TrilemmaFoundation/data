@@ -1,0 +1,75 @@
+id: census-tiger-line
+name: Census TIGER/Line Boundaries
+description: >
+  Official U.S. geographic boundaries and feature codes for building maps,
+  spatial joins, service-area analyses, and demographic products.
+theme: Geospatial & Infrastructure
+url: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 1
+formats:
+  - Shapefile
+  - GeoPackage
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: TIGER/Line Shapefiles
+  license_marker: federal government materials
+domains:
+  - Geography
+  - Census Geography
+data_types:
+  - Geospatial
+  - Vector Data
+tasks:
+  - GIS
+  - Spatial Join
+  - Mapping
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual boundary vintages from 2007-present
+update_frequency: annual
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    TIGER/Line files provide official geographic boundaries and identifiers
+    that join to Census statistics. Start with the national county file for one
+    pinned vintage and one ACS variable. Boundaries change over time, and the
+    geometry files contain no demographic measurements themselves.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - Enough memory for one national county boundary file
+  access_steps:
+    - Choose a TIGER/Line vintage that matches the statistical data being joined.
+    - Download the national county ZIP and read only the columns needed for the map.
+    - Join on full Census geographic identifiers rather than names.
+  python:
+    packages:
+      - geopandas
+      - pandas
+    code: |
+      import geopandas as gpd
+      import pandas as pd
+
+      counties = gpd.read_file(
+          "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip"
+      )[["GEOID", "NAME", "STATEFP", "geometry"]]
+      california = counties[counties["STATEFP"] == "06"].copy()
+      california["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(california[["GEOID", "NAME"]].head(20))
+  first_project:
+    title: Prepare county boundaries for an ACS map
+    goal: Create a California county layer that can join safely to ACS five-year estimates.
+    steps:
+      - Read the pinned county vintage and retain GEOID values as strings.
+      - Filter to California and verify that geographic identifiers are unique before joining ACS data.
+      - Explain how boundary vintage, geometry simplification, and missing demographics limit the layer.

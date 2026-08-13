@@ -1,0 +1,78 @@
+id: cms-care-compare-hospitals
+name: CMS Hospital General Information
+description: >
+  Medicare-registered hospital locations, characteristics, services, and
+  ratings for building provider comparison and access tools.
+theme: Health, Food & Safety
+url: https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/items/xubh-q36u
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+license: CMS public-data principles
+license_url: https://www.cms.gov/data-research/cms-data/cms-data-principles-and-operating-norms
+url_checks:
+  source_marker: Hospital General Information
+  license_marker: CMS data is a public good
+domains:
+  - Health Care
+  - Health Services
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Provider Comparison
+  - Geographic Analysis
+  - Market Research
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current provider records with archived releases
+update_frequency: monthly
+provider: Centers for Medicare & Medicaid Services
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    Hospital General Information lists Medicare-registered hospitals with
+    addresses, ownership, services, and overall ratings. Start with one state
+    and the stable dataset identifier. Ratings may be absent or not comparable
+    across facility types, and addresses are not a measure of service access.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the dataset overview and read the current data dictionary.
+    - Query the stable dataset identifier for a bounded page of hospital records.
+    - Preserve Facility ID values and the release date when comparing future versions.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0",
+          params={"limit": 100},
+          timeout=30,
+      )
+      response.raise_for_status()
+      hospitals = pd.DataFrame(response.json()["results"])
+      sample = hospitals[hospitals["state"] == "CA"]
+      print(sample[["facility_id", "facility_name", "hospital_type", "hospital_overall_rating"]].head(20))
+  first_project:
+    title: Compare hospitals within one state
+    goal: Summarize hospital types, ownership, emergency services, and reported ratings in California.
+    steps:
+      - Filter records by state while preserving Facility ID as text.
+      - Summarize hospital type and ownership and report rating missingness before comparing values.
+      - Explain why facility type, missing ratings, release timing, and geographic access limit the comparison.

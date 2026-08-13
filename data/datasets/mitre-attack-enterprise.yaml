@@ -1,0 +1,78 @@
+id: mitre-attack-enterprise
+name: MITRE ATT&CK Enterprise Knowledge Base
+description: >
+  Versioned adversary tactics, techniques, software, groups, mitigations, and
+  relationships for building threat-model and detection-coverage tools.
+theme: Technology & Cybersecurity
+url: https://attack.mitre.org/resources/attack-data-and-tools/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - STIX JSON
+  - XLSX
+license: MITRE ATT&CK terms of use
+license_url: https://attack.mitre.org/resources/legal-and-branding/terms-of-use/
+url_checks:
+  source_marker: ATT&CK in STIX
+  license_marker: non-exclusive, royalty-free license
+domains:
+  - Cybersecurity
+  - Threat Intelligence
+data_types:
+  - Knowledge Graph
+  - Taxonomy
+tasks:
+  - Threat Modeling
+  - Coverage Analysis
+  - Knowledge Graph Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: current versioned knowledge base
+update_frequency: occasional
+provider: MITRE
+source_type: nonprofit
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    Enterprise ATT&CK represents documented adversary behaviors and their
+    relationships in STIX. Start with attack-pattern objects and their tactic
+    phases. ATT&CK is a knowledge base, not a measure of behavior prevalence or
+    proof that a mapped control detects every implementation of a technique.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the ATT&CK data page and note the current Enterprise release.
+    - Download the official Enterprise STIX bundle from MITRE's data repository.
+    - Retain object identifiers, versions, revoked flags, and source citations.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json"
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      objects = response.json()["objects"]
+      techniques = pd.json_normalize([
+          item for item in objects
+          if item.get("type") == "attack-pattern" and not item.get("revoked", False)
+      ])
+      print(techniques[["id", "name", "x_mitre_version"]].head(20))
+  first_project:
+    title: Build an Enterprise tactic-to-technique matrix
+    goal: Count current Enterprise techniques by tactic and identify areas needing deeper coverage review.
+    steps:
+      - Filter to current non-revoked attack-pattern objects and expand their kill-chain phases.
+      - Count techniques by tactic while retaining technique identifiers and version fields.
+      - Explain why technique counts do not measure prevalence or guarantee detection effectiveness.

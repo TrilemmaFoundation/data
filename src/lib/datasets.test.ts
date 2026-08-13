@@ -79,7 +79,7 @@ getting_started:
 `;
 
 describe("loadDatasets", () => {
-  it("includes every dataset added in the 26-source expansion", () => {
+  it("includes every dataset added in the curated catalog expansions", () => {
     const ids = new Set(getAllDatasets().map((dataset) => dataset.id));
     for (const id of [
       "cisa-known-exploited-vulnerabilities",
@@ -98,6 +98,22 @@ describe("loadDatasets", () => {
       "usda-fooddata-central",
       "treasury-securities-auctions",
       "openalex-scholarly-works",
+      "crossref-works",
+      "pubmed-citations",
+      "clinicaltrials-studies",
+      "cms-care-compare-hospitals",
+      "nvd-cve",
+      "mitre-attack-enterprise",
+      "census-tiger-line",
+      "fta-ntd-monthly-ridership",
+      "bea-regional-gdp-income",
+      "fred-economic-series",
+      "imf-world-economic-outlook",
+      "unhcr-refugee-population",
+      "nasa-power-daily",
+      "congress-gov-legislation",
+      "gbif-species-occurrences",
+      "epa-airdata-daily-summaries",
     ]) {
       expect(ids.has(id), id).toBe(true);
     }
@@ -108,19 +124,19 @@ describe("loadDatasets", () => {
       getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
     );
     const groups = {
-      "Environment & Hazards": ["airnow-air-quality", "nasa-firms", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
-      "Government & Policy": ["federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
-      "Markets & Economics": ["bls-public-data-api", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
-      "Health, Food & Safety": ["cdc-places", "nhtsa-vehicle-recalls", "openfda-drug-adverse-events", "usda-fooddata-central"],
-      "Geospatial & Infrastructure": ["eia-hourly-electric-grid", "natural-earth"],
-      "Research & Reference": ["openalex-scholarly-works"],
-      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities"],
-      "Demographics & Development": ["acs-five-year-estimates", "world-development-indicators"],
+      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "nasa-firms", "nasa-power-daily", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
+      "Government & Policy": ["congress-gov-legislation", "federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
+      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "fred-economic-series", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
+      "Health, Food & Safety": ["cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "nhtsa-vehicle-recalls", "openfda-drug-adverse-events", "usda-fooddata-central"],
+      "Geospatial & Infrastructure": ["census-tiger-line", "eia-hourly-electric-grid", "fta-ntd-monthly-ridership", "natural-earth"],
+      "Research & Reference": ["crossref-works", "gbif-species-occurrences", "openalex-scholarly-works", "pubmed-citations"],
+      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "mitre-attack-enterprise", "nvd-cve"],
+      "Demographics & Development": ["acs-five-year-estimates", "unhcr-refugee-population", "world-development-indicators"],
     } as const;
     for (const [theme, ids] of Object.entries(groups)) {
       for (const id of ids) expect(themes[id], id).toBe(theme);
     }
-    expect(Object.keys(themes)).toHaveLength(26);
+    expect(Object.keys(themes)).toHaveLength(42);
   });
 
   it("loads valid yaml files and ignores templates", () => {

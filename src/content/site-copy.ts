@@ -59,6 +59,12 @@ export const catalogCopy = {
   resultCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
   resultStatus: (count: number) =>
     `${catalogCopy.resultCount(count)} found`,
+  paginationLabel: "Dataset catalog pages",
+  previousPageLabel: "Previous",
+  nextPageLabel: "Next",
+  pageLabel: (page: number) => `Page ${page}`,
+  pageStatus: (page: number, totalPages: number, start: number, end: number, total: number) =>
+    `Page ${page} of ${totalPages}, showing ${start}–${end} of ${total} datasets.`,
   showResults: (count: number) => `Show ${catalogCopy.resultCount(count)}`,
   removeFilter: (label: string) => `Remove ${label} filter`,
 } as const;

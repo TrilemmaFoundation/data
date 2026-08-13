@@ -1,0 +1,93 @@
+id: gbif-species-occurrences
+name: GBIF Species Occurrences
+description: >
+  Global museum, survey, observation, and citizen-science occurrence records
+  for building biodiversity maps and species-monitoring tools.
+theme: Research & Reference
+url: https://techdocs.gbif.org/en/openapi/v1/occurrence
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+  - Parquet
+  - Darwin Core Archive
+license: GBIF data-user agreement and record-level licenses
+license_url: https://www.gbif.org/terms
+url_checks:
+  source_marker: Occurrence API
+  license_marker: data user agreement
+domains:
+  - Biodiversity
+  - Ecology
+data_types:
+  - Geospatial
+  - Observation Data
+tasks:
+  - Species Monitoring
+  - Mapping
+  - Spatial Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: historical collections and observations through current publishing
+update_frequency: continuous
+provider: Global Biodiversity Information Facility
+source_type: intergovernmental
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    GBIF indexes species occurrences published by museums, surveys, research
+    programs, and observation networks. Start with one taxon, country, and
+    recent period. Records reflect uneven sampling, can be duplicated, may have
+    coordinate issues, and can generalize sensitive-species locations.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Match the scientific name to a GBIF taxon key before searching occurrences.
+    - Request one country and recent year range with coordinate and issue filters.
+    - Retain occurrence keys, dataset keys, licenses, and source citations for attribution.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      match = requests.get(
+          "https://api.gbif.org/v1/species/match",
+          params={"name": "Danaus plexippus"},
+          timeout=30,
+      )
+      match.raise_for_status()
+      taxon_key = match.json()["usageKey"]
+      response = requests.get(
+          "https://api.gbif.org/v1/occurrence/search",
+          params={
+              "taxon_key": taxon_key,
+              "country": "US",
+              "year": "2024,2026",
+              "has_coordinate": "true",
+              "has_geospatial_issue": "false",
+              "limit": 100,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      occurrences = pd.json_normalize(response.json()["results"])
+      print(occurrences[["key", "eventDate", "decimalLatitude", "decimalLongitude", "datasetKey"]].head(20))
+  first_project:
+    title: Map recent monarch butterfly occurrences
+    goal: Review recent U.S. monarch butterfly records with usable coordinates.
+    steps:
+      - Resolve the taxon key and request a bounded period with documented coordinate filters.
+      - Deduplicate cautiously by occurrence identity and inspect basis of record and publisher coverage.
+      - Explain how sampling bias, coordinate quality, duplicate publishing, and sensitive-location handling limit the map.

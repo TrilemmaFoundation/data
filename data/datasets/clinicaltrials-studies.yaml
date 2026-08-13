@@ -1,0 +1,87 @@
+id: clinicaltrials-studies
+name: ClinicalTrials.gov Study Records
+description: >
+  Registered clinical study protocols, locations, recruitment states, and
+  results for building trial finders and research-monitoring tools.
+theme: Health, Food & Safety
+url: https://clinicaltrials.gov/data-api/api
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+license: ClinicalTrials.gov terms and conditions
+license_url: https://clinicaltrials.gov/about-site/terms-conditions
+url_checks:
+  source_marker: ClinicalTrials.gov
+  license_marker: ClinicalTrials.gov
+domains:
+  - Clinical Research
+  - Public Health
+data_types:
+  - Registry Data
+  - Event Data
+tasks:
+  - Trial Discovery
+  - Monitoring
+  - Geographic Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 2000-present
+update_frequency: daily
+provider: U.S. National Library of Medicine
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    ClinicalTrials.gov contains sponsor-submitted study protocols, recruitment
+    states, locations, and results. Start with one condition, one country, and
+    recruiting studies. Registration does not independently verify a study's
+    claims, and locations, contacts, and results may be missing or outdated.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Choose one condition and country and confirm the search in ClinicalTrials.gov.
+    - Request only recruiting studies and a bounded page of fields from the API.
+    - Preserve NCT identifiers and check the record update date before presenting availability.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://clinicaltrials.gov/api/v2/studies",
+          params={
+              "query.cond": "asthma",
+              "filter.overallStatus": "RECRUITING",
+              "format": "json",
+              "pageSize": 50,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      studies = pd.json_normalize(response.json()["studies"])
+      columns = [
+          "protocolSection.identificationModule.nctId",
+          "protocolSection.identificationModule.briefTitle",
+          "protocolSection.statusModule.overallStatus",
+      ]
+      print(studies[columns].head(20))
+  first_project:
+    title: Find recruiting trials for one condition
+    goal: Identify recruiting asthma studies and review whether they list usable locations.
+    steps:
+      - Retrieve a bounded page and retain each study's NCT identifier and update date.
+      - Count studies by recruitment state and inspect the location fields before mapping them.
+      - Explain why registry status, submitted details, and missing contacts require source-page confirmation.

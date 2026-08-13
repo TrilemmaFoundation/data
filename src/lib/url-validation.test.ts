@@ -430,6 +430,34 @@ describe("checkUrl", () => {
       "2026-11-09",
       2,
     ],
+    [
+      "https://www.transit.dot.gov/ntd/monthly-ridership",
+      403,
+      "FTA blocks automated validation from some regions",
+      "2026-11-13",
+      2,
+    ],
+    [
+      "https://www.gbif.org/terms",
+      403,
+      "GBIF blocks automated validation from some regions",
+      "2026-11-13",
+      2,
+    ],
+    [
+      "https://www.imf.org/en/about/copyright-and-terms",
+      403,
+      "IMF blocks automated validation from some regions",
+      "2026-11-13",
+      2,
+    ],
+    [
+      "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
+      403,
+      "UNHCR blocks automated validation from some regions",
+      "2026-11-13",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {

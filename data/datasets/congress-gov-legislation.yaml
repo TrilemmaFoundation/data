@@ -1,0 +1,81 @@
+id: congress-gov-legislation
+name: Congress.gov Legislation API
+description: >
+  Official bills, amendments, actions, committees, members, summaries, and
+  legislative relationships for building policy tracking tools.
+theme: Government & Policy
+url: https://api.congress.gov/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Congress.gov API
+  license_marker: federal government materials
+domains:
+  - Legislation
+  - Public Policy
+data_types:
+  - Event Data
+  - Text
+tasks:
+  - Legislative Monitoring
+  - Alerting
+  - Timeline Analysis
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: coverage varies by legislative collection
+update_frequency: daily
+provider: Library of Congress
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    The Congress.gov API exposes bills and their actions, sponsors, committees,
+    subjects, summaries, and related records. Start with recently updated bills
+    in the current Congress. An action or sponsor does not predict enactment,
+    and summaries or linked records may arrive after the underlying event.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Congress.gov API key saved in the CONGRESS_API_KEY environment variable
+  access_steps:
+    - Register for a free Congress.gov API key and save it in the CONGRESS_API_KEY environment variable.
+    - Request one bounded page of bills from the current Congress ordered by update time.
+    - Retain Congress, bill type, bill number, update time, and source URL as the stable identity.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.congress.gov/v3/bill/119",
+          params={
+              "api_key": os.environ["CONGRESS_API_KEY"],
+              "format": "json",
+              "limit": 100,
+              "fromDateTime": "2026-07-01T00:00:00Z",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      bills = pd.json_normalize(response.json()["bills"])
+      print(bills[["congress", "type", "number", "title", "updateDate"]].head(20))
+  first_project:
+    title: Monitor recently updated legislation
+    goal: Identify bills in the 119th Congress updated since July 2026 and group them by bill type.
+    steps:
+      - Retrieve one bounded page and preserve the complete bill identity and update timestamp.
+      - Summarize updates by bill type and follow detail endpoints only for relevant records.
+      - Explain why update activity, sponsorship, summaries, and legislative actions do not predict passage.

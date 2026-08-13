@@ -6,6 +6,42 @@ import {
 } from "./provider-validation";
 
 const validBodies = {
+  "clinicaltrials-studies": JSON.stringify({
+    studies: [{ protocolSection: { identificationModule: { nctId: "NCT00000001", briefTitle: "Example" } } }],
+  }),
+  "cms-care-compare-hospitals": JSON.stringify({
+    count: 1,
+    results: [{ facility_id: "000001", facility_name: "Example Hospital", state: "CA" }],
+  }),
+  "crossref-works": JSON.stringify({
+    status: "ok",
+    message: { items: [{ DOI: "10.0000/example", title: ["Example"] }] },
+  }),
+  "gbif-species-occurrences": JSON.stringify({
+    count: 1,
+    results: [{ key: 1, scientificName: "Danaus plexippus" }],
+  }),
+  "imf-world-economic-outlook": JSON.stringify({
+    values: { NGDP_RPCH: { USA: { "2025": 2.1 } } },
+  }),
+  "mitre-attack-enterprise": JSON.stringify({
+    objects: [{ id: "attack-pattern--example", type: "attack-pattern" }],
+  }),
+  "nasa-power-daily": JSON.stringify({
+    geometry: { coordinates: [-112.074, 33.4484] },
+    properties: { parameter: { T2M: { "20250701": 35.1 } } },
+  }),
+  "nvd-cve": JSON.stringify({
+    totalResults: 1,
+    vulnerabilities: [{ cve: { id: "CVE-2021-44228", published: "2021-12-10", lastModified: "2026-01-01" } }],
+  }),
+  "pubmed-citations": JSON.stringify({
+    esearchresult: { count: "1", idlist: ["1"] },
+  }),
+  "unhcr-refugee-population": JSON.stringify({
+    maxPages: 1,
+    items: [{ year: 2024, refugees: 1 }],
+  }),
   "bls-public-data-api": JSON.stringify({
     status: "REQUEST_SUCCEEDED",
     Results: {
@@ -100,6 +136,16 @@ const validBodies = {
 } as const;
 
 const contentTypes = {
+  "clinicaltrials-studies": "application/json",
+  "cms-care-compare-hospitals": "application/json",
+  "crossref-works": "application/json",
+  "gbif-species-occurrences": "application/json",
+  "imf-world-economic-outlook": "application/json",
+  "mitre-attack-enterprise": "application/taxii+json;version=2.1",
+  "nasa-power-daily": "application/json",
+  "nvd-cve": "application/json",
+  "pubmed-citations": "application/json",
+  "unhcr-refugee-population": "application/json",
   "bls-public-data-api": "application/json",
   "cisa-known-exploited-vulnerabilities": "application/json",
   "federal-register-documents": "application/json",

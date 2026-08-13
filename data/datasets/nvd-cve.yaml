@@ -1,0 +1,83 @@
+id: nvd-cve
+name: NIST National Vulnerability Database CVEs
+description: >
+  CVE records enriched with severity, weakness, reference, and affected-product
+  data for building vulnerability monitors and exposure triage tools.
+theme: Technology & Cybersecurity
+url: https://www.nist.gov/itl/nvd
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: NIST public-domain data notice
+license_url: https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications
+url_checks:
+  source_marker: National Vulnerability Database
+  license_marker: Fair Use of Other NIST Data
+domains:
+  - Cybersecurity
+  - Software Security
+data_types:
+  - Registry Data
+  - Event Data
+tasks:
+  - Vulnerability Monitoring
+  - Risk Assessment
+  - Alerting
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 1999-present
+update_frequency: continuous
+provider: National Institute of Standards and Technology
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    The NVD enriches CVE records with CVSS metrics, weaknesses, references, and
+    affected-product configurations. Start with records modified during one
+    recent week. NVD analysis can lag publication, CPE matching is imperfect,
+    and CVSS severity does not measure exposure or business impact.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the NVD API guidance and choose a modification window no longer than seven days.
+    - Request a small page and honor rate limits; add a free key later only if higher throughput is necessary.
+    - Retain CVE identifiers, publication time, modification time, and analysis status.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import datetime, timedelta, timezone
+      import pandas as pd
+      import requests
+
+      end = datetime.now(timezone.utc)
+      start = end - timedelta(days=7)
+      response = requests.get(
+          "https://services.nvd.nist.gov/rest/json/cves/2.0",
+          params={
+              "lastModStartDate": start.isoformat(timespec="milliseconds"),
+              "lastModEndDate": end.isoformat(timespec="milliseconds"),
+              "resultsPerPage": 100,
+              "noRejected": "",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      records = pd.json_normalize([item["cve"] for item in response.json()["vulnerabilities"]])
+      print(records[["id", "published", "lastModified", "vulnStatus"]].head(20))
+  first_project:
+    title: Monitor recently modified vulnerabilities
+    goal: Identify CVE records modified during the last seven days and review their analysis status.
+    steps:
+      - Retrieve one bounded modification window and exclude rejected records.
+      - Summarize records by analysis status and inspect CVSS and affected-product fields when present.
+      - Explain why NVD lag, CPE applicability, asset exposure, and business impact must qualify prioritization.

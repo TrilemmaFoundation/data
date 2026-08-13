@@ -4,6 +4,7 @@ import type { FilterOptions } from "./search";
 import {
   filtersToParams,
   parseFilters,
+  parsePage,
   parseSort,
 } from "./filter-params";
 
@@ -110,5 +111,14 @@ describe("filter URL helpers", () => {
     expect(parseSort(new URLSearchParams("sort=name&order=sideways"))).toBeNull();
     expect(filtersToParams(EMPTY_FILTERS, { id: "name", desc: false }).get("order"))
       .toBe("asc");
+  });
+
+  it("round-trips canonical pages and rejects invalid values", () => {
+    expect(parsePage(filtersToParams(EMPTY_FILTERS, null, 3))).toBe(3);
+    expect(filtersToParams(EMPTY_FILTERS, null, 1).has("page")).toBe(false);
+    for (const value of ["0", "-1", "1.5", "abc", "9007199254740992"]) {
+      expect(parsePage(new URLSearchParams(`page=${value}`))).toBe(1);
+    }
+    expect(parsePage(new URLSearchParams("page=2&page=3"))).toBe(1);
   });
 });

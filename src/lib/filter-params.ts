@@ -63,9 +63,17 @@ export function parseSort(params: URLSearchParams): CatalogSort {
   return { id: id as (typeof SORT_COLUMNS)[number], desc: order === "desc" };
 }
 
+export function parsePage(params: URLSearchParams): number {
+  const values = params.getAll("page");
+  if (values.length !== 1 || !/^[1-9]\d*$/.test(values[0]!)) return 1;
+  const page = Number(values[0]);
+  return Number.isSafeInteger(page) ? page : 1;
+}
+
 export function filtersToParams(
   filters: DatasetFilters,
   sort: CatalogSort = null,
+  page = 1,
 ): URLSearchParams {
   const params = new URLSearchParams();
   if (filters.query.trim()) params.set("q", filters.query);
@@ -83,5 +91,6 @@ export function filtersToParams(
     params.set("sort", sort.id);
     params.set("order", sort.desc ? "desc" : "asc");
   }
+  if (page > 1) params.set("page", String(page));
   return params;
 }

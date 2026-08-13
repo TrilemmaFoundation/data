@@ -1,0 +1,84 @@
+id: unhcr-refugee-population
+name: UNHCR Refugee Population Statistics
+description: >
+  Official refugee, asylum-seeker, displacement, statelessness, return, and
+  resettlement statistics for building humanitarian trend and flow tools.
+theme: Demographics & Development
+url: https://api.unhcr.org/population/v1/population/?year=2024&limit=1
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+license: UNHCR terms of use for datasets
+license_url: https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets
+url_checks:
+  source_marker: refugees
+  license_marker: attribution to UNHCR
+domains:
+  - Forced Displacement
+  - Humanitarian Development
+data_types:
+  - Population Data
+  - Time Series
+tasks:
+  - Population Analysis
+  - Flow Analysis
+  - Mapping
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: 1951-present
+update_frequency: annual
+provider: UNHCR
+source_type: intergovernmental
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    UNHCR's database reports forcibly displaced and stateless populations by
+    year, origin, and asylum location. Start with refugees for two countries
+    across five years. End-of-year stocks are not annual flows, categories
+    differ, and some values are estimates or supplied by other authorities.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read UNHCR's population-category definitions and select one measure.
+    - Request a five-year window for a small country set using ISO codes.
+    - Retrieve footnotes and retain the source year and country-role definitions.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.unhcr.org/population/v1/population/",
+          params={
+              "yearFrom": 2020,
+              "yearTo": 2024,
+              "coo": "AFG,UKR",
+              "coa_all": "true",
+              "cf_type": "ISO",
+              "limit": 100,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      population = pd.DataFrame(response.json()["items"])
+      print(population[["year", "coo_name", "refugees", "asylum_seekers"]].head(20))
+  first_project:
+    title: Compare displacement stocks by origin
+    goal: Compare reported refugee and asylum-seeker stocks originating from Afghanistan and Ukraine from 2020 through 2024.
+    steps:
+      - Retrieve the bounded years and retain origin, asylum, and population-category fields.
+      - Aggregate only compatible categories and review the associated footnotes before charting.
+      - Explain why stocks are not flows and how estimates, coverage, and category definitions limit comparison.

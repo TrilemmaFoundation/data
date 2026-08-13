@@ -7,6 +7,7 @@ import {
   filterDatasets,
   getDatasetAccessMethods,
   getFilterOptions,
+  paginate,
   sortDatasets,
 } from "./search";
 
@@ -32,6 +33,22 @@ describe("filterDatasets", () => {
       .toContainEqual(expect.objectContaining({ id: "usgs-earthquakes" }));
     expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query: "hazard monitoring" }))
       .toContainEqual(expect.objectContaining({ id: "usgs-earthquakes" }));
+  });
+
+  it.each([
+    ["DOI", "crossref-works"],
+    ["biomedical", "pubmed-citations"],
+    ["clinical trial", "clinicaltrials-studies"],
+    ["hospital rating", "cms-care-compare-hospitals"],
+    ["CVE", "nvd-cve"],
+    ["ATT&CK", "mitre-attack-enterprise"],
+    ["transit ridership", "fta-ntd-monthly-ridership"],
+    ["legislation", "congress-gov-legislation"],
+    ["biodiversity", "gbif-species-occurrences"],
+    ["refugee", "unhcr-refugee-population"],
+  ])("searches %s metadata", (query, id) => {
+    expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query }).map((dataset) => dataset.id))
+      .toContain(id);
   });
 
   it("builds sorted, de-duplicated filter options", () => {
@@ -116,5 +133,15 @@ describe("filterDatasets", () => {
     }
     const reversed = sortDatasets(datasets, { id: "name", desc: true });
     expect(reversed[0]?.name.localeCompare(reversed.at(-1)!.name)).toBeGreaterThan(0);
+  });
+
+  it("paginates and clamps catalog results", () => {
+    expect(paginate([], 99)).toEqual({
+      items: [], page: 1, totalPages: 1, start: 0, end: 0,
+    });
+    expect(paginate(datasets, 1)).toMatchObject({ page: 1, start: 1, end: 10 });
+    const last = paginate(datasets, 99);
+    expect(last.page).toBe(Math.ceil(datasets.length / 10));
+    expect(last.end).toBe(datasets.length);
   });
 });

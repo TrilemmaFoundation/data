@@ -6,6 +6,133 @@ const MAX_RESPONSE_BYTES = 2_000_000;
 const TIMEOUT_MS = 10_000;
 
 const contracts = {
+  "clinicaltrials-studies": {
+    url: "https://clinicaltrials.gov/api/v2/studies?query.cond=asthma&format=json&pageSize=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        studies: z.array(z.object({
+          protocolSection: z.object({
+            identificationModule: z.object({
+              nctId: z.string(),
+              briefTitle: z.string(),
+            }),
+          }),
+        })).min(1),
+      }),
+    ),
+  },
+  "cms-care-compare-hospitals": {
+    url: "https://data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0?limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        count: z.number(),
+        results: z.array(z.object({
+          facility_id: z.string(),
+          facility_name: z.string(),
+          state: z.string(),
+        })).min(1),
+      }),
+    ),
+  },
+  "crossref-works": {
+    url: "https://api.crossref.org/works?query=wildfire&rows=1&select=DOI,title,published",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        status: z.literal("ok"),
+        message: z.object({
+          items: z.array(z.object({ DOI: z.string(), title: z.array(z.string()).min(1) })).min(1),
+        }),
+      }),
+    ),
+  },
+  "gbif-species-occurrences": {
+    url: "https://api.gbif.org/v1/occurrence/search?taxon_key=212&limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        count: z.number(),
+        results: z.array(z.object({
+          key: z.number(),
+          scientificName: z.string(),
+        })).min(1),
+      }),
+    ),
+  },
+  "imf-world-economic-outlook": {
+    url: "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH/USA",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        values: z.object({
+          NGDP_RPCH: z.object({ USA: z.record(z.string(), z.number()) }),
+        }),
+      }),
+    ),
+  },
+  "mitre-attack-enterprise": {
+    url: "https://attack-taxii.mitre.org/api/v21/collections/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019/objects/?limit=1",
+    contentTypes: ["application/taxii+json;version=2.1"],
+    validate: jsonValidator(
+      z.object({
+        objects: z.array(z.object({
+          id: z.string(),
+          type: z.string(),
+        })).min(1),
+      }),
+    ),
+  },
+  "nasa-power-daily": {
+    url: "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M&community=RE&longitude=-112.074&latitude=33.4484&start=20250701&end=20250701&format=JSON&time-standard=UTC",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        geometry: z.object({ coordinates: z.array(z.number()).min(2) }),
+        properties: z.object({
+          parameter: z.object({ T2M: z.record(z.string(), z.number()) }),
+        }),
+      }),
+    ),
+  },
+  "nvd-cve": {
+    url: "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        totalResults: z.number(),
+        vulnerabilities: z.array(z.object({
+          cve: z.object({ id: z.string(), published: z.string(), lastModified: z.string() }),
+        })).min(1),
+      }),
+    ),
+  },
+  "pubmed-citations": {
+    url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=wildfire&retmax=1&retmode=json",
+    contentTypes: ["application/json", "text/json"],
+    validate: jsonValidator(
+      z.object({
+        esearchresult: z.object({
+          count: z.string(),
+          idlist: z.array(z.string()).min(1),
+        }),
+      }),
+    ),
+  },
+  "unhcr-refugee-population": {
+    url: "https://api.unhcr.org/population/v1/population/?year=2024&limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        maxPages: z.number(),
+        items: z.array(z.object({
+          year: z.number(),
+          refugees: z.number().nullable(),
+        })).min(1),
+      }),
+    ),
+  },
   "bls-public-data-api": {
     url: "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2024&endyear=2025",
     contentTypes: ["application/json"],

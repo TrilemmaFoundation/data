@@ -1,0 +1,76 @@
+id: fta-ntd-monthly-ridership
+name: FTA NTD Monthly Ridership
+description: >
+  Agency- and mode-level public transit service and unlinked passenger-trip
+  reports for building ridership recovery and system comparison tools.
+theme: Geospatial & Infrastructure
+url: https://www.transit.dot.gov/ntd/monthly-ridership
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 1
+formats:
+  - XLSX
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Raw Monthly Ridership Data File
+  license_marker: federal government materials
+domains:
+  - Public Transit
+  - Transportation
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Transit Ridership
+  - Trend Analysis
+  - Benchmarking
+  - Operational Monitoring
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: monthly reporting from 2002-present
+update_frequency: monthly
+provider: Federal Transit Administration
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    The NTD monthly release reports service and unlinked passenger trips by
+    transit agency and mode. Start with the adjusted monthly file and a few
+    agencies. Values can be revised, reporting practices differ, and unlinked
+    passenger trips count boardings rather than unique people.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - The current Monthly Module Adjusted Data Release downloaded from FTA
+  access_steps:
+    - Open NTD Data and download the current Complete Monthly Ridership workbook.
+    - Save it as complete_monthly_ridership.xlsx and record the release date in the notebook.
+    - Select a small agency set and compare like-for-like modes and metrics.
+  python:
+    packages:
+      - pandas
+      - openpyxl
+    code: |
+      import pandas as pd
+
+      ridership = pd.read_excel(
+          "complete_monthly_ridership.xlsx",
+          sheet_name="UPT",
+      )
+      agencies = ridership[ridership["Agency"].isin([
+          "New York City Transit",
+          "Chicago Transit Authority",
+      ])].copy()
+      print(agencies.head(20))
+  first_project:
+    title: Compare monthly transit ridership recovery
+    goal: Compare reported passenger trips for two agencies with the same mode against the prior year.
+    steps:
+      - Record the file release and filter to two agencies and one common transit mode.
+      - Calculate year-over-year change for matched months and inspect missing or revised values.
+      - Explain why unlinked trips, reporting differences, revisions, and service changes limit comparisons.

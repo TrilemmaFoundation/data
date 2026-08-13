@@ -1,0 +1,83 @@
+id: crossref-works
+name: Crossref Works Metadata
+description: >
+  Publisher-deposited DOI metadata for building literature monitors, journal
+  alerts, funding analyses, and scholarly-reference tools.
+theme: Research & Reference
+url: https://www.crossref.org/documentation/retrieve-metadata/rest-api/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: Crossref REST API terms and member-deposited metadata rights
+license_url: https://www.crossref.org/documentation/retrieve-metadata/rest-api/
+url_checks:
+  source_marker: publicly available REST API
+  license_marker: subject to copyright
+domains:
+  - Research
+  - Scholarly Communication
+data_types:
+  - Bibliographic Data
+  - Event Data
+tasks:
+  - Literature Monitoring
+  - Trend Analysis
+  - Alerting
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: historical registered works through current deposits
+update_frequency: continuous
+provider: Crossref
+source_type: nonprofit
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    Crossref exposes metadata deposited by DOI registrants, including titles,
+    publication dates, funders, licenses, and updates. Start with one topic and
+    a 30-day deposit window. Deposit completeness varies by member, and a
+    deposit date is not necessarily the work's publication date.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An email address to identify polite API requests
+  access_steps:
+    - Choose one specific research topic and a 30-day deposit window.
+    - Send a polite API request with your email address and limit the returned fields.
+    - Retain each DOI and both publication and deposit dates for deduplication.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from datetime import date, timedelta
+      import pandas as pd
+      import requests
+
+      start = date.today() - timedelta(days=30)
+      response = requests.get(
+          "https://api.crossref.org/works",
+          params={
+              "query": "wildfire risk",
+              "filter": f"from-deposit-date:{start.isoformat()}",
+              "select": "DOI,title,published,created,publisher,type",
+              "rows": 100,
+              "mailto": "you@example.com",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      works = pd.json_normalize(response.json()["message"]["items"])
+      print(works[["DOI", "publisher", "type"]].head(20))
+  first_project:
+    title: Monitor recent deposits about one topic
+    goal: Identify DOI records about wildfire risk deposited during the last 30 days.
+    steps:
+      - Retrieve a bounded result set and deduplicate records by DOI.
+      - Summarize deposits by publisher and work type while retaining publication dates.
+      - Explain how query matching, member-supplied metadata, and deposit timing limit the monitor.

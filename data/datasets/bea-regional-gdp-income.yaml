@@ -1,0 +1,87 @@
+id: bea-regional-gdp-income
+name: BEA Regional GDP and Personal Income
+description: >
+  Official state and local GDP, income, and employment statistics for building
+  regional growth, market-sizing, and economic comparison tools.
+theme: Markets & Economics
+url: https://apps.bea.gov/api/signup/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - XML
+license: BEA Data API terms of service
+license_url: https://apps.bea.gov/api/signup/
+url_checks:
+  source_marker: Regional
+  license_marker: Terms of Service
+domains:
+  - Regional Economics
+  - National Accounts
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Market Sizing
+  - Trend Analysis
+  - Regional Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: varies by Regional table, including series from 1998-present
+update_frequency: quarterly
+provider: U.S. Bureau of Economic Analysis
+source_type: government
+last_verified: 2026-08-13
+getting_started:
+  overview: >
+    The BEA Regional API provides state, county, and metro GDP, personal
+    income, and employment tables. Start with one documented line code and a
+    few states. Tables mix units and frequencies, estimates are revised, and
+    nominal growth must not be presented as real growth.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free BEA API key saved in the BEA_API_KEY environment variable
+  access_steps:
+    - Register for a free BEA API key and save it in the BEA_API_KEY environment variable.
+    - Use the Regional metadata methods to confirm one table name, line code, unit, and available year.
+    - Request only a small geographic set and retain the table and line-code metadata.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://apps.bea.gov/api/data",
+          params={
+              "UserID": os.environ["BEA_API_KEY"],
+              "method": "GetData",
+              "datasetname": "Regional",
+              "TableName": "SQINC1",
+              "LineCode": "1",
+              "GeoFIPS": "06000,48000,36000",
+              "Year": "LAST5",
+              "ResultFormat": "JSON",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      rows = response.json()["BEAAPI"]["Results"]["Data"]
+      income = pd.DataFrame(rows)
+      print(income[["GeoName", "TimePeriod", "DataValue", "Unit"]].head(20))
+  first_project:
+    title: Compare recent state personal-income estimates
+    goal: Compare the selected BEA personal-income line across California, Texas, and New York.
+    steps:
+      - Confirm the table, line code, frequency, unit, and most recent five available periods.
+      - Convert formatted values to numbers and compare matched periods across the three states.
+      - Explain how revisions, nominal units, annualization, and population differences limit interpretation.
