@@ -155,6 +155,24 @@ test("catalog pagination keeps global order and canonical URL state", async ({ p
   await expect(page).not.toHaveURL(/page=/);
 });
 
+test("deep catalog links show page context and a result above the fold", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/?page=4");
+
+  await expect(
+    page.getByText(catalogCopy.pageSummary(4, Math.ceil(DATASET_COUNT / 10), 31, 40)),
+  ).toBeVisible();
+  const firstResult = page
+    .getByRole("table", { name: tableCopy.caption })
+    .getByRole("row")
+    .nth(1);
+  const bounds = await firstResult.boundingBox();
+  expect(bounds?.y).toBeLessThan(800);
+  expect(
+    bounds ? bounds.y + bounds.height : Number.POSITIVE_INFINITY,
+  ).toBeLessThan(800);
+});
+
 test("pagination resets for catalog changes and restores through guide history", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/?page=2");
@@ -448,6 +466,9 @@ test("mobile filter drawer closes at the desktop breakpoint", async ({ page }) =
   await page.setViewportSize({ width: 1024, height: 900 });
   await expect(dialog).toBeHidden();
   await expect(page.locator("#desktop-dataset-theme")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }),
+  ).toBeFocused();
 });
 
 test("advanced desktop filters stay within the drawer and remain fully reachable", async ({ page }) => {

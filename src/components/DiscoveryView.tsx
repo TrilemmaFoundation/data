@@ -136,7 +136,8 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
   const searchRef = useRef<HTMLInputElement>(null);
   const resultsTitleRef = useRef<HTMLHeadingElement>(null);
   const filterDialogRef = useRef<HTMLDialogElement>(null);
-  const filterTriggerRef = useRef<HTMLButtonElement>(null);
+  const activeFilterTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const desktopFilterTriggerRef = useRef<HTMLButtonElement>(null);
   const results = useMemo(() => filterDatasets(datasets, filters), [datasets, filters]);
   const chips = useMemo(() => activeChips(filters), [filters]);
   const isUnfiltered = chips.length === 0;
@@ -247,26 +248,39 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     resultsTitleRef.current?.focus({ preventScroll: true });
   }, []);
 
+  const openFilters = useCallback((trigger: HTMLButtonElement) => {
+    activeFilterTriggerRef.current = trigger;
+    filterDialogRef.current?.showModal();
+  }, []);
+
+  const restoreFilterTriggerFocus = useCallback(() => {
+    const activeTrigger = activeFilterTriggerRef.current;
+    const visibleTrigger = activeTrigger?.offsetParent
+      ? activeTrigger
+      : desktopFilterTriggerRef.current;
+    visibleTrigger?.focus();
+  }, []);
+
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-5">
         <section
           aria-labelledby="catalog-hero-title"
-          className="px-1 py-8 text-center sm:px-8 sm:py-12 lg:py-14"
+          className="px-1 py-4 text-center sm:px-8 sm:py-5 lg:py-6"
         >
           <div className="mx-auto max-w-6xl">
             <p className="eyebrow">{catalogCopy.heroEyebrow}</p>
             <h1
               id="catalog-hero-title"
-              className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl lg:whitespace-nowrap"
+              className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
             >
               {catalogCopy.heroTitle}
             </h1>
-            <Button size="lg" className="mt-7" onClick={browseCatalog}>
+            <Button size="lg" className="mt-5" onClick={browseCatalog}>
               {catalogCopy.browseDatasets(datasets.length)}
               <ArrowDown aria-hidden="true" />
             </Button>
-            <ul className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/80">
+            <ul className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/80">
               {catalogCopy.heroProofLabels.map((label) => (
                 <li key={label} className="flex items-center gap-2">
                   <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
@@ -280,7 +294,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
         <section
           id="dataset-catalog"
           aria-labelledby="results-title"
-          className="mt-4 scroll-mt-24 border-t border-white/20 pt-8 sm:mt-6 sm:pt-10"
+          className="scroll-mt-24 border-t border-white/20 pt-5 sm:pt-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -296,6 +310,16 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
               <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
                 {catalogCopy.resultStatus(results.length)}
               </p>
+              {paginated.totalPages > 1 && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {catalogCopy.pageSummary(
+                    paginated.page,
+                    paginated.totalPages,
+                    paginated.start,
+                    paginated.end,
+                  )}
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {chips.length > 0 && (
@@ -304,10 +328,9 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
                 </Button>
               )}
               <button
-                ref={filterTriggerRef}
                 type="button"
-                className={cn(buttonVariants({ variant: "outline" }))}
-                onClick={() => filterDialogRef.current?.showModal()}
+                className={cn(buttonVariants({ variant: "outline" }), "lg:hidden")}
+                onClick={(event) => openFilters(event.currentTarget)}
               >
                 <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
                 {chips.length > 0 && (
@@ -319,23 +342,40 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
             </div>
           </div>
 
-          <label htmlFor="dataset-search" className="mt-5 block text-sm font-semibold text-white">
-            {catalogCopy.searchLabel}
-          </label>
-          <div className="relative mt-2">
-            <Search
-              className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
-              aria-hidden="true"
-            />
-            <Input
-              id="dataset-search"
-              ref={searchRef}
-              type="search"
-              defaultValue={filters.query}
-              onChange={(event) => handleSearchChange(event.target.value)}
-              placeholder={catalogCopy.searchPlaceholder}
-              className="h-13 border-white/15 pr-4 pl-12 text-base shadow-[0_4px_4px_rgba(10,10,20,0.45)] placeholder:text-white/40"
-            />
+          <div className="mt-4 flex items-end gap-3">
+            <div className="min-w-0 flex-1">
+              <label htmlFor="dataset-search" className="block text-sm font-semibold text-white">
+                {catalogCopy.searchLabel}
+              </label>
+              <div className="relative mt-2">
+                <Search
+                  className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <Input
+                  id="dataset-search"
+                  ref={searchRef}
+                  type="search"
+                  defaultValue={filters.query}
+                  onChange={(event) => handleSearchChange(event.target.value)}
+                  placeholder={catalogCopy.searchPlaceholder}
+                  className="h-12 border-white/15 pr-4 pl-12 text-base shadow-[0_4px_4px_rgba(10,10,20,0.45)] placeholder:text-white/40"
+                />
+              </div>
+            </div>
+            <button
+              ref={desktopFilterTriggerRef}
+              type="button"
+              className={cn(buttonVariants({ variant: "outline" }), "hidden h-12 lg:inline-flex")}
+              onClick={(event) => openFilters(event.currentTarget)}
+            >
+              <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
+              {chips.length > 0 && (
+                <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
+                  {chips.length}
+                </span>
+              )}
+            </button>
           </div>
 
           <DatasetQuickFilters
@@ -343,7 +383,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
             options={filterOptions}
             filters={filters}
             onChange={handleChange}
-            className="mt-5 hidden lg:grid"
+            className="mt-4 hidden lg:grid"
           />
 
           {chips.length > 0 && (
@@ -372,7 +412,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
             </div>
           ) : (
             <>
-              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:hidden">
+              <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:hidden">
                 {paginated.items.map((dataset) => (
                   <DatasetCard
                     key={dataset.id}
@@ -381,7 +421,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
                   />
                 ))}
               </div>
-              <div className="mt-6 hidden lg:block">
+              <div className="mt-5 hidden lg:block">
                 <DatasetTable
                   datasets={paginated.items}
                   sort={sort}
@@ -407,7 +447,7 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
         aria-labelledby="filter-dialog-title"
         aria-describedby="filter-dialog-description"
         className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(92vw,28rem)] max-w-none border-0 border-l border-white/10 bg-brand-black p-0 text-white shadow-[0_4px_4px_rgba(10,10,20,0.65)] backdrop:bg-brand-black/80 backdrop:backdrop-blur-sm"
-        onClose={() => filterTriggerRef.current?.focus()}
+        onClose={restoreFilterTriggerFocus}
       >
         <div className="flex h-full flex-col">
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-brand-black/95 px-5 py-4 backdrop-blur">

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowUp, ChevronsUpDown, KeyRound } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, KeyRound } from "lucide-react";
 import {
   createColumnHelper,
   createSortedRowModel,
@@ -30,7 +30,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { datasetCardCopy, tableCopy } from "@/content/site-copy";
-import { cn } from "@/lib/utils";
 
 const features = tableFeatures({
   rowSortingFeature,
@@ -54,9 +53,9 @@ function SortableHeader<TValue>({
       aria-label={tableCopy.sortBy(children, sorted)}
     >
       {children}
-      {sorted === "asc" ? <ArrowUp aria-hidden="true" />
-        : sorted === "desc" ? <ArrowDown aria-hidden="true" />
-          : <ChevronsUpDown aria-hidden="true" />}
+      {sorted === "asc" ? <ArrowUp className="size-4" aria-hidden="true" />
+        : sorted === "desc" ? <ArrowDown className="size-4" aria-hidden="true" />
+          : <ArrowUpDown className="size-4 text-white/50" aria-hidden="true" />}
     </button>
   );
 }
@@ -106,7 +105,11 @@ export function DatasetTable({
       id: "theme",
       sortFn: sortFn("theme"),
       header: ({ column }) => <SortableHeader column={column}>{tableCopy.themeLabel}</SortableHeader>,
-      cell: ({ row }) => <Badge variant="outline" className="h-auto whitespace-normal">{row.original.theme}</Badge>,
+      cell: ({ row }) => (
+        <span className="text-sm font-medium leading-5 text-white/75">
+          {row.original.theme}
+        </span>
+      ),
     }),
     columnHelper.accessor(
       (dataset) => getDatasetAccessMethods(dataset).join("+"),
@@ -182,6 +185,14 @@ export function DatasetTable({
     <div className="surface">
       <Table className="min-w-[950px] table-fixed">
         <TableCaption className="sr-only">{tableCopy.caption}</TableCaption>
+        <colgroup>
+          <col style={{ width: "38%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "14%" }} />
+          <col style={{ width: "12%" }} />
+          <col style={{ width: "11%" }} />
+          <col style={{ width: "12%" }} />
+        </colgroup>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="hover:bg-transparent">
@@ -191,10 +202,7 @@ export function DatasetTable({
                   <TableHead
                     key={header.id}
                     scope="col"
-                    className={cn(
-                      "sticky top-16 z-10 bg-card/95 backdrop-blur",
-                      header.column.id === "name" && "w-[36%]",
-                    )}
+                    className="sticky top-16 z-10 bg-card/95 backdrop-blur"
                     aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
                   >
                     {header.isPlaceholder ? null : <table.FlexRender header={header} />}

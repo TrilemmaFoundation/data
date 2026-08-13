@@ -31,11 +31,14 @@ export function CatalogPagination({
 }) {
   if (totalPages <= 1) return null;
   return (
-    <nav className="mt-6" aria-label={catalogCopy.paginationLabel}>
-      <p className="text-center text-sm text-muted-foreground" aria-live="polite">
+    <nav
+      className="surface mt-5 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between sm:px-4"
+      aria-label={catalogCopy.paginationLabel}
+    >
+      <p className="text-center text-sm text-muted-foreground sm:text-left" aria-live="polite">
         {catalogCopy.pageStatus(page, totalPages, start, end, total)}
       </p>
-      <div className="mt-3 flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
         <Button variant="outline" disabled={page === 1} onClick={() => onPageChange(page - 1)}>
           <ChevronLeft aria-hidden="true" /> {catalogCopy.previousPageLabel}
         </Button>
