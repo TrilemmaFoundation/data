@@ -92,6 +92,9 @@ npm install
 npm run dev
 ```
 
+`npm run dev` uses port 3000 when that localhost port is free. If it is
+busy, the next free port is used instead.
+
 Useful scripts:
 
 ```bash

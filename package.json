@@ -6,7 +6,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx scripts/dev.ts",
     "build": "next build",
     "lint": "eslint",
     "validate-datasets": "tsx scripts/validate-datasets.ts",
