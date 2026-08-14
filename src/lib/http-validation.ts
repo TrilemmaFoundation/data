@@ -92,7 +92,7 @@ export async function closePinnedAgents(agents: PinnedAgentCache): Promise<void>
   agents.clear();
 }
 
-export async function resolveSafeTarget(
+async function resolveSafeTarget(
   target: URL,
   originalHostname: string,
   resolveHost: ResolveHost,

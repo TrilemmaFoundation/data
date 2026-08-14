@@ -169,10 +169,7 @@ describe("loadDatasets", () => {
 
   it("reports id/filename mismatches", () => {
     const dir = makeTempDir();
-    fs.writeFileSync(
-      path.join(dir, "other.yaml"),
-      validYaml.replace("id: sample", "id: sample"),
-    );
+    fs.writeFileSync(path.join(dir, "other.yaml"), validYaml);
 
     const result = loadDatasets(dir);
     expect(result.datasets).toHaveLength(0);
