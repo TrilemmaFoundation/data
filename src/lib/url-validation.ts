@@ -99,6 +99,33 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-13",
     },
   ],
+  [
+    "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
+    {
+      statuses: [403],
+      reason:
+        "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://www.earthdata.nasa.gov/engage/open-data-services-and-software/data-and-information-policy",
+    {
+      statuses: [403],
+      reason:
+        "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
+    {
+      statuses: [403],
+      reason:
+        "UNHCR blocks automated validation from some regions; reconfirmed 2026-08-14",
+      expires: "2026-11-12",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

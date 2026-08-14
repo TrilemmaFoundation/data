@@ -423,6 +423,27 @@ describe("checkUrl", () => {
       "2026-11-13",
       2,
     ],
+    [
+      "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
+      403,
+      "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
+      "2026-11-12",
+      2,
+    ],
+    [
+      "https://www.earthdata.nasa.gov/engage/open-data-services-and-software/data-and-information-policy",
+      403,
+      "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
+      "2026-11-12",
+      2,
+    ],
+    [
+      "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
+      403,
+      "UNHCR blocks automated validation from some regions; reconfirmed 2026-08-14",
+      "2026-11-12",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {
