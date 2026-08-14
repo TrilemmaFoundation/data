@@ -1,7 +1,6 @@
 import type { Dataset } from "./schema";
 import {
   closePinnedAgents,
-  createPinnedLookup,
   fetchPinnedHttps,
   readBoundedBody,
   resolveHostWithDns,
@@ -9,8 +8,6 @@ import {
   type ResolveHost,
 } from "./http-validation";
 import { mapPool } from "./async-pool";
-
-export { createPinnedLookup };
 
 const MAX_PAGE_BYTES = 1_000_000;
 const RETRY_DELAYS_MS = [250, 750];

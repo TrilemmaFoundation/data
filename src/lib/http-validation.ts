@@ -4,12 +4,12 @@ import { Agent } from "undici";
 
 export const VALIDATOR_USER_AGENT =
   "TrilemmaDataCatalogValidator/1.0 (+https://data.trilemma.foundation)";
-export const DEFAULT_TIMEOUT_MS = 10_000;
+const DEFAULT_TIMEOUT_MS = 10_000;
 export const MAX_REDIRECTS = 5;
 
-export type ResolvedAddress = { address: string; family: number };
+type ResolvedAddress = { address: string; family: number };
 export type ResolveHost = (hostname: string) => Promise<ResolvedAddress[]>;
-export type ApprovedAddress = { address: string; family: 4 | 6 };
+type ApprovedAddress = { address: string; family: 4 | 6 };
 export type PinnedAgentCache = Map<string, Agent>;
 
 type PinnedFetchOptions = {
@@ -21,7 +21,7 @@ type PinnedFetchOptions = {
   agents?: PinnedAgentCache;
 };
 
-export type PinnedFetchResult = {
+type PinnedFetchResult = {
   status: number | null;
   message: string | null;
   identityError: string | null;

@@ -33,10 +33,20 @@ describe("pinned HTTP helpers", () => {
     ]);
   });
 
-  it("creates a pinned lookup for a single address", () => {
+  it("creates a pinned lookup for IPv4 and IPv6 addresses", () => {
     const callback = vi.fn();
     createPinnedLookup("93.184.216.34", 4)("example.com", {}, callback);
     expect(callback).toHaveBeenCalledWith(null, "93.184.216.34", 4);
+
+    const allCallback = vi.fn();
+    createPinnedLookup("2001:4860:4860::8888", 6)(
+      "example.com",
+      { all: true },
+      allCallback,
+    );
+    expect(allCallback).toHaveBeenCalledWith(null, [
+      { address: "2001:4860:4860::8888", family: 6 },
+    ]);
   });
 
   it("rejects a cross-host redirect when DNS pinning is skipped", async () => {

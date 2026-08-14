@@ -70,17 +70,13 @@ export function parsePage(params: URLSearchParams): number {
   return Number.isSafeInteger(page) ? page : 1;
 }
 
-export function catalogParamsFromSearch(search: string): URLSearchParams {
-  return new URLSearchParams(
-    search.startsWith("?") ? search.slice(1) : search,
-  );
-}
-
 export function searchStringToCatalogState(
   search: string,
   options: FilterOptions,
 ) {
-  const params = catalogParamsFromSearch(search);
+  const params = new URLSearchParams(
+    search.startsWith("?") ? search.slice(1) : search,
+  );
   return {
     params,
     filters: parseFilters(params, options),

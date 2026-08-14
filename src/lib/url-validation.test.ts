@@ -4,7 +4,6 @@ import type { Dataset } from "./schema";
 import { closePinnedAgents } from "./http-validation";
 import {
   checkUrl as checkUrlWithDns,
-  createPinnedLookup,
   exceptionExpiryWarnings,
   EXCEPTION_WARNING_DAYS,
   validateDatasetUrls,
@@ -32,22 +31,6 @@ function pageResponse(
 }
 
 describe("checkUrl", () => {
-  it("pins approved DNS results for the connection", () => {
-    const callback = vi.fn();
-    createPinnedLookup("93.184.216.34", 4)("example.com", {}, callback);
-    expect(callback).toHaveBeenCalledWith(null, "93.184.216.34", 4);
-
-    const allCallback = vi.fn();
-    createPinnedLookup("2001:4860:4860::8888", 6)(
-      "example.com",
-      { all: true },
-      allCallback,
-    );
-    expect(allCallback).toHaveBeenCalledWith(null, [
-      { address: "2001:4860:4860::8888", family: 6 },
-    ]);
-  });
-
   it("accepts an IPv6-only public hostname", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(
       pageResponse("Expected page", "https://example.com/catalog"),
