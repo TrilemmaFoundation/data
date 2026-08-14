@@ -132,14 +132,19 @@ export function DatasetTable({
           return (
             <TableRow key={dataset.id}>
               <TableCell>
-                <div className="flex min-w-0 items-center gap-1.5">
+                <div className="flex min-w-0 items-start gap-1.5">
                   <Link
                     href={`/datasets/${dataset.id}`}
-                    className="min-w-0 truncate whitespace-nowrap rounded-sm text-[0.9375rem] font-semibold text-white hover:text-primary"
+                    className="min-w-0 rounded-sm text-[0.9375rem] leading-snug font-semibold text-white hover:text-primary"
                     title={`${dataset.description} — ${dataset.provider}`}
                   >
-                    {dataset.name}
-                    <span className="font-normal text-xs text-secondary"> · {dataset.provider}</span>
+                    <span className="block truncate">{dataset.name}</span>
+                    <span
+                      className="block truncate text-xs font-normal leading-4 text-secondary"
+                      aria-hidden="true"
+                    >
+                      {dataset.provider}
+                    </span>
                   </Link>
                   {featured && (
                     <Badge variant="secondary" className="shrink-0">

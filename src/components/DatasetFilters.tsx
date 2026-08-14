@@ -45,6 +45,7 @@ function FilterSelect({
   value,
   onChange,
   compact = false,
+  className,
   children,
 }: {
   id: string;
@@ -52,6 +53,7 @@ function FilterSelect({
   value: string;
   onChange: (value: string) => void;
   compact?: boolean;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -60,6 +62,7 @@ function FilterSelect({
       className={cn(
         "min-w-0 font-semibold text-white",
         compact ? "flex-1 text-xs" : "block text-sm",
+        className,
       )}
     >
       <span className={compact ? "sr-only" : "block"}>{label}</span>
@@ -68,8 +71,8 @@ function FilterSelect({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 px-3 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]",
-          compact ? "mt-0" : "mt-1.5",
+          "h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]",
+          compact ? "mt-0 px-2" : "mt-1.5 px-3",
         )}
       >
         {children}
@@ -131,6 +134,7 @@ export function DatasetQuickFilters({
         id={`${idPrefix}-dataset-access`}
         label={compact ? filterCopy.accessMethodShortLabel : filterCopy.accessMethodLabel}
         compact={compact}
+        className={compact ? "max-xl:hidden" : undefined}
         value={filters.accessMethod ?? ""}
         onChange={(accessMethod) => onChange({
           ...filters,
@@ -149,6 +153,7 @@ export function DatasetQuickFilters({
         id={`${idPrefix}-dataset-api-key`}
         label={compact ? filterCopy.apiKeyShortLabel : filterCopy.apiKeyLabel}
         compact={compact}
+        className={compact ? "max-xl:hidden" : undefined}
         value={filters.apiKeyRequired === null ? "" : String(filters.apiKeyRequired)}
         onChange={(value) => onChange({
           ...filters,

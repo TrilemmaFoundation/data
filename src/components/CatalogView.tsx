@@ -149,8 +149,8 @@ export function CatalogView({
           aria-labelledby="results-title"
           className="scroll-mt-24 pt-4"
         >
-          <div className="flex items-center gap-2">
-            <div className="min-w-0 flex-1 basis-40 lg:max-w-56 xl:max-w-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1 sm:min-w-48 lg:max-w-xs xl:max-w-sm">
               <label htmlFor="dataset-search" className="sr-only">
                 {catalogCopy.searchLabel}
               </label>
@@ -166,34 +166,39 @@ export function CatalogView({
                   defaultValue={filters.query}
                   onChange={(event) => onSearchChange(event.target.value)}
                   placeholder={catalogCopy.searchPlaceholder}
-                  className="border-white/15 pr-4 pl-12 placeholder:text-white/40"
+                  className="border-white/15 pr-4 pl-12 placeholder:text-white/40 [&::-webkit-search-cancel-button]:appearance-none"
                 />
               </div>
             </div>
-            <DatasetQuickFilters
-              idPrefix="desktop"
-              options={filterOptions}
-              filters={filters}
-              onChange={onFiltersChange}
-              compact
-              className="hidden min-w-0 flex-1 lg:flex"
-            />
-            <button
-              ref={desktopFilterTriggerRef}
-              type="button"
-              className={cn(buttonVariants({ variant: "outline" }), "h-11 shrink-0")}
-              aria-haspopup="dialog"
-              aria-expanded={filtersOpen}
-              aria-controls="catalog-filter-dialog"
-              onClick={(event) => openFilters(event.currentTarget)}
-            >
-              <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
-              {chips.length > 0 && (
-                <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
-                  {chips.length}
-                </span>
-              )}
-            </button>
+            <div className="flex min-w-0 items-center gap-2 max-sm:w-full lg:flex-1">
+              <DatasetQuickFilters
+                idPrefix="desktop"
+                options={filterOptions}
+                filters={filters}
+                onChange={onFiltersChange}
+                compact
+                className="hidden min-w-0 flex-1 lg:flex"
+              />
+              <button
+                ref={desktopFilterTriggerRef}
+                type="button"
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "h-11 w-full shrink-0 sm:w-auto",
+                )}
+                aria-haspopup="dialog"
+                aria-expanded={filtersOpen}
+                aria-controls="catalog-filter-dialog"
+                onClick={(event) => openFilters(event.currentTarget)}
+              >
+                <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
+                {chips.length > 0 && (
+                  <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
+                    {chips.length}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           {chips.length > 0 && (
@@ -272,13 +277,13 @@ export function CatalogView({
               <X aria-hidden="true" />
             </button>
           </div>
-          <div className="flex-1 space-y-7 overflow-y-auto p-5">
+          <div className="min-h-0 flex-1 space-y-7 overflow-y-auto p-5 pb-6">
             <DatasetQuickFilters
               idPrefix="drawer"
               options={filterOptions}
               filters={filters}
               onChange={onFiltersChange}
-              className="lg:hidden"
+              className="xl:hidden"
             />
             <DatasetFilters options={filterOptions} filters={filters} onChange={onFiltersChange} />
           </div>

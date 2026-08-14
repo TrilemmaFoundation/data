@@ -3,7 +3,6 @@ import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { CatalogDataset } from "@/lib/schema";
 import { getSizeCategory } from "@/lib/size";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -27,7 +26,7 @@ export function DatasetCard({
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col border-white/10 bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
+        "group relative flex h-full flex-col border-white/10 bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
         featured && "border-primary/50",
       )}
     >
@@ -47,7 +46,10 @@ export function DatasetCard({
           </span>
         </div>
         <CardTitle className="pt-1 text-lg font-semibold text-white">
-          <Link href={`/datasets/${dataset.id}`} className="rounded-sm hover:text-primary">
+          <Link
+            href={`/datasets/${dataset.id}`}
+            className="rounded-sm after:absolute after:inset-0 after:z-10 after:content-[''] hover:text-primary"
+          >
             {dataset.name}
           </Link>
         </CardTitle>
@@ -73,10 +75,13 @@ export function DatasetCard({
         </div>
       </CardContent>
 
-      <CardFooter className="border-white/10 bg-brand-black/25">
-        <Link href={`/datasets/${dataset.id}`} className={cn(buttonVariants(), "w-full")}>
+      <CardFooter className="border-white/10 bg-brand-black/25 px-4 py-2">
+        <p
+          className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors group-hover:text-white"
+          aria-hidden="true"
+        >
           {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />
-        </Link>
+        </p>
       </CardFooter>
     </Card>
   );

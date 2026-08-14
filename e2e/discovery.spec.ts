@@ -445,6 +445,38 @@ test("catalog uses a desktop table and mobile cards at the lg breakpoint", async
   await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 });
 
+test("catalog search stays wide enough to read and cards use a single guide link", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 900 });
+  await page.goto("/");
+  const search = page.getByLabel(catalogCopy.searchLabel);
+  expect((await search.boundingBox())?.width ?? 0).toBeGreaterThan(250);
+  await expect(page.locator('[data-slot="card"]').first().locator("a")).toHaveCount(1);
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto("/");
+  expect((await search.boundingBox())?.width ?? 0).toBeGreaterThan(280);
+  await expect(page.locator("#desktop-dataset-theme")).toBeVisible();
+  await expect(page.locator("#desktop-dataset-access")).toBeHidden();
+  await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
+  await expect(page.locator("#drawer-dataset-access")).toBeVisible();
+  await expect(page.locator("#drawer-dataset-api-key")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("link", { name: "National Weather Service API", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole("table", { name: tableCopy.caption })
+      .getByRole("row")
+      .nth(1)
+      .getByText("National Weather Service", { exact: true }),
+  ).toBeVisible();
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(page.locator("#desktop-dataset-access")).toBeVisible();
+  await expect(page.locator("#desktop-dataset-api-key")).toBeVisible();
+});
+
 test("the sticky table header meets the site header without exposing rows", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");

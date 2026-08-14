@@ -35,7 +35,7 @@ export const siteCopy = {
 export const catalogCopy = {
   heroTitle: "Find data to build your next microproduct",
   searchLabel: "Search by topic, provider, or product use",
-  searchPlaceholder: "Try “company filings” or “electricity demand”",
+  searchPlaceholder: "Try “weather” or “filings”",
   recommendedDatasetId: "nws-weather-api",
   catalogEyebrow: "Dataset catalog",
   activeFiltersAriaLabel: "Active filters",
