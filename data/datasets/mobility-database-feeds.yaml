@@ -1,0 +1,87 @@
+id: mobility-database-feeds
+name: Mobility Database GTFS Feeds
+description: >
+  A global catalog of GTFS and related mobility feeds for building transit-feed
+  finders that respect each agency's license.
+theme: Geospatial & Infrastructure
+url: https://mobilitydatabase.org/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: MobilityData catalog metadata CC0; individual feeds licensed by agencies
+license_url: https://mobilitydatabase.org/terms-and-conditions
+url_checks:
+  source_marker: Global Catalog of GTFS
+  license_marker: CC0 1.0 Universal
+domains:
+  - Public Transit
+  - Transportation
+  - Mobility
+data_types:
+  - Registry Data
+  - Geospatial
+tasks:
+  - Feed Discovery
+  - Operational Planning
+  - Mapping
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: continuously updated feed catalog
+update_frequency: continuous
+provider: MobilityData
+source_type: nonprofit
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The Mobility Database API lists GTFS, GTFS Realtime, and GBFS feeds with
+    provider, geography, and license metadata. Start by searching active GTFS
+    schedule feeds for one country. Catalog metadata is CC0; each feed's
+    contents remain under that agency's license, so do not download or
+    redistribute a feed until you read its license URL.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Mobility Database access token saved in the MOBILITY_DATABASE_ACCESS_TOKEN environment variable
+  access_steps:
+    - Create a Mobility Database account, copy an access token, and save it in MOBILITY_DATABASE_ACCESS_TOKEN.
+    - Read the terms covering catalog metadata versus individual feed licenses.
+    - Request a bounded list of GTFS feeds for one country and print each license URL.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.mobilitydatabase.org/v1/gtfs_feeds",
+          headers={
+              "Authorization": f"Bearer {os.environ['MOBILITY_DATABASE_ACCESS_TOKEN']}",
+          },
+          params={"limit": 20, "offset": 0, "country_code": "US", "status": "active"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      feeds = pd.json_normalize(payload if isinstance(payload, list) else payload.get("results", payload))
+      feeds["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      license_col = next(
+          (column for column in feeds.columns if "license" in column.lower()),
+          feeds.columns[0],
+      )
+      print(feeds[[column for column in ["id", "provider", "status", license_col] if column in feeds.columns]].head(20))
+  first_project:
+    title: Find licensed GTFS feeds for one country
+    goal: List a bounded set of cataloged GTFS feeds and record each feed's license URL before any download.
+    steps:
+      - Confirm the API returned feed identifiers and provider names for the bounded request.
+      - Print each feed's license URL or license field and keep only feeds whose terms you have read.
+      - State that MobilityData catalog metadata is CC0 while feed contents remain under each agency's license.

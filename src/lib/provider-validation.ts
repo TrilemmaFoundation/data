@@ -438,6 +438,130 @@ const contracts = {
       }),
     ),
   },
+  "cfpb-consumer-complaints": {
+    url: "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?size=1&product=Mortgage",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        hits: z.object({
+          hits: z.array(z.object({ _source: z.record(z.string(), z.unknown()) })).min(1),
+        }),
+      }),
+    ),
+  },
+  "openfda-food-enforcement": {
+    url: "https://api.fda.gov/food/enforcement.json?limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        meta: z.object({
+          last_updated: z.string(),
+          results: z.object({ total: z.number() }),
+        }),
+        results: z.array(
+          z.object({
+            recalling_firm: z.string(),
+            product_description: z.string(),
+            report_date: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "osv-open-source-vulnerabilities": {
+    url: "https://api.osv.dev/v1/vulns/GHSA-c3g4-w6cv-6v7h",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        id: z.string(),
+      }),
+    ),
+  },
+  "eurostat-statistics": {
+    url: "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&lang=EN&geo=DE&s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&lastTimePeriod=1",
+    contentTypes: ["application/json", "application/json-stat", "application/json;charset=UTF-8"],
+    validate: jsonValidator(
+      z.object({
+        value: z.union([
+          z.record(z.string(), z.number()),
+          z.array(z.number().nullable()),
+        ]),
+        dimension: z.object({
+          time: z.object({
+            category: z.object({
+              index: z.record(z.string(), z.number()),
+            }),
+          }),
+        }),
+      }),
+    ),
+  },
+  "fhfa-house-price-index": {
+    url: "https://www.fhfa.gov/hpi/download/monthly/hpi_master.csv",
+    range: "bytes=0-65535",
+    contentTypes: ["text/csv", "text/plain", "application/octet-stream", "application/csv"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body).split(/\r?\n/, 1).join();
+      return ["hpi_flavor", "place_name"].every((field) => header.includes(field))
+        ? null
+        : "CSV is missing hpi_flavor or place_name";
+    },
+  },
+  "nppes-npi-registry": {
+    url: "https://npiregistry.cms.hhs.gov/api/?version=2.1&city=Baltimore&state=MD&limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        results: z.array(z.object({ number: z.string() })).min(1),
+      }),
+    ),
+  },
+  "wikimedia-pageviews": {
+    url: "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/Earth/daily/20250801/20250807",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        items: z.array(
+          z.object({
+            timestamp: z.string(),
+            views: z.number(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
+  "arxiv-preprints": {
+    url: "https://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=1",
+    contentTypes: ["application/atom+xml", "text/xml", "application/xml"],
+    validate(body: Uint8Array) {
+      const text = new TextDecoder().decode(body);
+      return text.includes("<feed") && text.toLowerCase().includes("arxiv")
+        ? null
+        : "response is not an arXiv Atom feed";
+    },
+  },
+  "epa-echo-drinking-water": {
+    url: "https://echodata.epa.gov/echo/sdw_rest_services.get_systems?output=JSON&p_st=RI&p_act=Y",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        Results: z.object({
+          Systems: z.array(z.object({ PWSId: z.string() }).passthrough()).min(1),
+        }),
+      }),
+    ),
+  },
+  "noaa-ibtracs": {
+    url: "https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.NA.list.v04r01.csv",
+    range: "bytes=0-65535",
+    contentTypes: ["text/csv", "text/plain", "application/octet-stream"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body).split(/\r?\n/, 1).join();
+      return header.includes("SID") && header.includes("NAME")
+        ? null
+        : "CSV is missing SID or NAME";
+    },
+  },
 } satisfies Record<
   string,
   {

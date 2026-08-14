@@ -1,0 +1,81 @@
+id: openfda-food-enforcement
+name: openFDA Food Enforcement Reports
+description: >
+  FDA food-recall enforcement reports for building bounded product-safety
+  monitors and recall-research tools.
+theme: Health, Food & Safety
+url: https://open.fda.gov/apis/food/enforcement/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - ZIP
+license: Creative Commons CC0 1.0 Universal, with noted third-party exceptions
+license_url: https://open.fda.gov/terms/
+url_checks:
+  source_marker: Food Enforcement Overview
+  license_marker: Creative Commons CC0 1.0 Universal
+domains:
+  - Food Safety
+  - Public Health
+data_types:
+  - Event Data
+  - Tabular
+tasks:
+  - Recall Lookup
+  - Safety Monitoring
+  - Alerting
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: 2004-present
+update_frequency: weekly
+provider: U.S. Food and Drug Administration
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The openFDA food-enforcement API returns classified FDA Recall Enterprise
+    System reports for food products. Start with one hazard class and a bounded
+    report-date window. Do not use this feed as a public-alert system, and do
+    not treat recall status as current after classification.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the food-enforcement overview and the responsible-use disclaimer.
+    - Query a bounded report-date window and one classification.
+    - Preserve the exact query and retrieval timestamp before summarizing firms or products.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.fda.gov/food/enforcement.json",
+          params={
+              "search": 'classification:"Class I" AND report_date:[20250101 TO 20251231]',
+              "limit": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      recalls = pd.DataFrame(response.json()["results"])
+      recalls["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(recalls[["recalling_firm", "product_description", "reason_for_recall", "report_date"]].head(20))
+  first_project:
+    title: Summarize Class I food recalls in one year
+    goal: Identify which firms and reasons appear most often in Class I food-enforcement reports for a bounded calendar year.
+    steps:
+      - Confirm the API returned classified enforcement reports for the selected year and Class I filter.
+      - Count reports by recalling firm and reason, noting that one event can expand to additional lots later.
+      - State that openFDA must not be used to issue public alerts and that recall status is not updated after classification.

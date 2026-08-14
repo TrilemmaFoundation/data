@@ -116,6 +116,21 @@ describe("loadDatasets", () => {
       "congress-gov-legislation",
       "gbif-species-occurrences",
       "epa-airdata-daily-summaries",
+      "cfpb-consumer-complaints",
+      "college-scorecard",
+      "fhfa-house-price-index",
+      "openfda-food-enforcement",
+      "osv-open-source-vulnerabilities",
+      "fec-campaign-finance",
+      "eurostat-statistics",
+      "mobility-database-feeds",
+      "bts-airline-on-time",
+      "nppes-npi-registry",
+      "epa-echo-drinking-water",
+      "arxiv-preprints",
+      "wikimedia-pageviews",
+      "usda-nass-quick-stats",
+      "noaa-ibtracs",
     ]) {
       expect(ids.has(id), id).toBe(true);
     }
@@ -126,19 +141,19 @@ describe("loadDatasets", () => {
       getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
     );
     const groups = {
-      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "nasa-firms", "nasa-power-daily", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
-      "Government & Policy": ["congress-gov-legislation", "federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
-      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "fred-economic-series", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
-      "Health, Food & Safety": ["cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "nhtsa-vehicle-recalls", "openfda-drug-adverse-events", "usda-fooddata-central"],
-      "Geospatial & Infrastructure": ["census-tiger-line", "eia-hourly-electric-grid", "fta-ntd-monthly-ridership", "natural-earth"],
-      "Research & Reference": ["crossref-works", "gbif-species-occurrences", "openalex-scholarly-works", "pubmed-citations"],
-      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "mitre-attack-enterprise", "nvd-cve"],
-      "Demographics & Development": ["acs-five-year-estimates", "unhcr-refugee-population", "world-development-indicators"],
+      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "epa-echo-drinking-water", "nasa-firms", "nasa-power-daily", "noaa-ibtracs", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
+      "Government & Policy": ["congress-gov-legislation", "fec-campaign-finance", "federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
+      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "cfpb-consumer-complaints", "fhfa-house-price-index", "fred-economic-series", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
+      "Health, Food & Safety": ["cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "nhtsa-vehicle-recalls", "nppes-npi-registry", "openfda-drug-adverse-events", "openfda-food-enforcement", "usda-fooddata-central"],
+      "Geospatial & Infrastructure": ["bts-airline-on-time", "census-tiger-line", "eia-hourly-electric-grid", "fta-ntd-monthly-ridership", "mobility-database-feeds", "natural-earth"],
+      "Research & Reference": ["arxiv-preprints", "crossref-works", "gbif-species-occurrences", "openalex-scholarly-works", "pubmed-citations", "wikimedia-pageviews"],
+      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "mitre-attack-enterprise", "nvd-cve", "osv-open-source-vulnerabilities"],
+      "Demographics & Development": ["acs-five-year-estimates", "college-scorecard", "eurostat-statistics", "unhcr-refugee-population", "usda-nass-quick-stats", "world-development-indicators"],
     } as const;
     for (const [theme, ids] of Object.entries(groups)) {
       for (const id of ids) expect(themes[id], id).toBe(theme);
     }
-    expect(Object.keys(themes)).toHaveLength(42);
+    expect(Object.keys(themes)).toHaveLength(57);
   });
 
   it("loads valid yaml files and ignores templates", () => {

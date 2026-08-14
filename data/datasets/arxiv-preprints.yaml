@@ -1,0 +1,93 @@
+id: arxiv-preprints
+name: arXiv Preprint Metadata
+description: >
+  Open preprint descriptive metadata for building topic alerts and research
+  discovery tools that link back to arXiv.
+theme: Research & Reference
+url: https://info.arxiv.org/help/api/index.html
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - Atom XML
+license: arXiv API terms; descriptive metadata under CC0 1.0
+license_url: https://info.arxiv.org/help/api/tou.html
+url_checks:
+  source_marker: arXiv API Access
+  license_marker: Creative Commons Universal (CC0 1.0)
+domains:
+  - Scholarly Communication
+  - Preprints
+  - Research
+data_types:
+  - Bibliographic Data
+  - Text
+tasks:
+  - Literature Monitoring
+  - Topic Research
+  - Alerting
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 1991-present
+update_frequency: daily
+provider: arXiv
+source_type: academic
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The arXiv API returns Atom feeds of e-print metadata. Start with one
+    category and a handful of recent results. Metadata is CC0; full-text PDFs
+    remain under each paper's license, and a preprint is not a peer-reviewed
+    journal record.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the arXiv API terms, including the one-request-every-three-seconds limit.
+    - Query one category with max_results set to a small number.
+    - Link users to arXiv abstract pages rather than mirroring PDFs.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import xml.etree.ElementTree as ET
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://export.arxiv.org/api/query",
+          params={
+              "search_query": "cat:cs.LG",
+              "start": 0,
+              "max_results": 5,
+              "sortBy": "submittedDate",
+              "sortOrder": "descending",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      ns = {"atom": "http://www.w3.org/2005/Atom"}
+      root = ET.fromstring(response.text)
+      rows = []
+      for entry in root.findall("atom:entry", ns):
+          rows.append({
+              "id": entry.findtext("atom:id", default="", namespaces=ns),
+              "title": " ".join((entry.findtext("atom:title", default="", namespaces=ns) or "").split()),
+              "published": entry.findtext("atom:published", default="", namespaces=ns),
+          })
+      preprints = pd.DataFrame(rows)
+      preprints["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(preprints)
+  first_project:
+    title: Watch recent machine-learning preprints
+    goal: List five recent cs.LG submissions and their arXiv identifiers.
+    steps:
+      - Parse the Atom feed and confirm each entry has an id, title, and published date.
+      - Keep only metadata fields and link to the abstract URL rather than downloading PDFs.
+      - State that arXiv metadata is CC0 while paper files follow each submitter's license, and that preprints are not peer-reviewed publication records.

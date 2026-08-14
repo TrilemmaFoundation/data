@@ -1,0 +1,81 @@
+id: osv-open-source-vulnerabilities
+name: OSV Open Source Vulnerabilities
+description: >
+  Package- and commit-resolved open-source advisories for building dependency
+  exposure monitors and remediation queues.
+theme: Technology & Cybersecurity
+url: https://osv.dev/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+license: Creative Commons Attribution 4.0 International
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: distributed vulnerability database for Open Source
+  license_marker: Attribution 4.0 International
+domains:
+  - Cybersecurity
+  - Software Security
+  - Open Source
+data_types:
+  - Event Data
+  - Knowledge Graph
+tasks:
+  - Vulnerability Monitoring
+  - Alerting
+  - Coverage Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: continuously updated advisories from participating ecosystems
+update_frequency: continuous
+provider: Google OSV
+source_type: company
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    OSV.dev aggregates OpenSSF OSV-format advisories and matches them to package
+    names, versions, and commits. Start by querying one pinned package version.
+    A match is not the same as a CVE or CPE lookup in NVD, and it does not prove
+    that your deployed code path is exploitable.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the OSV.dev API examples and choose one ecosystem, package name, and version.
+    - POST a bounded query for that exact package version.
+    - Record the package coordinates and retrieval timestamp before triaging aliases.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://api.osv.dev/v1/query",
+          json={
+              "version": "2.4.1",
+              "package": {"name": "jinja2", "ecosystem": "PyPI"},
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      advisories = pd.DataFrame(response.json().get("vulns", []))
+      advisories["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(advisories[["id", "summary", "published"]].head(20))
+  first_project:
+    title: Check one pinned Python package for known advisories
+    goal: List OSV advisories that match a specific PyPI package version and note their aliases.
+    steps:
+      - Confirm the query returned vulnerability IDs for the pinned package version.
+      - Expand aliases such as CVE or GHSA identifiers and record whether a fix version is listed.
+      - Explain that package-resolved OSV matches are not a substitute for NVD CPE search or proof of exploitability in your application.

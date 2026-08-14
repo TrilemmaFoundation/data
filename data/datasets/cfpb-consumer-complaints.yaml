@@ -1,0 +1,80 @@
+id: cfpb-consumer-complaints
+name: CFPB Consumer Complaint Database
+description: >
+  Consumer financial product complaints sent to companies for response, for
+  building company, product, and state complaint-monitoring tools.
+theme: Markets & Economics
+url: https://www.consumerfinance.gov/data-research/consumer-complaints/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+  - ZIP
+license: U.S. Government public data / CFPB public-domain dedication
+license_url: https://cfpb.github.io/source-code-policy/
+url_checks:
+  source_marker: Consumer Complaint Database
+  license_marker: public domain work
+domains:
+  - Consumer Finance
+  - Financial Regulation
+data_types:
+  - Event Data
+  - Tabular
+tasks:
+  - Complaint Monitoring
+  - Trend Analysis
+  - Alerting
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: 2011-present
+update_frequency: daily
+provider: Consumer Financial Protection Bureau
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The Consumer Complaint Database publishes complaints that CFPB sent to
+    companies for response. Start with one product and one state through the
+    search API. These records are not a statistical sample of consumer
+    experience and are not a finding that a company violated the law.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Consumer Complaint Database page and read what is published and when.
+    - Query the search API for one product in one state with a small result size.
+    - Record the query filters and retrieval timestamp before comparing companies.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
+          params={"size": 20, "product": "Mortgage", "state": "CA"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      hits = [hit["_source"] for hit in response.json()["hits"]["hits"]]
+      complaints = pd.DataFrame(hits)
+      complaints["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(complaints[["company", "product", "issue", "date_received"]].head(20))
+  first_project:
+    title: Monitor mortgage complaints in one state
+    goal: Identify which companies appear most often in recent California mortgage complaints.
+    steps:
+      - Confirm the API returned complaint records for the Mortgage product and CA state filter.
+      - Count complaints by company and issue, and note companies with large market share may appear more often.
+      - State that published complaints are not a representative sample or a determination of legal wrongdoing.

@@ -126,6 +126,15 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-12",
     },
   ],
+  [
+    "https://collegescorecard.ed.gov/data/api/",
+    {
+      statuses: [403],
+      reason:
+        "College Scorecard blocks automated validation from some regions; reconfirmed 2026-08-14",
+      expires: "2026-11-12",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

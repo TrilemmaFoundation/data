@@ -148,6 +148,37 @@ const validBodies = {
   "kalshi-market-data": JSON.stringify({
     markets: [{ ticker: "KXTEST", title: "Example market" }],
   }),
+  "cfpb-consumer-complaints": JSON.stringify({
+    hits: { hits: [{ _source: { company: "Example Bank", product: "Mortgage" } }] },
+  }),
+  "openfda-food-enforcement": JSON.stringify({
+    meta: { last_updated: "2026-07-30", results: { total: 1 } },
+    results: [{
+      recalling_firm: "Example Foods",
+      product_description: "Example product",
+      report_date: "20250115",
+    }],
+  }),
+  "osv-open-source-vulnerabilities": JSON.stringify({
+    id: "GHSA-c3g4-w6cv-6v7h",
+    summary: "Example advisory",
+  }),
+  "eurostat-statistics": JSON.stringify({
+    value: { "0": 3.2 },
+    dimension: { time: { category: { index: { "2025-01": 0 } } } },
+  }),
+  "fhfa-house-price-index": "hpi_type,hpi_flavor,frequency,level,place_name\ntraditional,purchase-only,monthly,State,California",
+  "nppes-npi-registry": JSON.stringify({
+    results: [{ number: "1679576344" }],
+  }),
+  "wikimedia-pageviews": JSON.stringify({
+    items: [{ timestamp: "2025080100", views: 1234 }],
+  }),
+  "arxiv-preprints": "<feed xmlns=\"http://www.w3.org/2005/Atom\"><title>ArXiv Query</title></feed>",
+  "epa-echo-drinking-water": JSON.stringify({
+    Results: { Systems: [{ PWSId: "RI0000001" }] },
+  }),
+  "noaa-ibtracs": "SID,NAME,ISO_TIME,LAT,LON\nNA0001,EXAMPLE,2025-01-01,20,60",
 } as const;
 
 const contentTypes = {
@@ -180,6 +211,16 @@ const contentTypes = {
   "cdc-places": "application/json",
   "sec-edgar-apis": "application/json",
   "kalshi-market-data": "application/json",
+  "cfpb-consumer-complaints": "application/json",
+  "openfda-food-enforcement": "application/json",
+  "osv-open-source-vulnerabilities": "application/json",
+  "eurostat-statistics": "application/json",
+  "fhfa-house-price-index": "text/csv",
+  "nppes-npi-registry": "application/json",
+  "wikimedia-pageviews": "application/json",
+  "arxiv-preprints": "application/atom+xml",
+  "epa-echo-drinking-water": "application/json",
+  "noaa-ibtracs": "text/csv",
 } as const;
 
 function response(
@@ -278,6 +319,14 @@ describe("checkProviderContract", () => {
     await expect(
       checkProviderContract("polymarket-markets", {
         fetchImpl: vi.fn().mockResolvedValue(response("[]", "application/json")),
+      }),
+    ).resolves.toEqual([
+      expect.stringContaining("response contract mismatch"),
+    ]);
+
+    await expect(
+      checkProviderContract("epa-echo-drinking-water", {
+        fetchImpl: vi.fn().mockResolvedValue(response("{}", "application/json")),
       }),
     ).resolves.toEqual([
       expect.stringContaining("response contract mismatch"),

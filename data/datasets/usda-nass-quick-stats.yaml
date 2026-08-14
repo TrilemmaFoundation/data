@@ -1,0 +1,90 @@
+id: usda-nass-quick-stats
+name: USDA NASS Quick Stats
+description: >
+  Official U.S. agricultural survey and census estimates for building commodity
+  and county production monitors.
+theme: Demographics & Development
+url: https://quickstats.nass.usda.gov/api
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+  - XML
+license: NASS API terms of service
+license_url: https://quickstats.nass.usda.gov/api
+url_checks:
+  source_marker: QuickStats API
+  license_marker: This product uses the NASS API but is not endorsed or certified by NASS
+domains:
+  - Agriculture
+  - Commodities
+data_types:
+  - Tabular
+  - Time Series
+  - Survey Estimates
+tasks:
+  - Trend Analysis
+  - Regional Comparison
+  - Market Monitoring
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: Census of Agriculture years plus ongoing surveys
+update_frequency: occasional
+provider: USDA National Agricultural Statistics Service
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    Quick Stats exposes published NASS survey and census estimates. Start with
+    one commodity, one state, one statistic, and one year so the request stays
+    under the 50,000-row cap. Display the required NASS disclaimer, and do not
+    treat a single-year extract as a complete national inventory.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free NASS API key saved in the NASS_API_KEY environment variable
+  access_steps:
+    - Register for a NASS API key and save it in the NASS_API_KEY environment variable.
+    - Use get_counts to confirm a commodity-state-year query is under 50,000 rows.
+    - Request JSON for that bounded query and record the short_desc and unit.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      params = {
+          "key": os.environ["NASS_API_KEY"],
+          "commodity_desc": "CORN",
+          "statisticcat_desc": "YIELD",
+          "agg_level_desc": "STATE",
+          "state_alpha": "IA",
+          "year": 2024,
+          "format": "JSON",
+      }
+      response = requests.get(
+          "https://quickstats.nass.usda.gov/api/api_GET/",
+          params=params,
+          timeout=30,
+      )
+      response.raise_for_status()
+      estimates = pd.DataFrame(response.json()["data"])
+      estimates["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(estimates[["short_desc", "state_alpha", "year", "Value", "unit_desc"]].head(20))
+  first_project:
+    title: Look up one state's corn yield
+    goal: Retrieve published Iowa corn-yield estimates for one year and record their units.
+    steps:
+      - Confirm the API returned yield rows for the selected commodity, state, and year.
+      - Note the unit_desc and whether the Value is a number or a suppression code.
+      - Display that the product uses the NASS API but is not endorsed or certified by NASS, and do not treat one state-year extract as a national production total.

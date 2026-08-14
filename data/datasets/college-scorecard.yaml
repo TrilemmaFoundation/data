@@ -1,0 +1,89 @@
+id: college-scorecard
+name: College Scorecard Institution Data
+description: >
+  U.S. college cost, completion, debt, and earnings statistics for building
+  school-comparison and program-research tools.
+theme: Demographics & Development
+url: https://collegescorecard.ed.gov/data/api/
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: College Scorecard API
+  license_marker: federal government materials
+domains:
+  - Education
+  - Higher Education
+data_types:
+  - Tabular
+  - Survey Estimates
+tasks:
+  - Provider Comparison
+  - Market Research
+  - Community Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: institution metrics with year-specific and latest objects
+update_frequency: annual
+provider: U.S. Department of Education
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    College Scorecard exposes institution and field-of-study metrics through an
+    api.data.gov key. Start with one state and a few fields such as tuition,
+    completion, and earnings. Many debt and earnings values cover Title IV
+    cohorts only, and the latest object can mix metrics from different years.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free api.data.gov key saved in the DATA_GOV_API_KEY environment variable
+  access_steps:
+    - Register for a free api.data.gov key and save it in the DATA_GOV_API_KEY environment variable.
+    - Open the College Scorecard API documentation and choose one state plus a short field list.
+    - Request a bounded school page and record which latest metrics came from different years.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.data.gov/ed/collegescorecard/v1/schools",
+          params={
+              "api_key": os.environ["DATA_GOV_API_KEY"],
+              "school.state": "CA",
+              "per_page": 20,
+              "fields": ",".join([
+                  "id",
+                  "school.name",
+                  "latest.cost.tuition.in_state",
+                  "latest.completion.rate_suppressed.overall",
+                  "latest.earnings.10_yrs_after_entry.median",
+              ]),
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      schools = pd.DataFrame(response.json()["results"])
+      print(schools.head(20))
+  first_project:
+    title: Compare in-state tuition and earnings for California colleges
+    goal: Rank a bounded set of California institutions by in-state tuition and ten-year median earnings.
+    steps:
+      - Confirm the API returned the requested fields for a single state page.
+      - Rank schools on tuition and earnings and flag missing or suppressed values.
+      - Explain that many earnings and debt fields describe Title IV cohorts and that latest metrics may not share one reporting year.

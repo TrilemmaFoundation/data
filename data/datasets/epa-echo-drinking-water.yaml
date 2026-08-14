@@ -1,0 +1,81 @@
+id: epa-echo-drinking-water
+name: EPA ECHO Drinking Water Systems
+description: >
+  SDWA public water-system inventory and compliance records for building local
+  drinking-water system lookups.
+theme: Environment & Hazards
+url: https://echo.epa.gov/tools/web-services
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Drinking Water System Search REST Services
+  license_marker: federal government materials
+domains:
+  - Water Resources
+  - Environmental Health
+  - Public Health
+data_types:
+  - Registry Data
+  - Tabular
+  - Geospatial
+tasks:
+  - Safety Monitoring
+  - Geographic Analysis
+  - Compliance Monitoring
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: SDWIS/Fed records with weekly ECHO refreshes
+update_frequency: weekly
+provider: U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    ECHO Drinking Water System Search services expose SDWIS/Fed inventory and
+    compliance attributes for public water systems. Start with one state and
+    JSON output. Do not use the web service as a bulk-download substitute, and
+    do not treat these records as real-time water-quality measurements.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the ECHO web-services page and locate Drinking Water System Search.
+    - Query get_systems for one state with JSON output.
+    - Keep the request bounded to that state rather than paging a national extract.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://echodata.epa.gov/echo/sdw_rest_services.get_systems",
+          params={"output": "JSON", "p_st": "RI", "p_act": "Y"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      systems = pd.json_normalize(payload.get("Results", payload).get("Systems", payload))
+      systems["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(systems.head(20))
+  first_project:
+    title: Profile active public water systems in one state
+    goal: Count active Rhode Island public water systems in a bounded ECHO search and note compliance fields that are present.
+    steps:
+      - Confirm the JSON response includes water-system identifiers for the selected state.
+      - Summarize system counts by county or type without requesting a national download.
+      - State that ECHO web services are not a bulk-download path and that SDWIS/Fed is not a real-time water-quality feed.

@@ -1,0 +1,77 @@
+id: fhfa-house-price-index
+name: FHFA House Price Index
+description: >
+  Repeat-sales indexes of U.S. single-family house prices for building local
+  housing-market monitors and regional comparison tools.
+theme: Markets & Economics
+url: https://www.fhfa.gov/data/hpi
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - CSV
+  - JSON
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: FHFA House Price Index
+  license_marker: federal government materials
+domains:
+  - Housing
+  - Regional Economics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Trend Analysis
+  - Regional Comparison
+  - Market Monitoring
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: mid-1970s-present depending on geography and index flavor
+update_frequency: monthly
+provider: Federal Housing Finance Agency
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The FHFA House Price Index measures average price changes from repeat
+    mortgage transactions on the same single-family properties. Start with
+    purchase-only monthly series for a few states. The index is not a list of
+    sale prices, and coverage is strongest where Fannie Mae and Freddie Mac
+    purchase or securitize mortgages.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the FHFA HPI datasets page and identify the purchase-only monthly series.
+    - Download the master CSV and filter to one index flavor, frequency, and geography level.
+    - Record the flavor, seasonal-adjustment choice, and retrieval date before comparing places.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      prices = pd.read_csv("https://www.fhfa.gov/hpi/download/monthly/hpi_master.csv")
+      state_prices = prices[
+          (prices["hpi_flavor"] == "purchase-only")
+          & (prices["frequency"] == "monthly")
+          & (prices["level"] == "State")
+          & (prices["place_name"].isin(["California", "Texas", "Florida"]))
+      ].copy()
+      state_prices["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(state_prices[["place_name", "yr", "period", "index_nsa", "index_sa"]].tail(24))
+  first_project:
+    title: Compare recent state house-price indexes
+    goal: Describe how purchase-only monthly indexes moved for three states over the last two years.
+    steps:
+      - Filter the master file to purchase-only monthly state series and confirm the date range.
+      - Plot seasonally adjusted indexes for the selected states on a shared timeline.
+      - State that the HPI is a repeat-sales index, not observed list prices, and that Enterprise mortgage coverage varies by market.

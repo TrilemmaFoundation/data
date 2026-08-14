@@ -1,0 +1,99 @@
+id: eurostat-statistics
+name: Eurostat Statistics API
+description: >
+  Official European statistical series for building country comparison and
+  release-monitoring tools from a bounded Eurostat dataset.
+theme: Demographics & Development
+url: https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-getting-started
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+  - TSV
+license: Eurostat free re-use with source acknowledgement
+license_url: https://ec.europa.eu/eurostat/en/help/copyright-notice
+url_checks:
+  source_marker: Statistics API is a REST web service
+  license_marker: Copyright notice and free re-use of data
+domains:
+  - Labor Economics
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Country Comparison
+  - Economic Monitoring
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Europe
+temporal_coverage: series-specific coverage published in each data code
+update_frequency: monthly
+provider: Eurostat
+source_type: intergovernmental
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    Eurostat's Statistics API returns JSON-stat for a data code such as monthly
+    unemployment. Start with one country, one adjustment, and the last twelve
+    periods. Acknowledge Eurostat as the source, and do not reuse third-country
+    or restricted trade extracts for commercial products.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Statistics API getting-started page and choose one data code.
+    - Request a filtered JSON-stat subset for one country and a short time window.
+    - Record the data code, filters, and access date for the required source citation.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m",
+          params={
+              "format": "JSON",
+              "lang": "EN",
+              "geo": "DE",
+              "s_adj": "SA",
+              "age": "TOTAL",
+              "sex": "T",
+              "unit": "PC_ACT",
+              "lastTimePeriod": 12,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      time_index = payload["dimension"]["time"]["category"]["index"]
+      values = payload["value"]
+      rows = []
+      for period, position in time_index.items():
+          if isinstance(values, list):
+              value = values[position] if position < len(values) else None
+          else:
+              value = values.get(str(position))
+          if value is not None:
+              rows.append({"period": period, "unemployment_rate": value})
+      unemployment = pd.DataFrame(rows).sort_values("period")
+      unemployment["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(unemployment)
+  first_project:
+    title: Track one country's monthly unemployment rate
+    goal: Describe how Germany's seasonally adjusted monthly unemployment rate moved over the last twelve published periods.
+    steps:
+      - Confirm the JSON-stat response contains twelve time periods for the selected geo and adjustment filters.
+      - Plot the unemployment rate and note any missing periods.
+      - Cite Eurostat with the data code and access date, and do not treat this filtered EU series as a license to reuse restricted non-EU trade extracts.

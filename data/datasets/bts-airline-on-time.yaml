@@ -1,0 +1,86 @@
+id: bts-airline-on-time
+name: BTS Airline On-Time Performance
+description: >
+  Reporting-carrier flight on-time, delay, cancellation, and diversion records
+  for building airport and airline reliability monitors.
+theme: Geospatial & Infrastructure
+url: https://www.transtats.bts.gov/ontime/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.2
+formats:
+  - CSV
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Airline On-Time Statistics
+  license_marker: federal government materials
+domains:
+  - Aviation
+  - Transportation
+data_types:
+  - Event Data
+  - Tabular
+  - Time Series
+tasks:
+  - Operational Monitoring
+  - Benchmarking
+  - Anomaly Detection
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: January 1995-present
+update_frequency: monthly
+provider: Bureau of Transportation Statistics
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    BTS publishes monthly on-time performance for U.S. reporting carriers. Start
+    with one month's pre-zipped file and a few origin airports. Delay minutes
+    and cause codes are carrier-reported, and merger reporting codes change over
+    time.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Airline On-Time Statistics page and note the current reporting carriers and merger codes.
+    - Download one monthly On-Time Performance ZIP from the TranStats PREZIP directory.
+    - Load a bounded row sample and the delay columns you will compare.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from io import BytesIO
+      from zipfile import ZipFile
+      import pandas as pd
+      import requests
+
+      url = (
+          "https://transtats.bts.gov/PREZIP/"
+          "On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_7.zip"
+      )
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      with ZipFile(BytesIO(response.content)) as archive:
+          name = next(member for member in archive.namelist() if member.endswith(".csv"))
+          on_time = pd.read_csv(
+              archive.open(name),
+              usecols=["Origin", "Dest", "Reporting_Airline", "ArrDelay", "Cancelled"],
+              nrows=5000,
+          )
+      on_time["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(on_time.head(20))
+  first_project:
+    title: Compare arrival delays for a handful of origin airports
+    goal: Describe typical arrival delay and cancellation rates from a bounded monthly sample.
+    steps:
+      - Load the selected columns from one monthly ZIP and confirm origin, airline, delay, and cancellation fields parsed.
+      - Summarize median arrival delay and cancellation rate by origin airport.
+      - Explain that delay causes are carrier-reported and that merger codes can split the same brand across years.

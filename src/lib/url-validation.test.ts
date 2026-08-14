@@ -444,6 +444,13 @@ describe("checkUrl", () => {
       "2026-11-12",
       2,
     ],
+    [
+      "https://collegescorecard.ed.gov/data/api/",
+      403,
+      "College Scorecard blocks automated validation from some regions; reconfirmed 2026-08-14",
+      "2026-11-12",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {

@@ -1,0 +1,89 @@
+id: fec-campaign-finance
+name: FEC Campaign Finance Data
+description: >
+  Federal candidate and committee receipts, disbursements, and filings for
+  building campaign-finance monitors that stay inside FEC use limits.
+theme: Government & Policy
+url: https://www.fec.gov/data/
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: FEC API terms and sale-or-use restriction on contributor information
+license_url: https://www.fec.gov/updates/sale-or-use-contributor-information/
+url_checks:
+  source_marker: Campaign finance data
+  license_marker: cannot be sold or used for soliciting
+domains:
+  - Elections
+  - Campaign Finance
+  - Public Policy
+data_types:
+  - Tabular
+  - Time Series
+  - Transaction Data
+tasks:
+  - Legislative Monitoring
+  - Trend Analysis
+  - Market Monitoring
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: federal election cycles with nightly processed updates
+update_frequency: daily
+provider: Federal Election Commission
+source_type: government
+last_verified: 2026-08-14
+getting_started:
+  overview: >
+    The OpenFEC API exposes candidate and committee financial totals from FEC
+    reports. Start with active House candidate totals for one cycle, sorted by
+    receipts. Do not build products from individual contributor lists; FEC law
+    prohibits selling or using that information to solicit donations or for
+    commercial purposes.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free api.data.gov key saved in the DATA_GOV_API_KEY environment variable
+  access_steps:
+    - Register for a free api.data.gov key and save it in the DATA_GOV_API_KEY environment variable.
+    - Read the FEC sale-or-use restriction before choosing any contributor endpoint.
+    - Request a bounded page of candidate totals for one office and cycle.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.open.fec.gov/v1/candidates/totals/",
+          params={
+              "api_key": os.environ["DATA_GOV_API_KEY"],
+              "cycle": 2024,
+              "office": "H",
+              "is_active_candidate": "true",
+              "sort": "-receipts",
+              "per_page": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      totals = pd.DataFrame(response.json()["results"])
+      totals["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(totals[["name", "party_full", "state", "receipts", "disbursements"]].head(20))
+  first_project:
+    title: Rank House candidates by reported receipts
+    goal: Identify which active House candidates reported the largest receipts in one election cycle.
+    steps:
+      - Confirm the totals endpoint returned committee-level receipts and disbursements, not contributor names.
+      - Rank the bounded page by receipts and compare disbursements for the same candidates.
+      - State that individual contributor information from FEC reports cannot be sold or used to solicit donations or for commercial purposes.
