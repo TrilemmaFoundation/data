@@ -3,7 +3,7 @@
 Find **actively maintained, authoritative datasets** and test whether they can
 power a focused microproduct.
 
-> Find data to build your next microproduct
+> Choose a Dataset. Build a Microproduct.
 
 **Host:** [data.trilemma.foundation](https://data.trilemma.foundation)  
 **Stack:** Next.js + TypeScript + Vercel  

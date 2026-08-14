@@ -33,7 +33,7 @@ export const siteCopy = {
 } as const;
 
 export const catalogCopy = {
-  heroTitle: "Find data to build your next microproduct",
+  heroTitle: "Choose a Dataset. Build a Microproduct.",
   searchLabel: "Search by topic, provider, or product use",
   searchPlaceholder: "Try “weather” or “filings”",
   recommendedDatasetId: "nws-weather-api",
