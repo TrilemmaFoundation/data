@@ -116,10 +116,13 @@ It compiles examples for syntax and tests controlled provider fixtures instead.
 Live URL checks follow redirects, require the final page to remain on the
 intended host, and search the bounded response body for each YAML marker.
 Configured provider checks run after pushes to `main`, every Monday, and on
-manual workflow dispatch; a new YAML dataset does not require one. Live provider
+manual workflow dispatch; a new YAML dataset does not require one. Provider
+contracts are code-owned, use unauthenticated GET sample URLs, and stay optional
+for download-only datasets and sources that need an API key. Live provider
 and URL checks use bounded concurrency so fragile hosts are not requested all at
 once. A small code-owned allowlist may temporarily accept a bot-protected URL;
 every exception is exact, visible in validation output, and has an expiry date.
+Live CI warns 14 days before an exception expires so it can be reconfirmed or removed.
 
 ## What happens after merge
 

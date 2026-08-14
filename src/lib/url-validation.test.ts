@@ -1,9 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { getAllDatasets } from "./datasets";
 import type { Dataset } from "./schema";
+import { closePinnedAgents } from "./http-validation";
 import {
   checkUrl as checkUrlWithDns,
   createPinnedLookup,
+  exceptionExpiryWarnings,
+  EXCEPTION_WARNING_DAYS,
   validateDatasetUrls,
 } from "./url-validation";
 
@@ -733,5 +736,55 @@ describe("validateDatasetUrls", () => {
       errors: new Map(),
       warnings: new Map([["one.yaml", ["protected endpoint"]]]),
     });
+  });
+});
+
+describe("exceptionExpiryWarnings", () => {
+  it("warns within the 14-day window and ignores distant or expired dates", () => {
+    expect(EXCEPTION_WARNING_DAYS).toBe(14);
+    expect(exceptionExpiryWarnings(new Date("2026-08-10T00:00:00Z"))).toEqual([]);
+    expect(exceptionExpiryWarnings(new Date("2026-10-27T00:00:00Z"))).toEqual([]);
+    const soon = exceptionExpiryWarnings(new Date("2026-10-28T00:00:00Z"));
+    expect(soon.length).toBeGreaterThan(0);
+    expect(soon.some((warning) => warning.includes("2026-11-11"))).toBe(true);
+    expect(soon.some((warning) => warning.includes("reconfirm or remove"))).toBe(true);
+    const expired = exceptionExpiryWarnings(new Date("2026-11-12T00:00:00Z"));
+    expect(expired.every((warning) => !warning.includes("2026-11-11"))).toBe(true);
+    expect(expired.some((warning) => warning.includes("2026-11-13"))).toBe(true);
+  });
+});
+
+describe("pinned agent reuse", () => {
+  it("reuses one dispatcher for sequential same-host checks", async () => {
+    const agents = new Map();
+    const dispatchers: unknown[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: string | URL | Request, init?: RequestInit) => {
+        dispatchers.push(init && "dispatcher" in init ? init.dispatcher : undefined);
+        const url = String(input);
+        return Promise.resolve(pageResponse("Expected page", url));
+      }),
+    );
+
+    await expect(
+      checkUrl("https://example.com/one", {
+        agents,
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    await expect(
+      checkUrl("https://example.com/two", {
+        agents,
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+
+    expect(dispatchers).toHaveLength(2);
+    expect(dispatchers[0]).toBeDefined();
+    expect(dispatchers[0]).toBe(dispatchers[1]);
+    expect(agents.size).toBe(1);
+    await closePinnedAgents(agents);
+    vi.unstubAllGlobals();
   });
 });

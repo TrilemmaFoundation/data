@@ -1,5 +1,5 @@
 import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
-import { validateDatasetUrls } from "../src/lib/url-validation";
+import { exceptionExpiryWarnings, validateDatasetUrls } from "../src/lib/url-validation";
 import { validatePythonSyntaxBatch } from "../src/lib/python-validation";
 import { validateDatasetPolicy } from "../src/lib/catalog-validation";
 import { sanitizeDiagnostic } from "../src/lib/diagnostics";
@@ -10,6 +10,12 @@ async function main() {
   const urlValidation = offline
     ? { errors: new Map<string, string[]>(), warnings: new Map<string, string[]>() }
     : await validateDatasetUrls(datasets);
+
+  if (!offline) {
+    for (const warning of exceptionExpiryWarnings()) {
+      console.warn(sanitizeDiagnostic(`! ${warning}`));
+    }
+  }
 
   const allErrors: { file: string; messages: string[] }[] = [...errors];
   const pythonErrors = validatePythonSyntaxBatch(

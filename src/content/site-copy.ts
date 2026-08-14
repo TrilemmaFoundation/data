@@ -30,7 +30,6 @@ export const siteCopy = {
     "Authoritative, actively maintained data for building focused microproducts. Trilemma links to source data; it does not host or relicense it.",
   copyright: (year: number) =>
     `© ${year} Trilemma Foundation. All rights reserved.`,
-  loadingLabel: "Preparing the dataset catalog…",
 } as const;
 
 export const catalogCopy = {

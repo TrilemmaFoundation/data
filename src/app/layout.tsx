@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Roboto } from "next/font/google";
-import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { SiteHeader } from "@/components/SiteChrome";
+import { SiteFooter } from "@/components/SiteFooter";
 import { FOUNDATION_URL, SITE_URL } from "@/lib/seo";
 import { siteCopy } from "@/content/site-copy";
 import "./globals.css";

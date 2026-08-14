@@ -70,6 +70,45 @@ export function parsePage(params: URLSearchParams): number {
   return Number.isSafeInteger(page) ? page : 1;
 }
 
+export function catalogParamsFromSearch(search: string): URLSearchParams {
+  return new URLSearchParams(
+    search.startsWith("?") ? search.slice(1) : search,
+  );
+}
+
+export function searchStringToCatalogState(
+  search: string,
+  options: FilterOptions,
+) {
+  const params = catalogParamsFromSearch(search);
+  return {
+    params,
+    filters: parseFilters(params, options),
+    sort: parseSort(params),
+    page: parsePage(params),
+  };
+}
+
+export function isCanonicalPage(
+  params: URLSearchParams,
+  paginatedPage: number,
+): boolean {
+  const pageValues = params.getAll("page");
+  return paginatedPage === 1
+    ? pageValues.length === 0
+    : pageValues.length === 1 && pageValues[0] === String(paginatedPage);
+}
+
+export function catalogSearchFromLocation(
+  pagePathname: string,
+  locationPathname: string,
+  locationSearch: string,
+): string | null {
+  const page = pagePathname.replace(/\/+$/, "") || "/";
+  const current = locationPathname.replace(/\/+$/, "") || "/";
+  return page === current ? locationSearch : null;
+}
+
 export function filtersToParams(
   filters: DatasetFilters,
   sort: CatalogSort = null,

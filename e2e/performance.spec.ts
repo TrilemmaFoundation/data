@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import zlib from "node:zlib";
 import { expect, test, type Page } from "@playwright/test";
-import { getAllDatasets } from "../src/lib/datasets";
+import { getAllDatasets, getDatasetById } from "../src/lib/datasets";
+import { catalogCopy } from "../src/content/site-copy";
 
 const INITIAL_DATASET_COUNT = 5;
 const PER_DATASET_MARKUP_BUDGET = 3_000;
@@ -12,7 +13,8 @@ const addedDatasetBudget =
 const BUDGETS = {
   javascript: 860_000,
   css: 76_000,
-  html: 32_000 + addedDatasetBudget,
+  // Static HTML now includes the first catalog page (cards + table), not a CSR shell.
+  html: 125_000 + addedDatasetBudget,
   rsc: 22_000 + addedDatasetBudget,
   gzipCode: 285_000,
 };
@@ -69,4 +71,18 @@ test("initial catalog assets stay within attributed budgets", async ({ page }) =
   expect(measured.html).toBeLessThan(BUDGETS.html);
   expect(measured.rsc).toBeLessThan(BUDGETS.rsc);
   expect(measured.gzipCode).toBeLessThan(BUDGETS.gzipCode);
+});
+
+test("static catalog HTML includes dataset content", () => {
+  const html = fs.readFileSync("out/index.html", "utf8");
+  const body = html.split(/<body\b/i)[1] ?? "";
+  const preScript = body.split(/<script[\s>]/i)[0] ?? "";
+  const recommended = getDatasetById(catalogCopy.recommendedDatasetId);
+
+  expect(preScript).not.toContain("BAILOUT_TO_CLIENT_SIDE_RENDERING");
+  expect(preScript).not.toContain("Preparing the dataset catalog");
+  expect(preScript).toContain(catalogCopy.heroTitle);
+  expect(preScript).toContain("dataset-search");
+  expect(recommended).toBeDefined();
+  expect(preScript).toContain(recommended!.name);
 });

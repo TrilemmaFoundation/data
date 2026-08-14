@@ -4,6 +4,7 @@ import {
   MAX_PYTHON_LENGTH,
   MAX_TEXT_LENGTH,
   MAX_URL_LENGTH,
+  toCatalogDataset,
 } from "./schema";
 
 const validDataset = {
@@ -337,5 +338,36 @@ describe("DatasetSchema", () => {
         },
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("toCatalogDataset", () => {
+  it("omits guide-only fields from the catalog payload", () => {
+    const dataset = DatasetSchema.parse(validDataset);
+    const catalog = toCatalogDataset(dataset);
+
+    expect(catalog).toEqual({
+      id: dataset.id,
+      name: dataset.name,
+      description: dataset.description,
+      theme: dataset.theme,
+      provider: dataset.provider,
+      access_type: dataset.access_type,
+      update_frequency: dataset.update_frequency,
+      domains: dataset.domains,
+      tasks: dataset.tasks,
+      data_types: dataset.data_types,
+      formats: dataset.formats,
+      difficulty: dataset.difficulty,
+      geography: dataset.geography,
+      size_gb_min: dataset.size_gb_min,
+      size_gb_max: dataset.size_gb_max,
+      api_key_required: dataset.api_key_required,
+    });
+    expect(catalog).not.toHaveProperty("getting_started");
+    expect(catalog).not.toHaveProperty("url");
+    expect(catalog).not.toHaveProperty("license");
+    expect(catalog).not.toHaveProperty("license_url");
+    expect(catalog).not.toHaveProperty("url_checks");
   });
 });

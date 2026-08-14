@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 import { EMPTY_FILTERS } from "./search";
 import type { FilterOptions } from "./search";
 import {
+  catalogSearchFromLocation,
   filtersToParams,
+  isCanonicalPage,
   parseFilters,
   parsePage,
   parseSort,
+  searchStringToCatalogState,
 } from "./filter-params";
 
 describe("filter URL helpers", () => {
@@ -120,5 +123,34 @@ describe("filter URL helpers", () => {
       expect(parsePage(new URLSearchParams(`page=${value}`))).toBe(1);
     }
     expect(parsePage(new URLSearchParams("page=2&page=3"))).toBe(1);
+  });
+
+  it("parses a search string into catalog state", () => {
+    const state = searchStringToCatalogState(
+      "?q=maps&theme=Research%20%26%20Reference&page=2&sort=name&order=desc",
+      options,
+    );
+    expect(state.filters.query).toBe("maps");
+    expect(state.filters.theme).toBe("Research & Reference");
+    expect(state.sort).toEqual({ id: "name", desc: true });
+    expect(state.page).toBe(2);
+    expect(
+      searchStringToCatalogState("q=maps", options).filters.query,
+    ).toBe("maps");
+  });
+
+  it("detects canonical page query strings", () => {
+    expect(isCanonicalPage(new URLSearchParams(), 1)).toBe(true);
+    expect(isCanonicalPage(new URLSearchParams("page=1"), 1)).toBe(false);
+    expect(isCanonicalPage(new URLSearchParams("page=2"), 2)).toBe(true);
+    expect(isCanonicalPage(new URLSearchParams("page=2&page=2"), 2)).toBe(false);
+    expect(isCanonicalPage(new URLSearchParams("q=maps"), 1)).toBe(true);
+  });
+
+  it("reads catalog search only while the location is on the catalog page", () => {
+    expect(catalogSearchFromLocation("/", "/", "?q=maps")).toBe("?q=maps");
+    expect(catalogSearchFromLocation("/", "/", "")).toBe("");
+    expect(catalogSearchFromLocation("/", "/datasets/nws-weather-api", "?q=maps")).toBeNull();
+    expect(catalogSearchFromLocation("/", "/datasets/nws-weather-api/", "")).toBeNull();
   });
 });

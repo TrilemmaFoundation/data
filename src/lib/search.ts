@@ -110,6 +110,30 @@ function matchesAny(selected: string[], values: string[]): boolean {
   return selected.length === 0 || selected.some((item) => values.includes(item));
 }
 
+const fuseCache = new WeakMap<CatalogDataset[], Fuse<CatalogDataset>>();
+const FUSE_OPTIONS = {
+  keys: [
+    "name",
+    "description",
+    "provider",
+    "theme",
+    "domains",
+    "tasks",
+    "data_types",
+    "formats",
+  ],
+  threshold: 0.35,
+  ignoreLocation: true,
+};
+
+function getCatalogFuse(datasets: CatalogDataset[]): Fuse<CatalogDataset> {
+  const cached = fuseCache.get(datasets);
+  if (cached) return cached;
+  const fuse = new Fuse(datasets, FUSE_OPTIONS);
+  fuseCache.set(datasets, fuse);
+  return fuse;
+}
+
 export function filterDatasets(
   datasets: CatalogDataset[],
   filters: DatasetFilters,
@@ -117,21 +141,9 @@ export function filterDatasets(
   let results = datasets;
 
   if (filters.query.trim()) {
-    const fuse = new Fuse(datasets, {
-      keys: [
-        "name",
-        "description",
-        "provider",
-        "theme",
-        "domains",
-        "tasks",
-        "data_types",
-        "formats",
-      ],
-      threshold: 0.35,
-      ignoreLocation: true,
-    });
-    results = fuse.search(filters.query.trim()).map((hit) => hit.item);
+    results = getCatalogFuse(datasets)
+      .search(filters.query.trim())
+      .map((hit) => hit.item);
   }
 
   return results.filter((dataset) => {

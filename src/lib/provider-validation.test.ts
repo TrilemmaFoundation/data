@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Dataset } from "./schema";
 import {
   checkProviderContract,
+  providerRequestFailure,
   validateProviderContracts,
 } from "./provider-validation";
 
@@ -133,6 +134,20 @@ const validBodies = {
     { page: 1, pages: 1, total: 1 },
     [{ countryiso3code: "USA", date: "2025", value: null }],
   ]),
+  "nws-weather-api": JSON.stringify({
+    properties: {
+      forecastHourly: "https://api.weather.gov/gridpoints/OKX/33,37/forecast/hourly",
+    },
+  }),
+  "cdc-places": JSON.stringify([
+    { locationid: "06037", locationname: "Los Angeles", data_value: "10.1" },
+  ]),
+  "sec-edgar-apis": JSON.stringify({
+    filings: { recent: { filingDate: ["2026-01-02"], form: ["8-K"] } },
+  }),
+  "kalshi-market-data": JSON.stringify({
+    markets: [{ ticker: "KXTEST", title: "Example market" }],
+  }),
 } as const;
 
 const contentTypes = {
@@ -161,6 +176,10 @@ const contentTypes = {
   "usgs-water-data": "application/geo+json",
   "treasury-securities-auctions": "application/json",
   "world-development-indicators": "application/json",
+  "nws-weather-api": "application/geo+json",
+  "cdc-places": "application/json",
+  "sec-edgar-apis": "application/json",
+  "kalshi-market-data": "application/json",
 } as const;
 
 function response(
@@ -197,7 +216,11 @@ describe("checkProviderContract", () => {
       "fetch",
       vi.fn().mockResolvedValue(response(validBodies["nasa-firms"], "text/plain")),
     );
-    await expect(checkProviderContract("nasa-firms")).resolves.toEqual([]);
+    await expect(
+      checkProviderContract("nasa-firms", {
+        resolveHost: async () => [{ address: "93.184.216.34", family: 4 }],
+      }),
+    ).resolves.toEqual([]);
   });
 
   it.each(["unknown", "constructor"])(
@@ -288,6 +311,42 @@ describe("checkProviderContract", () => {
     ).resolves.toEqual(["provider contract request failed: no route"]);
   });
 
+  it("formats provider request failures without a GET prefix", () => {
+    const url = "https://example.com/data";
+    expect(providerRequestFailure(url, null)).toBe(
+      "provider contract request failed: unknown",
+    );
+    expect(providerRequestFailure(url, "denied")).toBe(
+      "provider contract request failed: denied",
+    );
+    expect(providerRequestFailure(url, `GET ${url}: offline`)).toBe(
+      "provider contract request failed: offline",
+    );
+  });
+
+  it("reports unexpected errors while reading a provider response", async () => {
+    const exploding = (error: unknown) => {
+      const payload = response(validBodies["nasa-firms"], "text/csv");
+      Object.defineProperty(payload, "body", {
+        get() {
+          throw error;
+        },
+      });
+      return payload;
+    };
+
+    await expect(
+      checkProviderContract("nasa-firms", {
+        fetchImpl: vi.fn().mockResolvedValue(exploding(new Error("stream exploded"))),
+      }),
+    ).resolves.toEqual(["provider contract request failed: stream exploded"]);
+    await expect(
+      checkProviderContract("nasa-firms", {
+        fetchImpl: vi.fn().mockResolvedValue(exploding("stream exploded")),
+      }),
+    ).resolves.toEqual(["provider contract request failed: stream exploded"]);
+  });
+
   it("aborts a provider request at the timeout", async () => {
     vi.useFakeTimers();
     const fetchImpl = vi.fn((_url: string | URL | Request, init?: RequestInit) =>
@@ -303,6 +362,35 @@ describe("checkProviderContract", () => {
     await expect(pending).resolves.toEqual([
       "provider contract request failed: aborted",
     ]);
+  });
+
+  it("rejects a cross-host redirect and follows a same-host redirect", async () => {
+    await expect(
+      checkProviderContract("nasa-firms", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          new Response(null, {
+            status: 302,
+            headers: { location: "https://evil.example/x" },
+          }),
+        ),
+      }),
+    ).resolves.toEqual([
+      "https://firms.modaps.eosdis.nasa.gov/content/notebooks/sample_viirs_snpp_071223.csv redirected to unexpected host evil.example",
+    ]);
+
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(null, {
+          status: 302,
+          headers: {
+            location: "/content/notebooks/sample_viirs_snpp_071223.csv",
+          },
+        }),
+      )
+      .mockResolvedValueOnce(response(validBodies["nasa-firms"], contentTypes["nasa-firms"]));
+    await expect(checkProviderContract("nasa-firms", { fetchImpl })).resolves.toEqual([]);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 });
 

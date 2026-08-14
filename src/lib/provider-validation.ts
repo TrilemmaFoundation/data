@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { readBoundedBody } from "./http-validation";
+import {
+  closePinnedAgents,
+  fetchPinnedHttps,
+  readBoundedBody,
+  VALIDATOR_USER_AGENT,
+  type ResolveHost,
+} from "./http-validation";
 import { mapPool } from "./async-pool";
 import type { Dataset } from "./schema";
 
@@ -380,6 +386,58 @@ const contracts = {
       ]),
     ),
   },
+  "nws-weather-api": {
+    url: "https://api.weather.gov/points/40.7128,-74.0060",
+    contentTypes: ["application/geo+json", "application/json", "application/ld+json"],
+    validate: jsonValidator(
+      z.object({
+        properties: z.object({
+          forecastHourly: z.string(),
+        }),
+      }),
+    ),
+  },
+  "cdc-places": {
+    url: "https://data.cdc.gov/resource/swc5-untb.json?$limit=1&$select=locationid,locationname,stateabbr,measureid,data_value",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          locationid: z.string(),
+          locationname: z.string(),
+          data_value: z.union([z.string(), z.number()]),
+        }),
+      ).min(1),
+    ),
+  },
+  "sec-edgar-apis": {
+    url: "https://data.sec.gov/submissions/CIK0000320193.json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        filings: z.object({
+          recent: z.object({
+            filingDate: z.array(z.string()).min(1),
+            form: z.array(z.string()).min(1),
+          }),
+        }),
+      }),
+    ),
+  },
+  "kalshi-market-data": {
+    url: "https://external-api.kalshi.com/trade-api/v2/markets?limit=1&status=open",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        markets: z.array(
+          z.object({
+            ticker: z.string(),
+            title: z.string(),
+          }),
+        ).min(1),
+      }),
+    ),
+  },
 } satisfies Record<
   string,
   {
@@ -394,6 +452,7 @@ type ProviderValidationOptions = {
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
   concurrency?: number;
+  resolveHost?: ResolveHost;
 };
 
 function jsonValidator(schema: z.ZodType) {
@@ -411,6 +470,15 @@ function jsonValidator(schema: z.ZodType) {
   };
 }
 
+export function providerRequestFailure(url: string, message: string | null): string {
+  const prefix = `GET ${url}: `;
+  if (!message) return "provider contract request failed: unknown";
+  if (message.startsWith(prefix)) {
+    return `provider contract request failed: ${message.slice(prefix.length)}`;
+  }
+  return `provider contract request failed: ${message}`;
+}
+
 export async function checkProviderContract(
   datasetId: string,
   options: ProviderValidationOptions = {},
@@ -420,32 +488,37 @@ export async function checkProviderContract(
   }
   const contract = contracts[datasetId as keyof typeof contracts];
 
-  const controller = new AbortController();
-  const timer = setTimeout(
-    () => controller.abort(),
-    options.timeoutMs ?? TIMEOUT_MS,
-  );
+  const agents = new Map();
 
   async function request() {
-    const response = await (options.fetchImpl ?? fetch)(contract.url, {
+    const result = await fetchPinnedHttps(contract.url, {
+      fetchImpl: options.fetchImpl,
+      resolveHost: options.resolveHost,
+      timeoutMs: options.timeoutMs ?? TIMEOUT_MS,
+      agents,
       headers: {
         Accept: contract.contentTypes.join(", "),
-        "User-Agent":
-          "TrilemmaDataCatalogValidator/1.0 (+https://data.trilemma.foundation)",
+        "User-Agent": VALIDATOR_USER_AGENT,
         ...("range" in contract ? { Range: contract.range } : {}),
       },
-      redirect: "follow",
-      signal: controller.signal,
     });
+    if (result.identityError) return [result.identityError];
+    if (!result.response) {
+      return [providerRequestFailure(contract.url, result.message)];
+    }
+
+    const response = result.response;
     if (!response.ok) return [`provider contract returned HTTP ${response.status}`];
 
     const declaredLength = Number(response.headers.get("content-length") ?? 0);
     if (declaredLength > MAX_RESPONSE_BYTES) {
+      await response.body?.cancel().catch(() => undefined);
       return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
     }
 
     const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
     if (!contract.contentTypes.some((type) => contentType.startsWith(type))) {
+      await response.body?.cancel().catch(() => undefined);
       return [`unexpected provider content type: ${contentType || "missing"}`];
     }
 
@@ -458,16 +531,16 @@ export async function checkProviderContract(
     return validationError ? [validationError] : [];
   }
 
+  let errors: string[];
   try {
-    const result = await request();
-    clearTimeout(timer);
-    return result;
+    errors = await request();
   } catch (error) {
-    clearTimeout(timer);
-    return [
+    errors = [
       `provider contract request failed: ${error instanceof Error ? error.message : String(error)}`,
     ];
   }
+  await closePinnedAgents(agents);
+  return errors;
 }
 
 export async function validateProviderContracts(
