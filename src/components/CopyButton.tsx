@@ -16,17 +16,22 @@ export function CopyButton({ value }: { value: string }) {
     [],
   );
 
+  function scheduleReset() {
+    resetTimer.current = window.setTimeout(() => {
+      setStatus("idle");
+      resetTimer.current = null;
+    }, 2000);
+  }
+
   async function copy() {
     if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
     try {
       await navigator.clipboard.writeText(value);
       setStatus("copied");
-      resetTimer.current = window.setTimeout(() => {
-        setStatus("idle");
-        resetTimer.current = null;
-      }, 2000);
+      scheduleReset();
     } catch {
       setStatus("error");
+      scheduleReset();
     }
   }
 

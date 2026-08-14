@@ -106,7 +106,7 @@ export function CatalogView({
           <section aria-labelledby="catalog-hero-title" className="min-w-0">
             <h1
               id="catalog-hero-title"
-              className="font-heading text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:whitespace-nowrap"
+              className="font-heading text-3xl font-bold leading-tight tracking-tight text-balance text-white sm:text-4xl lg:whitespace-nowrap"
             >
               {catalogCopy.heroTitle}
             </h1>

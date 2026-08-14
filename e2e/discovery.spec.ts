@@ -601,6 +601,17 @@ test("application copy reflows across supported viewport widths", async ({ page 
     if (width >= 1024) {
       await expect(heroTitle).toHaveCSS("white-space", "nowrap");
     }
+    if (width === 360) {
+      const lineWidths = await heroTitle.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return [...range.getClientRects()]
+          .map((box) => box.width)
+          .filter((width) => width > 1);
+      });
+      expect(lineWidths.length).toBeGreaterThan(1);
+      expect(lineWidths.at(-1) ?? 0).toBeGreaterThan(220);
+    }
 
     const cards = page.locator('[data-slot="card"]');
     if (width < 1024) {

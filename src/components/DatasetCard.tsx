@@ -45,7 +45,7 @@ export function DatasetCard({
             {featured ? datasetCardCopy.goodFirstBuildLabel : sizeCategory}
           </span>
         </div>
-        <CardTitle className="pt-1 text-lg font-semibold text-white">
+        <CardTitle className="pt-1 text-lg font-semibold text-balance text-white">
           <Link
             href={`/datasets/${dataset.id}`}
             className="rounded-sm after:absolute after:inset-0 after:z-10 after:content-[''] hover:text-primary"
