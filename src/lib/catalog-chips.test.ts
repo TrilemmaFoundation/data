@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogCopy, filterChipPrefixes, filterCopy } from "@/content/site-copy";
-import { activeChips, reconcileFilterChange } from "./catalog-chips";
+import { activeChips, facetChipCount, reconcileFilterChange } from "./catalog-chips";
 import { EMPTY_FILTERS } from "./search";
 
 const filters = {
@@ -49,6 +49,11 @@ describe("activeChips", () => {
       `${filterChipPrefixes.accessMethod}: Download`,
       catalogCopy.noApiKeyChipLabel,
     ]);
+  });
+
+  it("counts facet chips without treating search as a filter", () => {
+    expect(facetChipCount({ ...EMPTY_FILTERS, query: "earthquake" })).toBe(0);
+    expect(facetChipCount(filters)).toBe(activeChips(filters).length - 1);
   });
 });
 

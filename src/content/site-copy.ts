@@ -55,9 +55,13 @@ export const catalogCopy = {
   nextPageLabel: "Next",
   pageLabel: (page: number) => `Page ${page}`,
   pageSummary: (page: number, totalPages: number, start: number, end: number) =>
-    `Page ${page} of ${totalPages} · Showing ${start}–${end}`,
+    start === end
+      ? `Page ${page} of ${totalPages}`
+      : `Page ${page} of ${totalPages} · Showing ${start}–${end}`,
   pageStatus: (page: number, totalPages: number, start: number, end: number, total: number) =>
-    `Page ${page} of ${totalPages}, showing ${start}–${end} of ${total} datasets.`,
+    start === end
+      ? `Page ${page} of ${totalPages}, showing ${start} of ${total} datasets.`
+      : `Page ${page} of ${totalPages}, showing ${start}–${end} of ${total} datasets.`,
   showResults: (count: number) => `Show ${catalogCopy.resultCount(count)}`,
   removeFilter: (label: string) => `Remove ${label} filter`,
 } as const;

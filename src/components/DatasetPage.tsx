@@ -80,9 +80,10 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
         href={dataset.license_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:text-white"
+        className="inline-flex max-w-full items-start gap-1 text-primary hover:text-white"
       >
-        {dataset.license} <ExternalLink className="mb-0.5 inline size-3.5" aria-hidden="true" />
+        <span className="min-w-0 break-words">{dataset.license}</span>
+        <ExternalLink className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
       </a>,
     ],
   ];
@@ -246,7 +247,7 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 </div>
                 <h3 className="mt-2 text-xl font-semibold text-white">{guide.first_project.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.first_project.goal}</p>
-                <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+                <ol className="mt-5 grid gap-3 md:grid-cols-3">
                   {guide.first_project.steps.map((step, index) => (
                     <li key={step} className="rounded-lg border border-white/10 bg-brand-black/25 p-4 text-sm leading-6 text-white/80">
                       <span className="mb-2 block font-mono text-xs font-bold text-secondary">

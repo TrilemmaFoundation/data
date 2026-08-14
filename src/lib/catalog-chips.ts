@@ -67,6 +67,10 @@ export function activeChips(filters: Filters): ActiveChip[] {
   return chips;
 }
 
+export function facetChipCount(filters: Filters): number {
+  return activeChips(filters).filter((chip) => chip.key !== "query").length;
+}
+
 export function reconcileFilterChange(
   rendered: Filters,
   next: Filters,

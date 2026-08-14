@@ -48,6 +48,7 @@ export function CatalogView({
   const filterOptions = getFilterOptions(datasets);
   const results = filterDatasets(datasets, filters);
   const chips = activeChips(filters);
+  const facetCount = chips.filter((chip) => chip.key !== "query").length;
   const isUnfiltered = chips.length === 0;
   const displayedResults = (() => {
     if (!isUnfiltered) return results;
@@ -125,15 +126,15 @@ export function CatalogView({
             </p>
             {paginated.totalPages > 1 && (
               <>
-                <span className="text-white/30" aria-hidden="true">·</span>
-                <p className="text-xs whitespace-nowrap text-muted-foreground">
+                <span className="hidden text-white/30 lg:inline" aria-hidden="true">·</span>
+                <span className="hidden text-xs whitespace-nowrap text-muted-foreground lg:inline">
                   {catalogCopy.pageSummary(
                     paginated.page,
                     paginated.totalPages,
                     paginated.start,
                     paginated.end,
                   )}
-                </p>
+                </span>
               </>
             )}
             {chips.length > 0 && (
@@ -192,9 +193,12 @@ export function CatalogView({
                 onClick={(event) => openFilters(event.currentTarget)}
               >
                 <Filter aria-hidden="true" /> {filterCopy.moreFiltersLabel}
-                {chips.length > 0 && (
-                  <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground">
-                    {chips.length}
+                {facetCount > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground"
+                  >
+                    {facetCount}
                   </span>
                 )}
               </button>

@@ -155,7 +155,7 @@ export function SiteHeader() {
             tabIndex={-1}
             data-mobile-menu-backdrop
             aria-label={siteCopy.closeNavigationLabel}
-            className="fixed inset-x-0 bottom-0 top-14 z-40 cursor-default bg-brand-black/55 backdrop-blur-sm sm:top-16 md:hidden"
+            className="fixed inset-x-0 bottom-0 top-14 z-40 cursor-default bg-brand-black/80 backdrop-blur-sm sm:top-16 md:hidden"
             onClick={() => {
               setOpenPathname(null);
               menuButtonRef.current?.focus();

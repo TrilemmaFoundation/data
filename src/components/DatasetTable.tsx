@@ -59,7 +59,7 @@ function SortHeader({
     >
       <button
         type="button"
-        className="inline-flex min-h-8 items-center gap-1 rounded-sm text-left hover:text-white"
+        className="inline-flex min-h-8 items-center gap-1 rounded-sm text-left uppercase hover:text-white"
         onClick={() => onSortChange(nextSort(column, sort))}
         aria-label={tableCopy.sortBy(label, sorted)}
       >

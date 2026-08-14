@@ -55,6 +55,9 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
 
   await search.fill("GeoTIFF");
   await expect(page.getByRole("link", { name: "Natural Earth" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }),
+  ).toBeVisible();
 
   await page.goto("/?q=wildfire");
   await expect(page.getByRole("link", { name: "NASA FIRMS Active Fire Data" })).toBeVisible();
