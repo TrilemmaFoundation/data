@@ -81,80 +81,6 @@ getting_started:
 `;
 
 describe("loadDatasets", () => {
-  it("includes every dataset added in the curated catalog expansions", () => {
-    const ids = new Set(getAllDatasets().map((dataset) => dataset.id));
-    for (const id of [
-      "cisa-known-exploited-vulnerabilities",
-      "nhtsa-vehicle-recalls",
-      "openfema-disaster-declarations",
-      "federal-register-documents",
-      "sam-gov-contract-opportunities",
-      "usaspending-federal-awards",
-      "openfda-drug-adverse-events",
-      "airnow-air-quality",
-      "usgs-water-data",
-      "noaa-tides-currents",
-      "noaa-ncei-daily-summaries",
-      "cdc-places",
-      "bls-public-data-api",
-      "usda-fooddata-central",
-      "treasury-securities-auctions",
-      "openalex-scholarly-works",
-      "crossref-works",
-      "pubmed-citations",
-      "clinicaltrials-studies",
-      "cms-care-compare-hospitals",
-      "nvd-cve",
-      "mitre-attack-enterprise",
-      "census-tiger-line",
-      "fta-ntd-monthly-ridership",
-      "bea-regional-gdp-income",
-      "fred-economic-series",
-      "imf-world-economic-outlook",
-      "unhcr-refugee-population",
-      "nasa-power-daily",
-      "congress-gov-legislation",
-      "gbif-species-occurrences",
-      "epa-airdata-daily-summaries",
-      "cfpb-consumer-complaints",
-      "college-scorecard",
-      "fhfa-house-price-index",
-      "openfda-food-enforcement",
-      "osv-open-source-vulnerabilities",
-      "fec-campaign-finance",
-      "eurostat-statistics",
-      "mobility-database-feeds",
-      "bts-airline-on-time",
-      "nppes-npi-registry",
-      "epa-echo-drinking-water",
-      "arxiv-preprints",
-      "wikimedia-pageviews",
-      "usda-nass-quick-stats",
-      "noaa-ibtracs",
-      "fema-national-flood-hazard-layer",
-      "us-drought-monitor",
-      "epa-toxics-release-inventory",
-      "gdacs-disaster-alerts",
-      "noaa-swpc-space-weather",
-      "fcc-national-broadband-map",
-      "nrel-alt-fuel-stations",
-      "fhwa-national-bridge-inventory",
-      "overture-maps-places",
-      "ofac-sdn-list",
-      "open-states-legislation",
-      "cpsc-product-recalls",
-      "cdc-fluview-ilinet",
-      "cms-open-payments",
-      "nces-common-core-of-data",
-      "deps-dev-package-graph",
-      "hud-fair-market-rents",
-      "eia-weekly-petroleum-status",
-      "census-international-trade",
-    ]) {
-      expect(ids.has(id), id).toBe(true);
-    }
-  });
-
   it("assigns every dataset to the curated catalog theme", () => {
     const themes = Object.fromEntries(
       getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
@@ -169,10 +95,11 @@ describe("loadDatasets", () => {
       "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "deps-dev-package-graph", "mitre-attack-enterprise", "nvd-cve", "osv-open-source-vulnerabilities"],
       "Demographics & Development": ["acs-five-year-estimates", "college-scorecard", "eurostat-statistics", "nces-common-core-of-data", "unhcr-refugee-population", "usda-nass-quick-stats", "world-development-indicators"],
     } as const;
+    const grouped = Object.values(groups).flat();
+    expect([...Object.keys(themes)].sort()).toEqual([...grouped].sort());
     for (const [theme, ids] of Object.entries(groups)) {
       for (const id of ids) expect(themes[id], id).toBe(theme);
     }
-    expect(Object.keys(themes)).toHaveLength(76);
   });
 
   it("loads valid yaml files and ignores templates", () => {
