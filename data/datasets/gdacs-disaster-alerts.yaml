@@ -1,0 +1,84 @@
+id: gdacs-disaster-alerts
+name: GDACS Disaster Alerts
+description: >
+  Global multi-hazard disaster alerts for building international emergency
+  monitors that stay linked to official national sources.
+theme: Environment & Hazards
+url: https://www.gdacs.org/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - GeoJSON
+license: GDACS terms of use with source acknowledgement
+license_url: https://www.gdacs.org/
+url_checks:
+  source_marker: Global Disaster Awareness and Coordination System
+  license_marker: The JRC is not responsible
+domains:
+  - Emergency Management
+  - Natural Hazards
+  - Humanitarian Development
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Alerting
+  - Disaster Monitoring
+  - Event Analysis
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: continuously updated sudden-onset disaster alerts
+update_frequency: near real time
+provider: Global Disaster Alert and Coordination System
+source_type: intergovernmental
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    GDACS publishes multi-hazard alerts as a searchable GeoJSON event list.
+    Start with one hazard type and a recent date window. Alerts are modeled
+    impact estimates for humanitarian awareness; they are not official warnings
+    and must not be used for decisions without national or scientific sources.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the GDACS homepage and note the requirement to acknowledge GDACS as the source.
+    - Request the SEARCH event list for earthquakes in a bounded recent window.
+    - Preserve event type, alert level, country, and retrieval time.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH",
+          params={
+              "eventlist": "EQ",
+              "fromDate": "2026-07-01",
+              "toDate": "2026-08-17",
+              "alertlevel": "Orange;Red",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      features = response.json().get("features", [])
+      alerts = pd.json_normalize(features)
+      alerts["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(alerts.head())
+  first_project:
+    title: List recent orange and red earthquake alerts
+    goal: Test whether GDACS alert levels can power a bounded international hazard inbox.
+    steps:
+      - Keep event name, country, alert level, and dates from the GeoJSON properties.
+      - Count alerts by country and flag any missing coordinates.
+      - State that GDACS is not an official warning service and that each event needs the mandated national source.

@@ -1,0 +1,84 @@
+id: cms-open-payments
+name: CMS Open Payments
+description: >
+  Manufacturer payments to clinicians and teaching hospitals for building
+  bounded transparency lookups and conflict-check tools.
+theme: Health, Food & Safety
+url: https://openpaymentsdata.cms.gov/about/api
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 5
+formats:
+  - JSON
+  - CSV
+license: CMS public-data principles
+license_url: https://www.cms.gov/data-research/cms-data/cms-data-principles-and-operating-norms
+url_checks:
+  source_marker: CMS Open Payments
+  license_marker: CMS data is a public good
+domains:
+  - Health Care
+  - Health Services
+  - Regulation
+data_types:
+  - Transaction Data
+  - Tabular
+tasks:
+  - Provider Comparison
+  - Search
+  - Market Research
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual program years with periodic publications
+update_frequency: annual
+provider: Centers for Medicare & Medicaid Services
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    Open Payments publishes manufacturer payments to covered recipients through
+    a no-key datastore API. Start with one program-year general-payment
+    distribution and a 20-row limit. A payment is not evidence of improper
+    influence, and dataset IDs change with each publication.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Open Payments API page and note that dataset IDs are listed in the metastore.
+    - Query one general-payment distribution with a small limit and one recipient state filter.
+    - Preserve recipient, payer, amount, and nature-of-payment fields with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://openpaymentsdata.cms.gov/api/1/datastore/query/e6b17c6a-2534-4207-a4a1-6746a14911ff/0",
+          params={
+              "limit": 20,
+              "conditions[0][property]": "recipient_state",
+              "conditions[0][value]": "CO",
+              "conditions[0][operator]": "=",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      payments = pd.DataFrame(response.json()["results"])
+      payments["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(payments.head(20))
+  first_project:
+    title: Profile general payments in one state
+    goal: Test whether a 20-row Open Payments extract can support a bounded physician-payment lookup.
+    steps:
+      - Confirm the query returned Colorado rows and keep recipient, manufacturer, amount, and nature fields.
+      - Sum amounts by nature of payment and flag missing NPIs.
+      - State that a reported payment is not a finding of improper influence and that dataset IDs change each publication.

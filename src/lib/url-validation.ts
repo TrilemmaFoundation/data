@@ -135,6 +135,24 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-12",
     },
   ],
+  [
+    "https://www.fcc.gov/BroadbandData",
+    {
+      statuses: [403],
+      reason:
+        "FCC blocks automated validation from some regions; reconfirmed 2026-08-17",
+      expires: "2026-11-15",
+    },
+  ],
+  [
+    "https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fmr",
+    {
+      statuses: [403],
+      reason:
+        "HUD blocks automated validation from some regions; reconfirmed 2026-08-17",
+      expires: "2026-11-15",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

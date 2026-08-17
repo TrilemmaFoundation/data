@@ -1,0 +1,81 @@
+id: nces-common-core-of-data
+name: NCES Common Core of Data
+description: >
+  Public school and district directory records for building local school maps
+  and enrollment-directory tools.
+theme: Demographics & Development
+url: https://nces.ed.gov/ccd/psu_rev.asp
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.05
+formats:
+  - CSV
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Public School Universe Unrevised Data
+  license_marker: federal government materials
+domains:
+  - Education
+  - Demographics
+data_types:
+  - Registry Data
+  - Tabular
+  - Geospatial
+tasks:
+  - Mapping
+  - Community Comparison
+  - Provider Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual school-year directories
+update_frequency: annual
+provider: National Center for Education Statistics
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    CCD preliminary directory files list public schools with NCES IDs, addresses,
+    and operating status. Start with the latest school-year ZIP from the files
+    table and filter to one state. The filename changes every year, and a
+    directory record is not a performance rating.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the CCD Public School Universe files page and copy the latest preliminary directory ZIP URL.
+    - Download that ZIP and identify the school directory table inside it.
+    - Filter to one state before mapping names and coordinates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import io
+      import zipfile
+      import pandas as pd
+      import requests
+
+      url = "https://nces.ed.gov/ccd/Data/zip/ccd_sch_029_2425_w_0a_051425.zip"
+      response = requests.get(url, timeout=60)
+      response.raise_for_status()
+      with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+          table_name = next(name for name in archive.namelist() if name.lower().endswith((".csv", ".txt")))
+          with archive.open(table_name) as table:
+              schools = pd.read_csv(table, dtype=str, encoding="latin-1")
+      colorado = schools[schools["ST"] == "CO"].copy()
+      colorado["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(colorado.head(20))
+  first_project:
+    title: Map open public schools in one state
+    goal: Test whether a CCD directory extract can power a local school finder.
+    steps:
+      - Filter to Colorado and keep school name, city, status, and coordinates when present.
+      - Count open schools by city and flag missing coordinates.
+      - Explain that directory fields are not test scores and that the ZIP filename changes each school year.

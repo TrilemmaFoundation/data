@@ -1,0 +1,98 @@
+id: fcc-national-broadband-map
+name: FCC National Broadband Map
+description: >
+  Broadband Data Collection availability filings for building local coverage
+  screens and digital-divide comparisons.
+theme: Geospatial & Infrastructure
+url: https://www.fcc.gov/BroadbandData
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 20
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: National Broadband Map
+  license_marker: federal government materials
+domains:
+  - Infrastructure
+  - Telecommunications
+  - Demographics
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Coverage Analysis
+  - Site Selection
+  - Community Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: biannual BDC filings with interim map updates
+update_frequency: monthly
+provider: Federal Communications Commission
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    The National Broadband Map exposes a public data API over Broadband Data
+    Collection availability files. Start by listing as-of dates, then request
+    one state's summary files. Advertised availability is not a subscribed
+    speed, and CostQuest Fabric location identifiers are separately licensed.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free FCC BDC API username and hash saved in FCC_API_USERNAME and FCC_API_HASH
+  access_steps:
+    - Create an FCC user account and generate a National Broadband Map API token.
+    - Save the username and hash in FCC_API_USERNAME and FCC_API_HASH.
+    - List as-of dates and inspect one state's availability-file metadata without downloading Fabric extracts.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      session = requests.Session()
+      session.headers.update(
+          {
+              "username": os.environ["FCC_API_USERNAME"],
+              "hash_value": os.environ["FCC_API_HASH"],
+          }
+      )
+      dates = session.get(
+          "https://broadbandmap.fcc.gov/api/public/map/listAsOfDates",
+          timeout=30,
+      )
+      dates.raise_for_status()
+      as_of = next(
+          row["as_of_date"]
+          for row in reversed(dates.json()["data"])
+          if row.get("data_type") == "availability"
+      )
+      files = session.get(
+          f"https://broadbandmap.fcc.gov/api/public/map/downloads/listAvailabilityData/{as_of}",
+          params={"category": "State"},
+          timeout=30,
+      )
+      files.raise_for_status()
+      availability = pd.DataFrame(files.json()["data"])
+      colorado = availability[availability["state_fips"].astype(str) == "08"]
+      colorado = colorado.assign(retrieved_at_utc=pd.Timestamp.now(tz="UTC"))
+      print(colorado[["file_name", "data_type", "state_fips", "record_count"]].head(20))
+  first_project:
+    title: Inventory one state's published availability files
+    goal: Test whether a single BDC as-of date can support a bounded coverage-file finder.
+    steps:
+      - Select the latest as-of date and keep Colorado state-level availability rows.
+      - Group files by data type and record counts without downloading Fabric location extracts.
+      - Explain that advertised availability is not take-up or speed-test evidence and that Fabric coordinates are not in this extract.

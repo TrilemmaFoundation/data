@@ -562,6 +562,92 @@ const contracts = {
         : "CSV is missing SID or NAME";
     },
   },
+  "us-drought-monitor": {
+    url: "https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=08&startdate=8/12/2025&enddate=8/12/2025&statisticsType=1",
+    contentTypes: ["application/json", "text/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          mapDate: z.union([z.string(), z.number()]).optional(),
+        }).passthrough(),
+      ).min(1),
+    ),
+  },
+  "epa-toxics-release-inventory": {
+    url: "https://data.epa.gov/dmapservice/tri.tri_facility/state_abbr/equals/RI/1:1/json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          state_abbr: z.string().optional(),
+          facility_name: z.string().optional(),
+        }).passthrough(),
+      ).min(1),
+    ),
+  },
+  "gdacs-disaster-alerts": {
+    url: "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=EQ&fromDate=2025-01-01&toDate=2026-08-17",
+    contentTypes: ["application/json", "application/geo+json"],
+    validate: jsonValidator(
+      z.object({
+        features: z.array(z.object({
+          type: z.string().optional(),
+          properties: z.record(z.string(), z.unknown()).optional(),
+        })).min(1),
+      }),
+    ),
+  },
+  "noaa-swpc-space-weather": {
+    url: "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          time_tag: z.string(),
+        }).passthrough(),
+      ).min(2),
+    ),
+  },
+  "cpsc-product-recalls": {
+    url: "https://www.saferproducts.gov/RestWebServices/Recall?format=json&RecallDateStart=2025-01-01&RecallDateEnd=2025-01-31",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          RecallNumber: z.union([z.string(), z.number()]),
+        }).passthrough(),
+      ).min(1),
+    ),
+  },
+  "cdc-fluview-ilinet": {
+    url: "https://data.cdc.gov/resource/6svj-q4zv.json?$limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(z.record(z.string(), z.unknown())).min(1),
+    ),
+  },
+  "cms-open-payments": {
+    url: "https://openpaymentsdata.cms.gov/api/1/datastore/query/e6b17c6a-2534-4207-a4a1-6746a14911ff/0?limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        results: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "deps-dev-package-graph": {
+    url: "https://api.deps.dev/v3/systems/pypi/packages/requests/versions/2.32.3",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        versionKey: z.object({
+          system: z.string(),
+          name: z.string(),
+          version: z.string(),
+        }),
+      }).passthrough(),
+    ),
+  },
 } satisfies Record<
   string,
   {

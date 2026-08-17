@@ -1,0 +1,82 @@
+id: deps-dev-package-graph
+name: deps.dev Package Graph
+description: >
+  Resolved open-source package versions and dependencies for building
+  supply-chain maps that complement vulnerability feeds.
+theme: Technology & Cybersecurity
+url: https://docs.deps.dev/api/v3/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+license: Creative Commons Attribution 4.0 International
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: Open Source Insights
+  license_marker: Attribution 4.0 International
+domains:
+  - Open Source
+  - Software Security
+  - Cybersecurity
+data_types:
+  - Knowledge Graph
+  - Registry Data
+tasks:
+  - Coverage Analysis
+  - Vulnerability Monitoring
+  - Search
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: continuously updated package metadata
+update_frequency: continuous
+provider: Google
+source_type: company
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    deps.dev returns package versions and resolved dependency graphs. Start with
+    one PyPI package version. A dependency edge is not a vulnerability finding;
+    pair this graph with OSV or NVD for exposure, and attribute generated
+    deps.dev data under CC BY 4.0.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the v3 API docs and pick one ecosystem, package, and version.
+    - Request the package record, then the version dependencies endpoint.
+    - Keep system, name, version, and relation fields with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      version = requests.get(
+          "https://api.deps.dev/v3/systems/pypi/packages/requests/versions/2.32.3",
+          timeout=30,
+      )
+      version.raise_for_status()
+      deps = requests.get(
+          "https://api.deps.dev/v3/systems/pypi/packages/requests/versions/2.32.3:dependencies",
+          timeout=30,
+      )
+      deps.raise_for_status()
+      graph = pd.json_normalize(deps.json().get("nodes", []))
+      graph["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(version.json()["versionKey"])
+      print(graph.head(20))
+  first_project:
+    title: Map one package version's resolved dependencies
+    goal: Test whether a deps.dev graph can power a bounded supply-chain inventory.
+    steps:
+      - Confirm the version key and list direct versus indirect nodes when relation fields exist.
+      - Count unique dependency names and flag missing versions.
+      - Explain that this graph is not a CVE match and that generated deps.dev data requires CC BY attribution.

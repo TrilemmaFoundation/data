@@ -451,6 +451,20 @@ describe("checkUrl", () => {
       "2026-11-12",
       2,
     ],
+    [
+      "https://www.fcc.gov/BroadbandData",
+      403,
+      "FCC blocks automated validation from some regions; reconfirmed 2026-08-17",
+      "2026-11-15",
+      2,
+    ],
+    [
+      "https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fmr",
+      403,
+      "HUD blocks automated validation from some regions; reconfirmed 2026-08-17",
+      "2026-11-15",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {

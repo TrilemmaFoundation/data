@@ -1,0 +1,88 @@
+id: ofac-sdn-list
+name: OFAC Specially Designated Nationals List
+description: >
+  Treasury blocked-party names for building bounded sanctions-screening alerts
+  that stay inside OFAC matching limits.
+theme: Government & Policy
+url: https://ofac.treasury.gov/sanctions-list-service
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.02
+formats:
+  - CSV
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Specially Designated Nationals List
+  license_marker: federal government materials
+domains:
+  - Regulation
+  - Finance
+  - Compliance
+data_types:
+  - Registry Data
+  - Tabular
+tasks:
+  - Alerting
+  - Search
+  - Compliance Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: continuously updated designations
+update_frequency: continuous
+provider: Office of Foreign Assets Control
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    OFAC publishes the SDN list as CSV and XML. Start with the primary names
+    file and a handful of exact-string checks. A name match is not a confirmed
+    hit, aliases live in a separate file, and this extract is not a screening
+    product or legal advice.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Sanctions List Service page and identify the SDN CSV download.
+    - Load the primary names file with the documented column order.
+    - Compare only exact strings from an authorized customer list and keep the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      columns = [
+          "ent_num",
+          "sdn_name",
+          "sdn_type",
+          "program",
+          "title",
+          "call_sign",
+          "vess_type",
+          "tonnage",
+          "grt",
+          "vess_flag",
+          "vess_owner",
+          "remarks",
+      ]
+      sdn = pd.read_csv(
+          "https://www.treasury.gov/ofac/downloads/sdn.csv",
+          names=columns,
+          dtype=str,
+      )
+      sdn["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(sdn[["ent_num", "sdn_name", "sdn_type", "program"]].head(20))
+  first_project:
+    title: Build an exact-name SDN lookup
+    goal: Test whether a small authorized name list can be checked against primary SDN names.
+    steps:
+      - Load primary SDN names and drop placeholder null tokens such as -0-.
+      - Compare a short authorized name list with exact uppercase matching only.
+      - Explain that aliases, weak aliases, and fuzzy scores require the linked files and are not a legal determination.

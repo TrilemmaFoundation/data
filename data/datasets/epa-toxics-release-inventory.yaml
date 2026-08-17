@@ -1,0 +1,78 @@
+id: epa-toxics-release-inventory
+name: EPA Toxics Release Inventory
+description: >
+  Facility-level toxic chemical release reports for building fenceline community
+  monitors and environmental-justice screens.
+theme: Environment & Hazards
+url: https://www.epa.gov/enviro/envirofacts-data-service-api
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Toxics Release Inventory (TRI)
+  license_marker: federal government materials
+domains:
+  - Environmental Health
+  - Public Health
+  - Regulation
+data_types:
+  - Tabular
+  - Event Data
+tasks:
+  - Safety Monitoring
+  - Geographic Analysis
+  - Community Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 1987-present
+update_frequency: annual
+provider: U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    Envirofacts exposes TRI facility tables through a REST URL. Start with one
+    state and the first twenty facility rows. Reported pounds are self-reported
+    waste-management quantities, not measured community exposure, and they are
+    distinct from ECHO drinking-water compliance records.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the Envirofacts Data Service API page and identify the TRI facility table.
+    - Request a bounded row window for one state in JSON.
+    - Keep facility identifiers, city, and coordinates before joining release quantities.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.epa.gov/dmapservice/tri.tri_facility/state_abbr/equals/RI/1:20/json",
+          timeout=30,
+      )
+      response.raise_for_status()
+      facilities = pd.DataFrame(response.json())
+      facilities["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(facilities.head())
+  first_project:
+    title: Map reporting TRI facilities in one state
+    goal: Test whether a short facility extract can support a local fenceline directory.
+    steps:
+      - Keep facility name, city, ZIP, and coordinates and drop closed sites when a closure flag is present.
+      - Count facilities by city and flag missing coordinates.
+      - Explain that TRI pounds are not exposure estimates and that thresholds exclude many smaller operations.

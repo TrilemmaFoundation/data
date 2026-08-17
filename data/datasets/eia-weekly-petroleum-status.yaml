@@ -1,0 +1,89 @@
+id: eia-weekly-petroleum-status
+name: EIA Weekly Petroleum Status
+description: >
+  Weekly U.S. petroleum stocks and related series for building fuel-inventory
+  monitors and energy-market dashboards.
+theme: Markets & Economics
+url: https://www.eia.gov/opendata/index.php/api
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: U.S. Public Domain with EIA source acknowledgment
+license_url: https://www.eia.gov/about/copyrights_reuse.php
+url_checks:
+  source_marker: OPEN DATA
+  license_marker: Public domain and use of EIA content
+domains:
+  - Energy
+  - Commodities
+  - Macroeconomics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Market Monitoring
+  - Trend Analysis
+  - Forecast Evaluation
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: weekly petroleum series with history varying by product
+update_frequency: weekly
+provider: U.S. Energy Information Administration
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    EIA's petroleum weekly stocks route returns inventory series used in the
+    Weekly Petroleum Status Report. Start with U.S. crude stocks and a short
+    length. These are inventory statistics, not retail pump prices, unless you
+    choose a price route.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free EIA API key saved in the EIA_API_KEY environment variable
+  access_steps:
+    - Register for a free key on the EIA Open Data site, or reuse an existing EIA_API_KEY.
+    - Confirm the petroleum weekly stocks route and available facets.
+    - Request a bounded weekly sample for U.S. crude oil stocks.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.eia.gov/v2/petroleum/stoc/wstk/data/",
+          params={
+              "api_key": os.environ["EIA_API_KEY"],
+              "frequency": "weekly",
+              "data[0]": "value",
+              "facets[duoarea][]": "NUS",
+              "facets[product][]": "EPC0",
+              "length": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      stocks = pd.DataFrame(response.json()["response"]["data"])
+      stocks["period"] = pd.to_datetime(stocks["period"])
+      stocks["value"] = pd.to_numeric(stocks["value"], errors="coerce")
+      stocks["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(stocks[["period", "duoarea", "product-name", "value", "units"]].head())
+  first_project:
+    title: Track U.S. crude oil weekly stocks
+    goal: Test whether a short crude-stocks window can power an inventory-change alert.
+    steps:
+      - Sort by period and compute week-to-week stock changes.
+      - Flag the largest builds and draws in the extract.
+      - Explain that weekly stocks are not retail gasoline prices and that series can be revised after publication.

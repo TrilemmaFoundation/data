@@ -1,0 +1,86 @@
+id: us-drought-monitor
+name: U.S. Drought Monitor
+description: >
+  Weekly drought-category statistics for building local agricultural, water, and
+  risk-monitoring tools.
+theme: Environment & Hazards
+url: https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - CSV
+  - XML
+license: U.S. Drought Monitor citation policy (NDMC, USDA, and NOAA)
+license_url: https://droughtmonitor.unl.edu/DmData/GISData.aspx
+url_checks:
+  source_marker: U.S. Drought Monitor statistics are available through a set of REST services
+  license_marker: Please cite the Drought Monitor
+domains:
+  - Climate
+  - Agriculture
+  - Water Resources
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Trend Analysis
+  - Alerting
+  - Regional Comparison
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: 2000-present
+update_frequency: weekly
+provider: National Drought Mitigation Center
+source_type: academic
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    The U.S. Drought Monitor REST services return weekly None and D0–D4 area
+    statistics for a selected geography. Start with one state's two-digit FIPS
+    code (Colorado is 08) and a few months. Categories are expert-blended drought
+    intensity, not crop-loss claims, water-right determinations, or a forecast.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the web-service documentation and choose StateStatistics with percent-of-area output.
+    - Request JSON for one state FIPS code and a bounded date window.
+    - Cite NDMC, USDA, and NOAA with the retrieval date before charting D0–D4 shares.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent",
+          params={
+              "aoi": "08",
+              "startdate": "1/1/2025",
+              "enddate": "3/25/2025",
+              "statisticsType": 1,
+          },
+          headers={"Accept": "application/json"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      drought = pd.DataFrame(response.json())
+      drought["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(drought.head())
+  first_project:
+    title: Track one state's weekly drought coverage
+    goal: Describe how much of Colorado spent time in D1 or worse during a bounded winter window.
+    steps:
+      - Convert the week dates and keep D0–D4 percent-of-area columns.
+      - Plot D1 or worse over time and note weeks with missing or zero values.
+      - State that D-categories are not insurance triggers and that county statistics can differ from the state series.

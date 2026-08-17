@@ -1,0 +1,74 @@
+id: fhwa-national-bridge-inventory
+name: FHWA National Bridge Inventory
+description: >
+  Annual inspection records for U.S. highway bridges for building deficient-bridge
+  maps and local infrastructure scorecards.
+theme: Geospatial & Infrastructure
+url: https://www.fhwa.dot.gov/bridge/nbi/ascii2025.cfm
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 0.1
+formats:
+  - CSV
+  - Text
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Download NBI ASCII files 2025
+  license_marker: federal government materials
+domains:
+  - Infrastructure
+  - Transportation
+  - Public Safety
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Risk Mapping
+  - Geographic Analysis
+  - Benchmarking
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual inventories submitted each spring
+update_frequency: annual
+provider: Federal Highway Administration
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    FHWA publishes annual National Bridge Inventory extracts as delimited state
+    files. Start with one small jurisdiction and the documented field format.
+    Inspection ratings are not a live closure feed, and the yearly filename
+    changes with each inventory.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the current-year NBI ASCII download page and choose a comma-delimited state file.
+    - Read the record-format notes before assigning column names.
+    - Filter to highway bridges and keep condition ratings with the retrieval year.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      bridges = pd.read_csv(
+          "https://www.fhwa.dot.gov/bridge/nbi/2025/delimited/DC25.txt",
+          dtype=str,
+          quotechar="'",
+      )
+      bridges["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(bridges.head())
+  first_project:
+    title: Rank one jurisdiction's bridges by deck condition
+    goal: Test whether annual inspection ratings can support a local infrastructure watch list.
+    steps:
+      - Identify the deck, superstructure, and substructure rating fields from the format guide.
+      - Count bridges in poor condition and map them when coordinates are present.
+      - State that ratings are inspection snapshots, not current closures, and that coding-guide definitions changed over time.

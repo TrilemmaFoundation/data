@@ -1,0 +1,88 @@
+id: census-international-trade
+name: Census International Trade
+description: >
+  Monthly U.S. import and export statistics for building commodity and partner
+  trade monitors from a bounded Census extract.
+theme: Markets & Economics
+url: https://www.census.gov/data/developers/data-sets/international-trade.html
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: U.S. Census Bureau API Terms of Service
+license_url: https://www.census.gov/data/developers/about/terms-of-service.html
+url_checks:
+  source_marker: International Trade (monthly 2010-present)
+  license_marker: Terms of Service Agreement
+domains:
+  - International Economics
+  - Commodities
+  - Trade
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Market Monitoring
+  - Trend Analysis
+  - Country Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 2010-present monthly statistics
+update_frequency: monthly
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    The Census International Trade API returns monthly U.S. imports and exports
+    by HS code and partner. Start with one commodity chapter, one month, and
+    total partners. Values are revised, and a chapter total is not a shipment
+    record.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Census Data API key saved in the CENSUS_API_KEY environment variable
+  access_steps:
+    - Request a free key from the Census Data API page, or reuse an existing CENSUS_API_KEY.
+    - Review the imports-by-HS examples on the International Trade dataset page.
+    - Request one month of HS chapter 27 imports for all countries.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.census.gov/data/timeseries/intltrade/imports/hs",
+          params={
+              "get": "CTY_NAME,I_COMMODITY,GEN_VAL_MO",
+              "YEAR": "2024",
+              "MONTH": "12",
+              "COMM_LVL": "HS2",
+              "I_COMMODITY": "27",
+              "key": os.environ["CENSUS_API_KEY"],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      rows = response.json()
+      trade = pd.DataFrame(rows[1:], columns=rows[0])
+      trade["GEN_VAL_MO"] = pd.to_numeric(trade["GEN_VAL_MO"], errors="coerce")
+      trade["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(trade.head(20))
+  first_project:
+    title: Rank mineral-fuel import partners for one month
+    goal: Test whether a single HS chapter extract can power a bounded import-dependency monitor.
+    steps:
+      - Convert general import values to numbers and drop the WORLD total if it is present.
+      - Rank partner countries and keep the top ten.
+      - Explain that monthly totals are revised and that HS chapter 27 is not a retail energy price.

@@ -1,0 +1,80 @@
+id: hud-fair-market-rents
+name: HUD Fair Market Rents
+description: >
+  County and metro Fair Market Rents for building rent-burden screens and
+  voucher-payment comparison tools.
+theme: Markets & Economics
+url: https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fmr
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - Excel
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Fair Market Rents
+  license_marker: federal government materials
+domains:
+  - Housing
+  - Regional Economics
+data_types:
+  - Tabular
+  - Time Series
+tasks:
+  - Market Monitoring
+  - Regional Comparison
+  - Site Selection
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: annual fiscal-year FMRs
+update_frequency: annual
+provider: U.S. Department of Housing and Urban Development
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    HUD publishes Fair Market Rents by county and metro area. Start with one
+    state's statedata endpoint for a single fiscal year. FMR is a 40th-percentile
+    estimate used in voucher programs, not an observed asking rent.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free HUD User API token saved in the HUD_API_TOKEN environment variable
+  access_steps:
+    - Register for a HUD User API token from the FMR API documentation on HUD User.
+    - Save the token in the HUD_API_TOKEN environment variable.
+    - Request one state's county FMRs for a single fiscal year.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.huduser.gov/hudapi/public/fmr/statedata/CO",
+          params={"year": 2025},
+          headers={"Authorization": f"Bearer {os.environ['HUD_API_TOKEN']}"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()["data"]
+      rents = pd.DataFrame(payload.get("counties", payload))
+      rents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(rents.head(20))
+  first_project:
+    title: Compare two-bedroom FMRs across one state's counties
+    goal: Test whether county FMRs can support a bounded rent-burden screen.
+    steps:
+      - Keep county names and two-bedroom FMR values for Colorado.
+      - Rank counties and flag missing bedroom-size fields.
+      - State that FMR is not observed asking rent and that Small Area FMRs can differ inside a metro.

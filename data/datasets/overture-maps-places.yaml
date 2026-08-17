@@ -1,0 +1,92 @@
+id: overture-maps-places
+name: Overture Maps Places
+description: >
+  Global point-of-interest places for building local business, amenity, and
+  coverage maps from a bounded extract.
+theme: Geospatial & Infrastructure
+url: https://docs.overturemaps.org/guides/places/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 50
+formats:
+  - GeoParquet
+  - GeoJSON
+license: Community Data License Agreement - Permissive, Version 2.0
+license_url: https://docs.overturemaps.org/attribution/
+url_checks:
+  source_marker: tens of millions of point representations
+  license_marker: CDLA Permissive 2.0
+domains:
+  - Geography
+  - Cartography
+  - Local Economics
+data_types:
+  - Geospatial
+  - Tabular
+tasks:
+  - Mapping
+  - Spatial Analysis
+  - Market Research
+difficulty: advanced
+geography:
+  - Global
+temporal_coverage: monthly releases
+update_frequency: monthly
+provider: Overture Maps Foundation
+source_type: nonprofit
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    Overture Places is a global point layer published as GeoParquet. Start with
+    DuckDB, one metro bounding box, and a 50-row limit. Do not copy an entire
+    theme. Place names and categories can lag local reality, and GERS identifiers
+    are not stable storefront IDs.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - DuckDB 1.1 or newer with spatial and httpfs extensions
+  access_steps:
+    - Read the Places guide and attribution page and stay on the Places theme.
+    - Query the current release through a bounding box instead of downloading the theme.
+    - Keep names, categories, and coordinates for a single metro extract.
+  python:
+    packages:
+      - duckdb
+      - pandas
+    code: |
+      import duckdb
+      import pandas as pd
+
+      con = duckdb.connect()
+      con.execute("INSTALL httpfs; LOAD httpfs;")
+      con.execute("INSTALL spatial; LOAD spatial;")
+      places = con.execute(
+          """
+          SELECT
+            id,
+            names.primary AS name,
+            categories.primary AS category,
+            bbox.xmin AS lon,
+            bbox.ymin AS lat
+          FROM read_parquet(
+            'https://overturemapswestus2.blob.core.windows.net/release/2026-07-22.0/theme=places/type=place/*',
+            filename=true,
+            hive_partitioning=1
+          )
+          WHERE bbox.xmin BETWEEN -105.1 AND -104.8
+            AND bbox.ymin BETWEEN 39.7 AND 39.8
+          LIMIT 50
+          """
+      ).fetchdf()
+      places["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(places.head())
+  first_project:
+    title: Inventory places in one downtown bounding box
+    goal: Test whether a 50-row Places extract can power a neighborhood amenity map.
+    steps:
+      - Confirm the extract stayed inside the bounding box and did not scan the global theme locally.
+      - Count places by primary category and flag missing names.
+      - State that monthly releases change GERS coverage and that a place record is not proof a business is open.

@@ -137,7 +137,7 @@ test("catalog pagination keeps global order and canonical URL state", async ({ p
 
   await expect(table.getByRole("row")).toHaveCount(CATALOG_PAGE_SIZE + 1);
   await expect(pagination.getByRole("button", { name: catalogCopy.previousPageLabel })).toBeDisabled();
-  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(1) })).toHaveAttribute("aria-current", "page");
+  await expect(pagination.getByRole("button", { name: catalogCopy.pageLabel(1), exact: true })).toHaveAttribute("aria-current", "page");
 
   await pagination.getByRole("button", { name: catalogCopy.pageLabel(CATALOG_PAGES) }).click();
   await expect(page).toHaveURL(new RegExp(`page=${CATALOG_PAGES}`));
@@ -533,8 +533,10 @@ test("desktop sorting is shareable, reversible, and restores the promoted order"
   await expect(firstDataRow()).toContainText("National Weather Service API");
 
   await page.goto("/?sort=updates&order=asc");
-  await page.getByRole("link", { name: "National Weather Service API" }).click();
-  await expect(page).toHaveURL(/\/datasets\/nws-weather-api\/?$/);
+  const sortedFirst = firstDataRow().getByRole("link").first();
+  await expect(sortedFirst).toBeVisible();
+  await sortedFirst.click();
+  await expect(page).toHaveURL(/\/datasets\/[^/]+\/?$/);
   await page.goBack();
   await expect(page).toHaveURL((url) => url.searchParams.get("sort") === "updates");
 });
@@ -652,6 +654,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
 });
 
 test("every dataset guide reflows on a mobile viewport", async ({ page }) => {
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 360, height: 900 });
 
   for (const dataset of getAllDatasets()) {

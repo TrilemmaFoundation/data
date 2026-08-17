@@ -1,0 +1,84 @@
+id: open-states-legislation
+name: Open States Legislation
+description: >
+  State bill, legislator, and jurisdiction records for building state-level
+  policy trackers that stay inside Open States use limits.
+theme: Government & Policy
+url: https://docs.openstates.org/api-v3/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+license: Open States terms with no copyright claim over collected legislative data
+license_url: https://open.pluralpolicy.com/tos/
+url_checks:
+  source_marker: JSON API that can be used to programatically
+  license_marker: No attribution is required
+domains:
+  - Legislation
+  - Public Policy
+  - Government
+data_types:
+  - Event Data
+  - Tabular
+  - Text
+tasks:
+  - Legislative Monitoring
+  - Alerting
+  - Topic Research
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current sessions with historical coverage by jurisdiction
+update_frequency: daily
+provider: Open States / Plural Policy
+source_type: nonprofit
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    Open States API v3 returns bills and legislators for U.S. states. Start with
+    one jurisdiction and a small page of recent bills. Coverage and scrape lag
+    vary by state, and this feed is not the enrolled text of record.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Open States API key saved in the OPENSTATES_API_KEY environment variable
+  access_steps:
+    - Create an Open States account and request an API key.
+    - Save the key in the OPENSTATES_API_KEY environment variable.
+    - Request one jurisdiction's bills with a small page size.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://v3.openstates.org/bills",
+          params={
+              "jurisdiction": "Colorado",
+              "sort": "updated_desc",
+              "per_page": 10,
+              "page": 1,
+          },
+          headers={"X-API-KEY": os.environ["OPENSTATES_API_KEY"]},
+          timeout=30,
+      )
+      response.raise_for_status()
+      bills = pd.json_normalize(response.json()["results"])
+      bills["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(bills[["identifier", "title", "latest_action_date"]].head(10))
+  first_project:
+    title: Watch recently updated bills in one state
+    goal: Test whether a ten-bill extract can power a focused state-policy inbox.
+    steps:
+      - Keep bill identifiers, titles, and latest action dates for Colorado.
+      - Group bills by latest action date and flag missing titles.
+      - Explain that scrape lag and jurisdiction coverage mean this is not the legislature's official record.

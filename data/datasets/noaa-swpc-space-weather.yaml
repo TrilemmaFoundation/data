@@ -1,0 +1,76 @@
+id: noaa-swpc-space-weather
+name: NOAA SWPC Space Weather
+description: >
+  Operational geomagnetic and space-weather indices for building grid, radio,
+  and satellite-environment monitors.
+theme: Environment & Hazards
+url: https://www.spaceweather.gov/content/data-access
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+license: NOAA disclaimer / U.S. public domain
+license_url: https://www.noaa.gov/disclaimer
+url_checks:
+  source_marker: SWPC Data Service
+  license_marker: public domain
+domains:
+  - Natural Hazards
+  - Energy
+  - Emergency Management
+data_types:
+  - Time Series
+  - Operational Data
+tasks:
+  - Alerting
+  - Trend Analysis
+  - Operational Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: continuously updated operational products
+update_frequency: near real time
+provider: NOAA Space Weather Prediction Center
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    SWPC publishes JSON products for planetary K-index and related scales.
+    Start with the compact planetary K-index file. A high Kp value is not a
+    confirmed power-grid outage, radio blackout, or satellite anomaly.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the SWPC data-access page and note the JSON product directory.
+    - Download the planetary K-index JSON feed.
+    - Record observed versus estimated values and the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+          timeout=30,
+      )
+      response.raise_for_status()
+      kp = pd.DataFrame(response.json())
+      kp["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(kp.tail(12))
+  first_project:
+    title: Flag elevated planetary K-index periods
+    goal: Test whether recent Kp values can trigger a bounded space-weather awareness alert.
+    steps:
+      - Convert time_tag to timestamps and kp to numbers.
+      - List periods at or above Kp 5 and separate observed from estimated rows.
+      - Explain that Kp is not a grid-outage confirmation and that NOAA scales describe potential impacts only.

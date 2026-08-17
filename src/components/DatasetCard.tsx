@@ -32,8 +32,10 @@ export function DatasetCard({
     >
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <Badge variant="secondary" className="capitalize">
-            {dataset.difficulty === "beginner" && <Sparkles aria-hidden="true" />}
+          <Badge variant="secondary" className="capitalize text-secondary">
+            {dataset.difficulty === "beginner" && (
+              <Sparkles className="text-secondary" aria-hidden="true" />
+            )}
             {dataset.difficulty}
           </Badge>
           <span

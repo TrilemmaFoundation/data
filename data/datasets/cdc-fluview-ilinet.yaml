@@ -1,0 +1,78 @@
+id: cdc-fluview-ilinet
+name: CDC FluView ILINet
+description: >
+  Weekly outpatient influenza-like illness activity for building seasonal
+  respiratory-illness monitors.
+theme: Health, Food & Safety
+url: https://www.cdc.gov/fluview/overview/index.html
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - CSV
+license: U.S. Public Domain with CDC attribution and use requirements
+license_url: https://www.cdc.gov/other/agencymaterials.html
+url_checks:
+  source_marker: Outpatient Influenza-like Illness Surveillance Network
+  license_marker: public domain
+domains:
+  - Public Health
+  - Infectious Disease
+data_types:
+  - Time Series
+  - Tabular
+  - Survey Estimates
+tasks:
+  - Trend Analysis
+  - Alerting
+  - Regional Comparison
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: weekly surveillance seasons from the late 1990s
+update_frequency: weekly
+provider: Centers for Disease Control and Prevention
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    FluView publishes ILINet outpatient respiratory-illness activity on
+    data.cdc.gov. Start with a few recent weeks. ILI is syndromic — fever plus
+    cough or sore throat — not laboratory-confirmed influenza incidence.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the FluView methods page and note that ILINet is outpatient syndromic surveillance.
+    - Request a bounded JSON extract from the Outpatient Respiratory Illness Activity Map dataset.
+    - Keep geography, week, and activity level with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cdc.gov/resource/6svj-q4zv.json",
+          params={"$limit": 20, "$order": "week_ending DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      ili = pd.DataFrame(response.json())
+      ili["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(ili.head(20))
+  first_project:
+    title: Compare recent state ILI activity levels
+    goal: Test whether weekly activity categories can power a bounded flu-season dashboard.
+    steps:
+      - Inspect the returned geography and week fields and keep the latest week.
+      - Count states by activity level and note missing jurisdictions.
+      - Explain that ILINet captures any matching respiratory illness and is not confirmed flu incidence.

@@ -1,0 +1,87 @@
+id: nrel-alt-fuel-stations
+name: NREL Alternative Fuel Stations
+description: >
+  Alternative-fuel and EV charging station locations for building corridor maps
+  and local charging finders.
+theme: Geospatial & Infrastructure
+url: https://developer.nlr.gov/docs/transportation/alt-fuel-stations-v1/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - CSV
+  - GeoJSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Alternative Fueling Station Locator
+  license_marker: federal government materials
+domains:
+  - Transportation
+  - Energy
+  - Infrastructure
+data_types:
+  - Geospatial
+  - Tabular
+  - Registry Data
+tasks:
+  - Mapping
+  - Site Selection
+  - Operational Planning
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: continuously updated station inventory
+update_frequency: continuous
+provider: National Renewable Energy Laboratory
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    The Alternative Fuel Stations API returns station locations that power the
+    Alternative Fuels Data Center locator. Start with electric stations in one
+    state and a small limit. A listed station can be temporarily unavailable,
+    network-specific, or restricted to fleets.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free NLR API key saved in the NREL_API_KEY environment variable
+  access_steps:
+    - Register for a free key on the NLR Developer Network.
+    - Save the key in the NREL_API_KEY environment variable.
+    - Request a bounded list of electric stations for one state.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://developer.nlr.gov/api/alt-fuel-stations/v1.json",
+          params={
+              "api_key": os.environ["NREL_API_KEY"],
+              "fuel_type": "ELEC",
+              "state": "CO",
+              "status": "E",
+              "limit": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      stations = pd.DataFrame(response.json()["fuel_stations"])
+      stations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(stations[["station_name", "city", "latitude", "longitude", "ev_connector_types"]].head(20))
+  first_project:
+    title: Map open EV chargers in one state
+    goal: Test whether a bounded station extract can power a local charging finder.
+    steps:
+      - Keep open electric stations and explode connector types into a countable field.
+      - Map stations by city and flag missing coordinates or access hours.
+      - State that network status can change after the snapshot and that fleet-only sites are not public chargers.

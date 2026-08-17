@@ -1,0 +1,88 @@
+id: fema-national-flood-hazard-layer
+name: FEMA National Flood Hazard Layer
+description: >
+  Effective digital flood-hazard zones for building address-level flood-risk
+  lookups and site-selection screens.
+theme: Environment & Hazards
+url: https://www.fema.gov/flood-maps/national-flood-hazard-layer
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 2
+formats:
+  - JSON
+  - GeoJSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: National Flood Hazard Layer (NFHL)
+  license_marker: federal government materials
+domains:
+  - Natural Hazards
+  - Emergency Management
+  - Housing
+data_types:
+  - Geospatial
+  - Tabular
+tasks:
+  - Risk Mapping
+  - Site Selection
+  - Spatial Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: current effective FIRMs with ongoing LOMR updates
+update_frequency: continuous
+provider: Federal Emergency Management Agency
+source_type: government
+last_verified: 2026-08-17
+getting_started:
+  overview: >
+    The National Flood Hazard Layer publishes effective Flood Hazard Zones as a
+    queryable map service. Start with one point or a tight county envelope and
+    request a handful of zone attributes. A Special Flood Hazard Area flag is
+    not a flood-insurance quote, a parcel determination, or a substitute for
+    the Map Service Center product used in official rating.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the National Flood Hazard Layer page and note that Flood Hazard Zones are queryable as layer 28.
+    - Query one latitude and longitude with a bounded result count and no geometry payload.
+    - Record the flood zone, SFHA flag, and retrieval time before interpreting the result.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query",
+          params={
+              "geometry": "-96.7970,32.7767",
+              "geometryType": "esriGeometryPoint",
+              "inSR": 4326,
+              "spatialRel": "esriSpatialRelIntersects",
+              "outFields": "FLD_ZONE,ZONE_SUBTY,SFHA_TF",
+              "returnGeometry": "false",
+              "resultRecordCount": 5,
+              "f": "json",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      zones = pd.json_normalize(response.json().get("features", []))
+      zones["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(zones.head())
+  first_project:
+    title: Look up the effective flood zone for one address point
+    goal: Test whether a single geocoded point can power a bounded flood-risk screen.
+    steps:
+      - Query Flood Hazard Zones for one point and keep FLD_ZONE and SFHA_TF.
+      - Label the result as SFHA or non-SFHA and note missing coverage when no feature returns.
+      - State that NFHL zones are not insurance quotes and that unmapped communities need a Map Service Center check.

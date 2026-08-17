@@ -131,6 +131,25 @@ describe("loadDatasets", () => {
       "wikimedia-pageviews",
       "usda-nass-quick-stats",
       "noaa-ibtracs",
+      "fema-national-flood-hazard-layer",
+      "us-drought-monitor",
+      "epa-toxics-release-inventory",
+      "gdacs-disaster-alerts",
+      "noaa-swpc-space-weather",
+      "fcc-national-broadband-map",
+      "nrel-alt-fuel-stations",
+      "fhwa-national-bridge-inventory",
+      "overture-maps-places",
+      "ofac-sdn-list",
+      "open-states-legislation",
+      "cpsc-product-recalls",
+      "cdc-fluview-ilinet",
+      "cms-open-payments",
+      "nces-common-core-of-data",
+      "deps-dev-package-graph",
+      "hud-fair-market-rents",
+      "eia-weekly-petroleum-status",
+      "census-international-trade",
     ]) {
       expect(ids.has(id), id).toBe(true);
     }
@@ -141,19 +160,19 @@ describe("loadDatasets", () => {
       getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
     );
     const groups = {
-      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "epa-echo-drinking-water", "nasa-firms", "nasa-power-daily", "noaa-ibtracs", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "usgs-earthquakes", "usgs-water-data"],
-      "Government & Policy": ["congress-gov-legislation", "fec-campaign-finance", "federal-register-documents", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
-      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "cfpb-consumer-complaints", "fhfa-house-price-index", "fred-economic-series", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
-      "Health, Food & Safety": ["cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "nhtsa-vehicle-recalls", "nppes-npi-registry", "openfda-drug-adverse-events", "openfda-food-enforcement", "usda-fooddata-central"],
-      "Geospatial & Infrastructure": ["bts-airline-on-time", "census-tiger-line", "eia-hourly-electric-grid", "fta-ntd-monthly-ridership", "mobility-database-feeds", "natural-earth"],
+      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "epa-echo-drinking-water", "epa-toxics-release-inventory", "fema-national-flood-hazard-layer", "gdacs-disaster-alerts", "nasa-firms", "nasa-power-daily", "noaa-ibtracs", "noaa-swpc-space-weather", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "us-drought-monitor", "usgs-earthquakes", "usgs-water-data"],
+      "Government & Policy": ["congress-gov-legislation", "fec-campaign-finance", "federal-register-documents", "ofac-sdn-list", "open-states-legislation", "sam-gov-contract-opportunities", "usaspending-federal-awards"],
+      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "census-international-trade", "cfpb-consumer-complaints", "eia-weekly-petroleum-status", "fhfa-house-price-index", "fred-economic-series", "hud-fair-market-rents", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions"],
+      "Health, Food & Safety": ["cdc-fluview-ilinet", "cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "cms-open-payments", "cpsc-product-recalls", "nhtsa-vehicle-recalls", "nppes-npi-registry", "openfda-drug-adverse-events", "openfda-food-enforcement", "usda-fooddata-central"],
+      "Geospatial & Infrastructure": ["bts-airline-on-time", "census-tiger-line", "eia-hourly-electric-grid", "fcc-national-broadband-map", "fhwa-national-bridge-inventory", "fta-ntd-monthly-ridership", "mobility-database-feeds", "natural-earth", "nrel-alt-fuel-stations", "overture-maps-places"],
       "Research & Reference": ["arxiv-preprints", "crossref-works", "gbif-species-occurrences", "openalex-scholarly-works", "pubmed-citations", "wikimedia-pageviews"],
-      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "mitre-attack-enterprise", "nvd-cve", "osv-open-source-vulnerabilities"],
-      "Demographics & Development": ["acs-five-year-estimates", "college-scorecard", "eurostat-statistics", "unhcr-refugee-population", "usda-nass-quick-stats", "world-development-indicators"],
+      "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "deps-dev-package-graph", "mitre-attack-enterprise", "nvd-cve", "osv-open-source-vulnerabilities"],
+      "Demographics & Development": ["acs-five-year-estimates", "college-scorecard", "eurostat-statistics", "nces-common-core-of-data", "unhcr-refugee-population", "usda-nass-quick-stats", "world-development-indicators"],
     } as const;
     for (const [theme, ids] of Object.entries(groups)) {
       for (const id of ids) expect(themes[id], id).toBe(theme);
     }
-    expect(Object.keys(themes)).toHaveLength(57);
+    expect(Object.keys(themes)).toHaveLength(76);
   });
 
   it("loads valid yaml files and ignores templates", () => {

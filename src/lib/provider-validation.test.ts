@@ -179,6 +179,31 @@ const validBodies = {
     Results: { Systems: [{ PWSId: "RI0000001" }] },
   }),
   "noaa-ibtracs": "SID,NAME,ISO_TIME,LAT,LON\nNA0001,EXAMPLE,2025-01-01,20,60",
+  "us-drought-monitor": JSON.stringify([
+    { mapDate: "2025-08-12T00:00:00", stateAbbreviation: "CO", d1: "47.28" },
+  ]),
+  "epa-toxics-release-inventory": JSON.stringify([
+    { state_abbr: "RI", facility_name: "Example Facility" },
+  ]),
+  "gdacs-disaster-alerts": JSON.stringify({
+    features: [{ type: "Feature", properties: { eventid: 1 } }],
+  }),
+  "noaa-swpc-space-weather": JSON.stringify([
+    { time_tag: "2026-08-17T00:00:00", Kp: 2 },
+    { time_tag: "2026-08-17T03:00:00", Kp: 3 },
+  ]),
+  "cpsc-product-recalls": JSON.stringify([
+    { RecallNumber: "25-001", Title: "Example recall" },
+  ]),
+  "cdc-fluview-ilinet": JSON.stringify([
+    { week_ending: "2025-01-04", activity_level: "2" },
+  ]),
+  "cms-open-payments": JSON.stringify({
+    results: [{ teaching_hospital_name: "Example", total_amount_of_payment_usdollars: "10.00" }],
+  }),
+  "deps-dev-package-graph": JSON.stringify({
+    versionKey: { system: "PYPI", name: "requests", version: "2.32.3" },
+  }),
 } as const;
 
 const contentTypes = {
@@ -221,6 +246,14 @@ const contentTypes = {
   "arxiv-preprints": "application/atom+xml",
   "epa-echo-drinking-water": "application/json",
   "noaa-ibtracs": "text/csv",
+  "us-drought-monitor": "application/json",
+  "epa-toxics-release-inventory": "application/json",
+  "gdacs-disaster-alerts": "application/json",
+  "noaa-swpc-space-weather": "application/json",
+  "cpsc-product-recalls": "application/json",
+  "cdc-fluview-ilinet": "application/json",
+  "cms-open-payments": "application/json",
+  "deps-dev-package-graph": "application/json",
 } as const;
 
 function response(
