@@ -4,7 +4,7 @@ description: >
   County and metro Fair Market Rents for building rent-burden screens and
   voucher-payment comparison tools.
 theme: Markets & Economics
-url: https://www.huduser.gov/portal/datasets/fmr.html
+url: https://www.huduser.gov/portal/dataset/fmr-api.html
 access_type:
   - api
   - download
@@ -18,7 +18,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: Fair Market Rents
+  source_marker: Getting an Access Token
   license_marker: federal government materials
 domains:
   - Housing

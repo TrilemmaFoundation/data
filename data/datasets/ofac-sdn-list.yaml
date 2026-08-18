@@ -17,7 +17,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: Specially Designated Nationals List
+  source_marker: Office of Foreign Assets Control
   license_marker: federal government materials
 domains:
   - Regulation
