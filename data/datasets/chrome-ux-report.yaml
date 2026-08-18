@@ -61,7 +61,7 @@ getting_started:
       response = requests.post(
           "https://chromeuxreport.googleapis.com/v1/records:queryRecord",
           params={"key": os.environ["CRUX_API_KEY"]},
-          json={"origin": "https://www.example.com"},
+          json={"origin": "https://developer.chrome.com"},
           timeout=30,
       )
       response.raise_for_status()

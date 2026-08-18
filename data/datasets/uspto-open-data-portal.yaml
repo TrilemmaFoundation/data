@@ -1,17 +1,19 @@
 id: uspto-open-data-portal
 name: USPTO Open Data Portal
 description: >
-  U.S. patent bibliographic bulk files for building assignee, classification,
+  U.S. patent bibliographic records for building assignee, classification,
   and filing-volume research tools.
 theme: Research & Reference
 url: https://www.uspto.gov/learning-and-resources/data-and-statistics
 access_type:
+  - api
   - download
-api_key_required: false
+api_key_required: true
 free_to_access: true
 size_gb_min: 0.01
 size_gb_max: 50
 formats:
+  - JSON
   - XML
   - ZIP
   - CSV
@@ -35,42 +37,54 @@ tasks:
 difficulty: intermediate
 geography:
   - United States
-temporal_coverage: weekly patent grant and application bulk files
+temporal_coverage: daily File Wrapper bibliographic records and weekly bulk files
 update_frequency: weekly
 provider: United States Patent and Trademark Office
 source_type: government
 last_verified: 2026-08-18
 getting_started:
   overview: >
-    USPTO Open Data Portal is the current bulk and API home after PatentsView
-    search shut down. Start by confirming the portal page, then download one
-    weekly bibliographic zip only after checking its size. Full-text weekly
-    files are large, and this is not the retired PatentsView search API.
+    USPTO Open Data Portal replaced PatentsView for bibliographic search and
+    bulk files. Start with a 25-record File Wrapper search using a free ODP
+    API key. Weekly XML dumps are a separate bulk path, coverage is U.S.
+    applications, and this is not the retired PatentsView API.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
-    - Enough disk for one weekly zip
+    - A USPTO.gov account with an ODP API key saved in USPTO_API_KEY
   access_steps:
-    - Open USPTO data and statistics and follow the Open Data Portal link.
-    - Choose one weekly patent-grant bulk file and note its size before downloading.
-    - Parse a handful of invention-title fields rather than the whole week.
+    - Create a USPTO.gov account, complete the Open Data Portal profile fields, and save USPTO_API_KEY.
+    - Open the Patent File Wrapper search endpoint documentation.
+    - Request 25 utility applications and keep application number, title, and filing date.
   python:
     packages:
+      - pandas
       - requests
     code: |
+      import os
+      import pandas as pd
       import requests
 
-      response = requests.get(
-          "https://data.uspto.gov/home",
+      response = requests.post(
+          "https://api.uspto.gov/api/v1/patent/applications/search",
+          headers={"X-API-KEY": os.environ["USPTO_API_KEY"]},
+          json={
+              "q": "applicationMetaData.applicationTypeLabelName:Utility",
+              "pagination": {"offset": 0, "limit": 25},
+          },
           timeout=30,
       )
       response.raise_for_status()
-      print("Open Data Portal" in response.text)
-      print(response.url)
+      payload = response.json()
+      applications = pd.json_normalize(
+          payload.get("patentFileWrapperDataBag", []),
+      )
+      applications["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(applications.head())
   first_project:
-    title: Reach USPTO Open Data Portal
-    goal: Test whether the current USPTO portal can support a bounded patent-download workflow.
+    title: List recent utility patent applications
+    goal: Test whether File Wrapper search can power a bounded patent-title inbox.
     steps:
-      - Confirm the portal page identifies Open Data Portal before downloading anything.
-      - Choose one weekly bibliographic file in the portal and record its published week and size.
-      - Explain that weekly XML dumps are large and that PatentsView's search API is no longer the access path.
+      - Keep application number, invention title, and filing date from the first page.
+      - Count records missing a first applicant name.
+      - Explain that ODP search is not PatentsView, a 25-record page is not a complete assignee census, and weekly XML dumps are a separate bulk download.

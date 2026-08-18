@@ -70,14 +70,15 @@ getting_started:
       client.retrieve(
           "reanalysis-era5-single-levels",
           {
-              "product_type": "reanalysis",
-              "variable": "2m_temperature",
-              "year": "2024",
-              "month": "07",
-              "day": "15",
-              "time": "12:00",
+              "product_type": ["reanalysis"],
+              "variable": ["2m_temperature"],
+              "year": ["2024"],
+              "month": ["07"],
+              "day": ["15"],
+              "time": ["12:00"],
               "area": [40.8, -74.05, 40.7, -73.95],
-              "format": "netcdf",
+              "data_format": "netcdf",
+              "download_format": "unarchived",
           },
           "era5_nyc_sample.nc",
       )
