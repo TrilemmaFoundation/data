@@ -445,7 +445,31 @@ describe("checkProviderContract", () => {
         fetchImpl: vi.fn().mockResolvedValue(
           response(
             validBodies["usgs-earthquakes"],
+            "application/jsonp; charset=utf-8",
+          ),
+        ),
+      }),
+    ).resolves.toEqual([
+      "unexpected provider content type: application/jsonp; charset=utf-8",
+    ]);
+
+    await expect(
+      checkProviderContract("usgs-earthquakes", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          response(
+            validBodies["usgs-earthquakes"],
             "application/json ; charset=utf-8",
+          ),
+        ),
+      }),
+    ).resolves.toEqual([]);
+
+    await expect(
+      checkProviderContract("mitre-attack-enterprise", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          response(
+            validBodies["mitre-attack-enterprise"],
+            "application/taxii+json;version=2.1",
           ),
         ),
       }),

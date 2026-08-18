@@ -215,6 +215,8 @@ describe("checkUrl", () => {
     ["127.0.0.1", 6],
     ["::1", 6],
     ["::7f00:1", 6],
+    ["::127.0.0.1", 6],
+    ["0:0:0:0:0:0:7f00:1", 6],
     ["::ffff:127.0.0.1", 6],
     ["::ffff:127.000.000.001", 6],
     ["0:0:0:0:0:ffff:127.0.0.1", 6],
@@ -247,8 +249,11 @@ describe("checkUrl", () => {
 
   it.each([
     "::ffff:8.8.8.8",
+    "::ffff:808:808",
     "64:ff9b::808:808",
     "64:ff9b::8.8.8.8",
+    "::8.8.8.8",
+    "::808:808",
   ])("treats public embedded IPv4 %s as public", async (address) => {
     const fetchImpl = vi.fn().mockResolvedValue(
       pageResponse("Expected page", "https://example.com/catalog"),
