@@ -945,6 +945,10 @@ type ProviderValidationOptions = {
   resolveHost?: ResolveHost;
 };
 
+function mediaTypeOf(contentType: string): string {
+  return contentType.split(";", 1)[0]!.trim().toLowerCase();
+}
+
 function jsonValidator(schema: z.ZodType) {
   return (body: Uint8Array): string | null => {
     let value: unknown;
@@ -1007,7 +1011,8 @@ export async function checkProviderContract(
     }
 
     const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
-    if (!contract.contentTypes.some((type) => contentType.startsWith(type))) {
+    const mediaType = mediaTypeOf(contentType);
+    if (!contract.contentTypes.some((type) => mediaType === mediaTypeOf(type))) {
       await response.body?.cancel().catch(() => undefined);
       return [`unexpected provider content type: ${contentType || "missing"}`];
     }

@@ -54,23 +54,98 @@ for (const [network, prefix] of [
   blockedIpv6.addSubnet(network, prefix, "ipv6");
 }
 
-function ipv4FromMappedAddress(address: string): string | null {
-  const dotted = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(address);
-  if (dotted) return dotted[1]!;
-  const hex = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(address);
-  if (!hex) return null;
-  const high = Number.parseInt(hex[1]!, 16);
-  const low = Number.parseInt(hex[2]!, 16);
-  return `${(high >> 8) & 255}.${high & 255}.${(low >> 8) & 255}.${low & 255}`;
+function canonicalIpv4(address: string): string | null {
+  const parts = address.split(".");
+  if (parts.length !== 4) return null;
+  const octets: number[] = [];
+  for (const part of parts) {
+    if (!/^\d{1,3}$/.test(part)) return null;
+    const value = Number(part);
+    if (value > 255) return null;
+    octets.push(value);
+  }
+  return octets.join(".");
+}
+
+function parseIpv6Groups(part: string): number[] | null {
+  if (!part) return [];
+  const groups = part.split(":");
+  const values: number[] = [];
+  for (const group of groups) {
+    if (!/^[0-9a-f]{1,4}$/i.test(group)) return null;
+    values.push(Number.parseInt(group, 16));
+  }
+  return values;
+}
+
+function expandIpv6(address: string, expectedGroups: number): number[] | null {
+  const parts = address.split("::");
+  if (parts.length > 2) return null;
+  if (parts.length === 1) {
+    const values = parseIpv6Groups(parts[0]!);
+    return values?.length === expectedGroups ? values : null;
+  }
+  const left = parseIpv6Groups(parts[0]!);
+  const right = parseIpv6Groups(parts[1]!);
+  if (!left || !right) return null;
+  const missing = expectedGroups - left.length - right.length;
+  if (missing < 0) return null;
+  return [...left, ...Array<number>(missing).fill(0), ...right];
+}
+
+function parseIpv6(address: string): number[] | null {
+  let value = address.toLowerCase();
+  if (value.startsWith("[") && value.endsWith("]")) {
+    value = value.slice(1, -1);
+  }
+
+  let ipv4Groups: number[] | null = null;
+  const ipv4Tail = /^(.*):(\d{1,3}(?:\.\d{1,3}){3})$/.exec(value);
+  if (ipv4Tail) {
+    const ipv4 = canonicalIpv4(ipv4Tail[2]!);
+    if (!ipv4) return null;
+    const octets = ipv4.split(".").map(Number);
+    ipv4Groups = [(octets[0]! << 8) | octets[1]!, (octets[2]! << 8) | octets[3]!];
+    value = ipv4Tail[1]!.endsWith(":") ? `${ipv4Tail[1]}:` : ipv4Tail[1]!;
+  }
+  if (value.includes(".")) return null;
+
+  const groups = expandIpv6(value, ipv4Groups ? 6 : 8);
+  if (!groups) return null;
+  return ipv4Groups ? [...groups, ...ipv4Groups] : groups;
+}
+
+function ipv4FromGroups(groups: number[]): string {
+  return `${groups[6]! >> 8}.${groups[6]! & 255}.${groups[7]! >> 8}.${groups[7]! & 255}`;
+}
+
+function ipv4FromEmbeddedAddress(address: string): string | null {
+  const groups = parseIpv6(address);
+  if (!groups) return null;
+  const prefix = groups.slice(0, 6);
+  const mapped =
+    prefix[0] === 0 &&
+    prefix[1] === 0 &&
+    prefix[2] === 0 &&
+    prefix[3] === 0 &&
+    prefix[4] === 0 &&
+    prefix[5] === 0xffff;
+  const nat64 =
+    prefix[0] === 0x64 &&
+    prefix[1] === 0xff9b &&
+    prefix[2] === 0 &&
+    prefix[3] === 0 &&
+    prefix[4] === 0 &&
+    prefix[5] === 0;
+  const compatible = prefix.every((group) => group === 0);
+  return mapped || nat64 || compatible ? ipv4FromGroups(groups) : null;
 }
 
 function isBlockedResolvedAddress(address: string, family: number): boolean {
-  if (family === 4) return blockedIpv4.check(address, "ipv4");
-  if (family === 6) {
-    const mapped = ipv4FromMappedAddress(address);
-    if (mapped) return blockedIpv4.check(mapped, "ipv4");
-    return blockedIpv6.check(address, "ipv6");
-  }
+  if (family !== 4 && family !== 6) return true;
+  const ipv4 = canonicalIpv4(address) ?? ipv4FromEmbeddedAddress(address);
+  if (ipv4) return blockedIpv4.check(ipv4, "ipv4");
+  if (family === 6) return blockedIpv6.check(address, "ipv6");
   return true;
 }
 

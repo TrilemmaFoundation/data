@@ -433,6 +433,25 @@ describe("checkProviderContract", () => {
     ).resolves.toEqual(["unexpected provider content type: missing"]);
 
     await expect(
+      checkProviderContract("usgs-earthquakes", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          response(validBodies["usgs-earthquakes"], "application/jsonp"),
+        ),
+      }),
+    ).resolves.toEqual(["unexpected provider content type: application/jsonp"]);
+
+    await expect(
+      checkProviderContract("usgs-earthquakes", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          response(
+            validBodies["usgs-earthquakes"],
+            "application/json ; charset=utf-8",
+          ),
+        ),
+      }),
+    ).resolves.toEqual([]);
+
+    await expect(
       checkProviderContract("nasa-firms", {
         fetchImpl: vi.fn().mockResolvedValue(response(null, "text/csv")),
       }),

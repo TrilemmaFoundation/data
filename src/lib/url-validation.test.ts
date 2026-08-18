@@ -206,17 +206,29 @@ describe("checkUrl", () => {
 
   it.each([
     ["127.0.0.1", 4],
+    ["127.000.000.001", 4],
     ["10.0.0.1", 4],
     ["100.64.0.1", 4],
     ["169.254.169.254", 4],
     ["172.16.0.1", 4],
     ["192.168.0.1", 4],
+    ["127.0.0.1", 6],
     ["::1", 6],
+    ["::7f00:1", 6],
     ["::ffff:127.0.0.1", 6],
+    ["::ffff:127.000.000.001", 6],
+    ["0:0:0:0:0:ffff:127.0.0.1", 6],
+    ["0:0:0:0:0:ffff:7f00:1", 6],
+    ["[::ffff:127.0.0.1]", 6],
+    ["64:ff9b::7f00:1", 6],
+    ["64:ff9b::a9fe:a9fe", 6],
+    ["64:ff9b::169.254.169.254", 6],
+    ["64:ff9b:0:0:0:0:7f00:1", 6],
+    ["nope", 4],
     ["fc00::1", 6],
     ["fe80::1", 6],
     ["8.8.8.8", 0],
-  ])("blocks unsafe resolved address %s", async (address, family) => {
+  ])("blocks unsafe resolved address %s family %s", async (address, family) => {
     const fetchImpl = vi.fn();
     await expect(
       checkUrl("https://example.com/catalog", {
@@ -233,14 +245,42 @@ describe("checkUrl", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it("treats public IPv4-mapped IPv6 addresses as public IPv4", async () => {
+  it.each([
+    "::ffff:8.8.8.8",
+    "64:ff9b::808:808",
+    "64:ff9b::8.8.8.8",
+  ])("treats public embedded IPv4 %s as public", async (address) => {
     const fetchImpl = vi.fn().mockResolvedValue(
       pageResponse("Expected page", "https://example.com/catalog"),
     );
     await expect(
       checkUrl("https://example.com/catalog", {
         fetchImpl: fetchImpl as typeof fetch,
-        resolveHost: async () => [{ address: "::ffff:8.8.8.8", family: 6 }],
+        resolveHost: async () => [{ address, family: 6 }],
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    expect(fetchImpl).toHaveBeenCalled();
+  });
+
+  it.each([
+    "1::2::3",
+    "::ffff:256.0.0.1",
+    "::ffff:1.2",
+    "1:2:3:4:5:6:7:8:9",
+    "1:2:3:4:5:6::7:8:9",
+    "1:2:3",
+    "::gggg",
+    "gggg::1",
+    "[::1",
+  ])("does not treat malformed IPv6 %s as mapped private", async (address) => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      pageResponse("Expected page", "https://example.com/catalog"),
+    );
+    await expect(
+      checkUrl("https://example.com/catalog", {
+        fetchImpl: fetchImpl as typeof fetch,
+        resolveHost: async () => [{ address, family: 6 }],
         expectedMarker: "Expected page",
       }),
     ).resolves.toEqual({ ok: true, messages: [] });
