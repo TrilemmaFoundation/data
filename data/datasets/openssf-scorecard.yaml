@@ -1,0 +1,79 @@
+id: openssf-scorecard
+name: OpenSSF Scorecard
+description: >
+  Automated security-practice scores for public repositories for building
+  dependency-acceptance checks and maintainer-risk reviews.
+theme: Technology & Cybersecurity
+url: https://scorecard.dev/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Community Data License Agreement Permissive 2.0
+license_url: https://cdla.dev/permissive-2-0/
+url_checks:
+  source_marker: Quickly assess open source projects
+  license_marker: Community Data License Agreement
+domains:
+  - Software Security
+  - Open Source
+  - Cybersecurity
+data_types:
+  - Scores
+  - Repository Metadata
+tasks:
+  - Risk Assessment
+  - Dependency Review
+  - Security Monitoring
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: continuously rescored public repositories
+update_frequency: continuous
+provider: Open Source Security Foundation
+source_type: nonprofit
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    OpenSSF Scorecard publishes precomputed checks for public GitHub projects.
+    Start with one well-known repository and read the aggregate score plus a
+    few high-risk checks. Scores describe repository practices, not whether a
+    specific package version is vulnerable.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the Scorecard project page and the CDLA Permissive 2.0 data licence.
+    - Request the published score for github.com/ossf/scorecard.
+    - Keep the date, aggregate score, and check names before comparing projects.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.scorecard.dev/projects/github.com/ossf/scorecard",
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      checks = pd.json_normalize(payload.get("checks", []))
+      checks["repo"] = payload.get("repo", {}).get("name")
+      checks["score"] = payload.get("score")
+      print(payload.get("repo"), payload.get("score"))
+      print(checks[["name", "score", "reason"]].head(10))
+  first_project:
+    title: Review one repository's Scorecard checks
+    goal: Decide whether Scorecard can support an accept-or-review rule for a new dependency.
+    steps:
+      - Store the aggregate score and the Dangerous-Workflow, Branch-Protection, and Maintained checks.
+      - Flag any check scored below 5 and record the published reason text.
+      - State that Scorecard does not replace CVE monitoring or a review of the exact package version you would install.

@@ -1,0 +1,79 @@
+id: uk-police-street-crime
+name: UK Police Street-Level Crime
+description: >
+  Monthly street-level crime and outcome records for building neighbourhood
+  safety monitors in England, Wales, and Northern Ireland.
+theme: Government & Policy
+url: https://data.police.uk/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 2
+formats:
+  - JSON
+  - CSV
+license: Open Government Licence v3.0
+license_url: https://data.police.uk/about/
+url_checks:
+  source_marker: open data about crime and policing
+  license_marker: Open Government Licence v3.0
+domains:
+  - Public Safety
+  - Crime
+  - Local Government
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Geographic Analysis
+  - Trend Analysis
+  - Neighbourhood Monitoring
+difficulty: beginner
+geography:
+  - United Kingdom
+temporal_coverage: 2014-present street-level records
+update_frequency: monthly
+provider: data.police.uk
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Police API returns street-level crimes for a point or custom area.
+    Start with one coordinate pair and the most recently published month.
+    Locations are snapped to anonymised map points, reporting coverage varies
+    by force, and counts are not official statistics.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the data.police.uk about page and the Open Government Licence notice.
+    - Request street-level crimes for one latitude and longitude.
+    - Keep category, month, and the anonymised street name.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.police.uk/api/crimes-street/all-crime",
+          params={"lat": 51.5074, "lng": -0.1278},
+          timeout=30,
+      )
+      response.raise_for_status()
+      crimes = pd.json_normalize(response.json())
+      print(crimes[["id", "category", "month", "location.street.name"]].head(20))
+      print(crimes["category"].value_counts().head())
+  first_project:
+    title: Summarise recent street crime around one point
+    goal: Test whether category counts can power a neighbourhood safety snapshot.
+    steps:
+      - Keep crime id, category, month, and anonymised street name.
+      - Count records by category and flag missing coordinates.
+      - Explain that points are snapped for privacy and that force coverage and lag limit comparison across areas.

@@ -204,6 +204,48 @@ const validBodies = {
   "deps-dev-package-graph": JSON.stringify({
     versionKey: { system: "PYPI", name: "requests", version: "2.32.3" },
   }),
+  "first-epss": JSON.stringify({
+    data: [{ cve: "CVE-2024-3400", epss: "0.9", percentile: "0.99" }],
+  }),
+  "openssf-scorecard": JSON.stringify({
+    score: 8.5,
+    repo: { name: "github.com/ossf/scorecard" },
+  }),
+  "legislation-gov-uk": "<Legislation><Title>Data Protection Act 2018</Title></Legislation>",
+  "uk-police-street-crime": JSON.stringify([
+    { category: "anti-social-behaviour", month: "2026-01" },
+  ]),
+  "gleif-lei": JSON.stringify({
+    data: [{ id: "5493001KJTIIGC8Y1R12", type: "lei-records" }],
+  }),
+  "fdic-bank-find": JSON.stringify({
+    data: [{ data: { NAME: "Example Bank", CERT: "1" } }],
+  }),
+  "cftc-commitment-of-traders": JSON.stringify([
+    { contract_market_name: "GOLD", open_interest_all: "1" },
+  ]),
+  "ecb-statistical-data-warehouse": JSON.stringify({
+    dataSets: [{ series: {} }],
+  }),
+  "open-food-facts": JSON.stringify({
+    product: { code: "737628064502", product_name: "Example" },
+  }),
+  "cms-nursing-homes": JSON.stringify({
+    results: [{ cms_certification_number_ccn: "000000", provider_name: "Example" }],
+  }),
+  "who-gho-indicators": JSON.stringify({
+    value: [{ IndicatorCode: "WHOSIS_000001", SpatialDim: "USA" }],
+  }),
+  "wikidata-query": JSON.stringify({
+    results: { bindings: [{ item: { type: "uri", value: "http://www.wikidata.org/entity/Q5" } }] },
+  }),
+  "met-norway-locationforecast": JSON.stringify({
+    properties: { timeseries: [{ time: "2026-08-18T00:00:00Z" }] },
+  }),
+  "osm-overpass": JSON.stringify({
+    elements: [{ type: "node", id: 1, lat: 40.75, lon: -73.98 }],
+  }),
+  "ourairports": "id,ident,type,name,latitude_deg,longitude_deg\n1,KSEA,large_airport,Seattle,47.45,-122.31",
 } as const;
 
 const contentTypes = {
@@ -254,6 +296,21 @@ const contentTypes = {
   "cdc-fluview-ilinet": "application/json",
   "cms-open-payments": "application/json",
   "deps-dev-package-graph": "application/json",
+  "first-epss": "application/json",
+  "openssf-scorecard": "application/json",
+  "legislation-gov-uk": "application/xml",
+  "uk-police-street-crime": "application/json",
+  "gleif-lei": "application/vnd.api+json",
+  "fdic-bank-find": "application/json",
+  "cftc-commitment-of-traders": "application/json",
+  "ecb-statistical-data-warehouse": "application/json",
+  "open-food-facts": "application/json",
+  "cms-nursing-homes": "application/json",
+  "who-gho-indicators": "application/json",
+  "wikidata-query": "application/sparql-results+json",
+  "met-norway-locationforecast": "application/json",
+  "osm-overpass": "application/json",
+  "ourairports": "text/csv",
 } as const;
 
 function response(

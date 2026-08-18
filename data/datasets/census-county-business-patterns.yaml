@@ -1,0 +1,86 @@
+id: census-county-business-patterns
+name: Census County Business Patterns
+description: >
+  Annual establishment, employment, and payroll counts by industry and county
+  for building local industry-mix and site-selection tools.
+theme: Markets & Economics
+url: https://www.census.gov/programs-surveys/cbp.html
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 2
+formats:
+  - JSON
+  - CSV
+license: U.S. Census Bureau API Terms of Service
+license_url: https://www.census.gov/data/developers/about/terms-of-service.html
+url_checks:
+  source_marker: County Business Patterns
+  license_marker: Terms of Service Agreement
+domains:
+  - Local Economics
+  - Business
+  - Labor Economics
+data_types:
+  - Tabular
+  - Survey Estimates
+tasks:
+  - Market Sizing
+  - Site Selection
+  - Industry Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 1986-present
+update_frequency: annual
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    County Business Patterns counts establishments with paid employees by
+    NAICS and geography. Start with one state and the all-industry NAICS code.
+    Employment is a March 12 snapshot, payroll can be suppressed, and CBP
+    excludes most government and self-employed activity.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Census Data API key saved in the CENSUS_API_KEY environment variable
+  access_steps:
+    - Request a free Census Data API key and open the CBP program page.
+    - Review the current year variables for establishments, employment, and payroll.
+    - Request all-industry county totals for one state.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.census.gov/data/2023/cbp",
+          params={
+              "get": "NAME,ESTAB,EMP,PAYANN,NAICS2017_LABEL",
+              "for": "county:*",
+              "in": "state:08",
+              "NAICS2017": "00",
+              "key": os.environ["CENSUS_API_KEY"],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      rows = response.json()
+      counties = pd.DataFrame(rows[1:], columns=rows[0])
+      print(counties.head())
+  first_project:
+    title: Rank one state's counties by establishment counts
+    goal: Test whether CBP can describe which counties hold the most paid employers.
+    steps:
+      - Keep county name, establishments, employment, and annual payroll as numbers.
+      - Rank counties by establishments and flag suppressed payroll cells.
+      - Explain that March employment, NAICS suppression, and the exclusion of most government work limit a local industry story.

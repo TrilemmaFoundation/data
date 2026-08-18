@@ -1,0 +1,92 @@
+id: nih-reporter-projects
+name: NIH RePORTER Projects
+description: >
+  Funded NIH and HHS project records for building research-funding monitors,
+  institution dashboards, and topic-prospecting tools.
+theme: Government & Policy
+url: https://api.reporter.nih.gov/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: RePORTER Project
+  license_marker: federal government materials
+domains:
+  - Research Funding
+  - Biomedical Research
+  - Public Spending
+data_types:
+  - Tabular
+  - Documents
+tasks:
+  - Funding Analysis
+  - Topic Research
+  - Institution Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: active and historical NIH-funded projects
+update_frequency: weekly
+provider: National Institutes of Health
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    RePORTER exposes project abstracts, awards, institutes, and organizations
+    through a JSON POST search. Start with one fiscal year and one keyword.
+    Award amounts can be multi-year, subprojects can double-count activity,
+    and the API is not a complete picture of all U.S. biomedical funding.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the RePORTER API documentation and note that search uses POST, not GET.
+    - Search one fiscal year for a single keyword with a small result limit.
+    - Keep application IDs, organization names, and award amounts.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://api.reporter.nih.gov/v2/projects/search",
+          json={
+              "criteria": {
+                  "fiscal_years": [2025],
+                  "advanced_text_search": {
+                      "search_field": "terms",
+                      "search_text": "CRISPR",
+                  },
+              },
+              "limit": 25,
+              "include_fields": [
+                  "ApplId",
+                  "ProjectTitle",
+                  "Organization",
+                  "AwardAmount",
+                  "FiscalYear",
+              ],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      projects = pd.json_normalize(response.json()["results"])
+      print(projects.head())
+  first_project:
+    title: List recent NIH CRISPR project awards
+    goal: Test whether RePORTER can power a bounded funding inbox for one research topic.
+    steps:
+      - Keep application ID, title, organization, fiscal year, and award amount.
+      - Sum award amounts by organization and flag missing amounts.
+      - Explain that multi-year awards and subprojects can inflate totals if treated as independent grants.

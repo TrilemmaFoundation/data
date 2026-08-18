@@ -1,0 +1,83 @@
+id: open-food-facts
+name: Open Food Facts
+description: >
+  Collaborative packaged-food product records for building barcode lookup,
+  label, and nutrition-comparison tools.
+theme: Health, Food & Safety
+url: https://world.openfoodfacts.org/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.1
+size_gb_max: 20
+formats:
+  - JSON
+  - CSV
+license: Open Database License
+license_url: https://world.openfoodfacts.org/terms-of-use
+url_checks:
+  source_marker: Open Food Facts
+  license_marker: Open Database License
+domains:
+  - Nutrition
+  - Food Science
+  - Consumer Safety
+data_types:
+  - Product Data
+  - Tabular
+tasks:
+  - Product Lookup
+  - Label Analysis
+  - Nutrition Comparison
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: continuously updated product records
+update_frequency: continuous
+provider: Open Food Facts
+source_type: nonprofit
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Open Food Facts publishes packaged-product facts, including Nutri-Score
+    and ingredient lists, under ODbL. Start with one barcode and a custom
+    User-Agent. Contributor data can be incomplete, images have a separate
+    share-alike licence, and the database is not medical advice.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the terms of use, including attribution and share-alike for derivative databases.
+    - Request one product by barcode with a descriptive User-Agent.
+    - Keep the barcode, product name, and Nutri-Score if present.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://world.openfoodfacts.org/api/v2/product/737628064502.json",
+          headers={
+              "User-Agent": (
+                  "TrilemmaDataCatalogExample/1.0 "
+                  "(https://data.trilemma.foundation)"
+              )
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      product = pd.json_normalize(response.json()["product"])
+      print(product.filter(regex="code|product_name|nutriscore|brands").head())
+  first_project:
+    title: Look up one packaged food by barcode
+    goal: Test whether Open Food Facts can power a bounded product-fact card.
+    steps:
+      - Keep barcode, product name, brands, and Nutri-Score.
+      - Record missing nutrition or ingredient fields instead of filling them from other sites.
+      - Attribute Open Food Facts under ODbL and note that images and third-party packaging rights are separate.

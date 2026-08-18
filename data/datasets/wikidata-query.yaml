@@ -1,0 +1,93 @@
+id: wikidata-query
+name: Wikidata Query Service
+description: >
+  CC0 structured knowledge-graph facts for building entity lookup, taxonomy,
+  and reference-enrichment tools.
+theme: Research & Reference
+url: https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+  - CSV
+license: Creative Commons CC0 1.0
+license_url: https://www.wikidata.org/wiki/Wikidata:Licensing
+url_checks:
+  source_marker: Wikidata:SPARQL query service
+  license_marker: Creative Commons CC0 License
+domains:
+  - Knowledge Graphs
+  - Reference Data
+  - Research
+data_types:
+  - Linked Data
+  - Entity Data
+tasks:
+  - Entity Lookup
+  - Knowledge Graph Query
+  - Reference Enrichment
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: continuously updated Wikidata statements
+update_frequency: continuous
+provider: Wikimedia Foundation
+source_type: community
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Wikidata SPARQL returns CC0 statements for entities and properties. Start
+    with one class, one country, and a LIMIT. Send a descriptive User-Agent.
+    Query results can be incomplete, contested, or delayed relative to the
+    source that a statement cites.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Query Service and read the CC0 licensing page.
+    - Write a bounded SPARQL query with a LIMIT instead of selecting the whole graph.
+    - Request JSON results with a descriptive User-Agent.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      query = """
+      SELECT ?item ?itemLabel WHERE {
+        ?item wdt:P31 wd:Q515.
+        ?item wdt:P17 wd:Q30.
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      }
+      LIMIT 10
+      """
+      response = requests.get(
+          "https://query.wikidata.org/sparql",
+          params={"query": query, "format": "json"},
+          headers={
+              "User-Agent": (
+                  "TrilemmaDataCatalogExample/1.0 "
+                  "(https://data.trilemma.foundation)"
+              ),
+              "Accept": "application/sparql-results+json",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      bindings = response.json()["results"]["bindings"]
+      cities = pd.json_normalize(bindings)
+      print(cities.head())
+  first_project:
+    title: List a handful of U.S. cities from Wikidata
+    goal: Test whether a bounded SPARQL query can seed a reference lookup table.
+    steps:
+      - Keep item IRI and English label for ten cities.
+      - Record missing labels instead of guessing names from other sources.
+      - Treat results as CC0 statements that still need a cited source before publication.

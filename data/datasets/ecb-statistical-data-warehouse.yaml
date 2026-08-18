@@ -1,0 +1,86 @@
+id: ecb-statistical-data-warehouse
+name: ECB Statistical Data Warehouse
+description: >
+  Euro-area official statistics on exchange rates, prices, and monetary
+  aggregates for building policy-rate and inflation monitors.
+theme: Markets & Economics
+url: https://data.ecb.europa.eu/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+  - SDMX
+license: ECB copyright and reuse notice
+license_url: https://www.ecb.europa.eu/home/disclaimer/html/index.en.html
+url_checks:
+  source_marker: ECB Data Portal
+  license_marker: Disclaimer
+domains:
+  - Macroeconomics
+  - Finance
+  - International Statistics
+data_types:
+  - Time Series
+tasks:
+  - Trend Analysis
+  - Policy Monitoring
+  - Market Research
+difficulty: intermediate
+geography:
+  - Europe
+temporal_coverage: euro-area series with varying starts
+update_frequency: daily
+provider: European Central Bank
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The ECB SDMX 2.1 API returns official euro-area statistics. Start with one
+    exchange-rate series and a short observation window. Series keys are dense,
+    vintages can be revised, and a rate observation is not a trading signal.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the ECB Data Portal and the SDMX web-service help.
+    - Request the last ten daily USD/EUR reference rates.
+    - Keep the series key, observation date, and value.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A",
+          params={"lastNObservations": 10, "format": "jsondata"},
+          headers={"Accept": "application/json"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      series = payload["dataSets"][0]["series"]
+      observations = next(iter(series.values()))["observations"]
+      dates = payload["structure"]["dimensions"]["observation"][0]["values"]
+      rows = [
+          {"date": dates[int(index)]["id"], "usd_per_eur": value[0]}
+          for index, value in observations.items()
+      ]
+      rates = pd.DataFrame(rows)
+      print(rates)
+  first_project:
+    title: Chart recent USD per EUR reference rates
+    goal: Test whether one ECB series can power a bounded FX monitor.
+    steps:
+      - Keep observation dates and USD-per-EUR values from the EXR dataflow.
+      - Plot the last ten daily observations and record the series key.
+      - Explain that ECB reference rates are not transaction prices and can be revised.

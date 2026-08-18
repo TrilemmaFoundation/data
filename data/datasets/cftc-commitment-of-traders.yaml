@@ -1,0 +1,88 @@
+id: cftc-commitment-of-traders
+name: CFTC Commitments of Traders
+description: >
+  Weekly futures positioning by trader category for building commodities,
+  rates, and speculative-position monitors.
+theme: Markets & Economics
+url: https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Commitments of Traders
+  license_marker: federal government materials
+domains:
+  - Commodities
+  - Finance
+  - Capital Markets
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Market Monitoring
+  - Positioning Analysis
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 1986-present weekly reports
+update_frequency: weekly
+provider: Commodity Futures Trading Commission
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The COT reports break down open interest for futures markets with enough
+    large traders. Start with one contract in the legacy combined dataset.
+    Categories are regulatory, not strategy labels, and Tuesday positions are
+    published later in the week.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Commitments of Traders page and the public reporting environment.
+    - Request a bounded page of legacy combined records for one market.
+    - Keep report date, market name, and commercial versus noncommercial long/short.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://publicreporting.cftc.gov/resource/jun7-fc8e.json",
+          params={
+              "$limit": 20,
+              "$order": "report_date_as_yyyy_mm_dd DESC",
+              "contract_market_name": "GOLD",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      cot = pd.DataFrame(response.json())
+      print(cot[[
+          "report_date_as_yyyy_mm_dd",
+          "contract_market_name",
+          "open_interest_all",
+          "noncomm_positions_long_all",
+          "noncomm_positions_short_all",
+      ]].head())
+  first_project:
+    title: Track speculative positioning in one futures market
+    goal: Test whether weekly COT records can power a bounded positioning monitor.
+    steps:
+      - Keep report date, market name, open interest, and noncommercial long/short.
+      - Compute net noncommercial positioning and note the publication lag from Tuesday.
+      - Explain that trader categories are CFTC reporting classes, not a forecast of price direction.

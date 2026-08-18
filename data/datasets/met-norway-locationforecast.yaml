@@ -1,0 +1,88 @@
+id: met-norway-locationforecast
+name: MET Norway Locationforecast
+description: >
+  Global point weather forecasts for building location-specific planning tools
+  outside the U.S. National Weather Service footprint.
+theme: Environment & Hazards
+url: https://api.met.no/weatherapi/locationforecast/2.0/documentation
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: CC BY 4.0 and Norwegian Licence for Open Government Data 2.0
+license_url: https://api.met.no/doc/License
+url_checks:
+  source_marker: Weather forecasts for any location on earth
+  license_marker: Norwegian Licence for Open Government Data
+domains:
+  - Weather
+  - Forecasting
+  - Emergency Management
+data_types:
+  - Time Series
+  - Forecast Data
+tasks:
+  - Forecasting
+  - Operational Planning
+  - Alerting
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: current forecasts out to about nine days
+update_frequency: continuous
+provider: Norwegian Meteorological Institute
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Locationforecast returns JSON weather for any latitude and longitude.
+    Start with the compact product for one coordinate. Identify the client in
+    User-Agent or MET Norway returns 403. Forecasts change, and this product is
+    not an official warning service.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the Locationforecast documentation and licensing page, including commercial reuse under CC BY and NLOD.
+    - Choose one coordinate and the compact JSON method.
+    - Send a unique User-Agent with a contact URL.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.met.no/weatherapi/locationforecast/2.0/compact",
+          params={"lat": 59.91, "lon": 10.75},
+          headers={
+              "User-Agent": (
+                  "TrilemmaDataCatalogExample/1.0 "
+                  "(https://data.trilemma.foundation)"
+              )
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      timeseries = pd.json_normalize(
+          response.json()["properties"]["timeseries"]
+      )
+      print(
+          timeseries.filter(
+              regex="time|air_temperature|wind_speed|precipitation_amount"
+          ).head()
+      )
+  first_project:
+    title: Inspect Oslo's next forecast hours
+    goal: Test whether Locationforecast can power a bounded local planning card.
+    steps:
+      - Keep time, air temperature, wind speed, and precipitation for the first hours.
+      - Convert times to timezone-aware timestamps before ranking the wettest hour.
+      - Credit MET Norway and explain that a forecast is not an official warning.

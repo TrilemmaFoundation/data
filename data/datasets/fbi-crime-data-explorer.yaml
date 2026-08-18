@@ -1,0 +1,79 @@
+id: fbi-crime-data-explorer
+name: FBI Crime Data Explorer
+description: >
+  Uniform Crime Reporting summaries and NIBRS extracts for building U.S. crime
+  trend and agency-comparison tools.
+theme: Government & Policy
+url: https://www.justice.gov/developer
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 5
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: FBI Crime Data API
+  license_marker: federal government materials
+domains:
+  - Public Safety
+  - Crime
+  - Justice
+data_types:
+  - Event Data
+  - Time Series
+tasks:
+  - Trend Analysis
+  - Geographic Analysis
+  - Agency Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 1985-present summarized UCR series
+update_frequency: annual
+provider: Federal Bureau of Investigation
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The FBI Crime Data API returns Uniform Crime Reporting summaries. Start
+    with national participation or one state series after requesting a free
+    api.data.gov key. Agency coverage is voluntary, SRS and NIBRS are not
+    interchangeable, and recent years can be incomplete.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free api.data.gov key saved in the FBI_CDE_API_KEY environment variable
+  access_steps:
+    - Open Crime Data Explorer and request a free key at api.data.gov.
+    - Read the API documentation for summarized state estimates.
+    - Request a bounded violent-crime series for one state.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.usa.gov/crime/fbi/sapi/api/estimates/states/CA/2020/2022",
+          params={"api_key": os.environ["FBI_CDE_API_KEY"]},
+          timeout=30,
+      )
+      response.raise_for_status()
+      estimates = pd.DataFrame(response.json().get("results", response.json()))
+      print(estimates.head())
+  first_project:
+    title: Compare one state's reported violent crime across three years
+    goal: Test whether CDE estimates can power a bounded state crime trend.
+    steps:
+      - Keep year, state, and violent-crime counts from the estimates response.
+      - Chart the three-year series and record any missing years.
+      - Explain that voluntary reporting, SRS-to-NIBRS transition, and population changes limit year-to-year comparison.

@@ -648,6 +648,162 @@ const contracts = {
       }).passthrough(),
     ),
   },
+  "first-epss": {
+    url: "https://api.first.org/data/v1/epss?cve=CVE-2024-3400",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(
+          z.object({
+            cve: z.string(),
+            epss: z.union([z.string(), z.number()]),
+            percentile: z.union([z.string(), z.number()]),
+          }).passthrough(),
+        ).min(1),
+      }).passthrough(),
+    ),
+  },
+  "openssf-scorecard": {
+    url: "https://api.scorecard.dev/projects/github.com/ossf/scorecard",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        score: z.number(),
+        repo: z.object({
+          name: z.string(),
+        }).passthrough(),
+      }).passthrough(),
+    ),
+  },
+  "legislation-gov-uk": {
+    url: "https://www.legislation.gov.uk/ukpga/2018/12/section/1/data.xml",
+    contentTypes: ["application/xml", "text/xml", "application/xhtml+xml"],
+    validate(body: Uint8Array) {
+      return new TextDecoder().decode(body).toLowerCase().includes("legislation")
+        ? null
+        : "XML is missing legislation markup";
+    },
+  },
+  "uk-police-street-crime": {
+    url: "https://data.police.uk/api/crimes-street/all-crime?lat=51.5074&lng=-0.1278&date=2026-01",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          category: z.string(),
+        }).passthrough(),
+      ).min(1),
+    ),
+  },
+  "gleif-lei": {
+    url: "https://api.gleif.org/api/v1/lei-records?filter[lei]=5493001KJTIIGC8Y1R12",
+    contentTypes: ["application/vnd.api+json", "application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(
+          z.object({
+            id: z.string(),
+          }).passthrough(),
+        ).min(1),
+      }).passthrough(),
+    ),
+  },
+  "fdic-bank-find": {
+    url: "https://api.fdic.gov/banks/institutions?filters=STALP:IA&limit=1&format=json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "cftc-commitment-of-traders": {
+    url: "https://publicreporting.cftc.gov/resource/jun7-fc8e.json?$limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(z.record(z.string(), z.unknown())).min(1),
+    ),
+  },
+  "ecb-statistical-data-warehouse": {
+    url: "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?lastNObservations=1&format=jsondata",
+    contentTypes: ["application/json", "application/vnd.sdmx.data+json"],
+    validate: jsonValidator(
+      z.object({
+        dataSets: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "open-food-facts": {
+    url: "https://world.openfoodfacts.org/api/v2/product/737628064502.json",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        product: z.object({
+          code: z.string(),
+        }).passthrough(),
+      }).passthrough(),
+    ),
+  },
+  "cms-nursing-homes": {
+    url: "https://data.cms.gov/provider-data/api/1/datastore/query/4pq5-n9py/0?limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        results: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "who-gho-indicators": {
+    url: "https://ghoapi.azureedge.net/api/WHOSIS_000001?$filter=SpatialDim%20eq%20'USA'&$top=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        value: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "wikidata-query": {
+    url: "https://query.wikidata.org/sparql?query=SELECT%20%3Fitem%20WHERE%20%7B%20wd%3AQ42%20wdt%3AP31%20%3Fitem%20%7D%20LIMIT%201&format=json",
+    contentTypes: ["application/sparql-results+json", "application/json"],
+    validate: jsonValidator(
+      z.object({
+        results: z.object({
+          bindings: z.array(z.record(z.string(), z.unknown())).min(1),
+        }),
+      }).passthrough(),
+    ),
+  },
+  "met-norway-locationforecast": {
+    url: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.91&lon=10.75",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        properties: z.object({
+          timeseries: z.array(z.record(z.string(), z.unknown())).min(1),
+        }).passthrough(),
+      }).passthrough(),
+    ),
+  },
+  "osm-overpass": {
+    url: "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A10%5D%3Bnode%5B%22amenity%22%3D%22cafe%22%5D(40.748,-73.988,40.751,-73.985)%3Bout%201%3B",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        elements: z.array(z.record(z.string(), z.unknown())).min(1),
+      }).passthrough(),
+    ),
+  },
+  "ourairports": {
+    url: "https://davidmegginson.github.io/ourairports-data/airports.csv",
+    range: "bytes=0-65535",
+    contentTypes: ["text/csv", "text/plain", "application/octet-stream"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body).split(/\r?\n/, 1).join();
+      return ["ident", "type", "name", "latitude_deg"].every((field) => header.includes(field))
+        ? null
+        : "CSV is missing ident, type, name, or latitude_deg";
+    },
+  },
 } satisfies Record<
   string,
   {

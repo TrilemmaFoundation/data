@@ -1,0 +1,80 @@
+id: cms-nursing-homes
+name: CMS Nursing Home Compare
+description: >
+  Medicare-certified nursing home ratings, staffing, and inspection records
+  for building local long-term-care comparison tools.
+theme: Health, Food & Safety
+url: https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/items/4pq5-n9py
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+  - CSV
+license: CMS public-data principles
+license_url: https://www.cms.gov/data-research/cms-data/cms-data-principles-and-operating-norms
+url_checks:
+  source_marker: Provider Information
+  license_marker: CMS data is a public good
+domains:
+  - Health Care
+  - Health Services
+  - Long-Term Care
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Provider Comparison
+  - Geographic Analysis
+  - Quality Monitoring
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current Medicare-certified nursing homes
+update_frequency: monthly
+provider: Centers for Medicare & Medicaid Services
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Nursing Home Provider Information lists certified facilities with Five-Star
+    ratings, staffing, and inspection dates. Start with one state and the
+    stable dataset identifier. Ratings can be missing, inspections lag events,
+    and a star rating is not a clinical recommendation.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Provider Information dataset and read the data dictionary.
+    - Query the stable dataset identifier for a bounded page of facilities.
+    - Preserve CMS Certification Number values as text.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cms.gov/provider-data/api/1/datastore/query/4pq5-n9py/0",
+          params={"limit": 100},
+          timeout=30,
+      )
+      response.raise_for_status()
+      homes = pd.DataFrame(response.json()["results"])
+      state_col = next(column for column in homes.columns if "state" in column.lower())
+      sample = homes[homes[state_col] == "CA"]
+      print(sample.head(20))
+  first_project:
+    title: Compare nursing homes within one state
+    goal: Summarize Five-Star ratings and staffing for facilities in one state.
+    steps:
+      - Filter records by state while preserving CMS Certification Numbers as text.
+      - Summarize overall ratings and report missingness before ranking facilities.
+      - Explain why inspection lag, missing ratings, and resident mix limit a quality comparison.

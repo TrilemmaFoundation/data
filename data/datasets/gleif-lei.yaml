@@ -1,0 +1,79 @@
+id: gleif-lei
+name: GLEIF Legal Entity Identifier Index
+description: >
+  Global legal-entity identifiers and reference data for building company
+  lookup, ownership, and sanctions-screening tools.
+theme: Markets & Economics
+url: https://www.gleif.org/en/lei-data/gleif-api/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.1
+size_gb_max: 2
+formats:
+  - JSON
+  - XML
+license: CC0 1.0 Universal
+license_url: https://www.gleif.org/en/meta/lei-data-terms-of-use/
+url_checks:
+  source_marker: GLEIF API
+  license_marker: CC0 licence
+domains:
+  - Finance
+  - Business
+  - Compliance
+data_types:
+  - Registry Data
+  - Relational Data
+tasks:
+  - Entity Resolution
+  - Ownership Analysis
+  - Screening
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: current LEI records with daily golden copies
+update_frequency: daily
+provider: Global Legal Entity Identifier Foundation
+source_type: nonprofit
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    GLEIF publishes Legal Entity Identifiers and reference data under CC0.
+    Start with one known LEI rather than the concatenated golden copy. LEI
+    coverage is not universal, reference data can lag the entity's own filings,
+    and an LEI is not a credit, sanctions, or beneficial-ownership decision.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the GLEIF API page and the LEI Data Terms of Use, including the CC0 licence.
+    - Request one LEI record from the public API.
+    - Keep the LEI, legal name, jurisdiction, and registration status.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.gleif.org/api/v1/lei-records",
+          params={"filter[lei]": "5493001KJTIIGC8Y1R12"},
+          headers={"Accept": "application/vnd.api+json"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      records = pd.json_normalize(response.json()["data"])
+      print(records.filter(regex="id|legalName|jurisdiction|status").head())
+  first_project:
+    title: Look up one legal entity by LEI
+    goal: Test whether GLEIF can power a company-identity card from a single identifier.
+    steps:
+      - Keep the LEI, legal name, jurisdiction, and registration status.
+      - Record the last update time and any missing address fields.
+      - Explain that an LEI does not by itself confirm ownership, sanctions status, or that the entity is still operating.

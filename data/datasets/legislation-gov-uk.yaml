@@ -1,0 +1,89 @@
+id: legislation-gov-uk
+name: legislation.gov.uk
+description: >
+  Consolidated UK legislation in machine-readable form for building statute
+  lookup, citation, and change-monitoring tools.
+theme: Government & Policy
+url: https://www.legislation.gov.uk/developer
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 5
+formats:
+  - XML
+  - HTML
+  - JSON
+license: Open Government Licence v3.0
+license_url: https://www.legislation.gov.uk/developer
+url_checks:
+  source_marker: Legislation API
+  license_marker: Open Government Licence v3.0
+domains:
+  - Legislation
+  - Public Policy
+  - Regulation
+data_types:
+  - Documents
+  - Legal Text
+tasks:
+  - Document Search
+  - Change Monitoring
+  - Citation Research
+difficulty: beginner
+geography:
+  - United Kingdom
+temporal_coverage: historic and in-force UK legislation
+update_frequency: daily
+provider: The National Archives
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    legislation.gov.uk publishes consolidated UK Acts and statutory instruments
+    through a documented HTTP API. Start with one well-known Act and its XML
+    representation. The service is free to reuse commercially under OGL v3.0;
+    some EU-derived items carry an additional Commission reuse notice.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the developer zone and read the Open Government Licence attribution requirement.
+    - Request the Data Protection Act 2018 contents page as XML.
+    - Keep the official URI when you cite a section in any downstream product.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import xml.etree.ElementTree as ET
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.legislation.gov.uk/ukpga/2018/12/data.xml",
+          timeout=30,
+      )
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      ns = {"a": "http://www.legislation.gov.uk/namespaces/legislation"}
+      title = root.findtext(".//a:Title", default="", namespaces=ns)
+      sections = [
+          {
+              "number": item.findtext("a:Number", default="", namespaces=ns),
+              "title": item.findtext("a:Title", default="", namespaces=ns),
+          }
+          for item in root.findall(".//a:P1group", ns)[:20]
+      ]
+      print(title)
+      print(pd.DataFrame(sections).head())
+  first_project:
+    title: Extract section titles from one UK Act
+    goal: Test whether legislation.gov.uk URIs can power a bounded statute browser.
+    steps:
+      - Parse the Data Protection Act 2018 XML and keep official section numbers.
+      - List the first twenty section titles and flag any missing numbers.
+      - Attribute Crown copyright under OGL v3.0 and note that EU-origin items may need a second acknowledgement.

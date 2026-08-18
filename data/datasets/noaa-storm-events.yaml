@@ -1,0 +1,94 @@
+id: noaa-storm-events
+name: NOAA Storm Events Database
+description: >
+  National Weather Service storm reports for building U.S. severe-weather
+  history, loss, and event-type analysis tools.
+theme: Environment & Hazards
+url: https://www.ncei.noaa.gov/stormevents/ftp.jsp
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 2
+formats:
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Storm Events Database
+  license_marker: federal government materials
+domains:
+  - Weather
+  - Natural Hazards
+  - Emergency Management
+data_types:
+  - Event Data
+  - Tabular
+tasks:
+  - Event Analysis
+  - Loss Analysis
+  - Geographic Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 1950-present
+update_frequency: monthly
+provider: NOAA National Centers for Environmental Information
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Storm Events publishes yearly details, locations, and fatalities CSVs.
+    Start with one recent details file, not the full 1950-present archive.
+    Reports are NWS-entered events, so counts are not a complete census of
+    every storm and damage figures can be estimated.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the bulk-download page and the directory of yearly CSV files.
+    - Choose the latest details file for one year from the directory listing.
+    - Read a bounded row sample instead of concatenating every historical year.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import gzip
+      import re
+      from io import BytesIO
+
+      import pandas as pd
+      import requests
+
+      listing = requests.get(
+          "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/",
+          timeout=30,
+      )
+      listing.raise_for_status()
+      names = re.findall(
+          r'href="(StormEvents_details-ftp_v1.0_d2025_c\d+\.csv\.gz)"',
+          listing.text,
+      )
+      filename = sorted(names)[-1]
+      archive = requests.get(
+          "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+          + filename,
+          timeout=120,
+      )
+      archive.raise_for_status()
+      events = pd.read_csv(
+          BytesIO(gzip.decompress(archive.content)),
+          nrows=200,
+          low_memory=False,
+      )
+      print(events[["EVENT_ID", "STATE", "EVENT_TYPE", "BEGIN_DATE_TIME"]].head())
+  first_project:
+    title: Count 2025 storm-event types in a bounded sample
+    goal: Test whether one yearly details file can power a local hazard-history table.
+    steps:
+      - Keep event ID, state, event type, and begin time from the first 200 rows.
+      - Count event types and flag missing states before ranking hazards.
+      - Explain that Storm Events is a reported-event archive, not a complete storm census.

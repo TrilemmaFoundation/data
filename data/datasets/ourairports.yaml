@@ -1,0 +1,77 @@
+id: ourairports
+name: OurAirports
+description: >
+  Community airport, runway, and navaid records for building aviation
+  directories and map layers from a nightly public-domain CSV.
+theme: Geospatial & Infrastructure
+url: https://ourairports.com/data/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.05
+formats:
+  - CSV
+license: Public Domain
+license_url: https://ourairports.com/data/
+url_checks:
+  source_marker: airports.csv
+  license_marker: All data is released to the Public Domain
+domains:
+  - Aviation
+  - Transportation
+  - Mapping
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Directory Search
+  - Geographic Analysis
+  - Infrastructure Mapping
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: continuously updated community airport records
+update_frequency: daily
+provider: OurAirports
+source_type: community
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    OurAirports publishes a nightly airports.csv covering worldwide aerodromes.
+    Start with large airports in one country. Community coordinates and names
+    can be incomplete, and the file is not an official aeronautical chart.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the data page and note the public-domain terms.
+    - Download airports.csv from the published GitHub Pages mirror.
+    - Filter to one ISO country and large airports before mapping.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      airports = pd.read_csv(
+          "https://davidmegginson.github.io/ourairports-data/airports.csv"
+      )
+      us_large = airports[
+          (airports["iso_country"] == "US")
+          & (airports["type"] == "large_airport")
+      ]
+      print(
+          us_large[
+              ["ident", "name", "municipality", "latitude_deg", "longitude_deg"]
+          ].head()
+      )
+  first_project:
+    title: Map large U.S. airports from the public-domain dump
+    goal: Test whether OurAirports can power a bounded aviation directory layer.
+    steps:
+      - Keep ident, name, municipality, and coordinates for U.S. large airports.
+      - Count missing municipalities before plotting.
+      - Explain that community airport records are not a substitute for official NASR or AIP charts.

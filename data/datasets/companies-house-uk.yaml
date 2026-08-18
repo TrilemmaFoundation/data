@@ -1,0 +1,79 @@
+id: companies-house-uk
+name: Companies House Register
+description: >
+  Public UK company, officer, and filing records for building company-status,
+  officer, and industry-lookup tools.
+theme: Markets & Economics
+url: https://developer.company-information.service.gov.uk/get-started
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 10
+formats:
+  - JSON
+  - CSV
+license: Companies House public register terms
+license_url: https://www.gov.uk/guidance/companies-house-data-products
+url_checks:
+  source_marker: Get started with the Companies House API
+  license_marker: impose no rules or requirements
+domains:
+  - Business
+  - Corporate Filings
+  - Regulation
+data_types:
+  - Registry Data
+  - Documents
+tasks:
+  - Entity Resolution
+  - Company Research
+  - Screening
+difficulty: beginner
+geography:
+  - United Kingdom
+temporal_coverage: live companies on the public register
+update_frequency: daily
+provider: Companies House
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Companies House API returns public register records for UK companies.
+    Start with one company number after creating a free API key. Register data
+    can lag filings, dissolved companies remain searchable, and you remain
+    responsible for data-protection rules when publishing officer details.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Companies House API key saved in the COMPANIES_HOUSE_API_KEY environment variable
+  access_steps:
+    - Register a Companies House developer account and create an API key.
+    - Read the data-products page, including the notice that the public register has no reuse licence restrictions.
+    - Request one company profile by company number.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.company-information.service.gov.uk/company/00000006",
+          auth=(os.environ["COMPANIES_HOUSE_API_KEY"], ""),
+          timeout=30,
+      )
+      response.raise_for_status()
+      profile = pd.json_normalize(response.json())
+      print(profile.filter(regex="company_name|company_number|company_status|sic").head())
+  first_project:
+    title: Look up one UK company's status and SIC codes
+    goal: Test whether the public register can power a company-status card.
+    steps:
+      - Keep company number, name, status, and SIC codes.
+      - Record the accounts and confirmation-statement due dates if present.
+      - Explain that officer and address fields are personal data and that register lag can make a "live" status stale.

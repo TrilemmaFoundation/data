@@ -1,0 +1,74 @@
+id: onet-occupations
+name: O*NET Occupational Database
+description: >
+  U.S. occupation titles, skills, and task descriptions for building job-profile
+  and labor-market research tools from published database files.
+theme: Demographics & Development
+url: https://www.onetcenter.org/database.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - CSV
+  - JSON
+  - Excel
+license: Creative Commons Attribution 4.0
+license_url: https://www.onetcenter.org/license_db.html
+url_checks:
+  source_marker: O*NET 30.3 Database
+  license_marker: Creative Commons Attribution 4.0 International License
+domains:
+  - Labor Economics
+  - Occupations
+  - Workforce Development
+data_types:
+  - Tabular
+  - Taxonomy
+tasks:
+  - Labor Market Research
+  - Job Profiling
+  - Skills Analysis
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current O*NET-SOC occupations with quarterly updates
+update_frequency: quarterly
+provider: National Center for O*NET Development
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    O*NET publishes occupation codes, titles, and descriptions as downloadable
+    database files under CC BY 4.0. Start with the Occupation Data CSV, not the
+    paid-product Web Services free-tier. Titles are a taxonomy, not a vacancy
+    count, and O*NET is a trademark of USDOL/ETA.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the database page and read the CC BY attribution requirements.
+    - Download the published Occupation Data file, not services.onetcenter.org.
+    - Keep O*NET-SOC codes as text and credit O*NET 30.3 Database.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      occupations = pd.read_csv(
+          "https://www.onetcenter.org/dl_files/database/db_30_3_text/Occupation%20Data.txt",
+          sep="\t",
+      )
+      print(occupations.head())
+      print(occupations.columns.tolist())
+  first_project:
+    title: Browse published O*NET occupation titles
+    goal: Test whether the Occupation Data file can power a bounded job-profile lookup.
+    steps:
+      - Keep O*NET-SOC code, title, and description as published.
+      - Search for one occupation family by title keywords and count matching codes.
+      - Attribute O*NET 30.3 Database under CC BY 4.0 and explain that titles are not a measure of hiring demand.

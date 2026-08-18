@@ -1,0 +1,81 @@
+id: who-gho-indicators
+name: WHO Global Health Observatory
+description: >
+  Official country health indicators for building life-expectancy, mortality,
+  and coverage comparison tools.
+theme: Demographics & Development
+url: https://www.who.int/data/gho/info/gho-odata-api
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - XML
+license: Creative Commons Attribution 4.0 with WHO additional terms
+license_url: https://data.who.int/about/data/terms-and-conditions
+url_checks:
+  source_marker: GHO OData API
+  license_marker: Creative Commons Attribution 4.0 International License
+domains:
+  - Public Health
+  - International Statistics
+  - Demographics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - International Comparison
+  - Trend Analysis
+  - Policy Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: indicator series with country-specific starts
+update_frequency: annual
+provider: World Health Organization
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The GHO OData API returns WHO health indicators by country and year. Start
+    with life expectancy at birth for one country. Values can lag, sex and age
+    splits differ by indicator, and WHO forbids implying endorsement.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the GHO OData examples and the data.who.int terms, including CC BY 4.0 and no-endorsement rules.
+    - Request one indicator filtered to one country and a recent year.
+    - Keep indicator code, SpatialDim, TimeDim, and NumericValue.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://ghoapi.azureedge.net/api/WHOSIS_000001",
+          params={"$filter": "SpatialDim eq 'USA'", "$top": "20"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      observations = pd.DataFrame(response.json()["value"])
+      print(
+          observations[
+              ["IndicatorCode", "SpatialDim", "TimeDim", "Dim1", "NumericValue"]
+          ].head()
+      )
+  first_project:
+    title: Chart U.S. life expectancy at birth from GHO
+    goal: Test whether one WHO indicator can power a bounded national trend card.
+    steps:
+      - Keep year, sex dimension, and NumericValue for WHOSIS_000001 in the United States.
+      - Plot the series and report missing years before interpreting a change.
+      - Attribute WHO under CC BY 4.0 and state that the chart is not a WHO-endorsed product.

@@ -1,0 +1,84 @@
+id: fdic-bank-find
+name: FDIC BankFind Suite
+description: >
+  FDIC-insured institution, branch, financial, and failure records for building
+  bank-directory, branch-map, and failure-history tools.
+theme: Markets & Economics
+url: https://api.fdic.gov/banks/docs
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: BankFind Suite
+  license_marker: federal government materials
+domains:
+  - Finance
+  - Banking
+  - Regulation
+data_types:
+  - Registry Data
+  - Geospatial
+  - Time Series
+tasks:
+  - Directory Search
+  - Geographic Analysis
+  - Failure Analysis
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: 1934-present failures with current institutions
+update_frequency: weekly
+provider: Federal Deposit Insurance Corporation
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    BankFind Suite exposes institution and branch records through a public API.
+    Start with one state abbreviation and a small result limit. A key is not
+    required today, though FDIC documents a registration path. Branch lists are
+    not a measure of service quality, and failure records are historical.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the BankFind API documentation and note the Elastic-style filter syntax.
+    - Request a bounded page of Iowa institutions.
+    - Keep certificate numbers, names, and city fields as text.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.fdic.gov/banks/institutions",
+          params={
+              "filters": 'STALP:IA',
+              "fields": "NAME,CERT,CITY,STALP,ACTIVE",
+              "limit": 20,
+              "format": "json",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      banks = pd.DataFrame(response.json()["data"])
+      print(banks.head())
+  first_project:
+    title: List active FDIC-insured institutions in one state
+    goal: Test whether BankFind can power a bounded state bank directory.
+    steps:
+      - Keep certificate number, name, city, and active flag.
+      - Count active versus inactive institutions and flag missing cities.
+      - Explain that a branch or certificate list is not a safety rating and that failure history lives on a separate endpoint.
