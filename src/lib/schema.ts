@@ -1,11 +1,12 @@
 import { z } from "zod";
 
 const AccessTypeSchema = z.enum(["download", "api", "both"]);
-const DifficultySchema = z.enum([
+export const DIFFICULTIES = [
   "beginner",
   "intermediate",
   "advanced",
-]);
+] as const;
+const DifficultySchema = z.enum(DIFFICULTIES);
 const DATASET_THEMES = [
   "Environment & Hazards",
   "Government & Policy",
@@ -26,7 +27,7 @@ const SourceTypeSchema = z.enum([
   "community",
 ]);
 
-const UPDATE_FREQUENCIES = [
+export const UPDATE_FREQUENCIES = [
   "continuous",
   "near real time",
   "daily",

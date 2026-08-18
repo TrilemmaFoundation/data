@@ -1,5 +1,7 @@
 import Fuse from "fuse.js";
 import {
+  DIFFICULTIES,
+  UPDATE_FREQUENCIES,
   type CatalogDataset,
   type Dataset,
   type DatasetTheme,
@@ -173,22 +175,6 @@ export function filterDatasets(
   });
 }
 
-const DIFFICULTY_ORDER: Dataset["difficulty"][] = [
-  "beginner",
-  "intermediate",
-  "advanced",
-];
-const UPDATE_ORDER: Dataset["update_frequency"][] = [
-  "continuous",
-  "near real time",
-  "daily",
-  "weekly",
-  "monthly",
-  "quarterly",
-  "annual",
-  "occasional",
-];
-
 export function compareDatasets(
   a: CatalogDataset,
   b: CatalogDataset,
@@ -203,10 +189,10 @@ export function compareDatasets(
             getDatasetAccessMethods(b).join("+"),
           )
         : column === "difficulty"
-          ? DIFFICULTY_ORDER.indexOf(a.difficulty) -
-            DIFFICULTY_ORDER.indexOf(b.difficulty)
-          : UPDATE_ORDER.indexOf(a.update_frequency) -
-            UPDATE_ORDER.indexOf(b.update_frequency);
+          ? DIFFICULTIES.indexOf(a.difficulty) -
+            DIFFICULTIES.indexOf(b.difficulty)
+          : UPDATE_FREQUENCIES.indexOf(a.update_frequency) -
+            UPDATE_FREQUENCIES.indexOf(b.update_frequency);
   return compared || a.name.localeCompare(b.name);
 }
 
