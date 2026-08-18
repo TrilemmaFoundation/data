@@ -1,0 +1,79 @@
+id: statcan-web-data
+name: Statistics Canada Web Data Service
+description: >
+  Canadian statistical tables for building provincial labour, prices, and
+  population tools from Statistics Canada SDMX.
+theme: Demographics & Development
+url: https://www.statcan.gc.ca/en/developers/wds
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+  - SDMX
+license: Statistics Canada Open Licence
+license_url: https://www.statcan.gc.ca/en/reference/licence
+url_checks:
+  source_marker: Web Data Service
+  license_marker: Statistics Canada Open Licence
+domains:
+  - Demographics
+  - Labor Economics
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Provincial Comparison
+  - Economic Monitoring
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Canada
+temporal_coverage: table-specific Statistics Canada series
+update_frequency: monthly
+provider: Statistics Canada
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Web Data Service returns cube metadata and vector series as JSON. Start
+    with one vector id such as a national unemployment rate. Cube ids change
+    when tables are terminated, and bilingual labels can differ.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the WDS documentation and copy one vector identifier from a CANSIM table.
+    - POST getDataFromVectorsAndLatestNPeriods for a few periods.
+    - Cite Statistics Canada under the Open Licence.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://www150.statcan.gc.ca/t1/wds/rest/getDataFromVectorsAndLatestNPeriods",
+          json=[{"vectorId": 2062811, "latestN": 12}],
+          timeout=30,
+      )
+      response.raise_for_status()
+      series = pd.json_normalize(response.json()[0]["object"]["vectorDataPoint"])
+      series["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(series.head())
+  first_project:
+    title: Chart a Canadian labour vector
+    goal: Test whether one WDS vector can power a bounded provincial-or-national labour sketch.
+    steps:
+      - Confirm twelve vector data points returned for the selected vector id.
+      - Plot the reference periods and values.
+      - Cite Statistics Canada and explain that terminated cubes change identifiers and that this is not U.S. BLS data.

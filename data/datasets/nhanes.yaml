@@ -1,0 +1,78 @@
+id: nhanes
+name: NHANES Public Data Files
+description: >
+  Cycle-based examination, laboratory, and questionnaire files for building
+  nutrition and health-survey prototypes from public NHANES tables.
+theme: Health, Food & Safety
+url: https://wwwn.cdc.gov/nchs/nhanes/default.aspx
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 2
+formats:
+  - XPT
+  - CSV
+license: U.S. Public Domain with CDC attribution and use requirements
+license_url: https://www.cdc.gov/other/agencymaterials.html
+url_checks:
+  source_marker: National Health and Nutrition Examination Survey
+  license_marker: public domain
+domains:
+  - Public Health
+  - Nutrition
+  - Survey Research
+data_types:
+  - Survey Microdata
+  - Tabular
+tasks:
+  - Health Survey Analysis
+  - Nutrition Research
+  - Prevalence Estimation
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: NHANES cycles from 1999-present with two-year public files
+update_frequency: occasional
+provider: National Center for Health Statistics
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    NHANES public files include demographics, examination, and lab tables by
+    cycle. Start with one cycle's demographics XPT. Unweighted row counts are
+    not national estimates; use interview weights, and do not treat a cycle
+    extract as clinical diagnosis data.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the NHANES page and choose one public cycle such as 2021-2023.
+    - Download the demographics XPT file.
+    - Keep sequence number, interview weight, age, and sex.
+  python:
+    packages:
+      - pandas
+      - pyreadstat
+    code: |
+      import pandas as pd
+      import pyreadstat
+      import requests
+      from io import BytesIO
+
+      response = requests.get(
+          "https://wwwn.cdc.gov/Nchs/Nhanes/2021-2023/DEMO_L.xpt",
+          timeout=60,
+      )
+      response.raise_for_status()
+      demographics, _meta = pyreadstat.read_xport(BytesIO(response.content))
+      print(demographics.head())
+  first_project:
+    title: Describe one NHANES demographics file
+    goal: Test whether a public cycle file can power a bounded survey-profile sketch.
+    steps:
+      - Keep sequence number, interview weight, age, and sex from the demographics table.
+      - Compare unweighted counts with a weighted age summary using the interview weight.
+      - Explain that unweighted rows are not U.S. prevalence estimates and that NHANES is not a diagnostic file.

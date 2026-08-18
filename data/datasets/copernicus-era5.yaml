@@ -1,0 +1,92 @@
+id: copernicus-era5
+name: Copernicus ERA5 Reanalysis
+description: >
+  Global hourly climate reanalysis for building location-specific weather-history
+  tools from a tightly bounded ERA5 extract.
+theme: Environment & Hazards
+url: https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 50
+formats:
+  - NetCDF
+  - GRIB
+license: Licence to use Copernicus Products
+license_url: https://cds.climate.copernicus.eu/licences/licence-to-use-copernicus-products
+url_checks:
+  source_marker: ERA5 hourly data on single levels
+  license_marker: Licence to use Copernicus Products
+domains:
+  - Climate
+  - Weather
+  - Environmental Science
+data_types:
+  - Gridded Data
+  - Time Series
+tasks:
+  - Climate Analysis
+  - Historical Weather Reconstruction
+  - Site Screening
+difficulty: advanced
+geography:
+  - Global
+temporal_coverage: 1940-present
+update_frequency: daily
+provider: Copernicus Climate Change Service
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    ERA5 is a global reanalysis on the Climate Data Store. Start with one
+    variable, one hour, and a few-kilometer bounding box. Reanalysis blends
+    observations and a model, so it is not a station measurement, and CDS
+    jobs are queued rather than instant.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A CDS account, accepted ERA5 licence, and CDSAPI_KEY environment variable
+  access_steps:
+    - Register at the Climate Data Store and accept the ERA5 dataset licence on the download form.
+    - Save your personal access token in CDSAPI_KEY.
+    - Retrieve 2-metre temperature for one hour over a tiny bounding box as NetCDF.
+  python:
+    packages:
+      - cdsapi
+      - xarray
+      - netCDF4
+    code: |
+      import os
+      import cdsapi
+      import xarray as xr
+
+      client = cdsapi.Client(
+          url="https://cds.climate.copernicus.eu/api",
+          key=os.environ["CDSAPI_KEY"],
+      )
+      client.retrieve(
+          "reanalysis-era5-single-levels",
+          {
+              "product_type": "reanalysis",
+              "variable": "2m_temperature",
+              "year": "2024",
+              "month": "07",
+              "day": "15",
+              "time": "12:00",
+              "area": [40.8, -74.05, 40.7, -73.95],
+              "format": "netcdf",
+          },
+          "era5_nyc_sample.nc",
+      )
+      sample = xr.open_dataset("era5_nyc_sample.nc")
+      print(sample)
+  first_project:
+    title: Reconstruct one hour of 2-metre temperature
+    goal: Test whether a tiny ERA5 extract can power a site-history prototype.
+    steps:
+      - Confirm the NetCDF contains 2-metre temperature for the requested hour and bounding box.
+      - Convert temperature from kelvin to Celsius and record the grid-cell center used.
+      - Explain that ERA5 is a reanalysis grid, not a weather-station observation, and that queued CDS jobs can delay retrieval.

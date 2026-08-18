@@ -1,0 +1,73 @@
+id: census-lehd-lodes
+name: Census LEHD Origin-Destination Employment Statistics
+description: >
+  Block-level origin-destination jobs data for building commute, workforce, and
+  local employment-map prototypes.
+theme: Geospatial & Infrastructure
+url: https://lehd.ces.census.gov/data/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 50
+formats:
+  - CSV
+  - GZIP
+license: U.S. Census Bureau data-use terms
+license_url: https://www.census.gov/data/developers/about/terms-of-service.html
+url_checks:
+  source_marker: LEHD Origin-Destination Employment Statistics
+  license_marker: Terms of Service
+domains:
+  - Labor Economics
+  - Local Economics
+  - Transportation
+data_types:
+  - Tabular
+  - Geospatial
+  - Origin-Destination
+tasks:
+  - Commute Analysis
+  - Workforce Mapping
+  - Site Selection
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual LODES vintages with state-specific start years
+update_frequency: annual
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    LODES Origin-Destination files count jobs connecting home and work census
+    blocks. Start with one small state's OD main file. Counts are synthesised
+    from administrative records, some states are missing in some years, and
+    block-to-block files are large.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the LEHD data page and choose LODES OD for one small state.
+    - Download the JT00 OD main gzip for the latest vintage listed.
+    - Keep workplace block, residence block, and total jobs.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      jobs = pd.read_csv(
+          "https://lehd.ces.census.gov/data/lodes/LODES8/vt/od/vt_od_main_JT00_2022.csv.gz",
+          nrows=200,
+      )
+      print(jobs.head())
+  first_project:
+    title: Inspect Vermont LODES job flows
+    goal: Test whether a one-state OD extract can power a bounded commute sketch.
+    steps:
+      - Keep workplace geocode, residence geocode, and total jobs from the first rows.
+      - Sum jobs by workplace census tract prefix and list empty geocodes.
+      - Explain that LODES is synthesised administrative data, some states are omitted, and a sample of rows is not a statewide commute census.

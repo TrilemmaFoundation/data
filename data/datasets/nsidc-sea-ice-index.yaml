@@ -1,0 +1,78 @@
+id: nsidc-sea-ice-index
+name: NSIDC Sea Ice Index
+description: >
+  Arctic and Antarctic sea-ice extent and concentration time series for
+  building seasonal ice monitors and climate-comparison tools.
+theme: Environment & Hazards
+url: https://nsidc.org/data/g02135/versions/3
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - CSV
+  - GeoTIFF
+  - PNG
+license: NASA NSIDC DAAC data use and citation guidance
+license_url: https://nsidc.org/about/data-use-and-copyright
+url_checks:
+  source_marker: Sea Ice Index
+  license_marker: Citation Policies
+domains:
+  - Climate
+  - Cryosphere
+  - Earth Observation
+data_types:
+  - Time Series
+  - Geospatial
+  - Tabular
+tasks:
+  - Climate Monitoring
+  - Trend Analysis
+  - Seasonal Comparison
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: 1978-present
+update_frequency: daily
+provider: National Snow and Ice Data Center
+source_type: academic
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Sea Ice Index provides daily and monthly Northern Hemisphere extent
+    CSV files derived from passive-microwave satellite retrievals. Start with
+    the monthly North CSV. Extent is a thresholded ice-covered area, not ice
+    thickness or volume, and near-real-time values can be revised.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the G02135 dataset page and locate the Sea Ice Index CSV archives.
+    - Download the Northern Hemisphere monthly extent file.
+    - Keep date, extent, and missing flags before plotting.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      ice = pd.read_csv(
+          "https://noaadata.apps.nsidc.org/NOAA/G02135/north/monthly/data/N_09_extent_v3.0.csv",
+      )
+      ice.columns = [column.strip() for column in ice.columns]
+      ice["extent"] = pd.to_numeric(ice["extent"], errors="coerce")
+      ice["date"] = pd.to_datetime(
+          dict(year=ice["year"], month=ice["mo"], day=1)
+      )
+      print(ice[["date", "extent", "area"]].tail())
+  first_project:
+    title: Track September Arctic sea-ice extent
+    goal: Describe how September Northern Hemisphere extent has changed across the published record.
+    steps:
+      - Convert year and month to dates and drop rows with missing extent.
+      - Plot September extent and mark the minimum year in the extract.
+      - Explain that extent is not thickness or volume and that near-real-time months can be revised.

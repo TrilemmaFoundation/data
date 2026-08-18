@@ -1,0 +1,72 @@
+id: irs-soi-tax-stats
+name: IRS SOI Tax Stats
+description: >
+  Statistics of Income tables on individual and business tax returns for
+  building income, filing, and geographic tax-profile tools.
+theme: Markets & Economics
+url: https://www.irs.gov/statistics/soi-tax-stats-statistics-of-income
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - Excel
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Statistics of Income
+  license_marker: federal government materials
+domains:
+  - Public Finance
+  - Taxation
+  - Regional Economics
+data_types:
+  - Tabular
+  - Aggregated Data
+tasks:
+  - Income Analysis
+  - Geographic Comparison
+  - Public Finance Research
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: tax years published in SOI annual and geographic products
+update_frequency: annual
+provider: Internal Revenue Service
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    SOI publishes aggregated individual-income tables, including ZIP-code
+    products. Start with one state's ZIP-code AGI table. These are tabulated
+    tax returns, not household surveys, and ZIP totals can be suppressed for
+    disclosure.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the SOI Statistics of Income page and locate Individual Income Tax ZIP Code Data.
+    - Download one recent tax-year CSV or Excel file.
+    - Keep ZIP code, AGI class, number of returns, and total AGI.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      soi = pd.read_csv(
+          "https://www.irs.gov/pub/irs-soi/22zpallagi.csv",
+          nrows=200,
+      )
+      print(soi.head())
+  first_project:
+    title: Profile ZIP-code AGI classes
+    goal: Test whether a SOI ZIP extract can power a bounded local-income sketch.
+    steps:
+      - Keep state, ZIP, AGI class, return counts, and AGI from the first rows.
+      - Sum returns by AGI class for one state abbreviation in the extract.
+      - Explain that SOI ZIP tables are tax-return tabulations with disclosure suppression, not ACS income estimates.

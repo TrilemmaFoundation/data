@@ -465,6 +465,34 @@ describe("checkUrl", () => {
       "2026-11-15",
       2,
     ],
+    [
+      "https://volcano.si.edu/",
+      403,
+      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "2026-11-16",
+      2,
+    ],
+    [
+      "https://volcano.si.edu/gvp_webservices.cfm",
+      403,
+      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "2026-11-16",
+      2,
+    ],
+    [
+      "https://lda.gov/api/",
+      403,
+      "Senate LDA blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "2026-11-16",
+      2,
+    ],
+    [
+      "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list",
+      403,
+      "UN Security Council pages block automated validation from some regions; reconfirmed 2026-08-18",
+      "2026-11-16",
+      2,
+    ],
   ])(
     "allows an exact, unexpired protected-URL exception for %s",
     async (url, status, reason, expires, expectedAttempts) => {

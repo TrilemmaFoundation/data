@@ -1,0 +1,79 @@
+id: ons-statistics
+name: ONS Statistics API
+description: >
+  Official UK statistical datasets for building local labour, prices, and
+  population tools from Office for National Statistics.
+theme: Demographics & Development
+url: https://developer.ons.gov.uk/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+  - CSV
+license: Open Government Licence v3.0
+license_url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+url_checks:
+  source_marker: ONS developer hub
+  license_marker: Open Government Licence
+domains:
+  - Demographics
+  - Labor Economics
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Local Statistics
+  - Country Comparison
+  - Trend Analysis
+difficulty: beginner
+geography:
+  - United Kingdom
+temporal_coverage: dataset-specific ONS time series
+update_frequency: monthly
+provider: Office for National Statistics
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The ONS API returns dataset metadata and observations. Start with one
+    edition of CPIH or a labour dataset and a few observations. UK statistics
+    have geography codes that do not match U.S. FIPS, and some tables are
+    still Excel-only.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the ONS developer hub and pick one dataset id.
+    - Request the latest edition metadata, then a small observation slice.
+    - Cite ONS under the Open Government Licence.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.beta.ons.gov.uk/v1/datasets/cpih01/editions/time-series/versions/1/observations",
+          params={"time": "latest", "geography": "K02000001"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      observations = pd.json_normalize(response.json().get("observations", []))
+      observations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(observations.head())
+  first_project:
+    title: Read a UK CPIH observation
+    goal: Test whether the ONS API can power a bounded UK prices card.
+    steps:
+      - Confirm an observation value returned for the selected dataset and geography.
+      - Record the edition version and observation time used.
+      - Cite ONS under OGL and explain that UK geography codes are not U.S. FIPS and that editions are versioned.

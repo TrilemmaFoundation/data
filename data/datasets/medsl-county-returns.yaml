@@ -1,0 +1,71 @@
+id: medsl-county-returns
+name: MEDSL County Presidential Returns
+description: >
+  County-level U.S. presidential election returns for building result maps and
+  turnout comparison tools from MIT Election Data and Science Lab files.
+theme: Government & Policy
+url: https://electionlab.mit.edu/data
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - CSV
+  - DTA
+license: Creative Commons CC0 1.0 Universal
+license_url: https://creativecommons.org/publicdomain/zero/1.0/
+url_checks:
+  source_marker: Election Data
+  license_marker: CC0
+domains:
+  - Elections
+  - Public Policy
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Election Analysis
+  - Mapping
+  - Turnout Comparison
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: presidential general elections compiled by MEDSL
+update_frequency: occasional
+provider: MIT Election Data and Science Lab
+source_type: academic
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    MEDSL publishes county presidential returns on Harvard Dataverse. Start
+    with one election year and two-party totals. County shapefiles, third-party
+    votes, and certified state files can disagree, and this is not precinct
+    data.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the MEDSL data page and follow the county presidential returns Dataverse record.
+    - Download the CSV for the latest presidential cycle.
+    - Keep year, county FIPS, Democratic votes, and Republican votes.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      returns = pd.read_csv(
+          "https://dataverse.harvard.edu/api/access/datafile/6188156",
+          encoding="latin-1",
+      )
+      print(returns.head())
+  first_project:
+    title: Map one year's county presidential margins
+    goal: Test whether county returns can power a bounded result-map prototype.
+    steps:
+      - Filter to one year and keep county FIPS plus Democratic and Republican votes.
+      - Compute two-party vote share and list counties with missing FIPS.
+      - Explain that county totals can differ from certified state files and are not precinct results.

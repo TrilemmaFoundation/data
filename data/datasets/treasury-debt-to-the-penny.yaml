@@ -1,0 +1,85 @@
+id: treasury-debt-to-the-penny
+name: Treasury Debt to the Penny
+description: >
+  Daily U.S. public debt outstanding for building national-debt monitors and
+  fiscal-dashboard prototypes.
+theme: Markets & Economics
+url: https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - CSV
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Debt to the Penny
+  license_marker: federal government materials
+domains:
+  - Public Finance
+  - Fixed Income
+  - Macroeconomics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Fiscal Monitoring
+  - Trend Analysis
+  - Dashboarding
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: 1993-present daily totals with earlier incomplete splits
+update_frequency: daily
+provider: U.S. Department of the Treasury Bureau of the Fiscal Service
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Fiscal Data reports total public debt outstanding each business day, split
+    into debt held by the public and intragovernmental holdings. Start with
+    the latest 30 records. This is debt outstanding, not a deficit, and other
+    Fiscal Data tables calculate TPDO slightly differently.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Debt to the Penny dataset page and copy the API endpoint.
+    - Request the latest records sorted by record date descending.
+    - Keep record date, debt held by the public, and total public debt outstanding.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny",
+          params={
+              "fields": "record_date,debt_held_public_amt,intragov_hold_amt,tot_pub_debt_out_amt",
+              "sort": "-record_date",
+              "page[size]": 30,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      debt = pd.DataFrame(response.json()["data"])
+      debt["record_date"] = pd.to_datetime(debt["record_date"])
+      debt["tot_pub_debt_out_amt"] = pd.to_numeric(debt["tot_pub_debt_out_amt"])
+      print(debt.head())
+  first_project:
+    title: Chart recent total public debt
+    goal: Test whether daily TPDO can power a bounded national-debt sparkline.
+    steps:
+      - Convert amounts to numbers and sort by record date.
+      - Plot total public debt outstanding and the public versus intragovernmental split.
+      - Explain that TPDO is not the deficit and that other Fiscal Data tables treat Federal Financing Bank debt differently.

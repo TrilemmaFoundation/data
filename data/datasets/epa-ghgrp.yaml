@@ -1,0 +1,78 @@
+id: epa-ghgrp
+name: EPA Greenhouse Gas Reporting Program
+description: >
+  Facility-level U.S. greenhouse-gas emissions reports for building industrial
+  emissions maps and sector comparison tools.
+theme: Environment & Hazards
+url: https://www.epa.gov/ghgreporting/data-sets
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - Excel
+  - CSV
+  - JSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: GHG Reporting Program Data Sets
+  license_marker: federal government materials
+domains:
+  - Climate
+  - Environmental Health
+  - Regulation
+data_types:
+  - Tabular
+  - Facility Records
+tasks:
+  - Emissions Monitoring
+  - Facility Comparison
+  - Mapping
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: 2010-present reporting years
+update_frequency: annual
+provider: U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    GHGRP publishes annual facility emissions for large U.S. reporters. Start
+    with one state and one reporting year from Envirofacts. Reported totals are
+    self-reported under the rule, cover large emitters rather than every source,
+    and are not the EPA Inventory of U.S. Greenhouse Gas Emissions.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the GHGRP data sets page and note that Envirofacts can return JSON.
+    - Query one state and keep facility name, latitude, longitude, and CO2e.
+    - Record the reporting year used in the query.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.epa.gov/efservice/PUB_DIM_FACILITY/STATE/CO/JSON",
+          timeout=60,
+      )
+      response.raise_for_status()
+      facilities = pd.DataFrame(response.json())
+      print(facilities.head())
+  first_project:
+    title: Map Colorado GHGRP facilities
+    goal: Test whether facility records can power a bounded industrial-emissions locator.
+    steps:
+      - Keep facility identifier, name, county, and coordinates from the bounded extract.
+      - Count reporters by county and list names missing coordinates.
+      - Explain that GHGRP covers large reporters for a reporting year and is not a complete emissions inventory.

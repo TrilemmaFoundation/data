@@ -1,0 +1,86 @@
+id: nhtsa-fars
+name: NHTSA Fatality Analysis Reporting System
+description: >
+  Census of fatal U.S. motor-vehicle crashes for building road-safety maps and
+  fatality-trend monitors.
+theme: Health, Food & Safety
+url: https://www.nhtsa.gov/nhtsa-datasets-and-apis
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.05
+size_gb_max: 2
+formats:
+  - CSV
+  - SAS
+  - ZIP
+license: NHTSA public-information terms
+license_url: https://www.nhtsa.gov/about-nhtsa/terms-use
+url_checks:
+  source_marker: NHTSA Datasets and APIs
+  license_marker: may be distributed or copied
+domains:
+  - Transportation
+  - Vehicle Safety
+  - Public Health
+data_types:
+  - Event Data
+  - Tabular
+  - Crash Records
+tasks:
+  - Safety Analysis
+  - Mapping
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual FARS files from 1975-present
+update_frequency: annual
+provider: National Highway Traffic Safety Administration
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    FARS is a census of fatal crashes on U.S. public roads. Start with one
+    year's accident CSV. It does not include non-fatal crashes, and FARS is
+    not the same as NHTSA recall records.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the FARS file-download directory and choose one annual National folder.
+    - Download the accident CSV from that year.
+    - Keep state, county, date, and fatality count.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://crashviewer.nhtsa.dot.gov/CrashAPI/FARSData/GetFARSData",
+          params={
+              "dataset": "Accident",
+              "FromYear": "2022",
+              "ToYear": "2022",
+              "State": "12",
+              "format": "json",
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      crashes = pd.DataFrame(response.json().get("Results", [[]])[0])
+      crashes["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(crashes.head())
+  first_project:
+    title: Profile one state's fatal crashes
+    goal: Test whether a FARS extract can power a bounded road-safety sketch.
+    steps:
+      - Keep crash identifier, date, county, and fatality count from the bounded year.
+      - Count fatal crashes by county and list records missing coordinates if present.
+      - Explain that FARS covers fatal crashes only and is not NHTSA's vehicle-recall file.

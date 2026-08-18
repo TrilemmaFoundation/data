@@ -804,6 +804,130 @@ const contracts = {
         : "CSV is missing ident, type, name, or latitude_deg";
     },
   },
+  "nsf-awards": {
+    url: "https://api.nsf.gov/services/v1/awards.json?keyword=quantum&rpp=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        response: z.object({
+          award: z.array(z.object({ id: z.string(), title: z.string() })).min(1),
+        }),
+      }),
+    ),
+  },
+  "treasury-debt-to-the-penny": {
+    url: "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?fields=record_date,tot_pub_debt_out_amt&sort=-record_date&page[size]=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(z.object({
+          record_date: z.string(),
+          tot_pub_debt_out_amt: z.string(),
+        })).min(1),
+      }),
+    ),
+  },
+  "noaa-gml-co2": {
+    url: "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv",
+    range: "bytes=0-4096",
+    contentTypes: ["text/csv", "text/plain", "application/octet-stream"],
+    validate(body: Uint8Array) {
+      const text = new TextDecoder().decode(body);
+      return text.includes("year") && (text.includes("average") || text.includes("deseasonalized"))
+        ? null
+        : "CSV is missing year or average columns";
+    },
+  },
+  "pubchem-compounds": {
+    url: "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/aspirin/property/MolecularFormula,MolecularWeight/JSON",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        PropertyTable: z.object({
+          Properties: z.array(z.object({
+            CID: z.number(),
+            MolecularFormula: z.string(),
+          })).min(1),
+        }),
+      }),
+    ),
+  },
+  "dailymed-drug-labels": {
+    url: "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?drug_name=ibuprofen&pagesize=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.array(z.record(z.string(), z.unknown())).min(1),
+      }),
+    ),
+  },
+  "openfda-device-events": {
+    url: "https://api.fda.gov/device/event.json?search=date_received:%5B20240101+TO+20241231%5D&limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        meta: z.object({
+          results: z.object({ total: z.number() }),
+        }),
+        results: z.array(z.object({
+          mdr_report_key: z.string().optional(),
+        }).passthrough()).min(1),
+      }),
+    ),
+  },
+  "fema-nfip-redacted-claims": {
+    url: "https://www.fema.gov/api/open/v2/FimaNfipClaims?$top=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        FimaNfipClaims: z.array(z.object({
+          id: z.string(),
+          state: z.string().optional(),
+        }).passthrough()).min(1),
+      }),
+    ),
+  },
+  "ripe-stat": {
+    url: "https://stat.ripe.net/data/prefix-overview/data.json?resource=8.8.8.0/24",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        data: z.object({
+          resource: z.string(),
+        }).passthrough(),
+      }),
+    ),
+  },
+  "nchs-provisional-mortality": {
+    url: "https://data.cdc.gov/resource/muzy-jte6.json?$limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(z.object({
+        jurisdiction_of_occurrence: z.string(),
+      }).passthrough()).min(1),
+    ),
+  },
+  "noaa-ndbc-buoys": {
+    url: "https://www.ndbc.noaa.gov/data/realtime2/41001.txt",
+    range: "bytes=0-2048",
+    contentTypes: ["text/plain", "text/csv", "application/octet-stream"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body);
+      return header.includes("WSPD") && header.includes("WVHT")
+        ? null
+        : "buoy file is missing WSPD or WVHT";
+    },
+  },
+  "ons-statistics": {
+    url: "https://api.beta.ons.gov.uk/v1/datasets/cpih01",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        id: z.string(),
+        title: z.string().optional(),
+      }).passthrough(),
+    ),
+  },
 } satisfies Record<
   string,
   {

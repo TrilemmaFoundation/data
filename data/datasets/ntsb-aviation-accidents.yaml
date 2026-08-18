@@ -1,0 +1,82 @@
+id: ntsb-aviation-accidents
+name: NTSB Aviation Accident Database
+description: >
+  Civil aviation accident and incident investigations for building safety
+  monitors and event-history tools.
+theme: Geospatial & Infrastructure
+url: https://www.ntsb.gov/Pages/AviationQuery.aspx
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+  - CSV
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Aviation Accident Database
+  license_marker: federal government materials
+domains:
+  - Aviation
+  - Transportation
+  - Public Safety
+data_types:
+  - Event Data
+  - Tabular
+  - Geospatial
+tasks:
+  - Safety Analysis
+  - Event Monitoring
+  - Mapping
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: historical and current NTSB civil aviation investigations
+update_frequency: daily
+provider: National Transportation Safety Board
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    NTSB CAROL and the aviation query page expose accident records with
+    aircraft, location, and injury severity. Start with one year and one
+    state. Preliminary reports change, this is not a live ADS-B feed, and it
+    is not a complete global accident census.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the NTSB aviation query page and note CAROL as the current retrieval tool.
+    - Request a bounded JSON export for one year.
+    - Keep NTSB number, event date, location, and highest injury.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateRecentFile/6",
+          params={"fileType": "json"},
+          timeout=60,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      accidents = pd.DataFrame(payload if isinstance(payload, list) else payload.get("data", payload))
+      accidents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(accidents.head())
+  first_project:
+    title: List recent U.S. aviation accidents
+    goal: Test whether an NTSB extract can power a bounded safety-event inbox.
+    steps:
+      - Keep NTSB number, event date, location, and injury severity from the extract.
+      - Count events by highest injury and list records missing coordinates.
+      - Explain that preliminary investigations change and that NTSB records are not live aircraft positions.

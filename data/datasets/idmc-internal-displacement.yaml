@@ -1,0 +1,77 @@
+id: idmc-internal-displacement
+name: IDMC Internal Displacement
+description: >
+  Country-year internal displacement figures for building humanitarian
+  comparison tools alongside refugee statistics.
+theme: Demographics & Development
+url: https://www.internal-displacement.org/database/displacement-data
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - Excel
+  - CSV
+license: Creative Commons Attribution for Intergovernmental Organisations
+license_url: https://creativecommons.org/licenses/by/3.0/igo/
+url_checks:
+  source_marker: Global Internal Displacement Database
+  license_marker: Attribution
+domains:
+  - Forced Displacement
+  - Humanitarian Development
+data_types:
+  - Tabular
+  - Time Series
+  - Population Data
+tasks:
+  - Displacement Analysis
+  - Country Comparison
+  - Humanitarian Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: 2008-present GIDD stocks and flows
+update_frequency: annual
+provider: Internal Displacement Monitoring Centre
+source_type: nonprofit
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    IDMC's Global Internal Displacement Database publishes country-year stocks
+    and new displacements from conflict and disasters. Start with the Excel
+    download. Figures are expert-validated estimates, not household surveys,
+    and they are not UNHCR refugee counts.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the IDMC displacement-data page and download the GIDD Excel file.
+    - Load the conflict-and-disasters sheet.
+    - Keep ISO3, year, conflict displacements, and disaster displacements.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+      from io import BytesIO
+
+      response = requests.get(
+          "https://www.internal-displacement.org/sites/default/files/2024-05/IDMC_Internal_Displacement_Conflict-Violence_Disasters.xlsx",
+          timeout=60,
+      )
+      response.raise_for_status()
+      displacement = pd.read_excel(BytesIO(response.content), sheet_name=0)
+      print(displacement.head())
+  first_project:
+    title: Compare conflict and disaster displacements
+    goal: Test whether GIDD country-year rows can power a bounded humanitarian sketch.
+    steps:
+      - Keep country, year, and conflict versus disaster displacement columns.
+      - Rank one year by new displacements and list missing ISO3 codes.
+      - Explain that GIDD figures are curated estimates, not UNHCR refugee statistics, and can be revised.

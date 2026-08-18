@@ -1,0 +1,83 @@
+id: ilostat-labour-statistics
+name: ILOSTAT Labour Statistics
+description: >
+  Comparable labour-force, employment, and wage indicators for building
+  country labour-market dashboards from ILO SDMX.
+theme: Markets & Economics
+url: https://www.ilo.org/data-and-statistics
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - JSON
+  - CSV
+  - SDMX
+license: ILO rights and permissions / Creative Commons Attribution 4.0
+license_url: https://www.ilo.org/rights-and-permissions
+url_checks:
+  source_marker: ILOSTAT
+  license_marker: Creative Commons
+domains:
+  - Labor Economics
+  - International Statistics
+  - Employment
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Country Comparison
+  - Labor Market Monitoring
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: country-specific labour series published by ILOSTAT
+update_frequency: monthly
+provider: International Labour Organization
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    ILOSTAT SDMX returns labour indicators such as unemployment rate by sex
+    and age. Start with one country and one indicator. National definitions
+    differ, modelled estimates are not survey microdata, and coverage gaps
+    are common.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open ILOSTAT and copy one dataflow identifier such as UNE_2EAP_SEX_AGE_RT.
+    - Request SDMX-JSON for one country and a recent year range.
+    - Cite ILOSTAT with the indicator code.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://sdmx.ilo.org/rest/data/ILO,DF_UNE_2EAP_SEX_AGE_RT/A.USA.SEX_T.AGE_YTHADULT_YGE15",
+          headers={"Accept": "application/vnd.sdmx.data+json;version=1.0.0"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      observations = response.json()["data"]["dataSets"][0]["observations"]
+      unemployment = pd.DataFrame(
+          [{"position": key, "value": value[0]} for key, value in observations.items()]
+      )
+      unemployment["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(unemployment.tail())
+  first_project:
+    title: Track U.S. ILO unemployment
+    goal: Test whether one ILOSTAT series can power a bounded labour-market chart.
+    steps:
+      - Confirm observation values returned for the selected series key.
+      - Plot the latest published rates and note missing years.
+      - Explain that ILO modelled series can differ from BLS household-survey rates and are not microdata.

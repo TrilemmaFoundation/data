@@ -1,0 +1,84 @@
+id: oecd-sdmx-statistics
+name: OECD SDMX Statistics
+description: >
+  Comparable OECD economic and social indicators for building country dashboards
+  and release-monitoring tools from a bounded SDMX query.
+theme: Markets & Economics
+url: https://data-explorer.oecd.org/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+  - CSV
+  - SDMX
+license: Creative Commons Attribution 4.0 International
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: Data Explorer
+  license_marker: Attribution 4.0 International
+domains:
+  - International Economics
+  - Macroeconomics
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Country Comparison
+  - Economic Monitoring
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: series-specific coverage published with each OECD dataset
+update_frequency: monthly
+provider: Organisation for Economic Co-operation and Development
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    OECD publishes SDMX-JSON for named datasets such as quarterly GDP growth.
+    Start with one dataset, one country, and a short time window. Member-country
+    coverage is not global, and vintages can revise previous values.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open OECD Data Explorer and copy one dataset identifier such as QNA.
+    - Request SDMX-JSON for one country and a few periods.
+    - Cite OECD with the dataset code and access date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA,1.1/Q.AUS.S1.S1.B1GQ.L.XDC.LR.GY._Z",
+          headers={"Accept": "application/vnd.sdmx.data+json;charset=utf-8;version=1.0"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      observations = response.json()["data"]["dataSets"][0]["observations"]
+      rows = [
+          {"position": key, "value": value[0]}
+          for key, value in observations.items()
+      ]
+      gdp = pd.DataFrame(rows)
+      gdp["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(gdp.head())
+  first_project:
+    title: Track Australian quarterly GDP growth
+    goal: Test whether one OECD SDMX series can power a bounded growth monitor.
+    steps:
+      - Confirm the response contains observation values for the selected series key.
+      - Sort by time position and plot the latest published growth rates.
+      - Cite OECD and explain that member-economy series are not a world aggregate and can be revised.

@@ -1,0 +1,83 @@
+id: hmda-loan-applications
+name: HMDA Loan Application Register
+description: >
+  Home Mortgage Disclosure Act loan-application records for building local
+  mortgage-market and fair-lending research tools.
+theme: Markets & Economics
+url: https://cfpb.github.io/api/hmda/
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.1
+size_gb_max: 20
+formats:
+  - CSV
+  - ZIP
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: HMDA API documentation
+  license_marker: federal government materials
+domains:
+  - Housing
+  - Consumer Finance
+  - Financial Regulation
+data_types:
+  - Tabular
+  - Loan Records
+tasks:
+  - Mortgage Market Analysis
+  - Fair Lending Research
+  - Geographic Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: annual HMDA filings from 2007-present with schema changes
+update_frequency: annual
+provider: Consumer Financial Protection Bureau
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    HMDA LAR records loan applications, originations, and denials. Start with
+    one year and one state through the Data Browser. Applicant race and
+    ethnicity fields have disclosure rules, and a LAR row is not a credit
+    decision you can reverse-engineer.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the HMDA Data Publication page and choose the Data Browser.
+    - Filter to one year and one state with a small set of fields.
+    - Keep action taken, loan amount, and census tract.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      from io import StringIO
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv",
+          params={
+              "years": "2023",
+              "states": "VT",
+              "actions_taken": "1",
+          },
+          timeout=120,
+      )
+      response.raise_for_status()
+      loans = pd.read_csv(StringIO(response.text), nrows=200)
+      print(loans.head())
+  first_project:
+    title: Profile Vermont originations
+    goal: Test whether a one-state LAR extract can power a bounded mortgage-volume sketch.
+    steps:
+      - Keep action taken, loan amount, and census tract from the first rows.
+      - Summarize origination counts and median loan amount.
+      - Explain that HMDA is an application register with suppressed fields and is not a credit-scoring file.

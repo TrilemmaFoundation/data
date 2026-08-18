@@ -654,7 +654,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
 });
 
 test("every dataset guide reflows on a mobile viewport", async ({ page }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(Math.max(150_000, getAllDatasets().length * 1_200));
   await page.setViewportSize({ width: 360, height: 900 });
 
   for (const dataset of getAllDatasets()) {

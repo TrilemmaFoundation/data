@@ -1,0 +1,85 @@
+id: regulations-gov-dockets
+name: Regulations.gov Dockets
+description: >
+  Federal rulemaking dockets, documents, and public comments for building
+  comment-period monitors and agency docket trackers.
+theme: Government & Policy
+url: https://open.gsa.gov/api/regulationsgov/
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+license: Regulations.gov API terms of service
+license_url: https://open.gsa.gov/api/regulationsgov/
+url_checks:
+  source_marker: Regulations.gov API
+  license_marker: api.data.gov
+domains:
+  - Regulation
+  - Public Policy
+  - Legislation
+data_types:
+  - Documents
+  - Event Data
+  - Tabular
+tasks:
+  - Rulemaking Monitoring
+  - Comment Analysis
+  - Alerting
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: federal dockets and comments available through regulations.gov
+update_frequency: daily
+provider: U.S. General Services Administration
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The regulations.gov v4 API searches dockets and documents with an
+    api.data.gov key. Start with one agency and posted documents. Comment text
+    is public input, not agency policy, and bulk comment jobs have separate
+    rate limits.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free api.data.gov key saved in the DATA_GOV_API_KEY environment variable
+  access_steps:
+    - Register for a free api.data.gov key and save it in DATA_GOV_API_KEY.
+    - Read the v4 documents search parameters.
+    - Request a bounded page of EPA proposed rules.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.regulations.gov/v4/documents",
+          params={
+              "api_key": os.environ["DATA_GOV_API_KEY"],
+              "filter[agencyId]": "EPA",
+              "filter[documentType]": "Proposed Rule",
+              "page[size]": 20,
+              "sort": "-postedDate",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      documents = pd.json_normalize(response.json()["data"])
+      documents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(documents.head())
+  first_project:
+    title: Track recent EPA proposed rules
+    goal: Test whether v4 document search can power a bounded comment-period monitor.
+    steps:
+      - Keep document id, title, posted date, and comment-end date from the page.
+      - Flag documents whose comment period is still open.
+      - Explain that comments are public submissions and that the API is not the signed final rule.

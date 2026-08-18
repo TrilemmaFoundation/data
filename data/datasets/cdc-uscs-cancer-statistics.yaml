@@ -1,0 +1,79 @@
+id: cdc-uscs-cancer-statistics
+name: U.S. Cancer Statistics
+description: >
+  Official federal cancer incidence and mortality statistics for building
+  state comparison and cancer-burden dashboards.
+theme: Health, Food & Safety
+url: https://www.cdc.gov/united-states-cancer-statistics/index.html
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - CSV
+  - JSON
+  - Excel
+license: U.S. Public Domain with CDC attribution and use requirements
+license_url: https://www.cdc.gov/other/agencymaterials.html
+url_checks:
+  source_marker: United States Cancer Statistics
+  license_marker: public domain
+domains:
+  - Public Health
+  - Epidemiology
+data_types:
+  - Tabular
+  - Aggregated Data
+tasks:
+  - Incidence Comparison
+  - Trend Analysis
+  - Public Health Planning
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: USCS incidence and mortality years published by CDC and NCI
+update_frequency: annual
+provider: Centers for Disease Control and Prevention
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    USCS is the official federal combination of NPCR and SEER incidence with
+    NVSS mortality. Start with a public state-level incidence table, not the
+    SEER*Stat research file. Rates are age-adjusted to a standard population
+    and are not individual case listings.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the USCS page and locate Data Visualizations or public-use tables.
+    - Download or query one recent state incidence file.
+    - Keep state, cancer site, year, and age-adjusted rate.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cdc.gov/resource/5kmb-vjq2.json",
+          params={"$limit": 50, "$order": "year DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      stats = pd.DataFrame(response.json())
+      stats["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(stats.head())
+  first_project:
+    title: Compare state cancer incidence rows
+    goal: Test whether a USCS public table can power a bounded state-burden sketch.
+    steps:
+      - Keep geography, site, year, and age-adjusted rate from the extract.
+      - Rank a single site-year by rate and flag missing geographies.
+      - Explain that USCS public tables are aggregated rates, not SEER research microdata, and cannot identify individuals.

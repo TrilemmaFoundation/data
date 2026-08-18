@@ -1,0 +1,81 @@
+id: noaa-ndbc-buoys
+name: NOAA NDBC Buoy Observations
+description: >
+  Real-time marine weather and wave observations from moored buoys for building
+  coastal condition monitors and marine-operations alerts.
+theme: Environment & Hazards
+url: https://www.ndbc.noaa.gov/
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.02
+formats:
+  - Text
+  - CSV
+license: U.S. Government public data / NOAA disclaimer
+license_url: https://www.noaa.gov/disclaimer
+url_checks:
+  source_marker: National Data Buoy Center
+  license_marker: public domain
+domains:
+  - Weather
+  - Marine Operations
+  - Coastal Data
+data_types:
+  - Time Series
+  - Sensor Observations
+tasks:
+  - Operational Monitoring
+  - Alerting
+  - Marine Planning
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: station-specific realtime and historical observations
+update_frequency: near real time
+provider: NOAA National Data Buoy Center
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    NDBC publishes a station-page text file of recent meteorological and wave
+    observations for each buoy. Start with one station identifier such as 41001.
+    Sensors drop out, quality flags matter, and a single buoy is not a coastal
+    forecast.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An NDBC station identifier
+  access_steps:
+    - Open the NDBC station map and copy one buoy identifier.
+    - Retrieve that station's realtime text file.
+    - Keep observation time, wind speed, wave height, and air temperature.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      observations = pd.read_csv(
+          "https://www.ndbc.noaa.gov/data/realtime2/41001.txt",
+          sep=r"\s+",
+          skiprows=[1],
+          na_values=["MM"],
+      )
+      observations["observed_at_utc"] = pd.to_datetime(
+          observations[["#YY", "MM", "DD", "hh", "mm"]].rename(
+              columns={"#YY": "year", "MM": "month", "DD": "day", "hh": "hour", "mm": "minute"}
+          ),
+          utc=True,
+      )
+      print(observations[["observed_at_utc", "WSPD", "WVHT", "ATMP"]].head())
+  first_project:
+    title: Monitor one Atlantic buoy
+    goal: Test whether a single station file can power a bounded wind-and-wave condition board.
+    steps:
+      - Convert the timestamp columns to UTC and drop rows missing wind speed or wave height.
+      - Plot the latest hours of wind speed and significant wave height.
+      - Explain that one buoy cannot substitute for a coastal forecast and that MM placeholders mark missing sensors.

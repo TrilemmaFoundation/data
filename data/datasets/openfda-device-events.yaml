@@ -1,0 +1,81 @@
+id: openfda-device-events
+name: openFDA Device Adverse Events
+description: >
+  FDA medical-device adverse-event reports for exploring reported device
+  problems and building bounded safety-research tools.
+theme: Health, Food & Safety
+url: https://open.fda.gov/apis/device/event/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - ZIP
+license: Creative Commons CC0 1.0 Universal, with noted third-party exceptions
+license_url: https://open.fda.gov/terms/
+url_checks:
+  source_marker: Device Adverse Event Overview
+  license_marker: Creative Commons CC0 1.0 Universal
+domains:
+  - Medical Devices
+  - Public Health
+  - Regulation
+data_types:
+  - Event Data
+  - Aggregated Data
+tasks:
+  - Safety Signal Analysis
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 1991-present device event reports
+update_frequency: quarterly
+provider: U.S. Food and Drug Administration
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The openFDA device-event API searches MAUDE reports and can return
+    server-side counts. Start with one device generic name and a bounded
+    receive-date window. Voluntary reports cannot establish causality,
+    incidence, or comparative device safety.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the device-event field documentation and choose one generic device name.
+    - Query a bounded receive-date period and count reported product problems.
+    - Preserve the exact query and retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.fda.gov/device/event.json",
+          params={
+              "search": 'device.generic_name:"INFUSION PUMP" AND date_received:[20250101 TO 20251231]',
+              "count": "product_problems.exact",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      problems = pd.DataFrame(response.json()["results"])
+      problems["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(problems.head(20))
+  first_project:
+    title: Summarize reported infusion-pump problems
+    goal: Identify the most frequently reported product-problem terms for one device type in a bounded year.
+    steps:
+      - Confirm the API returned product-problem counts for the generic-name query.
+      - Rank the bounded counts and note terms that may reflect duplicate or incomplete reports.
+      - State that MAUDE reports do not establish causality, incidence, or comparative device safety.

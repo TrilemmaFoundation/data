@@ -1,0 +1,77 @@
+id: certificate-transparency-crtsh
+name: Certificate Transparency Search
+description: >
+  Issued TLS certificates indexed from public CT logs for building domain
+  certificate monitors and issuance alerts.
+theme: Technology & Cybersecurity
+url: https://certificate.transparency.dev/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+license: Certificate Transparency log public data / crt.sh use
+license_url: https://certificate.transparency.dev/
+url_checks:
+  source_marker: Certificate Transparency
+  license_marker: Certificate Transparency
+domains:
+  - Cybersecurity
+  - Internet Infrastructure
+data_types:
+  - Event Data
+  - Registry Data
+  - Tabular
+tasks:
+  - Certificate Monitoring
+  - Alerting
+  - Asset Discovery
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: certificates submitted to participating CT logs
+update_frequency: continuous
+provider: Sectigo crt.sh
+source_type: company
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    crt.sh queries public Certificate Transparency logs. Start with one
+    registered domain and a JSON search. CT logs are the origin; crt.sh is the
+    query surface. Logs can lag, expired certificates remain, and this is not a
+    complete inventory of every private PKI.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A domain you are authorized to inspect
+  access_steps:
+    - Open crt.sh and try one Identity search in the browser.
+    - Request JSON for that domain with output=json.
+    - Keep issuer name, common name, and not-after date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://crt.sh/",
+          params={"q": "example.com", "output": "json"},
+          timeout=60,
+      )
+      response.raise_for_status()
+      certificates = pd.DataFrame(response.json())
+      certificates["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(certificates[["issuer_name", "common_name", "not_after"]].head())
+  first_project:
+    title: List certificates for one domain
+    goal: Test whether a CT search can power a bounded issuance monitor.
+    steps:
+      - Deduplicate certificate ids and keep issuer, common name, and expiry.
+      - Flag certificates whose not-after date is in the past.
+      - Explain that CT coverage depends on participating logs and is not a private-PKI inventory.

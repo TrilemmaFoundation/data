@@ -1,0 +1,76 @@
+id: uspto-open-data-portal
+name: USPTO Open Data Portal
+description: >
+  U.S. patent bibliographic bulk files for building assignee, classification,
+  and filing-volume research tools.
+theme: Research & Reference
+url: https://www.uspto.gov/learning-and-resources/data-and-statistics
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 50
+formats:
+  - XML
+  - ZIP
+  - CSV
+license: USPTO website terms of use
+license_url: https://www.uspto.gov/terms-use-uspto-websites
+url_checks:
+  source_marker: Open Data Portal
+  license_marker: Terms of Use
+domains:
+  - Research
+  - Intellectual Property
+  - Innovation
+data_types:
+  - Documents
+  - Tabular
+  - Registry Data
+tasks:
+  - Patent Research
+  - Assignee Analysis
+  - Classification Research
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: weekly patent grant and application bulk files
+update_frequency: weekly
+provider: United States Patent and Trademark Office
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    USPTO Open Data Portal is the current bulk and API home after PatentsView
+    search shut down. Start by confirming the portal page, then download one
+    weekly bibliographic zip only after checking its size. Full-text weekly
+    files are large, and this is not the retired PatentsView search API.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - Enough disk for one weekly zip
+  access_steps:
+    - Open USPTO data and statistics and follow the Open Data Portal link.
+    - Choose one weekly patent-grant bulk file and note its size before downloading.
+    - Parse a handful of invention-title fields rather than the whole week.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://data.uspto.gov/home",
+          timeout=30,
+      )
+      response.raise_for_status()
+      print("Open Data Portal" in response.text)
+      print(response.url)
+  first_project:
+    title: Reach USPTO Open Data Portal
+    goal: Test whether the current USPTO portal can support a bounded patent-download workflow.
+    steps:
+      - Confirm the portal page identifies Open Data Portal before downloading anything.
+      - Choose one weekly bibliographic file in the portal and record its published week and size.
+      - Explain that weekly XML dumps are large and that PatentsView's search API is no longer the access path.

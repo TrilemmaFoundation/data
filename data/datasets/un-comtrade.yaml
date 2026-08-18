@@ -1,0 +1,87 @@
+id: un-comtrade
+name: UN Comtrade
+description: >
+  Official merchandise trade statistics for building partner and commodity
+  monitors from a bounded Comtrade extract.
+theme: Markets & Economics
+url: https://uncomtrade.org/docs/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: United Nations website terms of use
+license_url: https://www.un.org/en/about-us/terms-of-use
+url_checks:
+  source_marker: UN Comtrade Help Center
+  license_marker: Terms of Use
+domains:
+  - International Economics
+  - Trade
+  - Commodities
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Trade Monitoring
+  - Country Comparison
+  - Market Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: reporter-specific annual and monthly trade statistics
+update_frequency: monthly
+provider: United Nations Statistics Division
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Comtrade preview returns up to 500 trade records without a key. Start with
+    one reporter, one year, and total merchandise trade. Mirror statistics
+    disagree, confidential HS lines are suppressed, and a preview is not a
+    complete bulk extract.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open Comtrade Plus and note the preview API for unauthenticated queries.
+    - Request one reporter, one period, and HS total trade with a small record limit.
+    - Keep reporter, partner, flow, and primary value.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://comtradeplus.un.org/api/preview/C/A/HS",
+          params={
+              "reporterCode": 842,
+              "period": 2023,
+              "partnerCode": 0,
+              "cmdCode": "TOTAL",
+              "flowCode": "X,M",
+              "maxRecords": 100,
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      trade = pd.DataFrame(payload.get("data", payload))
+      trade["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(trade.head())
+  first_project:
+    title: Compare U.S. total merchandise exports and imports
+    goal: Test whether a preview extract can power a bounded trade-balance sketch.
+    steps:
+      - Keep reporter, period, flow, and primary value from the preview response.
+      - Compare export and import totals for the selected year.
+      - Explain that preview rows are capped, partners can be aggregated, and confidential commodities are omitted.

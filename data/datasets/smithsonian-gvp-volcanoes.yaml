@@ -1,0 +1,87 @@
+id: smithsonian-gvp-volcanoes
+name: Smithsonian Global Volcanism Program
+description: >
+  Holocene volcano locations and eruption records for building global volcanic
+  activity maps and nearby-hazard lookup tools.
+theme: Environment & Hazards
+url: https://volcano.si.edu/
+access_type:
+  - download
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.02
+formats:
+  - Excel
+  - CSV
+  - JSON
+license: Smithsonian GVP data-use and citation guidance
+license_url: https://volcano.si.edu/gvp_webservices.cfm
+url_checks:
+  source_marker: Global Volcanism Program
+  license_marker: web services
+domains:
+  - Natural Hazards
+  - Earth Science
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Event Data
+  - Registry Data
+tasks:
+  - Hazard Mapping
+  - Eruption Monitoring
+  - Place Lookup
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: Holocene volcanoes and historical eruption records
+update_frequency: weekly
+provider: Smithsonian Institution
+source_type: academic
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    GVP publishes a Holocene volcano list with coordinates, country, and
+    primary volcano type. Start with one country. Presence in the Holocene
+    list is not an eruption nowcast, and eruption records are compiled from
+    heterogeneous historical sources.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the GVP website and locate the volcano list download or web service.
+    - Retrieve Holocene volcanoes and keep volcano number, name, country, and coordinates.
+    - Cite Smithsonian GVP when presenting a map or list.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://volcano.si.edu/geoserver/GVP-VOTW/ows",
+          params={
+              "service": "WFS",
+              "version": "1.0.0",
+              "request": "GetFeature",
+              "typeName": "GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes",
+              "outputFormat": "application/json",
+              "CQL_FILTER": "Country='Iceland'",
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      volcanoes = pd.json_normalize(response.json()["features"])
+      print(volcanoes.head())
+  first_project:
+    title: Map Iceland's Holocene volcanoes
+    goal: Test whether GVP coordinates can power a bounded volcanic-place lookup.
+    steps:
+      - Keep volcano name, volcano number, and coordinates from the Iceland extract.
+      - Plot the points and list names missing coordinates.
+      - Explain that the Holocene catalog is not a live eruption feed and that historical eruption dates vary in quality.

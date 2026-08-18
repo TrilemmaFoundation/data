@@ -1,0 +1,91 @@
+id: github-archive
+name: GitHub Archive
+description: >
+  Hourly public GitHub event archives for building repository-activity monitors
+  without using BigQuery.
+theme: Technology & Cybersecurity
+url: https://www.gharchive.org/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.02
+size_gb_max: 0.2
+formats:
+  - JSON
+  - GZIP
+license: GitHub Terms of Service for public events, with GH Archive access terms
+license_url: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
+url_checks:
+  source_marker: GH Archive
+  license_marker: GitHub Terms of Service
+domains:
+  - Open Source
+  - Software
+  - Attention Measurement
+data_types:
+  - Event Data
+  - JSON Lines
+tasks:
+  - Activity Monitoring
+  - Trend Analysis
+  - Repository Research
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 2011-present hourly public GitHub events
+update_frequency: near real time
+provider: GH Archive
+source_type: community
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    GH Archive stores hourly gzip JSON of public GitHub events. Start with one
+    UTC hour and stream the first events rather than loading the whole file.
+    Do not use BigQuery for this guide, and public events still fall under
+    GitHub's terms.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open gharchive.org and note the hourly URL pattern.
+    - Stream one recent hourly gzip.
+    - Keep event type and repository name from the first records.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import gzip
+      import json
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.gharchive.org/2026-08-17-15.json.gz",
+          stream=True,
+          timeout=60,
+      )
+      response.raise_for_status()
+      rows = []
+      with gzip.GzipFile(fileobj=response.raw) as archive:
+          for line in archive:
+              event = json.loads(line)
+              rows.append(
+                  {
+                      "type": event.get("type"),
+                      "repo": (event.get("repo") or {}).get("name"),
+                  }
+              )
+              if len(rows) >= 50:
+                  break
+      events = pd.DataFrame(rows)
+      print(events.head())
+  first_project:
+    title: Count event types in one GitHub hour
+    goal: Test whether a streamed hour can power a bounded activity monitor.
+    steps:
+      - Stream the first 50 events from one hourly gzip and keep type plus repository.
+      - Count event types in that sample.
+      - Explain that the sample is not the full hour, BigQuery is out of scope here, and GitHub terms apply to public event data.

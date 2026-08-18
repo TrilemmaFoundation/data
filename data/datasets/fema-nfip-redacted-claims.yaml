@@ -1,0 +1,85 @@
+id: fema-nfip-redacted-claims
+name: FEMA NFIP Redacted Claims
+description: >
+  Redacted National Flood Insurance Program claims for building local flood-loss
+  histories and insurance-signal prototypes.
+theme: Environment & Hazards
+url: https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+  - Parquet
+license: OpenFEMA Terms and Conditions
+license_url: https://www.fema.gov/about/openfema/terms-conditions
+url_checks:
+  source_marker: FIMA NFIP Redacted Claims
+  license_marker: OpenFEMA Terms and Conditions
+domains:
+  - Natural Hazards
+  - Housing
+  - Emergency Management
+data_types:
+  - Event Data
+  - Tabular
+  - Geospatial
+tasks:
+  - Loss Analysis
+  - Community Comparison
+  - Insurance Research
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: historical NFIP claims through the current OpenFEMA extract
+update_frequency: monthly
+provider: Federal Emergency Management Agency
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    OpenFEMA publishes redacted NFIP claim records with occupancy, dates, and
+    paid amounts. Start with one state and a recent year. Claims are insured
+    losses, not a complete flood census, and redaction plus policy changes
+    limit neighborhood-level conclusions.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A two-letter U.S. state code
+  access_steps:
+    - Read the OpenFEMA NFIP claims page and terms before querying.
+    - Request a bounded v2 page for one state ordered by date of loss.
+    - Keep occupancy, loss date, and building and contents payments.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.fema.gov/api/open/v2/FimaNfipClaims",
+          params={
+              "$filter": "state eq 'FL' and yearOfLoss eq 2024",
+              "$select": "id,state,countyCode,yearOfLoss,dateOfLoss,occupancyType,amountPaidOnBuildingClaim,amountPaidOnContentsClaim",
+              "$top": 100,
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      claims = pd.DataFrame(response.json()["FimaNfipClaims"])
+      claims["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(claims.head())
+  first_project:
+    title: Summarize recent Florida NFIP claims
+    goal: Test whether a bounded claims extract can power a county flood-loss sketch.
+    steps:
+      - Convert payment fields to numbers and drop rows missing loss dates.
+      - Sum building and contents payments by county code for the selected year.
+      - Explain that NFIP claims cover insured properties only and that redaction prevents household-level identification.

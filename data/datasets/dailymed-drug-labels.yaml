@@ -1,0 +1,81 @@
+id: dailymed-drug-labels
+name: DailyMed Drug Labels
+description: >
+  Structured FDA drug-label (SPL) documents for building label lookup,
+  section-search, and medication-reference tools.
+theme: Health, Food & Safety
+url: https://dailymed.nlm.nih.gov/dailymed/app-support-web-services.cfm
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 5
+formats:
+  - JSON
+  - XML
+  - ZIP
+license: NLM copyright and data-use terms
+license_url: https://www.nlm.nih.gov/copyright.html
+url_checks:
+  source_marker: DailyMed
+  license_marker: NLM Copyright Information
+domains:
+  - Pharmaceuticals
+  - Health Care
+  - Regulation
+data_types:
+  - Documents
+  - Text
+  - Registry Data
+tasks:
+  - Label Lookup
+  - Section Search
+  - Reference Building
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: currently published SPL labels with historical versions
+update_frequency: daily
+provider: U.S. National Library of Medicine
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    DailyMed REST returns Structured Product Labeling metadata and sections.
+    Start with one drug name search and a single SET ID. Labels are regulatory
+    documents, not a complete picture of off-label use, and they can lag
+    manufacturer updates.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the DailyMed web-services help page.
+    - Search drug names for one generic and request the first page.
+    - Keep SET ID, title, and last-updated date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json",
+          params={"drug_name": "ibuprofen", "pagesize": 20, "page": 1},
+          timeout=30,
+      )
+      response.raise_for_status()
+      labels = pd.DataFrame(response.json()["data"])
+      labels["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(labels.head())
+  first_project:
+    title: List ibuprofen SPL titles
+    goal: Test whether DailyMed search can power a bounded label-lookup inbox.
+    steps:
+      - Keep SET ID, title, and published date from the first page.
+      - Deduplicate SET IDs and list titles that look like different dosage forms.
+      - Explain that SPL is the currently published label text and is not a complete clinical-use database.

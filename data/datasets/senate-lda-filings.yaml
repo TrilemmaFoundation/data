@@ -1,0 +1,79 @@
+id: senate-lda-filings
+name: Senate LDA Lobbying Disclosures
+description: >
+  Federal lobbying registrations and activity reports for building client and
+  issue disclosure monitors from Senate LDA filings.
+theme: Government & Policy
+url: https://lda.gov/api/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: LDA API
+  license_marker: federal government materials
+domains:
+  - Public Policy
+  - Regulation
+  - Legislation
+data_types:
+  - Tabular
+  - Documents
+tasks:
+  - Disclosure Monitoring
+  - Client Research
+  - Legislative Monitoring
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: LDA registrations and quarterly activity reports
+update_frequency: daily
+provider: United States Senate
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Senate LDA API lists lobbying filings, registrants, and clients. Start
+    with a small page of recent filings. Reported income is self-disclosed,
+    issue codes are broad, and a filing is not a complete map of influence.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the LDA API documentation and choose the filings list endpoint.
+    - Request one page of recent filings.
+    - Keep filing UUID, registrant, client, and filing type.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://lda.gov/api/v1/filings/",
+          params={"page_size": 25, "ordering": "-dt_posted"},
+          timeout=30,
+          headers={"Accept": "application/json"},
+      )
+      response.raise_for_status()
+      filings = pd.json_normalize(response.json()["results"])
+      filings["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(filings.head())
+  first_project:
+    title: Scan recent LDA filings
+    goal: Test whether the filings list can power a bounded lobbying-disclosure inbox.
+    steps:
+      - Keep filing identifier, registrant name, client name, and posted date.
+      - Count filings by registrant on the first page and list missing client names.
+      - Explain that LDA reports are self-disclosed summaries and are not a complete record of lobbying contacts.

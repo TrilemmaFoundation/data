@@ -1,0 +1,87 @@
+id: eia-weekly-natural-gas
+name: EIA Weekly Natural Gas Storage
+description: >
+  Weekly U.S. working-gas in storage for building inventory monitors and
+  energy-market dashboards.
+theme: Markets & Economics
+url: https://www.eia.gov/opendata/index.php/api
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: U.S. Public Domain with EIA source acknowledgment
+license_url: https://www.eia.gov/about/copyrights_reuse.php
+url_checks:
+  source_marker: OPEN DATA
+  license_marker: Public domain and use of EIA content
+domains:
+  - Energy
+  - Commodities
+  - Macroeconomics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Market Monitoring
+  - Trend Analysis
+  - Forecast Evaluation
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: weekly natural-gas storage series with history varying by region
+update_frequency: weekly
+provider: U.S. Energy Information Administration
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    EIA's weekly underground storage route returns working-gas inventories.
+    Start with the Lower 48 total and a short length. These are storage
+    statistics, not Henry Hub spot prices, and weekly values can be revised.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free EIA API key saved in the EIA_API_KEY environment variable
+  access_steps:
+    - Register for a free key on the EIA Open Data site, or reuse EIA_API_KEY.
+    - Confirm the natural-gas weekly storage route.
+    - Request a bounded Lower 48 working-gas sample.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.eia.gov/v2/natural-gas/stor/wkly/data/",
+          params={
+              "api_key": os.environ["EIA_API_KEY"],
+              "frequency": "weekly",
+              "data[0]": "value",
+              "facets[duoarea][]": "NUS",
+              "length": 20,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      storage = pd.DataFrame(response.json()["response"]["data"])
+      storage["period"] = pd.to_datetime(storage["period"])
+      storage["value"] = pd.to_numeric(storage["value"], errors="coerce")
+      storage["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(storage[["period", "duoarea", "value", "units"]].head())
+  first_project:
+    title: Track Lower 48 weekly gas storage
+    goal: Test whether a short storage window can power an inventory-change alert.
+    steps:
+      - Sort by period and compute week-to-week storage changes.
+      - Flag the largest injections and withdrawals in the extract.
+      - Explain that weekly storage is not a spot price and that EIA can revise previously published weeks.

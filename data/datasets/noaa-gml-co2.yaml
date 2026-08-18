@@ -1,0 +1,73 @@
+id: noaa-gml-co2
+name: NOAA GML Mauna Loa CO2
+description: >
+  Monthly atmospheric carbon dioxide measurements from Mauna Loa for building
+  climate-trend monitors and educational concentration trackers.
+theme: Environment & Hazards
+url: https://gml.noaa.gov/ccgg/trends/data.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+  - CSV
+  - Text
+license: U.S. Government public data / NOAA disclaimer
+license_url: https://www.noaa.gov/disclaimer
+url_checks:
+  source_marker: Trends in CO2
+  license_marker: public domain
+domains:
+  - Climate
+  - Environmental Science
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Trend Analysis
+  - Climate Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: 1958-present
+update_frequency: monthly
+provider: NOAA Global Monitoring Laboratory
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    NOAA GML publishes monthly mean carbon dioxide mole fractions from the Mauna
+    Loa observatory as a small CSV. Start with the in-situ monthly file. These
+    values represent one high-altitude Pacific site after quality control, not
+    a global average or a local urban concentration.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Trends in CO2 data page and identify the Mauna Loa monthly mean CSV.
+    - Load the file, skipping comment rows that begin with a hash.
+    - Keep year, month, and the seasonally adjusted monthly mean.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      co2 = pd.read_csv(
+          "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv",
+          comment="#",
+      )
+      co2["date"] = pd.to_datetime(
+          dict(year=co2["year"], month=co2["month"], day=1)
+      )
+      print(co2[["date", "average", "deseasonalized"]].tail())
+  first_project:
+    title: Chart Mauna Loa monthly CO2
+    goal: Test whether the monthly file can power a simple concentration-trend monitor.
+    steps:
+      - Drop rows where the monthly average is a missing-value sentinel.
+      - Plot the monthly average and the deseasonalized series over the full record.
+      - Explain that Mauna Loa is one background site and is not a global or city-level CO2 product.

@@ -1,0 +1,76 @@
+id: chrome-ux-report
+name: Chrome UX Report API
+description: >
+  Real-user Chrome experience metrics for building Core Web Vitals monitors
+  from origin-level CrUX records.
+theme: Technology & Cybersecurity
+url: https://developer.chrome.com/docs/crux
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Google APIs Terms of Service
+license_url: https://developers.google.com/terms
+url_checks:
+  source_marker: Chrome UX Report
+  license_marker: Google APIs Terms of Service
+domains:
+  - Web Performance
+  - Software
+data_types:
+  - Aggregated Data
+  - Time Series
+tasks:
+  - Performance Monitoring
+  - Origin Comparison
+  - Alerting
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: rolling 28-day CrUX collection windows
+update_frequency: daily
+provider: Google
+source_type: company
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The CrUX API returns origin-level p75 metrics such as LCP and INP. Start
+    with one origin you are authorized to monitor. CrUX covers opted-in Chrome
+    users, not synthetic tests, and small origins can be missing.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A Google API key saved in the CRUX_API_KEY environment variable
+  access_steps:
+    - Enable the Chrome UX Report API in Google Cloud and save CRUX_API_KEY.
+    - Read the query endpoint documentation.
+    - Request metrics for one HTTPS origin.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://chromeuxreport.googleapis.com/v1/records:queryRecord",
+          params={"key": os.environ["CRUX_API_KEY"]},
+          json={"origin": "https://www.example.com"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      record = pd.json_normalize(response.json())
+      print(record)
+  first_project:
+    title: Read one origin's Core Web Vitals
+    goal: Test whether CrUX can power a bounded real-user performance card.
+    steps:
+      - Confirm p75 LCP, INP, and CLS fields returned for the origin.
+      - Compare those p75 values to the published "good" thresholds.
+      - Explain that CrUX is opted-in Chrome field data and that small origins can be absent.

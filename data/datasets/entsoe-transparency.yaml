@@ -1,0 +1,87 @@
+id: entsoe-transparency
+name: ENTSO-E Transparency Platform
+description: >
+  European electricity generation, load, and day-ahead prices for building
+  grid-monitoring and power-market dashboards.
+theme: Markets & Economics
+url: https://www.entsoe.eu/data/transparency-platform/
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - XML
+  - CSV
+license: ENTSO-E Transparency Platform terms of use
+license_url: https://www.entsoe.eu/data/transparency-platform/
+url_checks:
+  source_marker: Transparency Platform
+  license_marker: Electricity Market Transparency
+domains:
+  - Energy
+  - Electricity
+  - Commodities
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Grid Monitoring
+  - Market Monitoring
+  - Forecast Evaluation
+difficulty: intermediate
+geography:
+  - Europe
+temporal_coverage: platform series from 2015-present with bidding-zone changes
+update_frequency: near real time
+provider: ENTSO-E
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Transparency Platform REST API returns XML for load, generation, and
+    prices. Start with one bidding zone and one day of actual total load. Zone
+    codes change over time, and this is not a retail bill.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Transparency Platform token saved in the ENTSOE_API_KEY environment variable
+  access_steps:
+    - Register on the Transparency Platform and create a REST API token.
+    - Save the token in ENTSOE_API_KEY.
+    - Request one day of actual total load for one bidding zone.
+  python:
+    packages:
+      - pandas
+      - requests
+      - lxml
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://web-api.tp.entsoe.eu/api",
+          params={
+              "securityToken": os.environ["ENTSOE_API_KEY"],
+              "documentType": "A65",
+              "processType": "A16",
+              "outBiddingZone_Domain": "10Y1001A1001A83F",
+              "periodStart": "202407010000",
+              "periodEnd": "202407020000",
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      print(response.text[:1000])
+      points = pd.read_xml(response.content, xpath=".//Point")
+      print(points.head())
+  first_project:
+    title: Chart one day of German load
+    goal: Test whether a Transparency extract can power a bounded grid-load monitor.
+    steps:
+      - Parse Point positions and quantities from the XML document.
+      - Plot load over the requested day and note missing intervals.
+      - Explain that bidding-zone codes change and that platform load is not a household electricity price.

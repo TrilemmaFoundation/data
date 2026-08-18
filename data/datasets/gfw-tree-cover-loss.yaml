@@ -1,0 +1,84 @@
+id: gfw-tree-cover-loss
+name: Global Forest Watch Tree Cover Loss
+description: >
+  Annual tree-cover loss statistics for building deforestation monitors and
+  country comparison tools from satellite-derived forest change.
+theme: Environment & Hazards
+url: https://data-api.globalforestwatch.org/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+license: Creative Commons Attribution 4.0 International
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: GFW DATA API
+  license_marker: Attribution 4.0 International
+domains:
+  - Climate
+  - Forestry
+  - Earth Observation
+data_types:
+  - Tabular
+  - Geospatial
+  - Time Series
+tasks:
+  - Deforestation Monitoring
+  - Country Comparison
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: 2001-present annual loss years
+update_frequency: annual
+provider: World Resources Institute
+source_type: nonprofit
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Global Forest Watch exposes UMD/Hansen tree-cover loss through a SQL query
+    API. Start with one year and the top countries by hectares lost. Loss is a
+    stand-replacement disturbance, not a land-use class, and it includes fire,
+    harvest, and conversion.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the GFW Data API documentation and locate the umd_tree_cover_loss dataset.
+    - Query one loss year aggregated by ISO3 code with a small row limit.
+    - Cite Hansen/UMD/Google/USGS/NASA and WRI when presenting results.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query",
+          params={
+              "sql": (
+                  "SELECT iso, SUM(umd_tree_cover_loss__ha) AS loss_ha "
+                  "FROM data WHERE umd_tree_cover_loss__year = 2023 "
+                  "GROUP BY iso ORDER BY loss_ha DESC LIMIT 15"
+              )
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      loss = pd.DataFrame(response.json()["data"])
+      loss["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(loss)
+  first_project:
+    title: Rank countries by 2023 tree-cover loss
+    goal: Test whether GFW country totals can power a bounded deforestation leaderboard.
+    steps:
+      - Confirm the query returned ISO3 codes and hectare totals for one loss year.
+      - Rank the bounded result and note countries with missing or zero values.
+      - Explain that tree-cover loss is not the same as deforestation of natural forest and includes harvest and fire.

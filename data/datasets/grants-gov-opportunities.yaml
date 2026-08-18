@@ -1,0 +1,83 @@
+id: grants-gov-opportunities
+name: Grants.gov Opportunities
+description: >
+  Federal grant opportunity postings for building funding inboxes and agency
+  opportunity monitors.
+theme: Government & Policy
+url: https://grants.gov/api/api-guide
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.2
+formats:
+  - JSON
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Grants.gov RESTful Application Programming Interface
+  license_marker: federal government materials
+domains:
+  - Research Funding
+  - Public Spending
+  - Government
+data_types:
+  - Tabular
+  - Documents
+tasks:
+  - Opportunity Monitoring
+  - Agency Comparison
+  - Alerting
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: posted, forecasted, and closed federal opportunities
+update_frequency: daily
+provider: Grants.gov
+source_type: government
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    Grants.gov search2 returns opportunity summaries without authentication.
+    Start with one keyword and posted status. A posting is not an award, and
+    eligibility, close dates, and attachments must be read on the opportunity
+    itself.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Grants.gov API guide and note that search2 uses POST.
+    - Search one keyword among posted opportunities with a small row count.
+    - Keep opportunity number, title, agency, and close date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.post(
+          "https://api.grants.gov/v1/api/search2",
+          json={
+              "keyword": "climate",
+              "oppStatuses": "posted",
+              "rows": 20,
+              "startRecordNum": 0,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()
+      opportunities = pd.DataFrame(payload.get("data", {}).get("oppHits", payload.get("oppHits", [])))
+      opportunities["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(opportunities.head())
+  first_project:
+    title: List posted climate grant opportunities
+    goal: Test whether search2 can power a bounded federal-funding inbox.
+    steps:
+      - Keep opportunity number, title, agency, and close date from the bounded response.
+      - Sort by close date and flag records missing an agency name.
+      - Explain that a posted opportunity is not an award and that eligibility is defined on the full notice.

@@ -1,0 +1,74 @@
+id: un-sc-consolidated-list
+name: UN Security Council Consolidated List
+description: >
+  UN Security Council sanctions designations for building bounded screening
+  alerts that stay inside list-matching limits.
+theme: Government & Policy
+url: https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.02
+formats:
+  - XML
+  - HTML
+license: United Nations website terms of use
+license_url: https://www.un.org/en/about-us/terms-of-use
+url_checks:
+  source_marker: UN Security Council Consolidated List
+  license_marker: Terms of Use
+domains:
+  - Regulation
+  - Compliance
+  - Finance
+data_types:
+  - Registry Data
+  - Tabular
+tasks:
+  - Alerting
+  - Search
+  - Compliance Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: currently listed designations with historical updates
+update_frequency: continuous
+provider: United Nations Security Council
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    The Security Council publishes a consolidated XML list of designated
+    individuals and entities. Start with exact primary names. A string match is
+    not a confirmed hit, aliases matter, and this list is not OFAC or a
+    complete global sanctions product.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the consolidated list page and locate the English XML download.
+    - Load INDIVIDUAL and ENTITY records from the XML.
+    - Keep DATAID, first and last names or entity name, and listed-on date.
+  python:
+    packages:
+      - pandas
+      - lxml
+    code: |
+      import pandas as pd
+
+      xml = pd.read_xml(
+          "https://scsanctions.un.org/resources/xml/en/consolidated.xml",
+          xpath=".//INDIVIDUAL",
+      )
+      xml["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(xml.head())
+  first_project:
+    title: Build an exact-name UN list lookup
+    goal: Test whether primary individual names can support a bounded screening prototype.
+    steps:
+      - Load individuals and keep DATAID plus first and last name fields.
+      - Compare a short authorized name list using exact uppercase matching only.
+      - Explain that aliases, transliteration, and entity records require the rest of the XML and that a match is not a legal determination.

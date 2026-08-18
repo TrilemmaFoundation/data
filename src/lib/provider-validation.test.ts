@@ -246,6 +246,37 @@ const validBodies = {
     elements: [{ type: "node", id: 1, lat: 40.75, lon: -73.98 }],
   }),
   "ourairports": "id,ident,type,name,latitude_deg,longitude_deg\n1,KSEA,large_airport,Seattle,47.45,-122.31",
+  "nsf-awards": JSON.stringify({
+    response: { award: [{ id: "1234567", title: "Example quantum award" }] },
+  }),
+  "treasury-debt-to-the-penny": JSON.stringify({
+    data: [{ record_date: "2026-08-14", tot_pub_debt_out_amt: "37000000000000.00" }],
+  }),
+  "noaa-gml-co2": "year,month,decimal date,average,deseasonalized\n2026,1,2026.042,427.01,425.50\n",
+  "pubchem-compounds": JSON.stringify({
+    PropertyTable: { Properties: [{ CID: 2244, MolecularFormula: "C9H8O4" }] },
+  }),
+  "dailymed-drug-labels": JSON.stringify({
+    data: [{ setid: "example", title: "IBUPROFEN" }],
+  }),
+  "openfda-device-events": JSON.stringify({
+    meta: { results: { total: 1 } },
+    results: [{ mdr_report_key: "123" }],
+  }),
+  "fema-nfip-redacted-claims": JSON.stringify({
+    FimaNfipClaims: [{ id: "abc", state: "FL" }],
+  }),
+  "ripe-stat": JSON.stringify({
+    data: { resource: "8.8.8.0/24" },
+  }),
+  "nchs-provisional-mortality": JSON.stringify([
+    { jurisdiction_of_occurrence: "California" },
+  ]),
+  "noaa-ndbc-buoys": "#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD\n2026 08 17 12 00 180 8.0 10.0 1.5 8.0 6.0 180\n",
+  "ons-statistics": JSON.stringify({
+    id: "cpih01",
+    title: "Consumer Prices Index including owner occupiers' housing costs",
+  }),
 } as const;
 
 const contentTypes = {
@@ -311,6 +342,17 @@ const contentTypes = {
   "met-norway-locationforecast": "application/json",
   "osm-overpass": "application/json",
   "ourairports": "text/csv",
+  "nsf-awards": "application/json",
+  "treasury-debt-to-the-penny": "application/json",
+  "noaa-gml-co2": "text/csv",
+  "pubchem-compounds": "application/json",
+  "dailymed-drug-labels": "application/json",
+  "openfda-device-events": "application/json",
+  "fema-nfip-redacted-claims": "application/json",
+  "ripe-stat": "application/json",
+  "nchs-provisional-mortality": "application/json",
+  "noaa-ndbc-buoys": "text/plain",
+  "ons-statistics": "application/json",
 } as const;
 
 function response(
@@ -435,6 +477,18 @@ describe("checkProviderContract", () => {
         fetchImpl: vi.fn().mockResolvedValue(response("HTML", "application/octet-stream")),
       }),
     ).resolves.toEqual(["download is not a ZIP archive"]);
+
+    await expect(
+      checkProviderContract("noaa-gml-co2", {
+        fetchImpl: vi.fn().mockResolvedValue(response("not-co2", "text/csv")),
+      }),
+    ).resolves.toEqual(["CSV is missing year or average columns"]);
+
+    await expect(
+      checkProviderContract("noaa-ndbc-buoys", {
+        fetchImpl: vi.fn().mockResolvedValue(response("no sensors", "text/plain")),
+      }),
+    ).resolves.toEqual(["buoy file is missing WSPD or WVHT"]);
   });
 
   it("reports Error and non-Error request failures", async () => {

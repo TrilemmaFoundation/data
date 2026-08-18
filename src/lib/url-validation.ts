@@ -153,6 +153,42 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-15",
     },
   ],
+  [
+    "https://volcano.si.edu/",
+    {
+      statuses: [403],
+      reason:
+        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      expires: "2026-11-16",
+    },
+  ],
+  [
+    "https://volcano.si.edu/gvp_webservices.cfm",
+    {
+      statuses: [403],
+      reason:
+        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      expires: "2026-11-16",
+    },
+  ],
+  [
+    "https://lda.gov/api/",
+    {
+      statuses: [403],
+      reason:
+        "Senate LDA blocks automated validation from some regions; reconfirmed 2026-08-18",
+      expires: "2026-11-16",
+    },
+  ],
+  [
+    "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list",
+    {
+      statuses: [403],
+      reason:
+        "UN Security Council pages block automated validation from some regions; reconfirmed 2026-08-18",
+      expires: "2026-11-16",
+    },
+  ],
 ]);
 
 function isReachable(status: number | null): boolean {

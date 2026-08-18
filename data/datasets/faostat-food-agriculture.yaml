@@ -1,0 +1,84 @@
+id: faostat-food-agriculture
+name: FAOSTAT Food and Agriculture
+description: >
+  Country food, agriculture, and land-use statistics for building commodity
+  and food-security comparison tools.
+theme: Demographics & Development
+url: https://www.fao.org/faostat/en/#data
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+  - Excel
+license: FAO terms and conditions
+license_url: https://www.fao.org/contact-us/terms/en
+url_checks:
+  source_marker: FAOSTAT
+  license_marker: Terms and Conditions
+domains:
+  - Agriculture
+  - Food Science
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Country Comparison
+  - Commodity Monitoring
+  - Food Security Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: item- and country-specific FAOSTAT series
+update_frequency: annual
+provider: Food and Agriculture Organization of the United Nations
+source_type: intergovernmental
+last_verified: 2026-08-18
+getting_started:
+  overview: >
+    FAOSTAT's JSON API returns one domain, item, and area at a time. Start
+    with wheat production for one country. National questionnaires, modelled
+    estimates, and unit changes all affect comparisons.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open FAOSTAT Data and choose the Crops and livestock products domain.
+    - Request one item, one area, and a short year list.
+    - Cite FAO with the domain and access date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://fenixservices.fao.org/faostat/api/v1/en/data/QCL",
+          params={
+              "area": 231,
+              "item": 15,
+              "element": 5510,
+              "year": "2018,2019,2020,2021,2022",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      crops = pd.DataFrame(response.json()["data"])
+      crops["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(crops.head())
+  first_project:
+    title: Track U.S. wheat production
+    goal: Test whether one FAOSTAT series can power a bounded commodity sketch.
+    steps:
+      - Keep area, item, year, value, and unit from the extract.
+      - Plot production over the requested years and note missing years.
+      - Cite FAO and explain that questionnaire coverage and unit definitions can change across years.
