@@ -18,7 +18,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: LDA API
+  source_marker: Download API
   license_marker: federal government materials
 domains:
   - Public Policy

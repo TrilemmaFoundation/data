@@ -504,7 +504,7 @@ test("desktop quick facets filter by theme, access, difficulty, and API key", as
 
   await page.locator("#desktop-dataset-access").selectOption("api");
   await page.locator("#desktop-dataset-api-key").selectOption("true");
-  await expect(page.getByRole("heading", { name: catalogCopy.emptyTitle })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Chrome UX Report API" })).toBeVisible();
   await page.locator("#desktop-dataset-access").selectOption("download");
   await page.locator("#desktop-dataset-difficulty").selectOption("beginner");
   await page.locator("#desktop-dataset-api-key").selectOption("false");

@@ -485,10 +485,48 @@ describe("checkProviderContract", () => {
     ).resolves.toEqual(["CSV is missing year or average columns"]);
 
     await expect(
+      checkProviderContract("noaa-gml-co2", {
+        fetchImpl: vi.fn().mockResolvedValue(
+          response("year,month,deseasonalized\n2026,1,425.50\n", "text/csv"),
+        ),
+      }),
+    ).resolves.toEqual([]);
+
+    await expect(
       checkProviderContract("noaa-ndbc-buoys", {
         fetchImpl: vi.fn().mockResolvedValue(response("no sensors", "text/plain")),
       }),
     ).resolves.toEqual(["buoy file is missing WSPD or WVHT"]);
+
+    await expect(
+      checkProviderContract("fhfa-house-price-index", {
+        fetchImpl: vi.fn().mockResolvedValue(response("not-hpi", "text/csv")),
+      }),
+    ).resolves.toEqual(["CSV is missing hpi_flavor or place_name"]);
+
+    await expect(
+      checkProviderContract("arxiv-preprints", {
+        fetchImpl: vi.fn().mockResolvedValue(response("<html>arxiv</html>", "application/xml")),
+      }),
+    ).resolves.toEqual(["response is not an arXiv Atom feed"]);
+
+    await expect(
+      checkProviderContract("noaa-ibtracs", {
+        fetchImpl: vi.fn().mockResolvedValue(response("not-storms", "text/csv")),
+      }),
+    ).resolves.toEqual(["CSV is missing SID or NAME"]);
+
+    await expect(
+      checkProviderContract("legislation-gov-uk", {
+        fetchImpl: vi.fn().mockResolvedValue(response("<html></html>", "application/xml")),
+      }),
+    ).resolves.toEqual(["XML is missing legislation markup"]);
+
+    await expect(
+      checkProviderContract("ourairports", {
+        fetchImpl: vi.fn().mockResolvedValue(response("not-airports", "text/csv")),
+      }),
+    ).resolves.toEqual(["CSV is missing ident, type, name, or latitude_deg"]);
   });
 
   it("reports Error and non-Error request failures", async () => {

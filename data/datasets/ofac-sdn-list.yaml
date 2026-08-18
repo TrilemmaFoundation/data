@@ -4,7 +4,7 @@ description: >
   Treasury blocked-party names for building bounded sanctions-screening alerts
   that stay inside OFAC matching limits.
 theme: Government & Policy
-url: https://ofac.treasury.gov/sanctions-list-service
+url: https://ofac.treasury.gov/
 access_type:
   - download
 api_key_required: false
@@ -37,7 +37,7 @@ temporal_coverage: continuously updated designations
 update_frequency: continuous
 provider: Office of Foreign Assets Control
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     OFAC publishes the SDN list as CSV and XML. Start with the primary names
@@ -49,7 +49,7 @@ getting_started:
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection
   access_steps:
-    - Open the Sanctions List Service page and identify the SDN CSV download.
+    - Open the Sanctions List Service from the OFAC homepage and identify the SDN CSV download.
     - Load the primary names file with the documented column order.
     - Compare only exact strings from an authorized customer list and keep the retrieval timestamp.
   python:

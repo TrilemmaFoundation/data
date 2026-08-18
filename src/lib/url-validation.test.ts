@@ -233,6 +233,35 @@ describe("checkUrl", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it("treats public IPv4-mapped IPv6 addresses as public IPv4", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      pageResponse("Expected page", "https://example.com/catalog"),
+    );
+    await expect(
+      checkUrl("https://example.com/catalog", {
+        fetchImpl: fetchImpl as typeof fetch,
+        resolveHost: async () => [{ address: "::ffff:8.8.8.8", family: 6 }],
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    expect(fetchImpl).toHaveBeenCalled();
+  });
+
+  it("maps hex IPv4-mapped IPv6 addresses onto the IPv4 block list", async () => {
+    const fetchImpl = vi.fn();
+    await expect(
+      checkUrl("https://example.com/catalog", {
+        fetchImpl: fetchImpl as typeof fetch,
+        resolveHost: async () => [{ address: "::ffff:7f00:1", family: 6 }],
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: ["https://example.com/catalog resolved to blocked address ::ffff:7f00:1"],
+    });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("rejects empty DNS results and private literal addresses", async () => {
     const fetchImpl = vi.fn();
     await expect(
@@ -455,13 +484,6 @@ describe("checkUrl", () => {
       "https://www.fcc.gov/BroadbandData",
       403,
       "FCC blocks automated validation from some regions; reconfirmed 2026-08-17",
-      "2026-11-15",
-      2,
-    ],
-    [
-      "https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fmr",
-      403,
-      "HUD blocks automated validation from some regions; reconfirmed 2026-08-17",
       "2026-11-15",
       2,
     ],

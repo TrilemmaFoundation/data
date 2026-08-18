@@ -4,7 +4,7 @@ description: >
   County and metro Fair Market Rents for building rent-burden screens and
   voucher-payment comparison tools.
 theme: Markets & Economics
-url: https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fmr
+url: https://www.huduser.gov/portal/datasets/fmr.html
 access_type:
   - api
   - download
@@ -37,7 +37,7 @@ temporal_coverage: annual fiscal-year FMRs
 update_frequency: annual
 provider: U.S. Department of Housing and Urban Development
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     HUD publishes Fair Market Rents by county and metro area. Start with one

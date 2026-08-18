@@ -47,12 +47,31 @@ const blockedIpv6 = new BlockList();
 for (const [network, prefix] of [
   ["::", 128],
   ["::1", 128],
-  ["::ffff:0:0", 96],
   ["fc00::", 7],
   ["fe80::", 10],
   ["ff00::", 8],
 ] as const) {
   blockedIpv6.addSubnet(network, prefix, "ipv6");
+}
+
+function ipv4FromMappedAddress(address: string): string | null {
+  const dotted = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(address);
+  if (dotted) return dotted[1]!;
+  const hex = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(address);
+  if (!hex) return null;
+  const high = Number.parseInt(hex[1]!, 16);
+  const low = Number.parseInt(hex[2]!, 16);
+  return `${(high >> 8) & 255}.${high & 255}.${(low >> 8) & 255}.${low & 255}`;
+}
+
+function isBlockedResolvedAddress(address: string, family: number): boolean {
+  if (family === 4) return blockedIpv4.check(address, "ipv4");
+  if (family === 6) {
+    const mapped = ipv4FromMappedAddress(address);
+    if (mapped) return blockedIpv4.check(mapped, "ipv4");
+    return blockedIpv6.check(address, "ipv6");
+  }
+  return true;
 }
 
 export const resolveHostWithDns: ResolveHost = (hostname) =>
@@ -114,11 +133,7 @@ async function resolveSafeTarget(
     return { error: `${target.toString()} did not resolve to an IP address` };
   }
   const blocked = addresses.find(({ address, family }) =>
-    family !== 4 && family !== 6
-      ? true
-      : family === 4
-        ? blockedIpv4.check(address, "ipv4")
-        : blockedIpv6.check(address, "ipv6"),
+    isBlockedResolvedAddress(address, family),
   );
   if (blocked) {
     return {

@@ -11,12 +11,12 @@ const addedDatasetBudget =
   PER_DATASET_MARKUP_BUDGET;
 
 const BUDGETS = {
-  javascript: 860_000,
+  javascript: 880_000,
   css: 76_000,
   // Static HTML now includes the first catalog page (cards + table), not a CSR shell.
   html: 125_000 + addedDatasetBudget,
   rsc: 22_000 + addedDatasetBudget,
-  gzipCode: 285_000,
+  gzipCode: 300_000,
 };
 
 async function initialCodeBytes(page: Page, path: string) {

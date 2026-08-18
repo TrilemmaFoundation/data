@@ -16,10 +16,10 @@ formats:
   - JSON
   - GeoTIFF
 license: Creative Commons Attribution 4.0
-license_url: https://hub.worldpop.org/data/licence.txt
+license_url: https://creativecommons.org/licenses/by/4.0/
 url_checks:
   source_marker: WorldPop REST API
-  license_marker: WorldPop datasets are licensed under the Creative Commons Attribution
+  license_marker: Attribution 4.0 International
 domains:
   - Demographics
   - Population
