@@ -63,14 +63,26 @@ getting_started:
 
       response = requests.get(
           "https://data.cms.gov/provider-data/api/1/datastore/query/4pq5-n9py/0",
-          params={"limit": 100},
+          params={
+              "limit": 20,
+              "conditions[0][property]": "state",
+              "conditions[0][value]": "CA",
+              "conditions[0][operator]": "=",
+          },
           timeout=30,
       )
       response.raise_for_status()
       homes = pd.DataFrame(response.json()["results"])
-      state_col = next(column for column in homes.columns if "state" in column.lower())
-      sample = homes[homes[state_col] == "CA"]
-      print(sample.head(20))
+      print(
+          homes[
+              [
+                  "cms_certification_number_ccn",
+                  "provider_name",
+                  "state",
+                  "overall_rating",
+              ]
+          ].head(20)
+      )
   first_project:
     title: Compare nursing homes within one state
     goal: Summarize Five-Star ratings and staffing for facilities in one state.

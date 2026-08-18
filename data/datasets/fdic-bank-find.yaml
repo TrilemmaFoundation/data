@@ -73,8 +73,10 @@ getting_started:
           timeout=30,
       )
       response.raise_for_status()
-      banks = pd.DataFrame(response.json()["data"])
-      print(banks.head())
+      banks = pd.json_normalize(
+          [row["data"] for row in response.json()["data"]]
+      )
+      print(banks[["NAME", "CERT", "CITY", "STALP", "ACTIVE"]].head())
   first_project:
     title: List active FDIC-insured institutions in one state
     goal: Test whether BankFind can power a bounded state bank directory.

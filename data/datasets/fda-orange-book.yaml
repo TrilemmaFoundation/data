@@ -4,21 +4,20 @@ description: >
   Approved drug products with therapeutic-equivalence, patent, and exclusivity
   dates for building generic-entry and substitution-research tools.
 theme: Health, Food & Safety
-url: https://www.accessdata.fda.gov/scripts/cder/ob/index.cfm
+url: https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files
 access_type:
-  - api
   - download
 api_key_required: false
 free_to_access: true
 size_gb_min: 0
 size_gb_max: 0.05
 formats:
-  - JSON
+  - TXT
   - CSV
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: Orange Book
+  source_marker: Orange Book Data Files
   license_marker: federal government materials
 domains:
   - Pharmaceuticals
@@ -42,37 +41,41 @@ last_verified: 2026-08-18
 getting_started:
   overview: >
     The Orange Book lists FDA-approved products with therapeutic-equivalence
-    codes, patents, and exclusivity. Start with one brand name through openFDA.
-    Exclusivity dates are not a guaranteed generic-entry day, and omitted
+    codes, patents, and exclusivity. Start with products.txt from the published
+    zip. Exclusivity dates are not a guaranteed generic-entry day, and omitted
     patents can still block substitution.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection
   access_steps:
-    - Open the Electronic Orange Book search and the federal public-data copyright page.
-    - Query openFDA Drugs@FDA for one brand name with a small limit.
-    - Keep application numbers, product names, and exclusivity fields when present.
+    - Open the Orange Book data-files page and the federal public-data copyright page.
+    - Download the published zip and read products.txt with the documented tilde delimiter.
+    - Keep application number, trade name, and therapeutic-equivalence code.
   python:
     packages:
       - pandas
       - requests
     code: |
+      import io
+      import zipfile
+
       import pandas as pd
       import requests
 
       response = requests.get(
-          "https://api.fda.gov/drug/drugsfda.json",
-          params={"search": 'openfda.brand_name:"LIPITOR"', "limit": 5},
+          "https://www.fda.gov/media/76860/download",
           timeout=30,
       )
       response.raise_for_status()
-      products = pd.json_normalize(response.json()["results"])
-      print(products.filter(regex="application_number|brand_name|generic_name|products").head())
+      with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+          products = pd.read_csv(archive.open("products.txt"), sep="~")
+      sample = products[products["Trade_Name"].str.upper() == "LIPITOR"]
+      print(sample[["Appl_No", "Trade_Name", "Ingredient", "TE_Code", "Approval_Date"]].head())
   first_project:
     title: Inspect one brand's approved products and exclusivity
     goal: Test whether Orange Book fields can support a bounded generic-entry review.
     steps:
-      - Keep application number, brand name, and product list for Lipitor.
-      - Record any exclusivity or patent fields returned and note missing dates.
+      - Keep application number, trade name, ingredient, and TE code for Lipitor.
+      - Join patent.txt or exclusivity.txt on application number only when those dates are present.
       - Explain that remaining patents, litigation, and supply can move generic entry after an exclusivity date.
