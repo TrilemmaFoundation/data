@@ -15,14 +15,14 @@ Thank you for contributing an operational dataset!
 - [ ] The `url` points to an authoritative source (not a mirror, when avoidable)
 - [ ] Source and license URLs use HTTPS and contain no embedded credentials
 - [ ] I verified the source URL and license URL are live
-- [ ] `url_checks` contains page-specific source and license text markers
+- [ ] `url_checks` contains page-specific source and license text markers (16+ characters; distinct when the URLs differ)
 - [ ] `last_verified` is today's real calendar date (`YYYY-MM-DD`)
 - [ ] Lists contain no duplicate values and text fields are not blank
 - [ ] Metadata text and URLs contain no control characters
 - [ ] Metadata can be independently verified against the source
 - [ ] `getting_started` includes complete prerequisites and access steps
-- [ ] The Python example is valid, concise, credential-free, and matches the described download
-- [ ] The first project has a clear goal and three actionable steps
+- [ ] The Python example is valid, concise, credential-free, and uses the authoritative source
+- [ ] The first project has a clear goal and three actionable steps, ending with an interpretation or limitation
 
 ### Exclude if any apply
 
@@ -37,6 +37,9 @@ Thank you for contributing an operational dataset!
 
 ### Notes for reviewers
 
-Automated CI will validate YAML parsing, required and unknown fields, unique IDs
-and list values, size ranges, difficulty, free access, license fields,
-calendar-valid dates, Python syntax, and live URL page identity.
+Automated pull-request CI will validate YAML parsing, required and unknown
+fields, unique IDs and list values, size ranges, difficulty, free access,
+license fields, calendar-valid dates, guide copy, page-identity marker policy,
+Python syntax, and built guide HTML. Live source and license page identity,
+and configured provider contracts, run after merge to `main`, on the weekly
+schedule, and on manual dispatch.

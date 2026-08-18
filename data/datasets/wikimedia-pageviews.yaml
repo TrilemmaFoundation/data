@@ -18,7 +18,7 @@ license: CC0 1.0 Universal
 license_url: https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/documentation/access-policy.html
 url_checks:
   source_marker: Page view analytics
-  license_marker: CC0 1.0 license
+  license_marker: CC0 1.0 Universal license
 domains:
   - Attention Measurement
   - Current Events
@@ -36,7 +36,7 @@ temporal_coverage: 2015-07-01-present
 update_frequency: daily
 provider: Wikimedia Foundation
 source_type: community
-last_verified: 2026-08-14
+last_verified: 2026-08-18
 getting_started:
   overview: >
     The Wikimedia Analytics API reports pageviews for Wikimedia projects.

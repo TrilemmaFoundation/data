@@ -18,8 +18,8 @@ formats:
 license: CC0 1.0 Universal
 license_url: https://www.gleif.org/en/meta/lei-data-terms-of-use/
 url_checks:
-  source_marker: GLEIF API
-  license_marker: CC0 licence
+  source_marker: GLEIF LEI data API
+  license_marker: LEI Data Terms of Use
 domains:
   - Finance
   - Business

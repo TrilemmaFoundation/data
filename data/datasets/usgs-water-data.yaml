@@ -20,8 +20,8 @@ formats:
 license: U.S. Public Domain / USGS CC0 guidance
 license_url: https://www.usgs.gov/data-management/data-licensing
 url_checks:
-  source_marker: Water Data APIs
-  license_marker: Data Licensing
+  source_marker: USGS Water Data APIs
+  license_marker: USGS Data Licensing
 
 domains:
   - Water Resources
@@ -44,7 +44,7 @@ update_frequency: near real time
 
 provider: U.S. Geological Survey
 source_type: government
-last_verified: 2026-08-11
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

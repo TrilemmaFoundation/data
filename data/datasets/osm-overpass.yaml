@@ -17,7 +17,7 @@ formats:
 license: Open Database License
 license_url: https://www.openstreetmap.org/copyright
 url_checks:
-  source_marker: Overpass API
+  source_marker: Overpass API Documentation
   license_marker: Open Database License
 domains:
   - Mapping

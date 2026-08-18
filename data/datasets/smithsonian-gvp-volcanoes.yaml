@@ -20,7 +20,7 @@ license: Smithsonian GVP data-use and citation guidance
 license_url: https://volcano.si.edu/gvp_webservices.cfm
 url_checks:
   source_marker: Global Volcanism Program
-  license_marker: web services
+  license_marker: GVP web services documentation
 domains:
   - Natural Hazards
   - Earth Science

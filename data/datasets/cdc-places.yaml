@@ -22,7 +22,7 @@ license: U.S. Public Domain with CDC attribution and use requirements
 license_url: https://www.cdc.gov/other/agencymaterials.html
 url_checks:
   source_marker: PLACES Data Portal
-  license_marker: public domain
+  license_marker: Most CDC materials are in the public domain
 
 domains:
   - Public Health
@@ -44,7 +44,7 @@ update_frequency: annual
 
 provider: Centers for Disease Control and Prevention
 source_type: government
-last_verified: 2026-08-11
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

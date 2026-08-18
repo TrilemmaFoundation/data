@@ -46,6 +46,39 @@ describe("checkUrl", () => {
     ).resolves.toEqual({ ok: true, messages: [] });
   });
 
+  it("accepts a public IPv6 address with a zone ID", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      pageResponse("Expected page", "https://example.com/catalog"),
+    );
+    await expect(
+      checkUrl("https://example.com/catalog", {
+        fetchImpl: fetchImpl as typeof fetch,
+        resolveHost: async () => [
+          { address: "2001:4860:4860::8888%eth0", family: 6 },
+        ],
+        expectedMarker: "Expected page",
+      }),
+    ).resolves.toEqual({ ok: true, messages: [] });
+    expect(fetchImpl).toHaveBeenCalled();
+  });
+
+  it.each(["2001:4860:4860::8888%", "[2001:4860:4860::8888%eth0]"])(
+    "accepts public global IPv6 %s after stripping zone decorations",
+    async (address) => {
+      const fetchImpl = vi.fn().mockResolvedValue(
+        pageResponse("Expected page", "https://example.com/catalog"),
+      );
+      await expect(
+        checkUrl("https://example.com/catalog", {
+          fetchImpl: fetchImpl as typeof fetch,
+          resolveHost: async () => [{ address, family: 6 }],
+          expectedMarker: "Expected page",
+        }),
+      ).resolves.toEqual({ ok: true, messages: [] });
+      expect(fetchImpl).toHaveBeenCalled();
+    },
+  );
+
   it("falls back to GET and retries one transient failure", async () => {
     const fetchImpl = vi
       .fn()
@@ -222,13 +255,21 @@ describe("checkUrl", () => {
     ["0:0:0:0:0:ffff:127.0.0.1", 6],
     ["0:0:0:0:0:ffff:7f00:1", 6],
     ["[::ffff:127.0.0.1]", 6],
+    ["::ffff:127.0.0.1%lo0", 6],
+    ["::ffff:127.0.0.1%1", 6],
+    ["[::ffff:127.0.0.1%eth0]", 6],
+    ["::ffff:127.0.0.1%", 6],
     ["64:ff9b::7f00:1", 6],
+    ["64:ff9b::7f00:1%lo0", 6],
+    ["::127.0.0.1%lo0", 6],
+    ["::7f00:1%1", 6],
     ["64:ff9b::a9fe:a9fe", 6],
     ["64:ff9b::169.254.169.254", 6],
     ["64:ff9b:0:0:0:0:7f00:1", 6],
     ["nope", 4],
     ["fc00::1", 6],
     ["fe80::1", 6],
+    ["fe80::1%lo0", 6],
     ["8.8.8.8", 0],
   ])("blocks unsafe resolved address %s family %s", async (address, family) => {
     const fetchImpl = vi.fn();
@@ -254,6 +295,11 @@ describe("checkUrl", () => {
     "64:ff9b::8.8.8.8",
     "::8.8.8.8",
     "::808:808",
+    "::ffff:8.8.8.8%eth0",
+    "::ffff:8.8.8.8%",
+    "::FFFF:8.8.8.8%ETH0",
+    "::8.8.8.8%eth0",
+    "64:ff9b::8.8.8.8%eth0",
   ])("treats public embedded IPv4 %s as public", async (address) => {
     const fetchImpl = vi.fn().mockResolvedValue(
       pageResponse("Expected page", "https://example.com/catalog"),
@@ -278,18 +324,21 @@ describe("checkUrl", () => {
     "::gggg",
     "gggg::1",
     "[::1",
-  ])("does not treat malformed IPv6 %s as mapped private", async (address) => {
-    const fetchImpl = vi.fn().mockResolvedValue(
-      pageResponse("Expected page", "https://example.com/catalog"),
-    );
+  ])("blocks unparsed IPv6 %s", async (address) => {
+    const fetchImpl = vi.fn();
     await expect(
       checkUrl("https://example.com/catalog", {
         fetchImpl: fetchImpl as typeof fetch,
         resolveHost: async () => [{ address, family: 6 }],
         expectedMarker: "Expected page",
       }),
-    ).resolves.toEqual({ ok: true, messages: [] });
-    expect(fetchImpl).toHaveBeenCalled();
+    ).resolves.toEqual({
+      ok: false,
+      messages: [
+        `https://example.com/catalog resolved to blocked address ${address}`,
+      ],
+    });
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 
   it("maps hex IPv4-mapped IPv6 addresses onto the IPv4 block list", async () => {

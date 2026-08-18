@@ -17,7 +17,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: Recalls
+  source_marker: CPSC Recalls and Recall Information
   license_marker: federal government materials
 domains:
   - Consumer Safety
@@ -37,7 +37,7 @@ temporal_coverage: 1973-present
 update_frequency: daily
 provider: U.S. Consumer Product Safety Commission
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     CPSC's Recall Retrieval service returns consumer product recalls as JSON.

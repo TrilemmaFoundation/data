@@ -1,8 +1,8 @@
 id: cdc-fluview-ilinet
 name: CDC FluView ILINet
 description: >
-  Weekly outpatient influenza-like illness activity for building seasonal
-  respiratory-illness monitors.
+  Weekly U.S. outpatient influenza-like illness activity for building seasonal
+  respiratory-illness monitoring tools.
 theme: Health, Food & Safety
 url: https://www.cdc.gov/fluview/overview/index.html
 access_type:
@@ -19,7 +19,7 @@ license: U.S. Public Domain with CDC attribution and use requirements
 license_url: https://www.cdc.gov/other/agencymaterials.html
 url_checks:
   source_marker: Outpatient Influenza-like Illness Surveillance Network
-  license_marker: public domain
+  license_marker: Most CDC materials are in the public domain
 domains:
   - Public Health
   - Infectious Disease
@@ -38,7 +38,7 @@ temporal_coverage: weekly surveillance seasons from the late 1990s
 update_frequency: weekly
 provider: Centers for Disease Control and Prevention
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     FluView publishes ILINet outpatient respiratory-illness activity on

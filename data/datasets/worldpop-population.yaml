@@ -1,8 +1,8 @@
 id: worldpop-population
 name: WorldPop Population Estimates
 description: >
-  Country-level high-resolution population grids for building catchment,
-  coverage, and demographic-denominator tools.
+  Country-level high-resolution national population grids for building
+  catchment, coverage, and demographic-denominator tools.
 theme: Demographics & Development
 url: https://www.worldpop.org/sdi/introapi/
 access_type:

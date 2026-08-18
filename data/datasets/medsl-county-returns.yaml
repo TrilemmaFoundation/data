@@ -17,8 +17,8 @@ formats:
 license: Creative Commons CC0 1.0 Universal
 license_url: https://creativecommons.org/publicdomain/zero/1.0/
 url_checks:
-  source_marker: Election Data
-  license_marker: CC0
+  source_marker: MIT Election Data and Science Lab
+  license_marker: CC0 1.0 Universal
 domains:
   - Elections
   - Public Policy

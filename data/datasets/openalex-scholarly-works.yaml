@@ -21,7 +21,7 @@ formats:
 license: Creative Commons CC0 1.0 Universal
 license_url: https://help.openalex.org/hc/en-us/articles/24397762024087-Pricing
 url_checks:
-  source_marker: API reference
+  source_marker: OpenAlex API Overview
   license_marker: public-domain license
 
 domains:
@@ -43,7 +43,7 @@ update_frequency: continuous
 
 provider: OurResearch
 source_type: nonprofit
-last_verified: 2026-08-12
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

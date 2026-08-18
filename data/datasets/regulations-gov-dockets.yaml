@@ -17,7 +17,7 @@ license: Regulations.gov API terms of service
 license_url: https://open.gsa.gov/api/regulationsgov/
 url_checks:
   source_marker: Regulations.gov API
-  license_marker: api.data.gov
+  license_marker: Regulations.gov API documentation
 domains:
   - Regulation
   - Public Policy

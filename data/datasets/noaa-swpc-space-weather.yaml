@@ -18,7 +18,7 @@ license: NOAA disclaimer / U.S. public domain
 license_url: https://www.noaa.gov/disclaimer
 url_checks:
   source_marker: SWPC Data Service
-  license_marker: public domain
+  license_marker: NOAA Disclaimer and Copyright
 domains:
   - Natural Hazards
   - Energy
@@ -37,7 +37,7 @@ temporal_coverage: continuously updated operational products
 update_frequency: near real time
 provider: NOAA Space Weather Prediction Center
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     SWPC publishes JSON products for planetary K-index and related scales.

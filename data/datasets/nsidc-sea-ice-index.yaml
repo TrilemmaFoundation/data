@@ -18,7 +18,7 @@ formats:
 license: NASA NSIDC DAAC data use and citation guidance
 license_url: https://nsidc.org/about/data-use-and-copyright
 url_checks:
-  source_marker: Sea Ice Index
+  source_marker: NSIDC Sea Ice Index
   license_marker: Citation Policies
 domains:
   - Climate

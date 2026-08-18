@@ -17,8 +17,8 @@ formats:
 license: BEA Data API terms of service
 license_url: https://apps.bea.gov/api/signup/
 url_checks:
-  source_marker: Regional
-  license_marker: Terms of Service
+  source_marker: BEA Data API User Guide
+  license_marker: BEA API Terms of Service
 domains:
   - Regional Economics
   - National Accounts
@@ -36,7 +36,7 @@ temporal_coverage: varies by Regional table, including series from 1998-present
 update_frequency: quarterly
 provider: U.S. Bureau of Economic Analysis
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     The BEA Regional API provides state, county, and metro GDP, personal

@@ -93,11 +93,17 @@ function expandIpv6(address: string, expectedGroups: number): number[] | null {
   return [...left, ...Array<number>(missing).fill(0), ...right];
 }
 
-function parseIpv6(address: string): number[] | null {
+function stripIpv6Decorations(address: string): string {
   let value = address.toLowerCase();
   if (value.startsWith("[") && value.endsWith("]")) {
     value = value.slice(1, -1);
   }
+  const zone = value.indexOf("%");
+  return zone === -1 ? value : value.slice(0, zone);
+}
+
+function parseIpv6(address: string): number[] | null {
+  let value = stripIpv6Decorations(address);
 
   let ipv4Groups: number[] | null = null;
   const ipv4Tail = /^(.*):(\d{1,3}(?:\.\d{1,3}){3})$/.exec(value);
@@ -145,7 +151,10 @@ function isBlockedResolvedAddress(address: string, family: number): boolean {
   if (family !== 4 && family !== 6) return true;
   const ipv4 = canonicalIpv4(address) ?? ipv4FromEmbeddedAddress(address);
   if (ipv4) return blockedIpv4.check(ipv4, "ipv4");
-  if (family === 6) return blockedIpv6.check(address, "ipv6");
+  if (family === 6) {
+    if (!parseIpv6(address)) return true;
+    return blockedIpv6.check(stripIpv6Decorations(address), "ipv6");
+  }
   return true;
 }
 

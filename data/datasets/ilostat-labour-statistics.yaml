@@ -19,7 +19,7 @@ formats:
 license: ILO rights and permissions / Creative Commons Attribution 4.0
 license_url: https://www.ilo.org/rights-and-permissions
 url_checks:
-  source_marker: ILOSTAT
+  source_marker: ILOSTAT labour statistics
   license_marker: Creative Commons
 domains:
   - Labor Economics

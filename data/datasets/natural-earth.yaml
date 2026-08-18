@@ -23,7 +23,7 @@ license: Public Domain
 license_url: https://www.naturalearthdata.com/about/terms-of-use/
 url_checks:
   source_marker: Natural Earth is a public domain map dataset
-  license_marker: Terms of Use
+  license_marker: Natural Earth Terms of Use
 
 domains:
   - Geography
@@ -47,7 +47,7 @@ update_frequency: occasional
 
 provider: Natural Earth
 source_type: community
-last_verified: 2026-08-10
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

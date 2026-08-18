@@ -18,8 +18,8 @@ formats:
 license: ClinicalTrials.gov terms and conditions
 license_url: https://clinicaltrials.gov/about-site/terms-conditions
 url_checks:
-  source_marker: ClinicalTrials.gov
-  license_marker: ClinicalTrials.gov
+  source_marker: ClinicalTrials.gov API
+  license_marker: ClinicalTrials.gov Terms and Conditions
 domains:
   - Clinical Research
   - Public Health
@@ -37,7 +37,7 @@ temporal_coverage: 2000-present
 update_frequency: daily
 provider: U.S. National Library of Medicine
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     ClinicalTrials.gov contains sponsor-submitted study protocols, recruitment

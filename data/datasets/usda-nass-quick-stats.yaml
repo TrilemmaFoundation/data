@@ -19,7 +19,7 @@ formats:
 license: NASS API terms of service
 license_url: https://quickstats.nass.usda.gov/api
 url_checks:
-  source_marker: QuickStats API
+  source_marker: NASS Quick Stats API
   license_marker: This product uses the NASS API but is not endorsed or certified by NASS
 domains:
   - Agriculture
@@ -39,7 +39,7 @@ temporal_coverage: Census of Agriculture years plus ongoing surveys
 update_frequency: occasional
 provider: USDA National Agricultural Statistics Service
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-08-18
 getting_started:
   overview: >
     Quick Stats exposes published NASS survey and census estimates. Start with

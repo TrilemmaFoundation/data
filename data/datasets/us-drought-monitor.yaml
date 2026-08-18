@@ -1,8 +1,8 @@
 id: us-drought-monitor
 name: U.S. Drought Monitor
 description: >
-  Weekly drought-category statistics for building local agricultural, water, and
-  risk-monitoring tools.
+  Weekly U.S. drought-category statistics for building local agricultural,
+  water, and risk-monitoring tools.
 theme: Environment & Hazards
 url: https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx
 access_type:
@@ -39,7 +39,7 @@ temporal_coverage: 2000-present
 update_frequency: weekly
 provider: National Drought Mitigation Center
 source_type: academic
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     The U.S. Drought Monitor REST services return weekly None and D0–D4 area

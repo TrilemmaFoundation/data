@@ -2,6 +2,7 @@ import { loadDatasets, getDatasetsDir } from "../src/lib/datasets";
 import { exceptionExpiryWarnings, validateDatasetUrls } from "../src/lib/url-validation";
 import { validatePythonSyntaxBatch } from "../src/lib/python-validation";
 import { validateDatasetPolicy } from "../src/lib/catalog-validation";
+import { validateGuideCopy } from "../src/lib/guide-validation";
 import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
 async function main() {
@@ -27,6 +28,7 @@ async function main() {
     const messages: string[] = [];
 
     messages.push(...validateDatasetPolicy(dataset));
+    messages.push(...validateGuideCopy(dataset));
 
     const pythonError = pythonErrors[index];
     if (pythonError) {

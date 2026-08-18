@@ -20,7 +20,7 @@ license: Polymarket Terms of Use
 license_url: https://polymarket.com/tos
 url_checks:
   source_marker: Learn how Polymarket organizes market data
-  license_marker: Terms of Use
+  license_marker: Polymarket Terms of Use
 
 domains:
   - Prediction Markets
@@ -43,7 +43,7 @@ update_frequency: continuous
 
 provider: Polymarket
 source_type: company
-last_verified: 2026-08-10
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

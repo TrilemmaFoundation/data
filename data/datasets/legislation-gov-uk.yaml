@@ -19,7 +19,7 @@ formats:
 license: Open Government Licence v3.0
 license_url: https://www.legislation.gov.uk/developer
 url_checks:
-  source_marker: Legislation API
+  source_marker: legislation.gov.uk developer
   license_marker: Open Government Licence v3.0
 domains:
   - Legislation
@@ -44,8 +44,8 @@ getting_started:
   overview: >
     legislation.gov.uk publishes consolidated UK Acts and statutory instruments
     through a documented HTTP API. Start with one well-known Act and its XML
-    representation. The service is free to reuse commercially under OGL v3.0;
-    some EU-derived items carry an additional Commission reuse notice.
+    representation. Consolidations can lag the official print and some
+    EU-derived items carry an additional Commission reuse notice.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab

@@ -19,7 +19,7 @@ formats:
 license: NLM copyright and data-use terms
 license_url: https://www.nlm.nih.gov/copyright.html
 url_checks:
-  source_marker: DailyMed
+  source_marker: DailyMed Web Services
   license_marker: NLM Copyright Information
 domains:
   - Pharmaceuticals

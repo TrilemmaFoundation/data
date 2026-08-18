@@ -19,8 +19,8 @@ formats:
 license: ECB copyright and reuse notice
 license_url: https://www.ecb.europa.eu/home/disclaimer/html/index.en.html
 url_checks:
-  source_marker: ECB Data Portal
-  license_marker: Disclaimer
+  source_marker: ECB Data Portal API
+  license_marker: ECB website disclaimer
 domains:
   - Macroeconomics
   - Finance

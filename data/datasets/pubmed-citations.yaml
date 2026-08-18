@@ -17,8 +17,8 @@ formats:
 license: NCBI database and copyright policies
 license_url: https://www.ncbi.nlm.nih.gov/home/about/policies/
 url_checks:
-  source_marker: E-utilities
-  license_marker: Copyright
+  source_marker: NCBI Entrez Programming Utilities
+  license_marker: NCBI Copyright and Disclaimers
 domains:
   - Biomedical Research
   - Scholarly Communication
@@ -36,7 +36,7 @@ temporal_coverage: 1946-present
 update_frequency: daily
 provider: U.S. National Library of Medicine
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     PubMed indexes biomedical and life-sciences citations with controlled

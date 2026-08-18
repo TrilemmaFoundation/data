@@ -17,7 +17,7 @@ license: RIPEstat terms and Creative Commons Attribution
 license_url: https://www.ripe.net/about-us/legal/
 url_checks:
   source_marker: About the Data API
-  license_marker: RIPE NCC
+  license_marker: RIPE NCC legal information
 domains:
   - Internet Infrastructure
   - Cybersecurity

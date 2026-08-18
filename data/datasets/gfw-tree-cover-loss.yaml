@@ -16,7 +16,7 @@ formats:
 license: Creative Commons Attribution 4.0 International
 license_url: https://creativecommons.org/licenses/by/4.0/
 url_checks:
-  source_marker: GFW DATA API
+  source_marker: Global Forest Watch Data API
   license_marker: Attribution 4.0 International
 domains:
   - Climate

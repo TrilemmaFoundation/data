@@ -18,7 +18,7 @@ formats:
 license: MITRE ATT&CK terms of use
 license_url: https://attack.mitre.org/resources/legal-and-branding/terms-of-use/
 url_checks:
-  source_marker: ATT&CK in STIX
+  source_marker: ATT&CK Data and Tools
   license_marker: non-exclusive, royalty-free license
 domains:
   - Cybersecurity
@@ -37,7 +37,7 @@ temporal_coverage: current versioned knowledge base
 update_frequency: occasional
 provider: MITRE
 source_type: nonprofit
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     Enterprise ATT&CK represents documented adversary behaviors and their

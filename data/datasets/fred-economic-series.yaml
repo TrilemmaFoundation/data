@@ -17,7 +17,7 @@ formats:
 license: FRED API terms of use and series-specific source rights
 license_url: https://fred.stlouisfed.org/docs/api/terms_of_use.html
 url_checks:
-  source_marker: FRED API
+  source_marker: FRED API Documentation
   license_marker: API Terms of Use
 domains:
   - Macroeconomics
@@ -35,7 +35,7 @@ temporal_coverage: varies by series with historical vintages available through A
 update_frequency: daily
 provider: Federal Reserve Bank of St. Louis
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     FRED normalizes economic series from many publishers, while ALFRED exposes

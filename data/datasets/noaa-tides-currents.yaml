@@ -21,7 +21,7 @@ license: U.S. Government public data / NOAA disclaimer
 license_url: https://www.noaa.gov/disclaimer
 url_checks:
   source_marker: CO-OPS Data Retrieval API
-  license_marker: public domain
+  license_marker: NOAA Disclaimer and Copyright
 
 domains:
   - Coastal Data
@@ -43,7 +43,7 @@ update_frequency: continuous
 
 provider: NOAA Center for Operational Oceanographic Products and Services
 source_type: government
-last_verified: 2026-08-11
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

@@ -19,7 +19,7 @@ formats:
 license: FAO terms and conditions
 license_url: https://www.fao.org/contact-us/terms/en
 url_checks:
-  source_marker: FAOSTAT
+  source_marker: FAOSTAT statistical database
   license_marker: Terms and Conditions
 domains:
   - Agriculture

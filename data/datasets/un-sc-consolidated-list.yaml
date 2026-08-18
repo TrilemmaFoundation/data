@@ -18,7 +18,7 @@ license: United Nations website terms of use
 license_url: https://www.un.org/en/about-us/terms-of-use
 url_checks:
   source_marker: UN Security Council Consolidated List
-  license_marker: Terms of Use
+  license_marker: United Nations Terms of Use
 domains:
   - Regulation
   - Compliance

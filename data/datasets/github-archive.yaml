@@ -17,7 +17,7 @@ formats:
 license: GitHub Terms of Service for public events, with GH Archive access terms
 license_url: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
 url_checks:
-  source_marker: GH Archive
+  source_marker: GH Archive project
   license_marker: GitHub Terms of Service
 domains:
   - Open Source

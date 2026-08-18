@@ -7,7 +7,7 @@ id: replace-with-dataset-id
 name: Replace with dataset name
 description: >
   Replace this with one concise sentence that states what the source contains
-  and the practical microproduct use it could support.
+  and the practical microproduct use it could support, using a "for" clause.
 theme: Environment & Hazards
 # Allowed: Environment & Hazards | Government & Policy | Markets & Economics |
 # Health, Food & Safety | Geospatial & Infrastructure | Research & Reference |
@@ -29,9 +29,11 @@ formats:
 license: Replace with the provider's data-use terms
 license_url: https://example.com/data-terms
 # Case-insensitive text that uniquely identifies the intended HTML pages.
+# Use at least 16 characters. Source and license markers must differ when the
+# URLs differ.
 url_checks:
-  source_marker: Replace with source page marker
-  license_marker: Replace with data-terms page marker
+  source_marker: Example Dataset Downloads
+  license_marker: Example Dataset Terms of Use
 
 domains:
   - Replace with domain
@@ -58,27 +60,27 @@ last_verified: YYYY-MM-DD
 
 getting_started:
   overview: >
-    Explain what the source provides, the smallest useful starting scope, and
-    the main limitation a beginner must understand. Use direct, practical
-    language and avoid unsupported claims.
+    Start with one small extract from the official source. Name the main
+    interpretation limit a beginner must understand, such as missing values or
+    provisional status.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
   access_steps:
-    - Replace with one imperative action that opens or authenticates with the source.
-    - Replace with one imperative action that retrieves a bounded sample.
+    - Open the official source and review access limits.
+    - Download a bounded sample from the authoritative file or API.
   python:
     packages:
       - pandas
     code: |
       import pandas as pd
 
-      data = pd.read_csv("replace-with-filename.csv")
+      data = pd.read_csv("https://example.com/sample.csv")
       print(data.head())
   first_project:
     title: Replace with a specific project title
     goal: Replace with one question that could validate a useful product signal.
     steps:
-      - Replace with a concrete data preparation step.
-      - Replace with a focused analysis or visualization step.
-      - Replace with an interpretation step that states a limitation.
+      - Inspect the first rows and keep a retrieval timestamp.
+      - Summarize the columns needed for the product signal.
+      - Explain one pattern and one limitation that would change a product decision.

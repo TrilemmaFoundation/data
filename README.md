@@ -98,8 +98,8 @@ busy, the next free port is used instead.
 Useful scripts:
 
 ```bash
-npm run validate-datasets          # policy + Python syntax + live page identity
-npm run validate-datasets:offline  # policy + Python syntax, no network
+npm run validate-datasets          # policy + guide copy + Python syntax + live page identity
+npm run validate-datasets:offline  # policy + guide copy + Python syntax, no network
 npm run validate-providers         # bounded live provider contract checks
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
@@ -110,8 +110,10 @@ npm run test:e2e                   # browser tests against the built export
 
 This project uses Next.js static export (`output: "export"`). After `npm run build`, serve the `out/` directory with any static file server (for example `npx serve out`). `next start` is not used.
 
-The browser suite starts that static server automatically. Install its Chromium
-binary once with `npx playwright install chromium`, then run the build and suite:
+The browser suite starts that static server automatically. It also reads each
+built dataset guide HTML file and checks that the YAML copy, source links,
+Python example, first project, and JSON-LD are present. Install Chromium once
+with `npx playwright install chromium`, then run the build and suite:
 
 ```bash
 npm run build
@@ -124,7 +126,7 @@ catalog and dataset guides. Raise a budget or accessibility exception only with
 a documented reason and intentional review.
 
 Pull-request validation is deterministic and credential-free: it checks schema,
-the 90-day maintenance policy, Python syntax, controlled provider fixtures,
+the 90-day maintenance policy, guide copy, Python syntax, controlled provider fixtures,
 lint, tests, and the static application. GitHub Actions runs bounded live source,
 data-terms, and configured provider-contract validation after pushes to `main`,
 every Monday, and on manual dispatch so drift is detected even without recent code

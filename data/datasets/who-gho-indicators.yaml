@@ -18,7 +18,7 @@ formats:
 license: Creative Commons Attribution 4.0 with WHO additional terms
 license_url: https://data.who.int/about/data/terms-and-conditions
 url_checks:
-  source_marker: GHO OData API
+  source_marker: GHO OData API documentation
   license_marker: Creative Commons Attribution 4.0 International License
 domains:
   - Public Health

@@ -18,7 +18,7 @@ formats:
 license: U.S. Public Domain with EIA source acknowledgment
 license_url: https://www.eia.gov/about/copyrights_reuse.php
 url_checks:
-  source_marker: OPEN DATA
+  source_marker: EIA Open Data API
   license_marker: Public domain and use of EIA content
 domains:
   - Energy

@@ -16,7 +16,7 @@ formats:
 license: Public Domain
 license_url: https://ourairports.com/data/
 url_checks:
-  source_marker: airports.csv
+  source_marker: OurAirports data downloads
   license_marker: All data is released to the Public Domain
 domains:
   - Aviation

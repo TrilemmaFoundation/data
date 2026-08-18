@@ -18,7 +18,7 @@ license: U.S. Census Bureau data-use terms
 license_url: https://www.census.gov/data/developers/about/terms-of-service.html
 url_checks:
   source_marker: LEHD Origin-Destination Employment Statistics
-  license_marker: Terms of Service
+  license_marker: Census Bureau API Terms of Service
 domains:
   - Labor Economics
   - Local Economics

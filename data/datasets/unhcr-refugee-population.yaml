@@ -18,7 +18,7 @@ formats:
 license: UNHCR terms of use for datasets
 license_url: https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets
 url_checks:
-  source_marker: refugees
+  source_marker: UNHCR Refugee Data Finder
   license_marker: attribution to UNHCR
 domains:
   - Forced Displacement
@@ -37,7 +37,7 @@ temporal_coverage: 1951-present
 update_frequency: annual
 provider: UNHCR
 source_type: intergovernmental
-last_verified: 2026-08-13
+last_verified: 2026-08-18
 getting_started:
   overview: >
     UNHCR's database reports forcibly displaced and stateless populations by

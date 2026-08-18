@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ExternalLink, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -101,6 +102,13 @@ export function SiteHeader() {
           className="hidden items-center gap-3 md:flex"
           aria-label={siteCopy.primaryNavigationLabel}
         >
+          <Link
+            href="/"
+            aria-current={pathname === "/" ? "page" : undefined}
+            className={buttonVariants({ variant: "ghost" })}
+          >
+            {siteCopy.datasetsNavigationLabel}
+          </Link>
           <a
             href={CONTRIBUTE_URL}
             target="_blank"
@@ -138,8 +146,19 @@ export function SiteHeader() {
             className="absolute inset-x-0 top-full z-50 border-t border-white/20 bg-linear-to-b from-brand-navy to-brand-black px-4 py-4 shadow-[0_4px_4px_rgba(10,10,20,0.65)] md:hidden"
           >
             <div className="mx-auto grid max-w-7xl gap-2">
-              <a
+              <Link
                 ref={firstMenuLinkRef}
+                href="/"
+                aria-current={pathname === "/" ? "page" : undefined}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start",
+                )}
+                onClick={() => setOpenPathname(null)}
+              >
+                {siteCopy.datasetsNavigationLabel}
+              </Link>
+              <a
                 href={CONTRIBUTE_URL}
                 target="_blank"
                 rel="noopener noreferrer"

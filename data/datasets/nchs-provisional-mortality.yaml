@@ -19,7 +19,7 @@ license: U.S. Public Domain with CDC attribution and use requirements
 license_url: https://www.cdc.gov/other/agencymaterials.html
 url_checks:
   source_marker: Weekly Provisional Counts of Deaths
-  license_marker: public domain
+  license_marker: Most CDC materials are in the public domain
 domains:
   - Public Health
   - Demographics

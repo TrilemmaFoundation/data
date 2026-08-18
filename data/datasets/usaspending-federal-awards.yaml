@@ -21,7 +21,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: USAspending API
+  source_marker: USAspending.gov API
   license_marker: federal government materials
 
 domains:
@@ -43,7 +43,7 @@ update_frequency: daily
 
 provider: U.S. Department of the Treasury
 source_type: government
-last_verified: 2026-08-11
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

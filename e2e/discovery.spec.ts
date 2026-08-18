@@ -274,8 +274,9 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   expect((await hero.boundingBox())?.y).toBe(before?.y);
   const firstLink = page
     .getByRole("navigation", { name: siteCopy.mobileNavigationLabel })
-    .getByRole("link", { name: siteCopy.contributeLabel });
+    .getByRole("link", { name: siteCopy.datasetsNavigationLabel });
   await expect(firstLink).toBeFocused();
+  await expect(firstLink).toHaveAttribute("href", "/");
   await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
 
   await page.keyboard.press("Shift+Tab");
@@ -288,11 +289,17 @@ test("mobile navigation overlays content and restores focus on Escape", async ({
   ).toBeFocused();
 
   await page.keyboard.press("Escape");
-  await expect(
-    page.getByRole("navigation", { name: siteCopy.mobileNavigationLabel }),
-  ).toBeHidden();
+  const navigation = page.getByRole("navigation", {
+    name: siteCopy.mobileNavigationLabel,
+  });
+  await expect(navigation).toBeHidden();
   await expect(trigger).toBeFocused();
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+
+  await trigger.click();
+  await firstLink.click();
+  await expect(navigation).toBeHidden();
+  await expect(page).toHaveURL((url) => url.pathname === "/");
 });
 
 test("mobile navigation closes from its backdrop and on route changes", async ({
@@ -331,9 +338,11 @@ test("header and footer expose the product and Foundation destinations", async (
   const primary = page.getByRole("navigation", {
     name: siteCopy.primaryNavigationLabel,
   });
-  await expect(
-    primary.getByRole("link", { name: siteCopy.datasetsNavigationLabel }),
-  ).toHaveCount(0);
+  const datasetsHome = primary.getByRole("link", {
+    name: siteCopy.datasetsNavigationLabel,
+  });
+  await expect(datasetsHome).toHaveAttribute("href", "/");
+  await expect(datasetsHome).toHaveAttribute("aria-current", "page");
   await expect(
     primary.getByRole("link", { name: siteCopy.contributeLabel }),
   ).toHaveAttribute("href", CONTRIBUTE_URL);
@@ -343,6 +352,12 @@ test("header and footer expose the product and Foundation destinations", async (
   await expect(
     page.getByRole("link", { name: siteCopy.productLabel, exact: true }),
   ).toHaveCount(0);
+
+  await page.goto("/datasets/nws-weather-api/");
+  await expect(datasetsHome).not.toHaveAttribute("aria-current");
+  await datasetsHome.click();
+  await expect(page).toHaveURL((url) => url.pathname === "/");
+  await expect(datasetsHome).toHaveAttribute("aria-current", "page");
 
   const dataLinks = page.getByRole("navigation", {
     name: siteCopy.footerDataNavigationLabel,

@@ -72,7 +72,9 @@ Do **not** add:
 - `license` and `license_url` are required
 - Source and license URLs must use HTTPS and must not embed credentials
 - `url_checks` must provide a short, page-specific text marker for the source
-  and license pages; matching is case-insensitive after redirects
+  and license pages; matching is case-insensitive after redirects. Markers must
+  be at least 16 characters, must not be generic page chrome, and must differ
+  when the source and license URLs differ
 - Text values are trimmed and must not be blank
 - Metadata text and URLs must not contain control characters; Python examples remain multiline
 - List values such as domains, tasks, formats, and geographies must not contain duplicates
@@ -83,6 +85,12 @@ Do **not** add:
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
 - The first project must contain at least three distinct, actionable steps
+  and end with an interpretation or limitation
+- Descriptions must be one sentence, at least 12 words, and include a `for`
+  clause naming a product, decision, or workflow
+- The `getting_started` overview must identify a smallest starting scope and
+  state an interpretation limitation
+- Access steps must start with an imperative verb
 - Python examples must be valid Python, use the authoritative source, avoid
   credentials, and be short enough for a beginner to understand in one notebook
   cell
@@ -97,7 +105,7 @@ npm install
 npm run validate-datasets
 ```
 
-Use offline mode (schema, maintenance policy, and Python syntax; no network)
+Use offline mode (schema, maintenance policy, guide copy, and Python syntax; no network)
 while iterating:
 
 ```bash
@@ -112,7 +120,8 @@ npm run validate-providers # configured provider response contracts
 ```
 
 Pull-request CI stays deterministic and does not execute contributed Python.
-It compiles examples for syntax and tests controlled provider fixtures instead.
+It checks guide copy, compiles examples for syntax, and tests controlled
+provider fixtures instead.
 Live URL checks follow redirects, require the final page to remain on the
 intended host, and search the bounded response body for each YAML marker.
 Configured provider checks run after pushes to `main`, every Monday, and on

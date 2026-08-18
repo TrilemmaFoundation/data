@@ -21,7 +21,7 @@ license: USPTO website terms of use
 license_url: https://www.uspto.gov/terms-use-uspto-websites
 url_checks:
   source_marker: Open Data Portal
-  license_marker: Terms of Use
+  license_marker: USPTO website Terms of Use
 domains:
   - Research
   - Intellectual Property

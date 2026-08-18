@@ -18,7 +18,7 @@ formats:
 license: U.S. Public Domain with EIA source acknowledgment
 license_url: https://www.eia.gov/about/copyrights_reuse.php
 url_checks:
-  source_marker: OPEN DATA
+  source_marker: EIA Open Data API
   license_marker: Public domain and use of EIA content
 domains:
   - Energy
@@ -38,7 +38,7 @@ temporal_coverage: weekly petroleum series with history varying by product
 update_frequency: weekly
 provider: U.S. Energy Information Administration
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 getting_started:
   overview: >
     EIA's petroleum weekly stocks route returns inventory series used in the

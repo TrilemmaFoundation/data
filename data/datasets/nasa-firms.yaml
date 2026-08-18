@@ -22,8 +22,8 @@ formats:
 license: NASA Earthdata CC0 data-use policy
 license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy
 url_checks:
-  source_marker: API - Area
-  license_marker: Data Use
+  source_marker: FIRMS US/Canada API
+  license_marker: NASA Earthdata Data Use Policy
 
 domains:
   - Wildfires
@@ -45,7 +45,7 @@ update_frequency: near real time
 
 provider: NASA Earthdata FIRMS
 source_type: government
-last_verified: 2026-08-10
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

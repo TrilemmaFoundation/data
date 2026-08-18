@@ -19,8 +19,8 @@ formats:
 license: BLS Public Data API Terms of Service
 license_url: https://www.bls.gov/developers/termsOfService.htm
 url_checks:
-  source_marker: Getting Started
-  license_marker: Terms of Service
+  source_marker: BLS Public Data API
+  license_marker: BLS Public Data API Terms of Service
 
 domains:
   - Labor Economics
@@ -42,7 +42,7 @@ update_frequency: monthly
 
 provider: U.S. Bureau of Labor Statistics
 source_type: government
-last_verified: 2026-08-11
+last_verified: 2026-08-18
 
 getting_started:
   overview: >

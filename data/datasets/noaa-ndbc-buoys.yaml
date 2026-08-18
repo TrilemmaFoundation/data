@@ -19,7 +19,7 @@ license: U.S. Government public data / NOAA disclaimer
 license_url: https://www.noaa.gov/disclaimer
 url_checks:
   source_marker: National Data Buoy Center
-  license_marker: public domain
+  license_marker: NOAA Disclaimer and Copyright
 domains:
   - Weather
   - Marine Operations
