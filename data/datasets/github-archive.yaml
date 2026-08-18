@@ -68,6 +68,7 @@ getting_started:
           timeout=60,
       )
       response.raise_for_status()
+      response.raw.decode_content = True
       rows = []
       with gzip.GzipFile(fileobj=response.raw) as archive:
           for line in archive:

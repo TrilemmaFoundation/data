@@ -56,6 +56,7 @@ getting_started:
     packages:
       - pandas
       - pyreadstat
+      - requests
     code: |
       import pandas as pd
       import pyreadstat

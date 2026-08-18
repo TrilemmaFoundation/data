@@ -51,8 +51,8 @@ getting_started:
     - A notebook environment such as Jupyter or Google Colab
     - An internet connection
   access_steps:
-    - Open the FARS file-download directory and choose one annual National folder.
-    - Download the accident CSV from that year.
+    - Open the NHTSA datasets and APIs page and choose FARS, not the recalls API.
+    - Request one year and one state from the Crash API accident dataset.
     - Keep state, county, date, and fatality count.
   python:
     packages:
