@@ -8,21 +8,39 @@ import {
   SIZE_CATEGORIES,
   type SizeCategory,
 } from "./size";
+import {
+  EMPTY_VOCABULARY_SNAPSHOT,
+  resolveSnapshotAlias,
+  type VocabularyKind,
+  type VocabularySnapshot,
+} from "./vocabulary-snapshot";
 
-function parseList(values: string[], allowed: readonly string[]): string[] {
+function parseList(
+  values: string[],
+  allowed: readonly string[],
+  snapshot: VocabularySnapshot,
+  kind?: VocabularyKind,
+): string[] {
   const allowedByKey = new Map(
     allowed.map((item) => [catalogValueKey(item), item] as const),
   );
   const selected = new Set<string>();
-  for (const value of values) {
-    const exact = allowedByKey.get(catalogValueKey(value));
+  const consider = (raw: string) => {
+    const exact = allowedByKey.get(catalogValueKey(raw));
     if (exact) {
       selected.add(exact);
-      continue;
+      return;
     }
+    if (!kind) return;
+    const canonical = resolveSnapshotAlias(snapshot, kind, raw);
+    if (canonical && allowedByKey.has(catalogValueKey(canonical))) {
+      selected.add(allowedByKey.get(catalogValueKey(canonical))!);
+    }
+  };
+  for (const value of values) {
+    consider(value);
     for (const part of value.split(",").map((item) => item.trim()).filter(Boolean)) {
-      const canonical = allowedByKey.get(catalogValueKey(part));
-      if (canonical) selected.add(canonical);
+      consider(part);
     }
   }
   return allowed.filter((item) => selected.has(item));
@@ -42,23 +60,24 @@ function appendList(params: URLSearchParams, key: string, values: string[]) {
 export function parseFilters(
   params: URLSearchParams,
   options: FilterOptions,
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
 ): DatasetFilters {
   const apiKey = params.get("apiKey");
-  const sizes = parseList(params.getAll("size"), SIZE_CATEGORIES) as SizeCategory[];
+  const sizes = parseList(params.getAll("size"), SIZE_CATEGORIES, snapshot) as SizeCategory[];
 
   return {
     query: (params.get("q") ?? "").trim(),
     theme: parseSingle(params.get("theme"), options.themes),
     accessMethod: parseSingle(params.get("access"), options.accessMethods),
     difficulty: parseSingle(params.get("difficulty"), options.difficulties),
-    domains: parseList(params.getAll("domain"), options.domains),
-    dataTypes: parseList(params.getAll("dataType"), options.dataTypes),
-    tasks: parseList(params.getAll("task"), options.tasks),
+    domains: parseList(params.getAll("domain"), options.domains, snapshot, "domains"),
+    dataTypes: parseList(params.getAll("dataType"), options.dataTypes, snapshot),
+    tasks: parseList(params.getAll("task"), options.tasks, snapshot, "tasks"),
     sizes,
-    formats: parseList(params.getAll("format"), options.formats),
+    formats: parseList(params.getAll("format"), options.formats, snapshot),
     apiKeyRequired:
       apiKey === "true" ? true : apiKey === "false" ? false : null,
-    geographies: parseList(params.getAll("geography"), options.geographies),
+    geographies: parseList(params.getAll("geography"), options.geographies, snapshot),
   };
 }
 
@@ -82,13 +101,14 @@ export function parsePage(params: URLSearchParams): number {
 export function searchStringToCatalogState(
   search: string,
   options: FilterOptions,
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
 ) {
   const params = new URLSearchParams(
     search.startsWith("?") ? search.slice(1) : search,
   );
   return {
     params,
-    filters: parseFilters(params, options),
+    filters: parseFilters(params, options, snapshot),
     sort: parseSort(params),
     page: parsePage(params),
   };

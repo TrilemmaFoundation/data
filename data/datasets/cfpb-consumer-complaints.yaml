@@ -39,6 +39,11 @@ update_frequency: daily
 provider: Consumer Financial Protection Bureau
 source_type: government
 last_verified: 2026-08-14
+
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
 getting_started:
   overview: >
     The Consumer Complaint Database publishes complaints that CFPB sent to

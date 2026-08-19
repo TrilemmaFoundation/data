@@ -9,10 +9,12 @@ import {
   siteCopy,
   tableCopy,
 } from "../src/content/site-copy";
-import { getAllDatasets } from "../src/lib/datasets";
-import { CATALOG_PAGE_SIZE } from "../src/lib/search";
+import { getActiveDatasets, getAllDatasets, getCatalogDatasets } from "../src/lib/datasets";
+import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, filterDatasets } from "../src/lib/search";
+import { getVocabulary, toVocabularySnapshot } from "../src/lib/vocabulary";
 import {
-  CONTRIBUTE_URL,
+  COLLECTIONS_PATH,
+  CONTRIBUTE_APP_PATH,
   FOUNDATION_CHARTER_URL,
   FOUNDATION_PRIVACY_URL,
   FOUNDATION_PROJECTS_URL,
@@ -22,9 +24,14 @@ import {
   FOUNDATION_URL,
 } from "../src/lib/seo";
 
-const DATASET_COUNT = getAllDatasets().length;
+const DATASET_COUNT = getActiveDatasets().length;
 const CATALOG_PAGES = Math.ceil(DATASET_COUNT / CATALOG_PAGE_SIZE);
 const LAST_PAGE_ITEMS = DATASET_COUNT % CATALOG_PAGE_SIZE || CATALOG_PAGE_SIZE;
+const EARTHQUAKE_HAZARD_COUNT = filterDatasets(
+  getCatalogDatasets(),
+  { ...EMPTY_FILTERS, query: "earthquake", domains: ["Natural Hazards"] },
+  toVocabularySnapshot(getVocabulary()),
+).length;
 
 test("discovery keeps valid URL state and ignores unknown filters", async ({ page }) => {
   await page.goto("/?domain=Natural%20Hazards,Unknown&difficulty=novice");
@@ -38,7 +45,7 @@ test("discovery keeps valid URL state and ignores unknown filters", async ({ pag
   await page.getByLabel(catalogCopy.searchLabel).fill("earthquake");
   await expect(page).toHaveURL(/q=earthquake/);
   await expect(page.getByRole("link", { name: "USGS Earthquake Catalog" })).toBeVisible();
-  await expect(page.getByRole("status")).toHaveText(catalogCopy.resultStatus(1));
+  await expect(page.getByRole("status")).toHaveText(catalogCopy.resultStatus(EARTHQUAKE_HAZARD_COUNT));
 
   await page.getByRole("link", { name: "USGS Earthquake Catalog" }).click();
   await expect(page).toHaveURL(/\/datasets\/usgs-earthquakes\/?$/);
@@ -85,48 +92,26 @@ test("rapid controls preserve filters selected during pending URL navigation", a
   ).toBeVisible();
 });
 
-test("the hero title leads into the catalog without a jump CTA", async ({ page }) => {
+test("the hero title leads into build paths without a jump CTA", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
   const hero = page.getByRole("region", { name: catalogCopy.heroTitle });
   await expect(hero.getByRole("heading", { name: catalogCopy.heroTitle })).toBeVisible();
   await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(0);
-
-  const table = page.getByRole("table", { name: tableCopy.caption });
-  const headerRow = table.getByRole("row").nth(0);
-  const firstRow = table.getByRole("row").nth(1);
-  const lastRow = table.getByRole("row").nth(CATALOG_PAGE_SIZE);
-  const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
-  const headerBounds = await headerRow.boundingBox();
-  const firstBounds = await firstRow.boundingBox();
-  const lastBounds = await lastRow.boundingBox();
-  const paginationBounds = await pagination.boundingBox();
-  expect(firstBounds?.y).toBeLessThan(280);
-  expect(firstBounds?.height ?? 0).toBeGreaterThan(headerBounds?.height ?? Number.POSITIVE_INFINITY);
-  expect(firstBounds?.height ?? 0).toBeGreaterThan(paginationBounds?.height ?? Number.POSITIVE_INFINITY);
-  expect(firstBounds ? firstBounds.y + firstBounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
-  expect(lastBounds ? lastBounds.y + lastBounds.height : Number.POSITIVE_INFINITY).toBeLessThan(900);
-  expect(
-    paginationBounds
-      ? paginationBounds.y + paginationBounds.height
-      : Number.POSITIVE_INFINITY,
-  ).toBeLessThan(900);
-
-  await page.setViewportSize({ width: 1280, height: 800 });
-  const laptopLast = await lastRow.boundingBox();
-  expect(laptopLast ? laptopLast.y + laptopLast.height : Number.POSITIVE_INFINITY).toBeLessThan(800);
+  await expect(page.getByRole("heading", { name: catalogCopy.buildPathsTitle })).toBeVisible();
+  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toBeVisible();
+  await expect(page.getByRole("table", { name: tableCopy.caption })).toBeVisible();
 });
 
-test("the recommended dataset leads the unfiltered catalog only", async ({ page }) => {
+test("starter datasets are curated independently of catalog sort", async ({ page }) => {
   await page.goto("/");
-  const firstRow = page.getByRole("table", { name: tableCopy.caption }).getByRole("row").nth(1);
-  await expect(firstRow).toContainText("National Weather Service API");
-  await expect(firstRow).toContainText(datasetCardCopy.goodFirstBuildLabel);
+  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toBeVisible();
+  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel).first()).toBeVisible();
 
   await page.goto("/?q=weather");
   await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
-  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toHaveCount(0);
 });
 
 test("catalog pagination keeps global order and canonical URL state", async ({ page }) => {
@@ -185,21 +170,21 @@ test("pagination previous and next stay put when the page list changes", async (
   expect(after.next?.x).toBeCloseTo(before.next?.x ?? Number.NaN, 0);
 });
 
-test("pagination next and previous keep the window scroll position", async ({ page }) => {
+test("pagination next and previous keep the catalog from jumping to the top", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
   await page.locator("footer").scrollIntoViewIfNeeded();
   const pagination = page.getByRole("navigation", { name: catalogCopy.paginationLabel });
-  const before = await page.evaluate(() => window.scrollY);
-  expect(before).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 
   await pagination.getByRole("button", { name: catalogCopy.nextPageLabel }).click();
   await expect(page).toHaveURL(/page=2/);
-  expect(await page.evaluate(() => window.scrollY)).toBe(before);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await expect(pagination.getByRole("button", { name: catalogCopy.previousPageLabel })).toBeVisible();
 
   await pagination.getByRole("button", { name: catalogCopy.previousPageLabel }).click();
   await expect(page).not.toHaveURL(/page=/);
-  expect(await page.evaluate(() => window.scrollY)).toBe(before);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 });
 
 test("deep catalog links show page context and a result above the fold", async ({ page }) => {
@@ -226,20 +211,20 @@ test("deep catalog links show page context and a result above the fold", async (
 test("pagination resets for catalog changes and restores through guide history", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/?page=2");
-  await expect(page.locator('[data-slot="card"]')).toHaveCount(CATALOG_PAGE_SIZE);
+  await expect(page.locator("#dataset-catalog [data-catalog-card]")).toHaveCount(CATALOG_PAGE_SIZE);
 
   await page.getByLabel(catalogCopy.searchLabel).fill("legislation");
   await expect(page).not.toHaveURL(/page=/);
   await expect(page.getByRole("link", { name: "Congress.gov Legislation API" }).first()).toBeVisible();
 
   await page.goto("/?page=2");
-  const guide = page.locator('[data-slot="card"] a').first();
+  const guide = page.locator("#dataset-catalog [data-catalog-card] a").first();
   const guideName = await guide.innerText();
   await guide.click();
   await expect(page.getByRole("heading", { level: 1, name: guideName })).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/page=2/);
-  await expect(page.locator('[data-slot="card"]')).toHaveCount(CATALOG_PAGE_SIZE);
+  await expect(page.locator("#dataset-catalog [data-catalog-card]")).toHaveCount(CATALOG_PAGE_SIZE);
 });
 
 test("long active filters do not create mobile horizontal scrolling", async ({ page }) => {
@@ -345,10 +330,10 @@ test("header and footer expose the product and Foundation destinations", async (
   await expect(datasetsHome).toHaveAttribute("aria-current", "page");
   await expect(
     primary.getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toHaveAttribute("href", CONTRIBUTE_URL);
+  ).toHaveAttribute("href", CONTRIBUTE_APP_PATH);
   await expect(
-    primary.getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toHaveAttribute("target", "_blank");
+    primary.getByRole("link", { name: siteCopy.collectionsNavigationLabel }),
+  ).toHaveAttribute("href", COLLECTIONS_PATH);
   await expect(
     page.getByRole("link", { name: siteCopy.productLabel, exact: true }),
   ).toHaveCount(0);
@@ -367,7 +352,7 @@ test("header and footer expose the product and Foundation destinations", async (
   ).toHaveAttribute("href", "/");
   await expect(
     dataLinks.getByRole("link", { name: siteCopy.contributeLabel }),
-  ).toHaveAttribute("href", CONTRIBUTE_URL);
+  ).toHaveAttribute("href", CONTRIBUTE_APP_PATH);
 
   const foundationLinks = page.getByRole("navigation", {
     name: siteCopy.footerFoundationNavigationLabel,
@@ -419,7 +404,7 @@ test("whitespace-only shared queries remain unfiltered", async ({ page }) => {
   await page.goto("/?q=+++");
 
   await expect(
-    page.getByRole("table", { name: tableCopy.caption }).getByText(datasetCardCopy.goodFirstBuildLabel),
+    page.getByRole("heading", { name: catalogCopy.firstBuildsTitle }),
   ).toBeVisible();
   await expect(page.getByLabel(catalogCopy.activeFiltersAriaLabel)).toHaveCount(0);
 });
@@ -430,7 +415,7 @@ test("mobile filters restore focus and the zero state recovers", async ({ page }
 
   await expect(page.getByRole("heading", { name: catalogCopy.emptyTitle })).toBeVisible();
   await page.getByRole("button", { name: catalogCopy.clearFiltersLabel }).click();
-  await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+  await expect(page.locator("#dataset-catalog [data-catalog-card]").first()).toBeVisible();
 
   const trigger = page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true });
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -456,11 +441,11 @@ test("catalog uses a desktop table and mobile cards at the lg breakpoint", async
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   await expect(page.getByRole("table", { name: tableCopy.caption })).toBeVisible();
-  await expect(page.locator('[data-slot="card"]').first()).toBeHidden();
+  await expect(page.locator("#dataset-catalog [data-catalog-card]").first()).toBeHidden();
 
   await page.setViewportSize({ width: 768, height: 900 });
   await expect(page.getByRole("table", { name: tableCopy.caption })).toBeHidden();
-  await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+  await expect(page.locator("#dataset-catalog [data-catalog-card]").first()).toBeVisible();
 });
 
 test("catalog search stays wide enough to read and cards use a single guide link", async ({ page }) => {
@@ -468,7 +453,7 @@ test("catalog search stays wide enough to read and cards use a single guide link
   await page.goto("/");
   const search = page.getByLabel(catalogCopy.searchLabel);
   expect((await search.boundingBox())?.width ?? 0).toBeGreaterThan(250);
-  await expect(page.locator('[data-slot="card"]').first().locator("a")).toHaveCount(1);
+  await expect(page.locator("#dataset-catalog [data-catalog-card]").first().locator("a")).toHaveCount(1);
 
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.goto("/");
@@ -481,13 +466,6 @@ test("catalog search stays wide enough to read and cards use a single guide link
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("link", { name: "National Weather Service API", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page
-      .getByRole("table", { name: tableCopy.caption })
-      .getByRole("row")
-      .nth(1)
-      .getByText("National Weather Service", { exact: true }),
   ).toBeVisible();
 
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -531,7 +509,7 @@ test("desktop sorting is shareable, reversible, and restores the promoted order"
   await page.goto("/");
   const table = page.getByRole("table", { name: tableCopy.caption });
   const firstDataRow = () => table.getByRole("row").nth(1);
-  await expect(firstDataRow()).toContainText("National Weather Service API");
+  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
 
   await page.getByRole("button", { name: "Sort Dataset ascending" }).click();
   await expect(page).toHaveURL((url) =>
@@ -545,7 +523,7 @@ test("desktop sorting is shareable, reversible, and restores the promoted order"
 
   await page.getByRole("button", { name: "Restore default order" }).click();
   await expect(page).toHaveURL((url) => !url.searchParams.has("sort"));
-  await expect(firstDataRow()).toContainText("National Weather Service API");
+  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
 
   await page.goto("/?sort=updates&order=asc");
   const sortedFirst = firstDataRow().getByRole("link").first();
@@ -630,7 +608,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
       expect(lineWidths.at(-1) ?? 0).toBeGreaterThan(220);
     }
 
-    const cards = page.locator('[data-slot="card"]');
+    const cards = page.locator("#dataset-catalog [data-catalog-card]");
     if (width < 1024) {
       await expect(cards.first()).toBeVisible();
     } else {
@@ -647,7 +625,7 @@ test("application copy reflows across supported viewport widths", async ({ page 
     }
     if (width === 1440) {
       expect((await page.locator("#results-title").boundingBox())?.y).toBeLessThan(160);
-      expect((await page.getByRole("table", { name: tableCopy.caption }).boundingBox())?.y).toBeLessThan(280);
+      await expect(page.getByRole("heading", { name: catalogCopy.buildPathsTitle })).toBeVisible();
     }
 
     let documentWidth = await page.evaluate(() => ({

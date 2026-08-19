@@ -47,6 +47,11 @@ provider: NASA Earthdata FIRMS
 source_type: government
 last_verified: 2026-08-18
 
+access_profile:
+  friction: high
+  setup_minutes: 20
+  registration_required: true
+
 getting_started:
   overview: >
     FIRMS publishes frequently refreshed thermal-anomaly detections from Earth-

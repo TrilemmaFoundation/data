@@ -1,0 +1,8 @@
+# Code-owned maintainer routing. Dataset YAML files do not need a maintainer field.
+maintainers:
+  - id: trilemma
+    label: Trilemma Data
+    contact: https://github.com/TrilemmaFoundation/data/issues
+routing:
+  default: trilemma
+  overrides: {}

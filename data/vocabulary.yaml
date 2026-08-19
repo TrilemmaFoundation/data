@@ -1,0 +1,400 @@
+# Code-owned catalog vocabulary. Dataset YAML may use a canonical label or an alias.
+# Filterable terms appear in the catalog drawer; aliases still match those filters.
+
+domains:
+  - label: Agriculture
+    filterable: true
+    aliases: []
+  - label: Climate
+    filterable: true
+    aliases:
+      - Cryosphere
+      - Earth Observation
+      - Earth Science
+      - Ecology
+      - Environmental Science
+      - Forestry
+  - label: Commodities
+    filterable: true
+    aliases: []
+  - label: Cybersecurity
+    filterable: true
+    aliases:
+      - Threat Intelligence
+  - label: Demographics
+    filterable: true
+    aliases:
+      - Census Geography
+      - Development
+      - Forced Displacement
+      - Humanitarian Development
+      - Population
+      - Survey Research
+  - label: Education
+    filterable: true
+    aliases:
+      - Higher Education
+  - label: Emergency Management
+    filterable: true
+    aliases:
+      - Disaster Recovery
+  - label: Energy
+    filterable: true
+    aliases:
+      - Electricity
+      - Renewable Energy
+  - label: Finance
+    filterable: true
+    aliases:
+      - Banking
+      - Business
+      - Capital Markets
+      - Consumer Finance
+      - Corporate Filings
+      - Financial Regulation
+      - Fixed Income
+      - Prediction Markets
+      - Taxation
+  - label: Health Care
+    filterable: true
+    aliases:
+      - Health Services
+      - Long-Term Care
+      - Medical Devices
+  - label: Housing
+    filterable: true
+    aliases:
+      - Geography
+      - Places
+  - label: Infrastructure
+    filterable: true
+    aliases:
+      - Cartography
+      - Geospatial
+      - Internet Infrastructure
+      - Mapping
+      - Telecommunications
+  - label: International Statistics
+    filterable: true
+    aliases:
+      - International Economics
+      - Trade
+  - label: Labor Economics
+    filterable: true
+    aliases:
+      - Employment
+      - Jobs
+      - Labor
+      - Occupations
+      - Workforce Development
+  - label: Legislation
+    filterable: true
+    aliases:
+      - Campaign Finance
+  - label: Macroeconomics
+    filterable: true
+    aliases:
+      - Economics
+      - Inflation
+      - National Accounts
+      - Public Finance
+  - label: Natural Hazards
+    filterable: true
+    aliases:
+      - Seismology
+      - Wildfires
+  - label: Public Health
+    filterable: true
+    aliases:
+      - Biomedical Research
+      - Clinical Research
+      - Community Health
+      - Consumer Safety
+      - Environmental Health
+      - Epidemiology
+      - Food Safety
+      - Food Science
+      - Infectious Disease
+      - Nutrition
+      - Pharmaceuticals
+  - label: Public Policy
+    filterable: true
+    aliases:
+      - Compliance
+      - Elections
+      - Government
+      - Government Procurement
+      - Justice
+      - Local Government
+      - Public Spending
+  - label: Public Safety
+    filterable: true
+    aliases:
+      - Crime
+  - label: Regional Economics
+    filterable: true
+    aliases:
+      - Local Economics
+  - label: Regulation
+    filterable: true
+    aliases: []
+  - label: Research
+    filterable: true
+    aliases:
+      - Attention Measurement
+      - Biodiversity
+      - Chemistry
+      - Current Events
+      - Innovation
+      - Intellectual Property
+      - Knowledge Graphs
+      - Preprints
+      - Reference Data
+      - Research Funding
+      - Scholarly Communication
+  - label: Software Security
+    filterable: true
+    aliases:
+      - Open Source
+      - Software
+      - Web Performance
+  - label: Transportation
+    filterable: true
+    aliases:
+      - Aviation
+      - Marine Operations
+      - Mobility
+      - Public Transit
+      - Vehicle Safety
+  - label: Water Resources
+    filterable: true
+    aliases:
+      - Coastal Data
+      - Hydrology
+  - label: Weather
+    filterable: true
+    aliases:
+      - Air Quality
+      - Forecasting
+      - Meteorology
+
+tasks:
+  - label: Alerting
+    filterable: true
+    aliases: []
+  - label: Community Comparison
+    filterable: true
+    aliases:
+      - Facility Comparison
+      - Health Comparison
+      - Incidence Comparison
+      - Institution Comparison
+      - Neighbourhood Monitoring
+      - Nutrient Comparison
+      - Nutrition Comparison
+      - Origin Comparison
+      - Seasonal Comparison
+      - Station Comparison
+      - Turnout Comparison
+  - label: Country Comparison
+    filterable: true
+    aliases:
+      - International Comparison
+      - Provincial Comparison
+  - label: Coverage Analysis
+    filterable: true
+    aliases:
+      - Population Analysis
+      - Population Estimation
+      - Prevalence Estimation
+      - Resource Assessment
+  - label: Economic Monitoring
+    filterable: true
+    aliases:
+      - Economic Analysis
+      - Financial Analysis
+      - Fiscal Monitoring
+      - Funding Analysis
+      - Income Analysis
+      - Industry Analysis
+      - Issuance Analysis
+      - Mortgage Market Analysis
+      - Public Finance Research
+  - label: Forecast Evaluation
+    filterable: true
+    aliases:
+      - Forecast Analysis
+      - Forecasting
+      - Historical Weather Reconstruction
+  - label: Geographic Analysis
+    filterable: true
+    aliases:
+      - Commute Analysis
+      - Flow Analysis
+      - Geographic Comparison
+      - Positioning Analysis
+      - Routing Analysis
+      - Transit Ridership
+      - Workforce Mapping
+  - label: Mapping
+    filterable: true
+    aliases:
+      - Benchmarking
+      - Dashboarding
+      - GIS
+      - Hazard Mapping
+      - Infrastructure Mapping
+      - Spatial Join
+      - Visualization
+  - label: Market Monitoring
+    filterable: true
+    aliases:
+      - Auction Monitoring
+      - Commodity Monitoring
+      - Demand Monitoring
+      - Market Analysis
+      - Trade Monitoring
+  - label: Market Research
+    filterable: true
+    aliases:
+      - Client Research
+      - Company Research
+      - Insurance Research
+  - label: Market Sizing
+    filterable: true
+    aliases: []
+  - label: Monitoring
+    filterable: true
+    aliases:
+      - Activity Monitoring
+      - Change Monitoring
+      - Climate Monitoring
+      - Complaint Monitoring
+      - Compliance Monitoring
+      - Deforestation Monitoring
+      - Disaster Monitoring
+      - Disclosure Monitoring
+      - Emissions Monitoring
+      - Eruption Monitoring
+      - Event Analysis
+      - Event Monitoring
+      - Filing Monitoring
+      - Gauge Monitoring
+      - Grid Monitoring
+      - Hazard Monitoring
+      - Hotspot Monitoring
+      - Humanitarian Monitoring
+      - Labor Market Monitoring
+      - Legal Monitoring
+      - Legislative Monitoring
+      - Mortality Monitoring
+      - Operational Monitoring
+      - Opportunity Monitoring
+      - Performance Monitoring
+      - Policy Monitoring
+      - Quality Monitoring
+      - Regulatory Monitoring
+      - Rulemaking Monitoring
+      - Species Monitoring
+      - Threshold Monitoring
+      - Water-Level Monitoring
+  - label: Operational Planning
+    filterable: true
+    aliases:
+      - Emergency Planning
+      - Local Statistics
+      - Marine Planning
+      - Public Health Planning
+      - Resource Planning
+  - label: Provider Comparison
+    filterable: true
+    aliases:
+      - Agency Comparison
+  - label: Regional Comparison
+    filterable: true
+    aliases: []
+  - label: Risk Assessment
+    filterable: true
+    aliases:
+      - Climate Analysis
+      - Displacement Analysis
+      - Food Security Analysis
+      - Health Survey Analysis
+      - Loss Analysis
+      - Risk Mapping
+  - label: Safety Monitoring
+    filterable: true
+    aliases:
+      - Anomaly Detection
+      - Failure Analysis
+      - Safety Analysis
+      - Safety Signal Analysis
+      - Threat Modeling
+  - label: Screening
+    filterable: true
+    aliases:
+      - Fair Lending Research
+      - Lead Discovery
+  - label: Search
+    filterable: true
+    aliases:
+      - Compound Lookup
+      - Directory Search
+      - Document Search
+      - Entity Lookup
+      - Entity Resolution
+      - Feed Discovery
+      - Label Lookup
+      - Place Lookup
+      - Prefix Lookup
+      - Product Lookup
+      - Property Retrieval
+      - Recall Lookup
+      - Section Search
+      - Trial Discovery
+  - label: Site Selection
+    filterable: true
+    aliases:
+      - Site Screening
+  - label: Spatial Analysis
+    filterable: true
+    aliases: []
+  - label: Topic Research
+    filterable: true
+    aliases:
+      - Assignee Analysis
+      - Award Analysis
+      - Case Research
+      - Election Analysis
+      - Citation Research
+      - Classification Research
+      - Comment Analysis
+      - Job Profiling
+      - Knowledge Graph Analysis
+      - Knowledge Graph Query
+      - Label Analysis
+      - Labor Market Research
+      - Literature Monitoring
+      - Nutrition Research
+      - Ownership Analysis
+      - Patent Research
+      - Product Research
+      - Recipient Research
+      - Reference Building
+      - Reference Enrichment
+      - Repository Research
+      - Skills Analysis
+  - label: Trend Analysis
+    filterable: true
+    aliases:
+      - Change Analysis
+      - Revision Analysis
+      - Timeline Analysis
+  - label: Vulnerability Monitoring
+    filterable: true
+    aliases:
+      - Asset Discovery
+      - Certificate Monitoring
+      - Dependency Review
+      - Network Monitoring
+      - Security Monitoring

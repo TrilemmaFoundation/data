@@ -4,7 +4,9 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   clearDatasetCacheForTests,
+  getActiveDatasets,
   getAllDatasets,
+  getCatalogDatasets,
   getDatasetById,
   getDatasetsDir,
   listDatasetFiles,
@@ -256,6 +258,8 @@ describe("loadDatasets", () => {
     ]);
     expect(getDatasetById("alpha", dir)?.name).toBe("Zulu");
     expect(getDatasetById("missing", dir)).toBeUndefined();
+    expect(getActiveDatasets().every((dataset) => dataset.catalog_status === "active")).toBe(true);
+    expect(getCatalogDatasets()[0]?.first_project_title).toBeTruthy();
   });
 
   it("reuses one catalog read for repeated lookups in the same process", () => {

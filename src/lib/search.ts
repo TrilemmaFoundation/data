@@ -11,6 +11,11 @@ import {
   sizeOverlapsCategory,
   type SizeCategory,
 } from "./size";
+import {
+  EMPTY_VOCABULARY_SNAPSHOT,
+  canonicalizeSnapshotValue,
+  type VocabularySnapshot,
+} from "./vocabulary-snapshot";
 
 const ACCESS_METHODS = ["api", "download"] as const;
 export type AccessMethod = (typeof ACCESS_METHODS)[number];
@@ -102,15 +107,38 @@ export function getDatasetAccessMethods(dataset: CatalogDataset): AccessMethod[]
   return ACCESS_METHODS.filter((method) => dataset.access_type.includes(method));
 }
 
-export function getFilterOptions(datasets: CatalogDataset[]): FilterOptions {
+export function getFilterOptions(
+  datasets: CatalogDataset[],
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
+): FilterOptions {
+  const presentDomains = new Set(
+    datasets.flatMap((dataset) =>
+      dataset.canonical_domains ??
+      dataset.domains.map((value) => canonicalizeSnapshotValue(snapshot, "domains", value)),
+    ),
+  );
+  const presentTasks = new Set(
+    datasets.flatMap((dataset) =>
+      dataset.canonical_tasks ??
+      dataset.tasks.map((value) => canonicalizeSnapshotValue(snapshot, "tasks", value)),
+    ),
+  );
+  const filterableDomains =
+    snapshot.filterable.domains.length > 0
+      ? snapshot.filterable.domains.filter((label) => presentDomains.has(label))
+      : uniqueSorted([...presentDomains]);
+  const filterableTasks =
+    snapshot.filterable.tasks.length > 0
+      ? snapshot.filterable.tasks.filter((label) => presentTasks.has(label))
+      : uniqueSorted([...presentTasks]);
   return {
     themes: uniqueSorted(datasets.map((dataset) => dataset.theme)) as DatasetTheme[],
     accessMethods: ACCESS_METHODS.filter((method) =>
       datasets.some((dataset) => getDatasetAccessMethods(dataset).includes(method)),
     ),
-    domains: uniqueSorted(datasets.flatMap((d) => d.domains)),
+    domains: filterableDomains,
     dataTypes: uniqueSorted(datasets.flatMap((d) => d.data_types)),
-    tasks: uniqueSorted(datasets.flatMap((d) => d.tasks)),
+    tasks: filterableTasks,
     difficulties: uniqueSorted(
       datasets.map((d) => d.difficulty),
     ) as Dataset["difficulty"][],
@@ -118,6 +146,29 @@ export function getFilterOptions(datasets: CatalogDataset[]): FilterOptions {
     formats: uniqueSorted(datasets.flatMap((d) => d.formats)),
     geographies: uniqueSorted(datasets.flatMap((d) => d.geography)),
   };
+}
+
+function datasetDomains(dataset: CatalogDataset): string[] {
+  return dataset.canonical_domains ?? dataset.domains;
+}
+
+function datasetTasks(dataset: CatalogDataset): string[] {
+  return dataset.canonical_tasks ?? dataset.tasks;
+}
+
+function matchesCanonical(
+  selected: string[],
+  values: string[],
+  kind: "domains" | "tasks",
+  snapshot: VocabularySnapshot,
+): boolean {
+  if (selected.length === 0) return true;
+  const keys = new Set(
+    values.map((value) => catalogValueKey(canonicalizeSnapshotValue(snapshot, kind, value))),
+  );
+  return selected.some((item) =>
+    keys.has(catalogValueKey(canonicalizeSnapshotValue(snapshot, kind, item))),
+  );
 }
 
 function matchesAny(selected: string[], values: string[]): boolean {
@@ -137,6 +188,8 @@ const FUSE_OPTIONS = {
     "tasks",
     "data_types",
     "formats",
+    "keywords",
+    "first_project_title",
   ],
   threshold: 0.35,
   ignoreLocation: true,
@@ -153,6 +206,7 @@ function getCatalogFuse(datasets: CatalogDataset[]): Fuse<CatalogDataset> {
 export function filterDatasets(
   datasets: CatalogDataset[],
   filters: DatasetFilters,
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
 ): CatalogDataset[] {
   let results = datasets;
 
@@ -171,9 +225,9 @@ export function filterDatasets(
     if (filters.difficulty !== null && dataset.difficulty !== filters.difficulty) {
       return false;
     }
-    if (!matchesAny(filters.domains, dataset.domains)) return false;
+    if (!matchesCanonical(filters.domains, datasetDomains(dataset), "domains", snapshot)) return false;
     if (!matchesAny(filters.dataTypes, dataset.data_types)) return false;
-    if (!matchesAny(filters.tasks, dataset.tasks)) return false;
+    if (!matchesCanonical(filters.tasks, datasetTasks(dataset), "tasks", snapshot)) return false;
     if (!matchesAny(filters.formats, dataset.formats)) return false;
     if (!matchesAny(filters.geographies, dataset.geography)) return false;
 

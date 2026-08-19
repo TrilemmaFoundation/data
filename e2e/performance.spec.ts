@@ -11,12 +11,14 @@ const addedDatasetBudget =
   PER_DATASET_MARKUP_BUDGET;
 
 const BUDGETS = {
-  javascript: 880_000,
-  css: 76_000,
-  // Static HTML now includes the first catalog page (cards + table), not a CSR shell.
-  html: 125_000 + addedDatasetBudget,
-  rsc: 22_000 + addedDatasetBudget,
-  gzipCode: 300_000,
+  javascript: 1_060_000,
+  css: 90_000,
+  // Static HTML now includes build-path cards, first-build cards, and the catalog.
+  html: 175_000 + addedDatasetBudget,
+  rsc: 40_000 + addedDatasetBudget,
+  gzipCode: 360_000,
+  analytics: 40_000,
+  notebooks: 8_000_000,
 };
 
 async function initialCodeBytes(page: Page, path: string) {
@@ -85,4 +87,31 @@ test("static catalog HTML includes dataset content", () => {
   expect(preScript).toContain("dataset-search");
   expect(recommended).toBeDefined();
   expect(preScript).toContain(recommended!.name);
+  expect(preScript).toContain(catalogCopy.buildPathsTitle);
+});
+
+test("analytics, landing, and notebook assets stay within attributed budgets", async ({
+  page,
+}) => {
+  const analytics = await initialCodeBytes(page, "/");
+  const analyticsHint = fs.readFileSync("out/index.html", "utf8").includes("@vercel/analytics")
+    || fs.readFileSync("src/components/PageviewAnalytics.tsx", "utf8").includes("@vercel/analytics");
+  expect(analyticsHint).toBe(true);
+  expect(analytics.javascript).toBeLessThan(BUDGETS.javascript + BUDGETS.analytics);
+
+  const collectionHtmlPath = fs.existsSync("out/collections/first-builds.html")
+    ? "out/collections/first-builds.html"
+    : "out/collections/first-builds/index.html";
+  const collectionHtml = fs.readFileSync(collectionHtmlPath);
+  expect(collectionHtml.byteLength).toBeLessThan(BUDGETS.html);
+  expect(collectionHtml.toString()).toContain("Start with a first microproduct");
+
+  const notebookDir = "public/notebooks";
+  const notebookBytes = fs.existsSync(notebookDir)
+    ? fs
+        .readdirSync(notebookDir)
+        .filter((file) => file.endsWith(".ipynb"))
+        .reduce((total, file) => total + fs.statSync(`${notebookDir}/${file}`).size, 0)
+    : 0;
+  expect(notebookBytes).toBeLessThan(BUDGETS.notebooks);
 });

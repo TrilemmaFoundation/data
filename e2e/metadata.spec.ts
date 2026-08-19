@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { siteCopy } from "../src/content/site-copy";
-import { getAllDatasets } from "../src/lib/datasets";
+import { getActiveDatasets } from "../src/lib/datasets";
+import { getAllCollections } from "../src/lib/collections";
+import { DATASET_THEMES } from "../src/lib/schema";
 
 test("public routes expose canonical and social metadata", async ({ page }) => {
   await page.goto("/");
@@ -62,11 +64,16 @@ test("robots and sitemap enumerate the public static application", async ({
   expect(sitemap.ok()).toBe(true);
   const body = await sitemap.text();
   expect(body).toContain("<loc>https://data.trilemma.foundation</loc>");
-  const datasets = getAllDatasets();
+  expect(body).toContain("<loc>https://data.trilemma.foundation/collections</loc>");
+  expect(body).toContain("<loc>https://data.trilemma.foundation/compare</loc>");
+  expect(body).toContain("<loc>https://data.trilemma.foundation/contribute</loc>");
+  const datasets = getActiveDatasets();
   for (const dataset of datasets) {
     expect(body).toContain(
       `<loc>https://data.trilemma.foundation/datasets/${dataset.id}</loc>`,
     );
   }
-  expect(body.match(/<loc>/g)).toHaveLength(datasets.length + 1);
+  const extra =
+    1 + 1 + 1 + 1 + DATASET_THEMES.length + getAllCollections().length;
+  expect(body.match(/<loc>/g)).toHaveLength(datasets.length + extra);
 });

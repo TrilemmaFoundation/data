@@ -39,6 +39,11 @@ update_frequency: weekly
 provider: Centers for Disease Control and Prevention
 source_type: government
 last_verified: 2026-08-18
+
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
 getting_started:
   overview: >
     FluView publishes ILINet outpatient respiratory-illness activity on

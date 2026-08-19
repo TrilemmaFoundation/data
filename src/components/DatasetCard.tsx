@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { CatalogDataset } from "@/lib/schema";
 import { getSizeCategory } from "@/lib/size";
+import { ShortlistToggle } from "@/components/ShortlistToggle";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -25,6 +26,7 @@ export function DatasetCard({
 
   return (
     <Card
+      data-catalog-card
       className={cn(
         "group relative flex h-full flex-col border-white/10 bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
         featured && "border-primary/50",
@@ -56,6 +58,10 @@ export function DatasetCard({
           </Link>
         </CardTitle>
         <CardDescription className="line-clamp-2 leading-5">{dataset.description}</CardDescription>
+        <p className="line-clamp-2 text-xs leading-5 text-secondary">
+          <span className="font-semibold text-white/80">{datasetCardCopy.firstProjectLabel}: </span>
+          {dataset.first_project_title}
+        </p>
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col justify-end">
@@ -77,13 +83,14 @@ export function DatasetCard({
         </div>
       </CardContent>
 
-      <CardFooter className="border-white/10 bg-brand-black/25 px-4 py-2">
+      <CardFooter className="relative z-20 items-center justify-between border-white/10 bg-brand-black/25 px-4 py-2">
         <p
           className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors group-hover:text-white"
           aria-hidden="true"
         >
           {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />
         </p>
+        <ShortlistToggle id={dataset.id} className="h-9 px-2" />
       </CardFooter>
     </Card>
   );

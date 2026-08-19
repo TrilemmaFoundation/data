@@ -48,6 +48,11 @@ provider: U.S. Geological Survey
 source_type: government
 last_verified: 2026-08-18
 
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+
 getting_started:
   overview: >
     The USGS Event Web Service provides current and historical earthquake

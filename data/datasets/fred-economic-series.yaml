@@ -36,6 +36,11 @@ update_frequency: daily
 provider: Federal Reserve Bank of St. Louis
 source_type: government
 last_verified: 2026-08-18
+
+access_profile:
+  friction: high
+  setup_minutes: 20
+  registration_required: true
 getting_started:
   overview: >
     FRED normalizes economic series from many publishers, while ALFRED exposes

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllDatasets, getDatasetById } from "@/lib/datasets";
+import { getAllDatasets, getCatalogDatasets, getDatasetById } from "@/lib/datasets";
+import { hasGeneratedNotebook } from "@/lib/notebooks";
+import { getRelatedDatasets } from "@/lib/related-datasets";
 import { datasetJsonLd, datasetPath, serializeJsonLd } from "@/lib/seo";
 import { DatasetPage } from "@/components/DatasetPage";
 import { notFoundCopy } from "@/content/site-copy";
@@ -43,13 +45,19 @@ export default async function DatasetDetailPage({
 
   if (!dataset) notFound();
 
+  const related = getRelatedDatasets(dataset, getCatalogDatasets());
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(datasetJsonLd(dataset)) }}
       />
-      <DatasetPage dataset={dataset} />
+      <DatasetPage
+        dataset={dataset}
+        related={related}
+        notebookAvailable={hasGeneratedNotebook(dataset)}
+      />
     </>
   );
 }

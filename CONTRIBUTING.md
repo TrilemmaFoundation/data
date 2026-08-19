@@ -4,7 +4,9 @@ Thank you for helping grow a beginner-friendly catalog of **actively maintained,
 authoritative datasets for building focused microproducts**.
 
 You should **never** need to touch search code, TypeScript types, or UI to add a
-dataset. One YAML file is enough.
+dataset. One YAML file is enough. If the dataset is `beginner` and does not
+require an API key, also run `npm run generate-notebooks` and include the
+generated notebook in the pull request.
 
 ## Quick start
 
@@ -12,7 +14,8 @@ dataset. One YAML file is enough.
 2. Copy [`data/datasets/_template.yaml`](data/datasets/_template.yaml)
 3. Rename it to `<dataset-id>.yaml` (kebab-case, matching the `id` field)
 4. Fill in every metadata and `getting_started` field
-5. Open a pull request
+5. For beginner, no-key datasets, run `npm run generate-notebooks` and commit `public/notebooks/<id>.ipynb`
+6. Open a pull request
 
 CI will automatically validate your YAML.
 
@@ -97,7 +100,19 @@ Do **not** add:
 - Python examples must be valid Python, use the authoritative source, avoid
   credentials, and be short enough for a beginner to understand in one notebook
   cell
-- Do not invent new fields in v1
+- Do not invent new fields in ordinary dataset pull requests. Vocabulary,
+  collections, and maintainer registries are maintainer-owned editorial
+  surfaces and are not required to add a dataset
+- Optional `catalog_status` defaults to `active`. Inactive records must include
+  `status_reason`. `temporarily_unavailable` also requires `status_until`.
+  `deprecated` also requires `replacement_id` pointing at a different active
+  dataset. Lifecycle states cannot bypass the 90-day verification policy
+- Optional `access_profile` and Python `expected_output` / `last_runtime_verified`
+  are maintainer-reviewed facts. Show only authored values; never infer a
+  provider's rate limit or fabricate live output
+- Domain and task tags must resolve through [`data/vocabulary.yaml`](data/vocabulary.yaml).
+  Use an existing canonical term or a documented alias; do not introduce a new
+  free-text label
 - Keep each dataset YAML file below 64 KiB; fields and lists are schema-bounded
   to protect validation and static builds from resource exhaustion
 
@@ -113,6 +128,7 @@ while iterating:
 
 ```bash
 npm run validate-datasets:offline
+npm run generate-notebooks:check
 ```
 
 Maintainers can also run the live checks:
@@ -139,5 +155,11 @@ Live CI warns 14 days before an exception expires so it can be reconfirmed or re
 ## What happens after merge
 
 The Next.js site rebuilds from YAML at build time. The dataset guide, search
-index, and filters are generated automatically from your file. No
-database or admin panel is involved.
+index, filters, and related-dataset links are generated automatically from your
+file. Beginner, no-key guides also get a generated Colab notebook; run
+`npm run generate-notebooks` and commit the result so CI's determinism check
+passes. Do not edit `public/notebooks/*.ipynb` by hand.
+
+A local contribution studio at `/contribute` can draft and validate YAML in the
+browser. It does not open a pull request, store credentials, or execute Python.
+Syntax, live URL, and provider checks still run in repository CI.

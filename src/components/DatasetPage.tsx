@@ -5,11 +5,24 @@ import {
   CheckCircle2,
   ExternalLink,
   Lightbulb,
+  NotebookPen,
   TerminalSquare,
 } from "lucide-react";
-import type { Dataset } from "@/lib/schema";
+import type { CatalogDataset, Dataset } from "@/lib/schema";
+import { isActiveDataset } from "@/lib/schema";
+import { catalogHref } from "@/lib/catalog-links";
+import { datasetPath, DATASET_ISSUE_URL, FEEDBACK_URL } from "@/lib/seo";
+import { colabNotebookUrl } from "@/lib/notebooks";
 import { formatSizeRange, getSizeCategory } from "@/lib/size";
+import {
+  catalogStatusLabel,
+  formatVerifiedDate,
+  frictionLabel,
+  pythonExampleStatus,
+  sourceTypeLabel,
+} from "@/lib/trust-signals";
 import { CopyButton } from "@/components/CopyButton";
+import { ShortlistToggle } from "@/components/ShortlistToggle";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,9 +39,11 @@ function capitalize(value: string): string {
 function ConceptPills({
   label,
   values,
+  hrefFor,
 }: {
   label: string;
   values: string[];
+  hrefFor?: (value: string) => string;
 }) {
   return (
     <div>
@@ -36,25 +51,51 @@ function ConceptPills({
         {label}
       </h3>
       <div className="mt-2 flex flex-wrap gap-2">
-        {values.map((value) => (
-          <Badge
-            key={value}
-            variant="outline"
-            className="h-auto max-w-full justify-start rounded-full whitespace-normal"
-          >
-            {value}
-          </Badge>
-        ))}
+        {values.map((value) => {
+          const badge = (
+            <Badge
+              variant="outline"
+              className="h-auto max-w-full justify-start rounded-full whitespace-normal"
+            >
+              {value}
+            </Badge>
+          );
+          return hrefFor ? (
+            <Link key={value} href={hrefFor(value)} className="rounded-full">
+              {badge}
+            </Link>
+          ) : (
+            <span key={value}>{badge}</span>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-export function DatasetPage({ dataset }: { dataset: Dataset }) {
+export function DatasetPage({
+  dataset,
+  related = [],
+  notebookAvailable = false,
+}: {
+  dataset: Dataset;
+  related?: CatalogDataset[];
+  notebookAvailable?: boolean;
+}) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
   const guide = dataset.getting_started;
   const installCommand = `python -m pip install ${guide.python.packages.join(" ")}`;
+  const pythonStatus = pythonExampleStatus(dataset);
+  const active = isActiveDataset(dataset);
+  const sampleRange =
+    dataset.access_profile?.first_sample_gb_min !== undefined &&
+    dataset.access_profile.first_sample_gb_max !== undefined
+      ? formatSizeRange(
+          dataset.access_profile.first_sample_gb_min,
+          dataset.access_profile.first_sample_gb_max,
+        )
+      : null;
 
   const difficulty = difficultyDescriptions[dataset.difficulty];
   const facts: Array<[string, ReactNode]> = [
@@ -74,6 +115,11 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
     [datasetGuideCopy.factLabels.provider, dataset.provider],
     [datasetGuideCopy.factLabels.updates, capitalize(dataset.update_frequency)],
     [
+      datasetGuideCopy.factLabels.verified,
+      formatVerifiedDate(dataset.last_verified),
+    ],
+    [datasetGuideCopy.factLabels.sourceType, sourceTypeLabel(dataset.source_type)],
+    [
       datasetGuideCopy.factLabels.dataTerms,
       <a
         key="license"
@@ -87,6 +133,25 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
       </a>,
     ],
   ];
+
+  if (dataset.access_profile) {
+    facts.push(
+      [datasetGuideCopy.factLabels.friction, frictionLabel(dataset.access_profile.friction)],
+      [datasetGuideCopy.factLabels.setupMinutes, datasetGuideCopy.setupMinutes(dataset.access_profile.setup_minutes)],
+      [
+        datasetGuideCopy.factLabels.registration,
+        dataset.access_profile.registration_required
+          ? datasetGuideCopy.registrationRequiredLabel
+          : datasetGuideCopy.registrationNotRequiredLabel,
+      ],
+    );
+    if (dataset.access_profile.rate_limit_notes) {
+      facts.push([datasetGuideCopy.factLabels.rateLimits, dataset.access_profile.rate_limit_notes]);
+    }
+    if (sampleRange) {
+      facts.push([datasetGuideCopy.factLabels.sampleSize, sampleRange]);
+    }
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
@@ -106,6 +171,24 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
           </li>
         </ol>
       </nav>
+
+      {!active && (
+        <div className="mb-5 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-white" role="status">
+          <p className="font-semibold">{catalogStatusLabel(dataset.catalog_status)}</p>
+          {dataset.status_reason ? <p className="mt-1 text-white/80">{dataset.status_reason}</p> : null}
+          {dataset.status_until ? (
+            <p className="mt-1 text-white/80">{datasetGuideCopy.statusUntilLabel(dataset.status_until)}</p>
+          ) : null}
+          {dataset.replacement_id ? (
+            <Link
+              href={datasetPath(dataset.replacement_id)}
+              className="mt-2 inline-flex font-semibold text-primary hover:text-white"
+            >
+              {datasetGuideCopy.replacementLabel}
+            </Link>
+          ) : null}
+        </div>
+      )}
 
       <header className="max-w-4xl">
         <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -132,6 +215,27 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
           >
             {datasetGuideCopy.officialSourceLabel} <ExternalLink aria-hidden="true" />
           </a>
+          {notebookAvailable && (
+            <a
+              href={colabNotebookUrl(dataset.id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto")}
+            >
+              {datasetGuideCopy.colabLabel} <NotebookPen aria-hidden="true" />
+            </a>
+          )}
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <ShortlistToggle id={dataset.id} />
+          <a
+            href={DATASET_ISSUE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-primary hover:text-white"
+          >
+            {datasetGuideCopy.feedbackLabel}
+          </a>
         </div>
       </header>
 
@@ -149,6 +253,17 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
             </div>
           ))}
         </dl>
+        <ul className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-secondary">
+          <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.pythonSyntaxLabel}</li>
+          {pythonStatus.notebook && (
+            <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.notebookLabel}</li>
+          )}
+          {pythonStatus.runtimeVerified && (
+            <li className="rounded-full border border-white/10 px-3 py-1">
+              {datasetGuideCopy.runtimeVerifiedLabel(formatVerifiedDate(pythonStatus.runtimeVerified))}
+            </li>
+          )}
+        </ul>
       </section>
 
       <section id="getting-started" className="scroll-mt-24 pt-10" aria-labelledby="guide-title">
@@ -231,6 +346,14 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 <code>{guide.python.code}</code>
               </pre>
             </div>
+            {guide.python.expected_output && (
+              <div className="border-t border-white/10 px-5 py-4 sm:px-6">
+                <h4 className="text-sm font-semibold text-white">{datasetGuideCopy.expectedOutputTitle}</h4>
+                <pre className="mt-2 overflow-x-auto font-mono text-xs leading-5 text-white/80">
+                  <code>{guide.python.expected_output}</code>
+                </pre>
+              </div>
+            )}
           </article>
 
           <article className="surface p-6 lg:col-span-2">
@@ -263,6 +386,31 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
         </div>
       </section>
 
+      {related.length > 0 && (
+        <section className="mt-10" aria-labelledby="related-title">
+          <div className="surface p-6 sm:p-7">
+            <h2 id="related-title" className="text-xl font-semibold text-white">
+              {datasetGuideCopy.relatedTitle}
+            </h2>
+            <ul className="mt-4 grid gap-3 md:grid-cols-3">
+              {related.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={datasetPath(item.id)}
+                    className="block rounded-lg border border-white/10 p-4 hover:border-primary/50"
+                  >
+                    <p className="font-semibold text-white">{item.name}</p>
+                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                      {item.first_project_title}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       <section className="mt-10" aria-labelledby="explore-title">
         <div className="surface p-6 sm:p-7">
           <div className="flex items-start gap-4">
@@ -283,26 +431,32 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                 <ConceptPills
                   label={datasetGuideCopy.conceptLabels.theme}
                   values={[dataset.theme]}
+                  hrefFor={() => catalogHref({ theme: dataset.theme })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.conceptLabels.domains}
                   values={dataset.domains}
+                  hrefFor={(value) => catalogHref({ domains: [value] })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.conceptLabels.dataTypes}
                   values={dataset.data_types}
+                  hrefFor={(value) => catalogHref({ dataTypes: [value] })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.conceptLabels.tasks}
                   values={dataset.tasks}
+                  hrefFor={(value) => catalogHref({ tasks: [value] })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.conceptLabels.geography}
                   values={dataset.geography}
+                  hrefFor={(value) => catalogHref({ geographies: [value] })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.factLabels.formats}
                   values={dataset.formats}
+                  hrefFor={(value) => catalogHref({ formats: [value] })}
                 />
                 <ConceptPills
                   label={datasetGuideCopy.factLabels.provider}
@@ -313,6 +467,16 @@ export function DatasetPage({ dataset }: { dataset: Dataset }) {
                   values={[dataset.license]}
                 />
               </div>
+              <p className="mt-6 text-sm">
+                <a
+                  href={FEEDBACK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-primary hover:text-white"
+                >
+                  {siteCopy.feedbackLabel}
+                </a>
+              </p>
             </div>
           </div>
         </div>

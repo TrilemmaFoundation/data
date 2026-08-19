@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { getDatasetById } from "./datasets";
-import { datasetJsonLd, datasetPath, serializeJsonLd, SITE_URL } from "./seo";
+import { getAllCollections } from "./collections";
+import {
+  collectionJsonLd,
+  datasetJsonLd,
+  datasetPath,
+  serializeJsonLd,
+  SITE_URL,
+  themeJsonLd,
+} from "./seo";
 
 describe("SEO helpers", () => {
   it("builds complete dataset structured data", () => {
@@ -23,5 +31,26 @@ describe("SEO helpers", () => {
     expect(serializeJsonLd({ value: "</script>" })).toBe(
       '{"value":"\\u003c/script>"}',
     );
+  });
+
+  it("builds collection and theme structured data", () => {
+    const collection = getAllCollections()[0]!;
+    expect(collectionJsonLd(collection, ["National Weather Service API"])).toMatchObject({
+      "@type": "CollectionPage",
+      name: collection.title,
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: 1,
+      },
+    });
+    expect(themeJsonLd("Environment & Hazards", ["USGS Earthquake Catalog"])).toMatchObject({
+      "@type": "CollectionPage",
+      url: `${SITE_URL}/themes/environment-hazards`,
+    });
+    const inactive = {
+      ...getDatasetById("natural-earth")!,
+      catalog_status: "deprecated" as const,
+    };
+    expect(datasetJsonLd(inactive)).toMatchObject({ creativeWorkStatus: "deprecated" });
   });
 });

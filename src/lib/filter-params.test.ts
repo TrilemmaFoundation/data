@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EMPTY_FILTERS } from "./search";
 import type { FilterOptions } from "./search";
+import { getVocabulary, toVocabularySnapshot } from "./vocabulary";
 import {
   catalogSearchFromLocation,
   filtersToParams,
@@ -86,6 +87,24 @@ describe("filter URL helpers", () => {
     expect(
       parseFilters(new URLSearchParams("format=NETCDF,csv"), formatOptions).formats,
     ).toEqual(["CSV", "NetCDF"]);
+  });
+
+  it("maps domain and task aliases onto canonical filter options", () => {
+    const aliasOptions = {
+      ...options,
+      domains: ["Natural Hazards", "Geography"],
+      tasks: ["Monitoring", "GIS"],
+    };
+    expect(
+      parseFilters(
+        new URLSearchParams("domain=Seismology&task=Hazard+Monitoring"),
+        aliasOptions,
+        toVocabularySnapshot(getVocabulary()),
+      ),
+    ).toMatchObject({
+      domains: ["Natural Hazards"],
+      tasks: ["Monitoring"],
+    });
   });
 
   it("drops unknown and duplicate catalog values", () => {

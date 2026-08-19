@@ -46,6 +46,11 @@ provider: National Weather Service
 source_type: government
 last_verified: 2026-08-18
 
+access_profile:
+  friction: medium
+  setup_minutes: 10
+  registration_required: false
+
 getting_started:
   overview: >
     The National Weather Service API provides official U.S. forecasts,

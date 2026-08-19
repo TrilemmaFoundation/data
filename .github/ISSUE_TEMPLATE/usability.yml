@@ -1,0 +1,39 @@
+name: Usability feedback
+description: Share a moderated test observation or product-usability issue.
+title: "[Usability] "
+labels: ["usability"]
+body:
+  - type: dropdown
+    id: task
+    attributes:
+      label: Which task were you trying?
+      options:
+        - Choose a dataset for a stated product
+        - Reach runnable code
+        - Interpret example output
+        - Compare alternatives
+        - Submit a correction
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Did you finish the task?
+      options:
+        - Yes, without help
+        - Yes, with hesitation or help
+        - No
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What happened?
+      description: Note where you started, what you clicked, and where you got stuck. Do not include personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would have helped?

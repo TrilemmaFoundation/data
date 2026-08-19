@@ -15,11 +15,12 @@ jobs:
   validate-datasets:
     name: Validate dataset YAML
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -33,6 +34,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: npm run validate-datasets:offline
 
+      - name: Check generated notebooks
+        if: github.event_name == 'pull_request'
+        run: npm run generate-notebooks:check
+
       - name: Validate live source page identity
         if: github.event_name != 'pull_request'
         run: npm run validate-datasets
@@ -40,6 +45,35 @@ jobs:
       - name: Validate provider contracts
         if: github.event_name != 'pull_request'
         run: npm run validate-providers
+
+      - name: Run allowlisted runtime canaries
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: |
+          python3 -m pip install --quiet pandas requests numpy
+          set +e
+          output="$(npm run validate-python-runtime 2>&1)"
+          status=$?
+          printf '%s\n' "$output"
+          if [ "$status" -ne 0 ]; then
+            {
+              echo "PYTHON_CANARY_FAILURES<<EOF"
+              printf '%s\n' "$output"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          fi
+          exit "$status"
+
+      - name: Generate maintenance report
+        if: github.event_name != 'pull_request'
+        run: npm run maintenance-report
+
+      - name: Upload maintenance report
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: maintenance-report
+          path: reports/maintenance-report.*
 
   test:
     name: Unit tests
@@ -58,6 +92,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check generated notebooks
+        run: npm run generate-notebooks:check
 
       - name: Run lint
         run: npm run lint

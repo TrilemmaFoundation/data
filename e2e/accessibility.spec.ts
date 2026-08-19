@@ -39,3 +39,18 @@ test("dataset guide passes automated accessibility checks", async ({ page }) => 
   await page.goto("/datasets/usgs-earthquakes");
   await expectNoAccessibilityViolations(page);
 });
+
+test("collection, theme, compare, and contribute pages pass accessibility checks", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  for (const path of [
+    "/collections/first-builds",
+    "/themes/environment-hazards",
+    "/compare",
+    "/contribute",
+  ]) {
+    await page.goto(path);
+    await expectNoAccessibilityViolations(page);
+  }
+});

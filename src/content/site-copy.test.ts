@@ -3,6 +3,9 @@ import { getAllDatasets } from "../lib/datasets";
 import {
   accessTypeLabels,
   catalogCopy,
+  collectionsCopy,
+  compareCopy,
+  contributeCopy,
   copyButtonCopy,
   datasetCardCopy,
   datasetGuideCopy,
@@ -10,8 +13,10 @@ import {
   filterChipPrefixes,
   filterCopy,
   notFoundCopy,
+  shortlistCopy,
   siteCopy,
   tableCopy,
+  themeLandingCopy,
 } from "./site-copy";
 
 function collectStrings(value: unknown): string[] {
@@ -34,6 +39,11 @@ describe("site copy", () => {
       copyButtonCopy,
       notFoundCopy,
       tableCopy,
+      themeLandingCopy,
+      collectionsCopy,
+      shortlistCopy,
+      compareCopy,
+      contributeCopy,
     ]);
 
     expect(values.length).toBeGreaterThan(0);
@@ -57,9 +67,14 @@ describe("site copy", () => {
     expect(catalogCopy.removeFilter("Domain: Economics")).toBe(
       "Remove Domain: Economics filter",
     );
-    expect(siteCopy.copyright(2026)).toBe(
-      "© 2026 Trilemma Foundation. All rights reserved.",
-    );
+    expect(catalogCopy.heroTrust(141, "Aug 11, 2026")).toContain("141");
+    expect(catalogCopy.datasetCount(1)).toBe("1 dataset");
+    expect(collectionsCopy.updatedLabel("2026-08-19")).toContain("2026-08-19");
+    expect(shortlistCopy.countLabel(1)).toBe("1 dataset shortlisted");
+    expect(shortlistCopy.countLabel(2)).toBe("2 datasets shortlisted");
+    expect(datasetGuideCopy.setupMinutes(10)).toBe("10 min");
+    expect(datasetGuideCopy.runtimeVerifiedLabel("Aug 19, 2026")).toContain("Aug 19");
+    expect(datasetGuideCopy.statusUntilLabel("2026-09-01")).toContain("2026-09-01");
   });
 
   it("keeps the recommended dataset resolvable", () => {
@@ -90,6 +105,7 @@ describe("site copy", () => {
   it("keeps table theme labels short and complete", () => {
     const themes = [...new Set(getAllDatasets().map((dataset) => dataset.theme))];
     expect(Object.keys(tableCopy.themeShort).sort()).toEqual([...themes].sort());
+    expect(Object.keys(themeLandingCopy).sort()).toEqual([...themes].sort());
     for (const theme of themes) {
       expect(tableCopy.themeShort[theme].length).toBeLessThan(theme.length);
     }

@@ -13,6 +13,7 @@ import {
   type CatalogSort,
   type DatasetFilters as Filters,
 } from "@/lib/search";
+import { BuildPathCards, type CollectionCardModel } from "@/components/BuildPathCards";
 import { CatalogPagination } from "@/components/CatalogPagination";
 import { DatasetCard } from "@/components/DatasetCard";
 import { DatasetFilters, DatasetQuickFilters } from "@/components/DatasetFilters";
@@ -20,10 +21,15 @@ import { DatasetTable } from "@/components/DatasetTable";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
 import { catalogCopy, filterCopy } from "@/content/site-copy";
 
 export function CatalogView({
   datasets,
+  collections,
+  starterIds,
+  trustSummary,
+  vocabulary,
   filters,
   sort,
   requestedPage,
@@ -35,6 +41,10 @@ export function CatalogView({
   onPageChange,
 }: {
   datasets: CatalogDataset[];
+  collections: CollectionCardModel[];
+  starterIds: string[];
+  trustSummary: string;
+  vocabulary: VocabularySnapshot;
   filters: Filters;
   sort: CatalogSort;
   requestedPage: number;
@@ -45,20 +55,16 @@ export function CatalogView({
   onSortChange: (sort: CatalogSort) => void;
   onPageChange: (page: number) => void;
 }) {
-  const filterOptions = getFilterOptions(datasets);
-  const results = filterDatasets(datasets, filters);
+  const filterOptions = getFilterOptions(datasets, vocabulary);
+  const results = filterDatasets(datasets, filters, vocabulary);
   const chips = activeChips(filters);
   const facetCount = chips.filter((chip) => chip.key !== "query").length;
   const isUnfiltered = chips.length === 0;
-  const displayedResults = (() => {
-    if (!isUnfiltered) return results;
-    const recommended = results.find(
-      (dataset) => dataset.id === catalogCopy.recommendedDatasetId,
-    );
-    if (!recommended || results[0] === recommended) return results;
-    return [recommended, ...results.filter((dataset) => dataset !== recommended)];
-  })();
-  const orderedResults = sortDatasets(displayedResults, sort);
+  const starterSet = new Set(starterIds);
+  const starters = starterIds
+    .map((id) => datasets.find((dataset) => dataset.id === id))
+    .filter((dataset): dataset is CatalogDataset => Boolean(dataset));
+  const orderedResults = sortDatasets(results, sort);
   const paginated = paginate(orderedResults, requestedPage);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterDialogRef = useRef<HTMLDialogElement>(null);
@@ -145,12 +151,38 @@ export function CatalogView({
           </div>
         </div>
 
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{trustSummary}</p>
+
+        {isUnfiltered && paginated.page === 1 && (
+          <>
+            <BuildPathCards collections={collections} />
+            {starters.length > 0 && (
+              <section aria-labelledby="first-builds-title" className="mt-10">
+                <div className="max-w-3xl">
+                  <h2 id="first-builds-title" className="text-xl font-semibold text-white">
+                    {catalogCopy.firstBuildsTitle}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {catalogCopy.firstBuildsDescription}
+                  </p>
+                </div>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {starters.map((dataset) => (
+                    <DatasetCard key={dataset.id} dataset={dataset} featured />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        )}
+
         <section
           id="dataset-catalog"
           aria-labelledby="results-title"
-          className="scroll-mt-24 pt-4"
+          className="scroll-mt-24 pt-8"
         >
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <h2 className="text-xl font-semibold text-white">{catalogCopy.catalogSectionTitle}</h2>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="min-w-0 flex-1 sm:min-w-48 lg:max-w-xs xl:max-w-sm">
               <label htmlFor="dataset-search" className="sr-only">
                 {catalogCopy.searchLabel}
@@ -166,6 +198,7 @@ export function CatalogView({
                   type="search"
                   defaultValue={filters.query}
                   onChange={(event) => onSearchChange(event.target.value)}
+                  onInput={(event) => onSearchChange(event.currentTarget.value)}
                   placeholder={catalogCopy.searchPlaceholder}
                   className="border-white/15 pr-4 pl-12 placeholder:text-white/40 [&::-webkit-search-cancel-button]:appearance-none"
                 />
@@ -236,7 +269,7 @@ export function CatalogView({
                   <DatasetCard
                     key={dataset.id}
                     dataset={dataset}
-                    featured={isUnfiltered && dataset.id === catalogCopy.recommendedDatasetId}
+                    featured={isUnfiltered && starterSet.has(dataset.id)}
                   />
                 ))}
               </div>
@@ -245,7 +278,8 @@ export function CatalogView({
                   datasets={paginated.items}
                   sort={sort}
                   onSortChange={onSortChange}
-                  featuredId={isUnfiltered ? catalogCopy.recommendedDatasetId : undefined}
+                  featuredId={undefined}
+                  featuredIds={isUnfiltered ? starterIds : []}
                 />
                 <div className="px-3 pb-2">{pagination}</div>
               </div>

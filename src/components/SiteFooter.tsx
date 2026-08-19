@@ -2,7 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { siteCopy } from "@/content/site-copy";
 import {
-  CONTRIBUTE_URL,
+  COLLECTIONS_PATH,
+  COMPARE_PATH,
+  CONTRIBUTE_APP_PATH,
+  FEEDBACK_URL,
   FOUNDATION_CHARTER_URL,
   FOUNDATION_PRIVACY_URL,
   FOUNDATION_PROJECTS_URL,
@@ -64,13 +67,17 @@ export function SiteFooter() {
               <Link href="/" className={footerLinkClass}>
                 {siteCopy.datasetsNavigationLabel}
               </Link>
-              <a
-                href={CONTRIBUTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={footerLinkClass}
-              >
+              <Link href={COLLECTIONS_PATH} className={footerLinkClass}>
+                {siteCopy.collectionsNavigationLabel}
+              </Link>
+              <Link href={COMPARE_PATH} className={footerLinkClass}>
+                {siteCopy.compareLabel}
+              </Link>
+              <Link href={CONTRIBUTE_APP_PATH} className={footerLinkClass}>
                 {siteCopy.contributeLabel}
+              </Link>
+              <a href={FEEDBACK_URL} className={footerLinkClass}>
+                {siteCopy.feedbackLabel}
               </a>
             </nav>
           </div>

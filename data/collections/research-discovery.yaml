@@ -1,0 +1,16 @@
+id: research-discovery
+title: Discover research and citations
+summary: >
+  Scholarly and trial metadata for topic alerts, literature monitors, and
+  research discovery tools that link back to the source.
+curator: Trilemma Data
+last_updated: 2026-08-19
+dataset_ids:
+  - pubmed-citations
+  - openalex-scholarly-works
+  - arxiv-preprints
+  - clinicaltrials-studies
+  - wikimedia-pageviews
+  - crossref-works
+  - uspto-open-data-portal
+  - pubchem-compounds

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DatasetSchema,
+  isActiveDataset,
   MAX_PYTHON_LENGTH,
   MAX_TEXT_LENGTH,
   MAX_URL_LENGTH,
@@ -339,6 +340,136 @@ describe("DatasetSchema", () => {
       }).success,
     ).toBe(false);
   });
+
+  it("defaults catalog_status to active and accepts optional access metadata", () => {
+    const parsed = DatasetSchema.parse(validDataset);
+    expect(parsed.catalog_status).toBe("active");
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        access_profile: {
+          friction: "low",
+          setup_minutes: 10,
+          registration_required: false,
+          rate_limit_notes: "Be polite with retries.",
+          first_sample_gb_min: 0,
+          first_sample_gb_max: 0.01,
+        },
+        getting_started: {
+          ...validDataset.getting_started,
+          python: {
+            ...validDataset.getting_started.python,
+            expected_output: "five forecast rows",
+            last_runtime_verified: "2026-08-18",
+          },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it("requires status metadata for inactive datasets", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "temporarily_unavailable",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "temporarily_unavailable",
+        status_reason: "Provider is serving a maintenance page.",
+        status_until: "2026-12-01",
+        replacement_id: "other-dataset",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "deprecated",
+        status_reason: "Provider retired the public file.",
+        replacement_id: "other-dataset",
+      }).success,
+    ).toBe(true);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "deprecated",
+        status_reason: "Provider retired the public file.",
+        replacement_id: "live-events",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "active",
+        status_reason: "should not appear",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "active",
+        status_until: "2026-12-01",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "active",
+        replacement_id: "other-dataset",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "temporarily_unavailable",
+        status_reason: "Provider is serving a maintenance page.",
+        status_until: "2026-12-01",
+      }).success,
+    ).toBe(true);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "deprecated",
+        status_reason: "Provider retired the public file.",
+      }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        catalog_status: "deprecated",
+        status_reason: "Provider retired the public file.",
+        replacement_id: "other-dataset",
+        status_until: "2026-12-01",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects inverted first-sample size ranges", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        access_profile: {
+          friction: "low",
+          setup_minutes: 5,
+          registration_required: false,
+          first_sample_gb_min: 0.01,
+        },
+      }).success,
+    ).toBe(true);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        access_profile: {
+          friction: "low",
+          setup_minutes: 5,
+          registration_required: false,
+          first_sample_gb_max: 0.01,
+        },
+      }).success,
+    ).toBe(true);
+  });
 });
 
 describe("toCatalogDataset", () => {
@@ -363,11 +494,51 @@ describe("toCatalogDataset", () => {
       size_gb_min: dataset.size_gb_min,
       size_gb_max: dataset.size_gb_max,
       api_key_required: dataset.api_key_required,
+      last_verified: dataset.last_verified,
+      source_type: dataset.source_type,
+      catalog_status: "active",
+      first_project_title: dataset.getting_started.first_project.title,
+      canonical_domains: dataset.domains,
+      canonical_tasks: dataset.tasks,
+      keywords: ["Natural Hazards", "Monitoring"],
+      access_friction: null,
+      setup_minutes: null,
+      registration_required: null,
     });
     expect(catalog).not.toHaveProperty("getting_started");
     expect(catalog).not.toHaveProperty("url");
     expect(catalog).not.toHaveProperty("license");
     expect(catalog).not.toHaveProperty("license_url");
     expect(catalog).not.toHaveProperty("url_checks");
+  });
+
+  it("uses vocabulary helpers when provided and reports inactive datasets", () => {
+    const dataset = DatasetSchema.parse({
+      ...validDataset,
+      domains: ["Seismology"],
+      access_profile: {
+        friction: "medium",
+        setup_minutes: 15,
+        registration_required: false,
+      },
+    });
+    const catalog = toCatalogDataset(dataset, {
+      canonicalize: (_kind, value) =>
+        value === "Seismology" ? "Natural Hazards" : value,
+      keywordsFor: () => ["Natural Hazards", "Seismology", "quakes"],
+    });
+    expect(catalog.canonical_domains).toEqual(["Natural Hazards"]);
+    expect(catalog.keywords).toEqual([
+      "Seismology",
+      "Monitoring",
+      "Natural Hazards",
+      "quakes",
+    ]);
+    expect(catalog.access_friction).toBe("medium");
+    expect(catalog.setup_minutes).toBe(15);
+    expect(catalog.registration_required).toBe(false);
+    expect(isActiveDataset(dataset)).toBe(true);
+    expect(isActiveDataset({ catalog_status: "deprecated" })).toBe(false);
+    expect(isActiveDataset({})).toBe(true);
   });
 });

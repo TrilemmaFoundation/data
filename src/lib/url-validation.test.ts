@@ -6,6 +6,7 @@ import {
   checkUrl as checkUrlWithDns,
   exceptionExpiryWarnings,
   EXCEPTION_WARNING_DAYS,
+  listUrlExceptions,
   validateDatasetUrls,
 } from "./url-validation";
 
@@ -911,6 +912,14 @@ describe("validateDatasetUrls", () => {
 describe("exceptionExpiryWarnings", () => {
   it("warns within the 14-day window and ignores distant or expired dates", () => {
     expect(EXCEPTION_WARNING_DAYS).toBe(14);
+    expect(listUrlExceptions().length).toBeGreaterThan(0);
+    expect(listUrlExceptions()[0]).toEqual(
+      expect.objectContaining({
+        url: expect.stringMatching(/^https:/),
+        expires: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+        reason: expect.any(String),
+      }),
+    );
     expect(exceptionExpiryWarnings(new Date("2026-08-10T00:00:00Z"))).toEqual([]);
     expect(exceptionExpiryWarnings(new Date("2026-10-27T00:00:00Z"))).toEqual([]);
     const soon = exceptionExpiryWarnings(new Date("2026-10-28T00:00:00Z"));

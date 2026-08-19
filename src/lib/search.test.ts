@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogDataset } from "./schema";
-import { getAllDatasets } from "./datasets";
+import { getCatalogDatasets } from "./datasets";
+import { getVocabulary, toVocabularySnapshot } from "./vocabulary";
 import {
   CATALOG_PAGE_SIZE,
   compareDatasets,
@@ -12,7 +13,8 @@ import {
   sortDatasets,
 } from "./search";
 
-const datasets = getAllDatasets();
+const datasets = getCatalogDatasets();
+const snapshot = toVocabularySnapshot(getVocabulary());
 const earthquakeCatalog = datasets.find(
   (dataset) => dataset.id === "usgs-earthquakes",
 )!;
@@ -53,8 +55,9 @@ describe("filterDatasets", () => {
   });
 
   it("builds sorted, de-duplicated filter options", () => {
-    const options = getFilterOptions(datasets);
+    const options = getFilterOptions(datasets, snapshot);
     expect(options.domains).toContain("Natural Hazards");
+    expect(options.domains).not.toContain("Seismology");
     expect(options.themes).toContain("Environment & Hazards");
     expect(options.themes).toEqual([...options.themes].sort((a, b) => a.localeCompare(b)));
     expect(options.sizes).toEqual([
@@ -71,6 +74,34 @@ describe("filterDatasets", () => {
       expect(folded).toEqual([...new Set(folded)]);
     }
     expect(getFilterOptions([]).accessMethods).toEqual([]);
+    const withoutCanonical = datasets.map((dataset) => {
+      const { canonical_domains, canonical_tasks, ...rest } = dataset;
+      void canonical_domains;
+      void canonical_tasks;
+      return rest as typeof dataset;
+    });
+    expect(getFilterOptions(withoutCanonical, snapshot).domains).toContain("Natural Hazards");
+    expect(
+      filterDatasets(
+        withoutCanonical,
+        { ...EMPTY_FILTERS, domains: ["Natural Hazards"] },
+        snapshot,
+      )
+        .map((dataset) => dataset.id),
+    ).toContain("usgs-earthquakes");
+  });
+
+  it("matches domain and task aliases to canonical filters", () => {
+    expect(
+      filterDatasets(datasets, { ...EMPTY_FILTERS, domains: ["Seismology"] }, snapshot).map(
+        (dataset) => dataset.id,
+      ),
+    ).toContain("usgs-earthquakes");
+    expect(
+      filterDatasets(datasets, { ...EMPTY_FILTERS, tasks: ["Hazard Monitoring"] }, snapshot).map(
+        (dataset) => dataset.id,
+      ),
+    ).toContain("usgs-earthquakes");
   });
 
   it("combines all filters and supports blank search text", () => {
@@ -88,7 +119,7 @@ describe("filterDatasets", () => {
         formats: [earthquakeCatalog.formats[0]!],
         apiKeyRequired: false,
         geographies: [earthquakeCatalog.geography[0]!],
-      }).map((dataset) => dataset.id),
+      }, snapshot).map((dataset) => dataset.id),
     ).toContain("usgs-earthquakes");
   });
 

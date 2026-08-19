@@ -47,6 +47,11 @@ provider: Federal Emergency Management Agency
 source_type: government
 last_verified: 2026-08-11
 
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+
 getting_started:
   overview: >
     OpenFEMA records federal disaster declarations, incident periods,

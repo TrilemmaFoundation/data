@@ -38,6 +38,11 @@ update_frequency: continuous
 provider: Office of Foreign Assets Control
 source_type: government
 last_verified: 2026-08-18
+
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
 getting_started:
   overview: >
     OFAC publishes the SDN list as CSV and XML. Start with the primary names

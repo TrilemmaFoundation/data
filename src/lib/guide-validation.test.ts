@@ -39,6 +39,7 @@ const validGuide: Dataset = {
   provider: "Example Agency",
   source_type: "government",
   last_verified: "2026-08-10",
+  catalog_status: "active",
   getting_started: {
     overview:
       "Start with one recent CSV extract. Missing timestamps and provisional status codes limit any trend claim.",

@@ -38,6 +38,11 @@ update_frequency: monthly
 provider: Federal Housing Finance Agency
 source_type: government
 last_verified: 2026-08-14
+
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
 getting_started:
   overview: >
     The FHFA House Price Index measures average price changes from repeat

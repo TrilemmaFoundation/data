@@ -29,6 +29,7 @@ quality — not catalog size.
 Public GitHub repo
         │
         ├── YAML dataset metadata
+        ├── vocabulary, collections, and maintainer registries
         │
         ▼
 TypeScript validation (Zod)
@@ -41,6 +42,9 @@ Vercel → data.trilemma.foundation
 ```
 
 No database, authentication, admin panel, backend service, or dataset storage.
+Generated Colab notebooks for beginner, no-key guides are committed under
+[`public/notebooks`](public/notebooks) and must be produced by
+`npm run generate-notebooks`, never edited by hand.
 
 ## Brand contract
 
@@ -73,8 +77,15 @@ Content has two explicit sources of truth:
 - Dataset descriptions and beginner guides live with their metadata in the
   corresponding [`data/datasets/*.yaml`](data/datasets) file.
 
-Each dataset selects one broad catalog theme. Detailed domains and tasks remain
-searchable tags, drawer filters, and guide-page metadata.
+Each dataset selects one broad catalog theme. Domain and task tags are
+normalized through [`data/vocabulary.yaml`](data/vocabulary.yaml): aliases
+stay searchable and keep old filter URLs working, while only `filterable`
+canonical terms appear in the catalog drawer.
+
+Curated build paths live in [`data/collections`](data/collections) and
+maintainer ownership in [`data/maintainers.yaml`](data/maintainers.yaml).
+Those files are maintainer-owned editorial surfaces, not part of an ordinary
+dataset pull request.
 
 Write in direct, practical language. Lead with the microproduct use or decision
 the data could support, define provider-specific terms, and state the limitation
@@ -101,6 +112,10 @@ Useful scripts:
 npm run validate-datasets          # policy + guide copy + Python syntax + live page identity
 npm run validate-datasets:offline  # policy + guide copy + Python syntax, no network
 npm run validate-providers         # bounded live provider contract checks
+npm run generate-notebooks         # rewrite committed beginner/no-key Colab notebooks
+npm run generate-notebooks:check   # fail if committed notebooks drifted
+npm run maintenance-report         # Markdown/JSON maintenance buckets (writes reports/)
+npm run validate-python-runtime    # allowlisted live Python canaries (not used in PRs)
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
 npm run test:coverage              # 100% statement/branch/function/line coverage for src/lib
@@ -121,16 +136,20 @@ npm run test:e2e
 ```
 
 The browser checks report and enforce separate JavaScript, CSS, HTML, static RSC,
-and compressed-code budgets for the catalog, plus automated WCAG checks for the
-catalog and dataset guides. Raise a budget or accessibility exception only with
-a documented reason and intentional review.
+compressed-code, analytics, landing, and notebook-asset budgets, plus automated
+WCAG checks for the catalog, collection/theme landings, compare, contribute, and
+dataset guides. Raise a budget or accessibility exception only with a documented
+reason and intentional review.
 
 Pull-request validation is deterministic and credential-free: it checks schema,
-the 90-day maintenance policy, guide copy, Python syntax, controlled provider fixtures,
-lint, tests, and the static application. GitHub Actions runs bounded live source,
-data-terms, and configured provider-contract validation after pushes to `main`,
-every Monday, and on manual dispatch so drift is detected even without recent code
-changes.
+vocabulary/collection/maintainer integrity, the 90-day maintenance policy, guide
+copy, Python syntax, notebook determinism, controlled provider fixtures, lint,
+100% `src/lib` coverage, and the static application. It does not execute
+contributed Python. GitHub Actions runs bounded live source, data-terms, and
+configured provider-contract validation after pushes to `main`, every Monday, and
+on manual dispatch. The same non-PR jobs write a maintenance report; weekly and
+manual runs also execute a small allowlisted Python runtime canary that cannot
+fail the pull-request gate.
 Dataset URLs must use HTTPS without embedded credentials. Live validation
 rejects private or link-local destinations and revalidates every same-host
 redirect before requesting it.

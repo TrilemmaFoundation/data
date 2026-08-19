@@ -197,6 +197,18 @@ function daysUntil(expires: string, todayIso: string): number {
   );
 }
 
+export function listUrlExceptions(): Array<{
+  url: string;
+  expires: string;
+  reason: string;
+}> {
+  return [...STATUS_EXCEPTIONS.entries()].map(([url, exception]) => ({
+    url,
+    expires: exception.expires,
+    reason: exception.reason,
+  }));
+}
+
 export function exceptionExpiryWarnings(today = new Date()): string[] {
   const todayIso = today.toISOString().slice(0, 10);
   const warnings: string[] = [];

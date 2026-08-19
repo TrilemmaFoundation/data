@@ -1,0 +1,39 @@
+name: Dataset correction
+description: Report a factual error, broken source, or guide problem for a catalog dataset.
+title: "[Dataset] "
+labels: ["dataset"]
+body:
+  - type: input
+    id: dataset_id
+    attributes:
+      label: Dataset id
+      description: The kebab-case id from the guide URL, such as nws-weather-api.
+      placeholder: nws-weather-api
+    validations:
+      required: true
+  - type: dropdown
+    id: problem_type
+    attributes:
+      label: What is wrong?
+      options:
+        - Broken or redirected source URL
+        - License or data-terms problem
+        - Metadata is inaccurate
+        - Python example is wrong or outdated
+        - Access or registration details changed
+        - Dataset should be marked unavailable or deprecated
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What did you expect, and what did you see? Include the page URL if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link to the official source, terms page, or a screenshot description. Do not paste secrets.

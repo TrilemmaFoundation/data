@@ -1,0 +1,16 @@
+id: compare-places
+title: Compare places
+summary: >
+  Authoritative local and national statistics for sizing a market, choosing a
+  site, or comparing communities.
+curator: Trilemma Data
+last_updated: 2026-08-19
+dataset_ids:
+  - acs-five-year-estimates
+  - bea-regional-gdp-income
+  - hud-fair-market-rents
+  - fhfa-house-price-index
+  - world-development-indicators
+  - who-gho-indicators
+  - census-county-business-patterns
+  - ons-statistics

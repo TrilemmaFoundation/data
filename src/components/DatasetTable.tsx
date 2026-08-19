@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { datasetCardCopy, tableCopy } from "@/content/site-copy";
+import { ShortlistToggle } from "@/components/ShortlistToggle";
 
 const SORT_HEADERS: Array<{ id: SortColumn; label: string }> = [
   { id: "name", label: tableCopy.datasetLabel },
@@ -83,12 +84,16 @@ export function DatasetTable({
   sort,
   onSortChange,
   featuredId,
+  featuredIds = [],
 }: {
   datasets: CatalogDataset[];
   sort: CatalogSort;
   onSortChange: (sort: CatalogSort) => void;
   featuredId?: string;
+  featuredIds?: string[];
 }) {
+  const featured = new Set(featuredIds);
+  if (featuredId) featured.add(featuredId);
   return (
     <Table className="table-fixed">
       <TableCaption className="sr-only">{tableCopy.caption}</TableCaption>
@@ -127,7 +132,7 @@ export function DatasetTable({
       </TableHeader>
       <TableBody>
         {datasets.map((dataset) => {
-          const featured = dataset.id === featuredId;
+          const isFeatured = featured.has(dataset.id);
           const formats = dataset.formats;
           return (
             <TableRow key={dataset.id}>
@@ -143,14 +148,15 @@ export function DatasetTable({
                       className="block truncate text-xs font-normal leading-4 text-secondary"
                       aria-hidden="true"
                     >
-                      {dataset.provider}
+                      {dataset.first_project_title}
                     </span>
                   </Link>
-                  {featured && (
+                  {isFeatured && (
                     <Badge variant="secondary" className="shrink-0">
                       {datasetCardCopy.goodFirstBuildLabel}
                     </Badge>
                   )}
+                  <ShortlistToggle id={dataset.id} className="h-8 shrink-0 px-2" />
                 </div>
               </TableCell>
               <TableCell>

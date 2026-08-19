@@ -2,14 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { siteCopy } from "@/content/site-copy";
 import { cn } from "@/lib/utils";
 import {
-  CONTRIBUTE_URL,
+  COLLECTIONS_PATH,
+  CONTRIBUTE_APP_PATH,
   FOUNDATION_URL,
 } from "@/lib/seo";
 
@@ -109,15 +110,20 @@ export function SiteHeader() {
           >
             {siteCopy.datasetsNavigationLabel}
           </Link>
-          <a
-            href={CONTRIBUTE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={COLLECTIONS_PATH}
+            aria-current={pathname.startsWith(COLLECTIONS_PATH) ? "page" : undefined}
+            className={buttonVariants({ variant: "ghost" })}
+          >
+            {siteCopy.collectionsNavigationLabel}
+          </Link>
+          <Link
+            href={CONTRIBUTE_APP_PATH}
+            aria-current={pathname === CONTRIBUTE_APP_PATH ? "page" : undefined}
             className={buttonVariants()}
           >
             {siteCopy.contributeLabel}
-            <ExternalLink className="size-3.5" aria-hidden="true" />
-          </a>
+          </Link>
         </nav>
 
         <button
@@ -158,15 +164,22 @@ export function SiteHeader() {
               >
                 {siteCopy.datasetsNavigationLabel}
               </Link>
-              <a
-                href={CONTRIBUTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={COLLECTIONS_PATH}
+                aria-current={pathname.startsWith(COLLECTIONS_PATH) ? "page" : undefined}
+                className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start")}
+                onClick={() => setOpenPathname(null)}
+              >
+                {siteCopy.collectionsNavigationLabel}
+              </Link>
+              <Link
+                href={CONTRIBUTE_APP_PATH}
+                aria-current={pathname === CONTRIBUTE_APP_PATH ? "page" : undefined}
                 className={cn(buttonVariants(), "w-full justify-start")}
+                onClick={() => setOpenPathname(null)}
               >
                 {siteCopy.contributeLabel}
-                <ExternalLink className="size-3.5" aria-hidden="true" />
-              </a>
+              </Link>
             </div>
           </nav>
           <button

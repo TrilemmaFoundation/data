@@ -17,21 +17,38 @@ import {
   isCanonicalPage,
   searchStringToCatalogState,
 } from "@/lib/filter-params";
+import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
 import { CatalogView } from "@/components/CatalogView";
+import type { CollectionCardModel } from "@/components/BuildPathCards";
 
-export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
+export function DiscoveryView({
+  datasets,
+  collections,
+  starterIds,
+  trustSummary,
+  vocabulary,
+}: {
+  datasets: CatalogDataset[];
+  collections: CollectionCardModel[];
+  starterIds: string[];
+  trustSummary: string;
+  vocabulary: VocabularySnapshot;
+}) {
   const router = useRouter();
   const pathname = usePathname();
-  const filterOptions = useMemo(() => getFilterOptions(datasets), [datasets]);
+  const filterOptions = useMemo(
+    () => getFilterOptions(datasets, vocabulary),
+    [datasets, vocabulary],
+  );
   const [locationSearch, setLocationSearch] = useState("");
   const { filters, sort, page: requestedPage } = useMemo(
-    () => searchStringToCatalogState(locationSearch, filterOptions),
-    [filterOptions, locationSearch],
+    () => searchStringToCatalogState(locationSearch, filterOptions, vocabulary),
+    [filterOptions, locationSearch, vocabulary],
   );
   const filtersRef = useRef(filters);
   const sortRef = useRef<CatalogSort>(sort);
   const locationSearchRef = useRef(locationSearch);
-  const searchUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSearchRef = useRef<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const resultsTitleRef = useRef<HTMLHeadingElement>(null);
 
@@ -40,19 +57,20 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
       filtersRef.current = nextFilters;
       sortRef.current = nextSort;
       const canonicalPage = paginate(
-        filterDatasets(datasets, nextFilters),
+        filterDatasets(datasets, nextFilters, vocabulary),
         nextPage,
       ).page;
       const query = filtersToParams(nextFilters, nextSort, canonicalPage).toString();
       const nextSearch = query ? `?${query}` : "";
       locationSearchRef.current = nextSearch;
+      pendingSearchRef.current = nextSearch;
       setLocationSearch(nextSearch);
       router[push ? "push" : "replace"](
         query ? `${pathname}?${query}` : pathname,
         { scroll: false },
       );
     },
-    [datasets, pathname, router],
+    [datasets, pathname, router, vocabulary],
   );
 
   useEffect(() => {
@@ -60,23 +78,24 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
     sortRef.current = sort;
   }, [filters, sort]);
 
-  useEffect(() => () => {
-    if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
-  }, []);
-
   useEffect(() => {
-    const applyLocation = () => {
+    const applyLocation = (source: "init" | "history" | "popstate") => {
       const nextSearch = catalogSearchFromLocation(
         pathname,
         window.location.pathname,
         window.location.search,
       );
-      if (nextSearch === null || nextSearch === locationSearchRef.current) return;
-      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
-      searchUpdateRef.current = null;
-      const state = searchStringToCatalogState(nextSearch, filterOptions);
+      if (nextSearch === null) return;
+      if (source === "popstate") {
+        pendingSearchRef.current = null;
+      } else if (pendingSearchRef.current !== null) {
+        if (nextSearch === pendingSearchRef.current) pendingSearchRef.current = null;
+        return;
+      }
+      if (nextSearch === locationSearchRef.current) return;
+      const state = searchStringToCatalogState(nextSearch, filterOptions, vocabulary);
       const canonicalPage = paginate(
-        filterDatasets(datasets, state.filters),
+        filterDatasets(datasets, state.filters, vocabulary),
         state.page,
       ).page;
       if (searchRef.current) {
@@ -89,30 +108,24 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
       locationSearchRef.current = nextSearch;
       setLocationSearch(nextSearch);
     };
-    applyLocation();
-    window.addEventListener("popstate", applyLocation);
+    applyLocation("init");
+    const onPopState = () => applyLocation("popstate");
+    window.addEventListener("popstate", onPopState);
     const history = window.history;
+    history.scrollRestoration = "manual";
     const pushState = history.pushState.bind(history);
-    const replaceState = history.replaceState.bind(history);
     history.pushState = (...args: Parameters<History["pushState"]>) => {
       pushState(...args);
-      applyLocation();
-    };
-    history.replaceState = (...args: Parameters<History["replaceState"]>) => {
-      replaceState(...args);
-      applyLocation();
+      applyLocation("history");
     };
     return () => {
-      window.removeEventListener("popstate", applyLocation);
+      window.removeEventListener("popstate", onPopState);
       history.pushState = pushState;
-      history.replaceState = replaceState;
     };
-  }, [datasets, filterOptions, pathname, updateState]);
+  }, [datasets, filterOptions, pathname, updateState, vocabulary]);
 
   const handleChange = useCallback(
     (next: Filters) => {
-      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
-      searchUpdateRef.current = null;
       const synchronized = reconcileFilterChange(filters, next, filtersRef.current);
       if (searchRef.current) searchRef.current.value = synchronized.query;
       updateState(synchronized, sortRef.current);
@@ -122,14 +135,20 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
 
   const handleSearchChange = useCallback(
     (query: string) => {
-      filtersRef.current = { ...filtersRef.current, query };
-      if (searchUpdateRef.current) clearTimeout(searchUpdateRef.current);
-      searchUpdateRef.current = setTimeout(() => {
-        searchUpdateRef.current = null;
-        updateState(filtersRef.current, sortRef.current);
-      }, 150);
+      const nextFilters = { ...filtersRef.current, query };
+      filtersRef.current = nextFilters;
+      const encoded = filtersToParams(nextFilters, sortRef.current, 1).toString();
+      const nextSearch = encoded ? `?${encoded}` : "";
+      locationSearchRef.current = nextSearch;
+      pendingSearchRef.current = nextSearch;
+      setLocationSearch(nextSearch);
+      window.history.replaceState(
+        window.history.state,
+        "",
+        nextSearch ? `${pathname}${nextSearch}` : pathname,
+      );
     },
-    [updateState],
+    [pathname],
   );
 
   const handleSortChange = useCallback(
@@ -148,6 +167,10 @@ export function DiscoveryView({ datasets }: { datasets: CatalogDataset[] }) {
   return (
     <CatalogView
       datasets={datasets}
+      collections={collections}
+      starterIds={starterIds}
+      trustSummary={trustSummary}
+      vocabulary={vocabulary}
       filters={filters}
       sort={sort}
       requestedPage={requestedPage}

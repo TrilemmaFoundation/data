@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
-import { DatasetSchema, type Dataset } from "./schema";
+import { DatasetSchema, isActiveDataset, toCatalogDataset, type CatalogDataset, type Dataset } from "./schema";
+import { getVocabulary } from "./vocabulary";
 
 const DATASETS_DIR = path.join(process.cwd(), "data", "datasets");
 export const MAX_DATASET_FILE_BYTES = 64 * 1024;
@@ -173,4 +174,13 @@ export function getDatasetById(
   dir: string = DATASETS_DIR,
 ): Dataset | undefined {
   return getAllDatasets(dir).find((dataset) => dataset.id === id);
+}
+
+export function getActiveDatasets(dir: string = DATASETS_DIR): Dataset[] {
+  return getAllDatasets(dir).filter(isActiveDataset);
+}
+
+export function getCatalogDatasets(dir: string = DATASETS_DIR): CatalogDataset[] {
+  const vocabulary = getVocabulary();
+  return getActiveDatasets(dir).map((dataset) => toCatalogDataset(dataset, vocabulary));
 }

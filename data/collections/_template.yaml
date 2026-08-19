@@ -1,0 +1,15 @@
+# Copy this file to <collection-id>.yaml. Filename must match id.
+# Collections are maintainer-owned and are not part of ordinary dataset PRs.
+
+id: replace-with-collection-id
+title: Replace with a build-oriented collection title
+summary: >
+  Replace this with one practical sentence describing the microproduct
+  job this collection helps a beginner start.
+curator: Trilemma Data
+last_updated: YYYY-MM-DD
+dataset_ids:
+  - nws-weather-api
+  - usgs-earthquakes
+  - openfema-disaster-declarations
+# foundation_url: https://www.trilemma.foundation/projects
