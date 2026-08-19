@@ -14,6 +14,7 @@ import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, filterDatasets } from "../src/lib/sea
 import { getVocabulary, toVocabularySnapshot } from "../src/lib/vocabulary";
 import {
   COLLECTIONS_PATH,
+  COMPARE_PATH,
   CONTRIBUTE_APP_PATH,
   FOUNDATION_CHARTER_URL,
   FOUNDATION_PRIVACY_URL,
@@ -335,14 +336,35 @@ test("header and footer expose the product and Foundation destinations", async (
     primary.getByRole("link", { name: siteCopy.collectionsNavigationLabel }),
   ).toHaveAttribute("href", COLLECTIONS_PATH);
   await expect(
+    primary.getByRole("link", { name: siteCopy.compareLabel }),
+  ).toHaveAttribute("href", COMPARE_PATH);
+  await expect(
     page.getByRole("link", { name: siteCopy.productLabel, exact: true }),
   ).toHaveCount(0);
+  await expect(page.getByRole("link", { name: siteCopy.name })).toHaveAttribute(
+    "href",
+    "/",
+  );
 
   await page.goto("/datasets/nws-weather-api/");
-  await expect(datasetsHome).not.toHaveAttribute("aria-current");
+  await expect(datasetsHome).toHaveAttribute("aria-current", "page");
+  await expect(
+    primary.getByRole("link", { name: siteCopy.collectionsNavigationLabel }),
+  ).not.toHaveAttribute("aria-current");
   await datasetsHome.click();
   await expect(page).toHaveURL((url) => url.pathname === "/");
   await expect(datasetsHome).toHaveAttribute("aria-current", "page");
+
+  await page.goto("/collections/first-builds/");
+  await expect(
+    primary.getByRole("link", { name: siteCopy.collectionsNavigationLabel }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(datasetsHome).not.toHaveAttribute("aria-current");
+
+  await page.goto("/compare/");
+  await expect(
+    primary.getByRole("link", { name: siteCopy.compareLabel }),
+  ).toHaveAttribute("aria-current", "page");
 
   const dataLinks = page.getByRole("navigation", {
     name: siteCopy.footerDataNavigationLabel,
@@ -394,7 +416,7 @@ test("mobile navigation stays closed after crossing the desktop breakpoint", asy
   });
   await expect(navigation).toBeVisible();
 
-  await page.setViewportSize({ width: 768, height: 900 });
+  await page.setViewportSize({ width: 1024, height: 900 });
   await expect(navigation).toBeHidden();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(navigation).toBeHidden();
