@@ -81,8 +81,20 @@ export type FilterOptions = {
   geographies: string[];
 };
 
+export function catalogValueKey(value: string): string {
+  return value.toLocaleLowerCase("en-US");
+}
+
 function uniqueSorted(values: string[]): string[] {
-  return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
+  const chosen = new Map<string, string>();
+  for (const value of values) {
+    const key = catalogValueKey(value);
+    const existing = chosen.get(key);
+    if (existing === undefined || value.localeCompare(existing, "en-US") < 0) {
+      chosen.set(key, value);
+    }
+  }
+  return [...chosen.values()].sort((a, b) => a.localeCompare(b));
 }
 
 export function getDatasetAccessMethods(dataset: CatalogDataset): AccessMethod[] {
@@ -109,7 +121,9 @@ export function getFilterOptions(datasets: CatalogDataset[]): FilterOptions {
 }
 
 function matchesAny(selected: string[], values: string[]): boolean {
-  return selected.length === 0 || selected.some((item) => values.includes(item));
+  if (selected.length === 0) return true;
+  const keys = new Set(values.map(catalogValueKey));
+  return selected.some((item) => keys.has(catalogValueKey(item)));
 }
 
 const fuseCache = new WeakMap<CatalogDataset[], Fuse<CatalogDataset>>();

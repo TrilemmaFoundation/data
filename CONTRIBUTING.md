@@ -77,7 +77,10 @@ Do **not** add:
   when the source and license URLs differ
 - Text values are trimmed and must not be blank
 - Metadata text and URLs must not contain control characters; Python examples remain multiline
-- List values such as domains, tasks, formats, and geographies must not contain duplicates
+- List values such as domains, tasks, formats, and geographies must not contain
+  duplicates, including the same value with different capitalization. The catalog
+  folds those case variants across datasets when building filters and parsing
+  shared filter URLs.
 - `last_verified` must be a real ISO calendar date in `YYYY-MM-DD` form and
   must be refreshed after a substantive review at least every 90 days
 - `update_frequency` must be one of `continuous`, `near real time`, `daily`,

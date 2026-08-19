@@ -76,6 +76,18 @@ describe("filter URL helpers", () => {
     ).toBe(true);
   });
 
+  it("maps case-variant list params to the canonical catalog option", () => {
+    const formatOptions = {
+      ...options,
+      formats: ["CSV", "NetCDF"],
+    };
+    expect(parseFilters(new URLSearchParams("format=netcdf"), formatOptions).formats)
+      .toEqual(["NetCDF"]);
+    expect(
+      parseFilters(new URLSearchParams("format=NETCDF,csv"), formatOptions).formats,
+    ).toEqual(["CSV", "NetCDF"]);
+  });
+
   it("drops unknown and duplicate catalog values", () => {
     const filters = parseFilters(
       new URLSearchParams(

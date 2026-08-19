@@ -1,5 +1,6 @@
 import type { DatasetFilters, FilterOptions } from "./search";
 import {
+  catalogValueKey,
   SORT_COLUMNS,
   type CatalogSort,
 } from "./search";
@@ -9,13 +10,21 @@ import {
 } from "./size";
 
 function parseList(values: string[], allowed: readonly string[]): string[] {
-  const selected = new Set(
-    values.flatMap((value) =>
-      allowed.includes(value)
-        ? value
-        : value.split(",").map((item) => item.trim()).filter(Boolean),
-    ),
+  const allowedByKey = new Map(
+    allowed.map((item) => [catalogValueKey(item), item] as const),
   );
+  const selected = new Set<string>();
+  for (const value of values) {
+    const exact = allowedByKey.get(catalogValueKey(value));
+    if (exact) {
+      selected.add(exact);
+      continue;
+    }
+    for (const part of value.split(",").map((item) => item.trim()).filter(Boolean)) {
+      const canonical = allowedByKey.get(catalogValueKey(part));
+      if (canonical) selected.add(canonical);
+    }
+  }
   return allowed.filter((item) => selected.has(item));
 }
 

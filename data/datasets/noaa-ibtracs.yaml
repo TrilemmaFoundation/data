@@ -13,7 +13,7 @@ size_gb_min: 0.01
 size_gb_max: 0.2
 formats:
   - CSV
-  - netCDF
+  - NetCDF
   - Shapefile
 license: IBTrACS open access / NOAA data-use policy
 license_url: https://www.ncei.noaa.gov/products/international-best-track-archive

@@ -67,6 +67,8 @@ describe("filterDatasets", () => {
     ]);
     for (const values of Object.values(options)) {
       expect(values).toEqual([...new Set(values)]);
+      const folded = values.map((value) => String(value).toLocaleLowerCase("en-US"));
+      expect(folded).toEqual([...new Set(folded)]);
     }
     expect(getFilterOptions([]).accessMethods).toEqual([]);
   });
@@ -88,6 +90,21 @@ describe("filterDatasets", () => {
         geographies: [earthquakeCatalog.geography[0]!],
       }).map((dataset) => dataset.id),
     ).toContain("usgs-earthquakes");
+  });
+
+  it("collapses case-variant tags into one filter option and still matches them", () => {
+    const lower: CatalogDataset = { ...earthquakeCatalog, id: "lower", formats: ["netCDF"] };
+    const upper: CatalogDataset = { ...earthquakeCatalog, id: "upper", formats: ["NetCDF"] };
+    const options = getFilterOptions([lower, upper]);
+    const netcdf = options.formats.filter(
+      (value) => value.toLocaleLowerCase("en-US") === "netcdf",
+    );
+    expect(netcdf).toHaveLength(1);
+    expect(
+      filterDatasets([lower, upper], { ...EMPTY_FILTERS, formats: netcdf })
+        .map((dataset) => dataset.id)
+        .sort(),
+    ).toEqual(["lower", "upper"]);
   });
 
   it("rejects each mismatched filter independently", () => {
