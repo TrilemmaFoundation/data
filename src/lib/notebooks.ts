@@ -20,13 +20,6 @@ export function notebookPublicPath(id: string): string {
   return `/notebooks/${notebookFilename(id)}`;
 }
 
-export function colabUrl(
-  datasetId: string,
-  repositoryPath = "TrilemmaFoundation/data",
-): string {
-  return `https://colab.research.google.com/github/${repositoryPath}/blob/main/${NOTEBOOKS_PUBLIC_DIR}/${notebookFilename(datasetId)}`;
-}
-
 export function githubNotebookUrl(
   datasetId: string,
   repositoryPath = "TrilemmaFoundation/data",
@@ -38,7 +31,7 @@ export function colabNotebookUrl(
   datasetId: string,
   repositoryPath = "TrilemmaFoundation/data",
 ): string {
-  return colabUrl(datasetId, repositoryPath);
+  return `https://colab.research.google.com/github/${repositoryPath}/blob/main/${NOTEBOOKS_PUBLIC_DIR}/${notebookFilename(datasetId)}`;
 }
 
 function markdownCell(source: string[]): Record<string, unknown> {

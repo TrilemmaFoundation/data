@@ -3,7 +3,6 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  collectionPath,
   getAllCollections,
   getCollectionById,
   getCollectionsDir,
@@ -46,7 +45,6 @@ describe("collections", () => {
     expect(collections.length).toBeGreaterThanOrEqual(5);
     expect(getCollectionById(collections[0]!.id)?.id).toBe(collections[0]!.id);
     expect(getCollectionById("missing")).toBeUndefined();
-    expect(collectionPath("first-builds")).toBe("/collections/first-builds");
     expect(STARTER_COLLECTION_ID).toBe("first-builds");
     expect(getCollectionsDir()).toMatch(/data\/collections$/);
     expect(

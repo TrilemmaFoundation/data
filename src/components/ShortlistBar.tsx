@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useShortlist } from "@/components/ShortlistProvider";
-import { buttonVariants } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { shortlistCopy } from "@/content/site-copy";
 import { canCompare, compareHref } from "@/lib/shortlist";
 import { cn } from "@/lib/utils";

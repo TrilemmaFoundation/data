@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getActiveDatasets } from "@/lib/datasets";
-import { getAllCollections, collectionPath } from "@/lib/collections";
+import { getAllCollections } from "@/lib/collections";
 import { allThemeSlugs, themePath } from "@/lib/landing";
 import {
+  collectionPath,
   COLLECTIONS_PATH,
   COMPARE_PATH,
   CONTRIBUTE_APP_PATH,

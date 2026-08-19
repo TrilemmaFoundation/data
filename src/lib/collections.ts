@@ -152,10 +152,6 @@ export function getCollectionById(
   return getAllCollections(dir).find((collection) => collection.id === id);
 }
 
-export function collectionPath(id: string): string {
-  return `/collections/${id}`;
-}
-
 export function validateCollectionMembership(
   collection: Collection,
   activeIds: Set<string>,

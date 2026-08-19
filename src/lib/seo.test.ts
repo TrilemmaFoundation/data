@@ -3,6 +3,7 @@ import { getDatasetById } from "./datasets";
 import { getAllCollections } from "./collections";
 import {
   collectionJsonLd,
+  collectionPath,
   datasetJsonLd,
   datasetPath,
   serializeJsonLd,
@@ -36,6 +37,7 @@ describe("SEO helpers", () => {
 
   it("builds collection and theme structured data", () => {
     const collection = getAllCollections()[0]!;
+    expect(collectionPath(collection.id)).toBe(`/collections/${collection.id}`);
     expect(collectionJsonLd(collection, ["National Weather Service API"])).toMatchObject({
       "@type": "CollectionPage",
       name: collection.title,

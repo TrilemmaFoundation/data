@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllCollections, collectionPath } from "@/lib/collections";
-import { collectionsCopy, siteCopy } from "@/content/site-copy";
-import { catalogCopy } from "@/content/site-copy";
-import { COLLECTIONS_PATH, pageSocialMetadata } from "@/lib/seo";
+import { getAllCollections } from "@/lib/collections";
+import { catalogCopy, collectionsCopy, siteCopy } from "@/content/site-copy";
+import { collectionPath, COLLECTIONS_PATH, pageSocialMetadata } from "@/lib/seo";
 import { cn, stretchedLinkClassName } from "@/lib/utils";
 
 export const metadata: Metadata = pageSocialMetadata(

@@ -25,10 +25,6 @@ export function disallowedPythonPackages(packages: readonly string[]): string[] 
   );
 }
 
-export function isPythonRuntimeCanary(id: string): boolean {
-  return (PYTHON_RUNTIME_CANARIES as readonly string[]).includes(id);
-}
-
 export function selectPythonRuntimeCanaries(datasets: Dataset[]): {
   selected: Dataset[];
   errors: string[];

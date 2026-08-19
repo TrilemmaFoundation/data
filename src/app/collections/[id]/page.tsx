@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  getAllCollections,
-  getCollectionById,
-  collectionPath,
-} from "@/lib/collections";
+import { getAllCollections, getCollectionById } from "@/lib/collections";
 import { getCatalogDatasets } from "@/lib/datasets";
 import { collectionCatalogHref } from "@/lib/catalog-links";
-import { collectionJsonLd, COLLECTIONS_PATH, pageSocialMetadata, serializeJsonLd } from "@/lib/seo";
-import { collectionsCopy, siteCopy } from "@/content/site-copy";
+import {
+  collectionJsonLd,
+  collectionPath,
+  COLLECTIONS_PATH,
+  pageSocialMetadata,
+  serializeJsonLd,
+} from "@/lib/seo";
+import { collectionsCopy, notFoundCopy, siteCopy } from "@/content/site-copy";
 import { DatasetCard } from "@/components/DatasetCard";
-import { notFoundCopy } from "@/content/site-copy";
 
 export function generateStaticParams() {
   return getAllCollections().map((collection) => ({ id: collection.id }));
