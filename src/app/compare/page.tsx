@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { CompareView } from "@/components/CompareView";
 import { getActiveDatasets, getCatalogDatasets } from "@/lib/datasets";
 import { compareCopy } from "@/content/site-copy";
-import { COMPARE_PATH } from "@/lib/seo";
+import { COMPARE_PATH, pageSocialMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: compareCopy.title,
-  description: compareCopy.description,
-  alternates: { canonical: COMPARE_PATH },
-};
+export const metadata: Metadata = pageSocialMetadata(
+  COMPARE_PATH,
+  compareCopy.title,
+  compareCopy.description,
+);
 
 export default function ComparePage() {
   const datasets = getCatalogDatasets();
@@ -24,7 +25,13 @@ export default function ComparePage() {
         {compareCopy.description}
       </p>
       <div className="mt-8">
-        <CompareView datasets={datasets} sourceUrls={sourceUrls} />
+        <Suspense
+          fallback={
+            <p className="text-sm text-muted-foreground">{compareCopy.emptyDescription}</p>
+          }
+        >
+          <CompareView datasets={datasets} sourceUrls={sourceUrls} />
+        </Suspense>
       </div>
     </div>
   );

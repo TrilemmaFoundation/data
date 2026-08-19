@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getDatasetById } from "./datasets";
 import { parseContributionYaml, stringifyContributionYaml } from "./contribution";
+import { getVocabulary, toVocabularySnapshot } from "./vocabulary";
 
 describe("contribution YAML round trip", () => {
   it("parses and regenerates a valid dataset YAML file", () => {
@@ -27,6 +28,25 @@ describe("contribution YAML round trip", () => {
     expect(copyIssues.dataset?.id).toBe("nws-weather-api");
     expect(copyIssues.issues.some((issue) => issue.path === "getting_started")).toBe(
       true,
+    );
+  });
+
+  it("rejects domain tags that are missing from the vocabulary snapshot", () => {
+    const dataset = getDatasetById("nws-weather-api")!;
+    const yaml = stringifyContributionYaml({
+      ...dataset,
+      domains: ["Totally Invented Domain"],
+    });
+    const snapshot = toVocabularySnapshot(getVocabulary());
+    const withoutSnapshot = parseContributionYaml(yaml);
+    expect(withoutSnapshot.dataset?.id).toBe("nws-weather-api");
+    expect(withoutSnapshot.issues).toEqual([]);
+
+    const withSnapshot = parseContributionYaml(yaml, snapshot);
+    expect(withSnapshot.dataset?.id).toBe("nws-weather-api");
+    expect(withSnapshot.issues.some((issue) => issue.path === "domains")).toBe(true);
+    expect(parseContributionYaml(stringifyContributionYaml(dataset), snapshot).issues).toEqual(
+      [],
     );
   });
 });

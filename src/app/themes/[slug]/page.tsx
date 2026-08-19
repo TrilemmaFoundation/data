@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { allThemeSlugs, themeFromSlug, themePath } from "@/lib/landing";
 import { getCatalogDatasets } from "@/lib/datasets";
 import { catalogHref } from "@/lib/catalog-links";
-import { serializeJsonLd, themeJsonLd } from "@/lib/seo";
+import { serializeJsonLd, themeJsonLd, pageSocialMetadata } from "@/lib/seo";
 import { DatasetCard } from "@/components/DatasetCard";
 import { collectionsCopy, notFoundCopy, siteCopy, themeLandingCopy } from "@/content/site-copy";
 import type { DatasetTheme } from "@/lib/schema";
@@ -22,11 +22,7 @@ export async function generateMetadata({
   const theme = themeFromSlug(slug);
   if (!theme) return { title: notFoundCopy.title };
   const copy = themeLandingCopy[theme];
-  return {
-    title: theme,
-    description: copy.summary,
-    alternates: { canonical: themePath(theme) },
-  };
+  return pageSocialMetadata(themePath(theme), theme, copy.summary);
 }
 
 export default async function ThemePage({

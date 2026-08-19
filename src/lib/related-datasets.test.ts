@@ -9,9 +9,14 @@ describe("related datasets", () => {
 
   it("returns a stable top-three of overlapping active datasets", () => {
     const related = getRelatedDatasets(nws, catalog);
+    const listed = catalog.find((item) => item.id === nws.id)!;
+    const sourceTags = {
+      domains: listed.canonical_domains,
+      tasks: listed.canonical_tasks,
+    };
     expect(related).toHaveLength(3);
     expect(related.map((item) => item.id)).not.toContain("nws-weather-api");
-    const scores = related.map((item) => relatedScore(nws, item));
+    const scores = related.map((item) => relatedScore(nws, item, sourceTags));
     expect(scores[0]!).toBeGreaterThanOrEqual(scores[1]!);
     expect(scores[1]!).toBeGreaterThanOrEqual(scores[2]!);
   });
@@ -67,5 +72,34 @@ describe("related datasets", () => {
     expect(
       getRelatedDatasets(nws, [right, left]).map((item) => item.id),
     ).toEqual(["alpha-related", "zeta-related"]);
+  });
+
+  it("counts alias domain tags as their canonical labels", () => {
+    const acs = getDatasetById("acs-five-year-estimates")!;
+    const acsCatalog = catalog.find((item) => item.id === acs.id)!;
+    expect(acs.domains).toContain("Local Economics");
+    expect(acsCatalog.canonical_domains).toContain("Regional Economics");
+    const candidate = {
+      ...catalog[0]!,
+      id: "regional-economics-only",
+      theme: "Research & Reference" as const,
+      canonical_domains: ["Regional Economics"],
+      canonical_tasks: [],
+      data_types: [],
+      difficulty: "advanced" as const,
+      access_type: [] as CatalogDataset["access_type"],
+    };
+    expect(
+      relatedScore(acs, candidate, {
+        domains: acsCatalog.canonical_domains,
+        tasks: acsCatalog.canonical_tasks,
+      }),
+    ).toBe(1);
+    expect(
+      relatedScore(acs, candidate, { domains: ["Demographics", "Housing"], tasks: acs.tasks }),
+    ).toBe(0);
+    expect(
+      getRelatedDatasets(acs, [acsCatalog, candidate], 1).map((item) => item.id),
+    ).toEqual(["regional-economics-only"]);
   });
 });

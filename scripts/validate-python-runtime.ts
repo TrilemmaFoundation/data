@@ -4,13 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { mapPool } from "../src/lib/async-pool";
 import { getAllDatasets } from "../src/lib/datasets";
-import { isActiveDataset } from "../src/lib/schema";
 import {
   disallowedPythonPackages,
-  isPythonRuntimeCanary,
   PYTHON_RUNTIME_CONCURRENCY,
   PYTHON_RUNTIME_MAX_OUTPUT_BYTES,
   PYTHON_RUNTIME_TIMEOUT_MS,
+  selectPythonRuntimeCanaries,
 } from "../src/lib/python-runtime";
 import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
@@ -43,10 +42,11 @@ function runExample(code: string, packages: string[]): string | null {
 }
 
 async function main() {
-  const datasets = getAllDatasets().filter(
-    (dataset) => isActiveDataset(dataset) && isPythonRuntimeCanary(dataset.id),
-  );
-  const results = await mapPool(datasets, PYTHON_RUNTIME_CONCURRENCY, async (dataset) => {
+  const { selected, errors } = selectPythonRuntimeCanaries(getAllDatasets());
+  for (const error of errors) {
+    console.error(sanitizeDiagnostic(error));
+  }
+  const results = await mapPool(selected, PYTHON_RUNTIME_CONCURRENCY, async (dataset) => {
     const error = runExample(
       dataset.getting_started.python.code,
       dataset.getting_started.python.packages,
@@ -63,7 +63,7 @@ async function main() {
     }
   }
 
-  if (failures.length > 0) {
+  if (errors.length > 0 || failures.length > 0) {
     process.exit(1);
   }
 }

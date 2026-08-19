@@ -6,9 +6,9 @@ import {
   getCollectionById,
   collectionPath,
 } from "@/lib/collections";
-import { getCatalogDatasets, getDatasetById } from "@/lib/datasets";
-import { catalogHref } from "@/lib/catalog-links";
-import { collectionJsonLd, COLLECTIONS_PATH, serializeJsonLd } from "@/lib/seo";
+import { getCatalogDatasets } from "@/lib/datasets";
+import { collectionCatalogHref } from "@/lib/catalog-links";
+import { collectionJsonLd, COLLECTIONS_PATH, pageSocialMetadata, serializeJsonLd } from "@/lib/seo";
 import { collectionsCopy, siteCopy } from "@/content/site-copy";
 import { DatasetCard } from "@/components/DatasetCard";
 import { notFoundCopy } from "@/content/site-copy";
@@ -25,11 +25,7 @@ export async function generateMetadata({
   const { id } = await params;
   const collection = getCollectionById(id);
   if (!collection) return { title: notFoundCopy.title };
-  return {
-    title: collection.title,
-    description: collection.summary,
-    alternates: { canonical: collectionPath(collection.id) },
-  };
+  return pageSocialMetadata(collectionPath(collection.id), collection.title, collection.summary);
 }
 
 export default async function CollectionDetailPage({
@@ -46,10 +42,7 @@ export default async function CollectionDetailPage({
     .map((datasetId) => catalog.find((dataset) => dataset.id === datasetId))
     .filter((dataset): dataset is NonNullable<typeof dataset> => Boolean(dataset));
   const names = datasets.map((dataset) => dataset.name);
-  const first = collection.dataset_ids[0]
-    ? getDatasetById(collection.dataset_ids[0])
-    : undefined;
-  const catalogLink = first ? catalogHref({ theme: first.theme }) : "/";
+  const catalogLink = collectionCatalogHref(datasets.map((dataset) => dataset.theme));
 
   return (
     <>

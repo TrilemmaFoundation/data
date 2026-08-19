@@ -1,13 +1,21 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import { validateGuideCopy } from "./guide-validation";
 import { DatasetSchema, type Dataset } from "./schema";
+import {
+  EMPTY_VOCABULARY_SNAPSHOT,
+  validateSnapshotCoverage,
+  type VocabularySnapshot,
+} from "./vocabulary-snapshot";
 
 export type ContributionIssue = {
   path: string;
   message: string;
 };
 
-export function parseContributionYaml(text: string): {
+export function parseContributionYaml(
+  text: string,
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
+): {
   dataset: Dataset | null;
   issues: ContributionIssue[];
 } {
@@ -39,10 +47,16 @@ export function parseContributionYaml(text: string): {
 
   return {
     dataset: parsed.data,
-    issues: validateGuideCopy(parsed.data).map((message) => ({
-      path: "getting_started",
-      message,
-    })),
+    issues: [
+      ...validateGuideCopy(parsed.data).map((message) => ({
+        path: "getting_started",
+        message,
+      })),
+      ...validateSnapshotCoverage(parsed.data, snapshot).map((message) => ({
+        path: message.startsWith("tasks") ? "tasks" : "domains",
+        message,
+      })),
+    ],
   };
 }
 

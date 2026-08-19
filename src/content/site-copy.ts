@@ -359,7 +359,7 @@ export const compareCopy = {
 export const contributeCopy = {
   title: "Contribution studio",
   description:
-    "Draft a dataset YAML file with the same schema and guide-copy rules used in CI. Download the file and open a GitHub pull request. This page does not execute Python or create a pull request.",
+    "Draft a dataset YAML file with the same schema, vocabulary, and guide-copy rules used in CI. Download the file and open a GitHub pull request. This page does not execute Python or create a pull request.",
   yamlLabel: "Dataset YAML",
   previewLabel: "Guide preview",
   errorsLabel: "Validation issues",

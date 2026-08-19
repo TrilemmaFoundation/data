@@ -27,6 +27,35 @@ export function collectionPath(id: string): string {
   return `/collections/${id}`;
 }
 
+export function pageSocialMetadata(path: string, title: string, description: string) {
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website" as const,
+      url: path,
+      siteName: "Trilemma Data",
+      title,
+      description,
+      images: [
+        {
+          url: "/foundation-white.webp",
+          width: 1500,
+          height: 303,
+          alt: "Trilemma Foundation",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      images: ["/foundation-white.webp"],
+    },
+  };
+}
+
 export function datasetJsonLd(dataset: Dataset) {
   return {
     "@context": "https://schema.org",

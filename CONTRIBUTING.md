@@ -161,5 +161,6 @@ file. Beginner, no-key guides also get a generated Colab notebook; run
 passes. Do not edit `public/notebooks/*.ipynb` by hand.
 
 A local contribution studio at `/contribute` can draft and validate YAML in the
-browser. It does not open a pull request, store credentials, or execute Python.
-Syntax, live URL, and provider checks still run in repository CI.
+browser against the same schema, catalog vocabulary, and guide-copy rules used
+in CI. It does not open a pull request, store credentials, or execute Python.
+Python syntax, live URL, and provider checks still run in repository CI.

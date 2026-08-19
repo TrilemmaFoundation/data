@@ -77,10 +77,12 @@ export function DatasetPage({
   dataset,
   related = [],
   notebookAvailable = false,
+  shortlistEnabled = true,
 }: {
   dataset: Dataset;
   related?: CatalogDataset[];
   notebookAvailable?: boolean;
+  shortlistEnabled?: boolean;
 }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
@@ -227,7 +229,7 @@ export function DatasetPage({
           )}
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <ShortlistToggle id={dataset.id} />
+          {shortlistEnabled ? <ShortlistToggle id={dataset.id} /> : null}
           <a
             href={DATASET_ISSUE_URL}
             target="_blank"

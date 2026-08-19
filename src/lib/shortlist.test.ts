@@ -6,6 +6,7 @@ import {
   MAX_SHORTLIST,
   parseCompareIds,
   parseShortlist,
+  resolveCompareSelection,
   serializeShortlist,
   SHORTLIST_VERSION,
   toggleShortlistId,
@@ -65,5 +66,25 @@ describe("shortlist helpers", () => {
     expect(canCompare(["a"])).toBe(false);
     expect(canCompare(["a", "b"])).toBe(true);
     expect(canCompare(Array.from({ length: MAX_COMPARE + 1 }, (_, index) => String(index)))).toBe(false);
+  });
+
+  it("keeps invalid compare queries from falling back to the shortlist", () => {
+    const shortlist = ["nws-weather-api", "usgs-earthquakes"];
+    expect(resolveCompareSelection(null, shortlist, known)).toEqual({
+      ids: shortlist,
+      source: "shortlist",
+    });
+    expect(resolveCompareSelection("nws-weather-api,usgs-earthquakes", [], known)).toEqual({
+      ids: ["nws-weather-api", "usgs-earthquakes"],
+      source: "query",
+    });
+    expect(resolveCompareSelection("not-a-dataset,also-fake", shortlist, known)).toEqual({
+      ids: [],
+      source: "invalid",
+    });
+    expect(resolveCompareSelection(null, [], known)).toEqual({
+      ids: [],
+      source: "empty",
+    });
   });
 });

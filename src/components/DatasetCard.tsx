@@ -32,6 +32,12 @@ export function DatasetCard({
         featured && "border-primary/50",
       )}
     >
+      <Link
+        href={`/datasets/${dataset.id}`}
+        className="absolute inset-0 z-10 rounded-[inherit]"
+      >
+        <span className="sr-only">{dataset.name}</span>
+      </Link>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <Badge variant="secondary" className="capitalize text-secondary">
@@ -49,13 +55,11 @@ export function DatasetCard({
             {featured ? datasetCardCopy.goodFirstBuildLabel : sizeCategory}
           </span>
         </div>
-        <CardTitle className="pt-1 text-lg font-semibold text-balance text-white">
-          <Link
-            href={`/datasets/${dataset.id}`}
-            className="rounded-sm after:absolute after:inset-0 after:z-10 after:content-[''] hover:text-primary"
-          >
-            {dataset.name}
-          </Link>
+        <CardTitle
+          aria-hidden="true"
+          className="pt-1 text-lg font-semibold text-balance text-white group-hover:text-primary"
+        >
+          {dataset.name}
         </CardTitle>
         <CardDescription className="line-clamp-2 leading-5">{dataset.description}</CardDescription>
         <p className="line-clamp-2 text-xs leading-5 text-secondary">
@@ -83,7 +87,7 @@ export function DatasetCard({
         </div>
       </CardContent>
 
-      <CardFooter className="relative z-20 items-center justify-between border-white/10 bg-brand-black/25 px-4 py-2">
+      <CardFooter className="items-center justify-between border-white/10 bg-brand-black/25 px-4 py-2">
         <p
           className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors group-hover:text-white"
           aria-hidden="true"

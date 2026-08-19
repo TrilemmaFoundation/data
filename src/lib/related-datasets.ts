@@ -16,11 +16,15 @@ function accessKeys(types: readonly string[]): string[] {
   return types.filter((value) => value !== "both");
 }
 
-export function relatedScore(dataset: Dataset, candidate: CatalogDataset): number {
+export function relatedScore(
+  dataset: Dataset,
+  candidate: CatalogDataset,
+  sourceTags: { domains: string[]; tasks: string[] } = dataset,
+): number {
   if (dataset.id === candidate.id) return Number.NEGATIVE_INFINITY;
   if (!isActiveDataset(candidate)) return Number.NEGATIVE_INFINITY;
-  const domainOverlap = overlapCount(dataset.domains, candidate.canonical_domains);
-  const taskOverlap = overlapCount(dataset.tasks, candidate.canonical_tasks);
+  const domainOverlap = overlapCount(sourceTags.domains, candidate.canonical_domains);
+  const taskOverlap = overlapCount(sourceTags.tasks, candidate.canonical_tasks);
   const typeOverlap = overlapCount(dataset.data_types, candidate.data_types);
   const accessOverlap = overlapCount(
     accessKeys(dataset.access_type),
@@ -41,10 +45,15 @@ export function getRelatedDatasets(
   catalog: CatalogDataset[],
   limit = RELATED_LIMIT,
 ): CatalogDataset[] {
+  const listed = catalog.find((item) => item.id === dataset.id);
+  const sourceTags = {
+    domains: listed?.canonical_domains ?? dataset.domains,
+    tasks: listed?.canonical_tasks ?? dataset.tasks,
+  };
   return [...catalog]
     .map((candidate) => ({
       candidate,
-      score: relatedScore(dataset, candidate),
+      score: relatedScore(dataset, candidate, sourceTags),
     }))
     .filter((item) => item.score > 0)
     .sort((left, right) => {

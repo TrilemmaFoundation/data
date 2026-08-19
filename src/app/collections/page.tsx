@@ -3,13 +3,14 @@ import Link from "next/link";
 import { getAllCollections, collectionPath } from "@/lib/collections";
 import { collectionsCopy, siteCopy } from "@/content/site-copy";
 import { catalogCopy } from "@/content/site-copy";
-import { COLLECTIONS_PATH } from "@/lib/seo";
+import { COLLECTIONS_PATH, pageSocialMetadata } from "@/lib/seo";
+import { cn, stretchedLinkClassName } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: collectionsCopy.title,
-  description: collectionsCopy.description,
-  alternates: { canonical: COLLECTIONS_PATH },
-};
+export const metadata: Metadata = pageSocialMetadata(
+  COLLECTIONS_PATH,
+  collectionsCopy.title,
+  collectionsCopy.description,
+);
 
 export default function CollectionsPage() {
   const collections = getAllCollections();
@@ -29,9 +30,12 @@ export default function CollectionsPage() {
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {collections.map((collection) => (
-          <article key={collection.id} className="surface p-5">
+          <article key={collection.id} className="surface group relative p-5">
             <h2 className="text-xl font-semibold text-white">
-              <Link href={collectionPath(collection.id)} className="hover:text-primary">
+              <Link
+                href={collectionPath(collection.id)}
+                className={cn(stretchedLinkClassName, "hover:text-primary")}
+              >
                 {collection.title}
               </Link>
             </h2>

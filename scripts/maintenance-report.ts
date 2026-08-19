@@ -6,6 +6,7 @@ import { getAllCollections } from "../src/lib/collections";
 import { loadVocabulary } from "../src/lib/vocabulary";
 import { loadMaintainers } from "../src/lib/maintainers";
 import { generatedNotebooks, notebookDrift, NOTEBOOKS_PUBLIC_DIR } from "../src/lib/notebooks";
+import { parseCanaryFailureLines } from "../src/lib/python-runtime";
 import { exceptionExpiryWarnings } from "../src/lib/url-validation";
 import { buildMaintenanceReport, formatMaintenanceMarkdown } from "../src/lib/maintenance";
 
@@ -40,11 +41,7 @@ function changedProviderFiles(): string[] {
 }
 
 function canaryFailuresFromEnv(): string[] {
-  const raw = process.env.PYTHON_CANARY_FAILURES ?? "";
-  return raw
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+  return parseCanaryFailureLines(process.env.PYTHON_CANARY_FAILURES ?? "");
 }
 
 function main() {

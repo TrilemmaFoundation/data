@@ -7,6 +7,7 @@ import { contributeCopy } from "@/content/site-copy";
 import { parseContributionYaml, stringifyContributionYaml } from "@/lib/contribution";
 import { CONTRIBUTE_URL } from "@/lib/seo";
 import { DATASET_THEMES, DIFFICULTIES } from "@/lib/schema";
+import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
 
 const TEMPLATE_YAML = `id: example-dataset
 name: Example Dataset
@@ -69,10 +70,13 @@ getting_started:
       - Explain one pattern and one limitation that would change a product decision.
 `;
 
-export function ContributeStudio() {
+export function ContributeStudio({ vocabulary }: { vocabulary: VocabularySnapshot }) {
   const [yamlText, setYamlText] = useState(TEMPLATE_YAML);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
-  const parsed = useMemo(() => parseContributionYaml(yamlText), [yamlText]);
+  const parsed = useMemo(
+    () => parseContributionYaml(yamlText, vocabulary),
+    [vocabulary, yamlText],
+  );
 
   async function copyYaml() {
     try {
@@ -180,7 +184,7 @@ export function ContributeStudio() {
         <h2 className="text-sm font-semibold text-white">{contributeCopy.previewLabel}</h2>
         {parsed.dataset && parsed.issues.length === 0 ? (
           <div className="mt-3">
-            <DatasetPage dataset={parsed.dataset} />
+            <DatasetPage dataset={parsed.dataset} shortlistEnabled={false} />
             <pre className="sr-only">{stringifyContributionYaml(parsed.dataset)}</pre>
           </div>
         ) : (

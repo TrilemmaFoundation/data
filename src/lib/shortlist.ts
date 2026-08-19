@@ -64,6 +64,26 @@ export function parseCompareIds(
   return selected;
 }
 
+export type CompareSelection = {
+  ids: string[];
+  source: "query" | "shortlist" | "invalid" | "empty";
+};
+
+export function resolveCompareSelection(
+  idsParam: string | null,
+  shortlistIds: readonly string[],
+  knownIds: ReadonlySet<string>,
+): CompareSelection {
+  if (idsParam !== null) {
+    const fromQuery = parseCompareIds(idsParam, knownIds);
+    if (fromQuery.length === 0) return { ids: [], source: "invalid" };
+    return { ids: fromQuery, source: "query" };
+  }
+  const fromShortlist = parseCompareIds(shortlistIds.join(","), knownIds);
+  if (fromShortlist.length === 0) return { ids: [], source: "empty" };
+  return { ids: fromShortlist, source: "shortlist" };
+}
+
 export function compareHref(ids: string[]): string {
   const unique = [...new Set(ids)].slice(0, MAX_COMPARE);
   if (unique.length === 0) return "/compare";

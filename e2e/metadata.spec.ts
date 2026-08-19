@@ -22,6 +22,16 @@ test("public routes expose canonical and social metadata", async ({ page }) => {
     "content",
     "summary_large_image",
   );
+
+  await page.goto("/compare");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://data.trilemma.foundation/compare",
+  );
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    "content",
+    "https://data.trilemma.foundation/compare",
+  );
 });
 
 test("dataset guides expose canonical metadata and valid JSON-LD", async ({

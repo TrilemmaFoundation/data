@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { ContributeStudio } from "@/components/ContributeStudio";
 import { contributeCopy } from "@/content/site-copy";
-import { CONTRIBUTE_APP_PATH } from "@/lib/seo";
+import { CONTRIBUTE_APP_PATH, pageSocialMetadata } from "@/lib/seo";
+import { getVocabulary, toVocabularySnapshot } from "@/lib/vocabulary";
 
-export const metadata: Metadata = {
-  title: contributeCopy.title,
-  description: contributeCopy.description,
-  alternates: { canonical: CONTRIBUTE_APP_PATH },
-};
+export const metadata: Metadata = pageSocialMetadata(
+  CONTRIBUTE_APP_PATH,
+  contributeCopy.title,
+  contributeCopy.description,
+);
 
 export default function ContributePage() {
   return (
@@ -19,7 +20,7 @@ export default function ContributePage() {
         {contributeCopy.description}
       </p>
       <div className="mt-8">
-        <ContributeStudio />
+        <ContributeStudio vocabulary={toVocabularySnapshot(getVocabulary())} />
       </div>
     </div>
   );

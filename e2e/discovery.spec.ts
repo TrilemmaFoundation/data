@@ -473,6 +473,37 @@ test("catalog search stays wide enough to read and cards use a single guide link
   await expect(page.locator("#desktop-dataset-api-key")).toBeVisible();
 });
 
+test("dataset and collection cards are clickable across the card body", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  const datasetCard = page.locator("#dataset-catalog [data-catalog-card]").first();
+  const datasetBox = await datasetCard.boundingBox();
+  expect(datasetBox).toBeTruthy();
+  await datasetCard.click({
+    position: { x: 24, y: Math.max(8, (datasetBox?.height ?? 0) - 18) },
+  });
+  await expect(page).toHaveURL(/\/datasets\//);
+
+  await page.goto("/");
+  const collectionCard = page.locator("[data-collection-card]").first();
+  const collectionBox = await collectionCard.boundingBox();
+  expect(collectionBox).toBeTruthy();
+  await collectionCard.click({
+    position: { x: 24, y: Math.max(8, (collectionBox?.height ?? 0) - 18) },
+  });
+  await expect(page).toHaveURL(/\/collections\//);
+
+  await page.goto("/collections");
+  const listingCard = page.getByRole("article").first();
+  const listingBox = await listingCard.boundingBox();
+  expect(listingBox).toBeTruthy();
+  await listingCard.click({
+    position: { x: 24, y: Math.max(8, (listingBox?.height ?? 0) - 18) },
+  });
+  await expect(page).toHaveURL(/\/collections\/.+/);
+});
+
 test("the sticky table header meets the site header without exposing rows", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");

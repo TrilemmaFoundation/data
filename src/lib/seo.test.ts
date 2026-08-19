@@ -6,6 +6,7 @@ import {
   datasetJsonLd,
   datasetPath,
   serializeJsonLd,
+  pageSocialMetadata,
   SITE_URL,
   themeJsonLd,
 } from "./seo";
@@ -52,5 +53,19 @@ describe("SEO helpers", () => {
       catalog_status: "deprecated" as const,
     };
     expect(datasetJsonLd(inactive)).toMatchObject({ creativeWorkStatus: "deprecated" });
+  });
+
+  it("sets matching canonical and social URLs for public routes", () => {
+    const metadata = pageSocialMetadata("/compare", "Compare datasets", "Side by side");
+    expect(metadata.alternates).toEqual({ canonical: "/compare" });
+    expect(metadata.openGraph).toMatchObject({
+      url: "/compare",
+      title: "Compare datasets",
+      description: "Side by side",
+    });
+    expect(metadata.twitter).toMatchObject({
+      title: "Compare datasets",
+      images: ["/foundation-white.webp"],
+    });
   });
 });

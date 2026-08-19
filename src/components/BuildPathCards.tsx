@@ -2,6 +2,7 @@ import Link from "next/link";
 import { collectionPath } from "@/lib/seo";
 import { catalogCopy, collectionsCopy } from "@/content/site-copy";
 import { ArrowRight } from "lucide-react";
+import { cn, stretchedLinkClassName } from "@/lib/utils";
 
 export type CollectionCardModel = {
   id: string;
@@ -26,10 +27,13 @@ export function BuildPathCards({ collections }: { collections: CollectionCardMod
           <article
             key={collection.id}
             data-collection-card
-            className="surface flex h-full flex-col p-5"
+            className="surface group relative flex h-full flex-col p-5"
           >
             <h3 className="text-lg font-semibold text-balance text-white">
-              <Link href={collectionPath(collection.id)} className="rounded-sm hover:text-primary">
+              <Link
+                href={collectionPath(collection.id)}
+                className={cn(stretchedLinkClassName, "rounded-sm hover:text-primary")}
+              >
                 {collection.title}
               </Link>
             </h3>

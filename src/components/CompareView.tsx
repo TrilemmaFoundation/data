@@ -1,26 +1,14 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import type { CatalogDataset } from "@/lib/schema";
 import { compareCopy, datasetGuideCopy, tableCopy } from "@/content/site-copy";
 import { useShortlist } from "@/components/ShortlistProvider";
-import { parseCompareIds } from "@/lib/shortlist";
+import { resolveCompareSelection } from "@/lib/shortlist";
 import { datasetPath } from "@/lib/seo";
 import { formatVerifiedDate, frictionLabel } from "@/lib/trust-signals";
 import { formatSizeRange } from "@/lib/size";
-
-function subscribe(onStoreChange: () => void) {
-  window.addEventListener("popstate", onStoreChange);
-  return () => window.removeEventListener("popstate", onStoreChange);
-}
-
-function getSnapshot() {
-  return window.location.search;
-}
-
-function getServerSnapshot() {
-  return "";
-}
 
 export function CompareView({
   datasets,
@@ -31,13 +19,17 @@ export function CompareView({
 }) {
   const known = useMemo(() => new Set(datasets.map((dataset) => dataset.id)), [datasets]);
   const { ids: shortlistIds } = useShortlist();
-  const search = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const fromQuery = parseCompareIds(new URLSearchParams(search).get("ids"), known);
-  const selectedIds = fromQuery.length > 0 ? fromQuery : parseCompareIds(shortlistIds.join(","), known);
-  const selected = selectedIds
+  const searchParams = useSearchParams();
+  const selection = resolveCompareSelection(searchParams.get("ids"), shortlistIds, known);
+  const selected = selection.ids
     .map((id) => datasets.find((dataset) => dataset.id === id))
     .filter((dataset): dataset is CatalogDataset => Boolean(dataset));
 
+  if (selection.source === "invalid") {
+    return (
+      <EmptyState title={compareCopy.invalidTitle} description={compareCopy.invalidDescription} />
+    );
+  }
   if (selected.length === 0) {
     return (
       <EmptyState title={compareCopy.emptyTitle} description={compareCopy.emptyDescription} />
