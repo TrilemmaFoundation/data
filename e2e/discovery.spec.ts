@@ -101,18 +101,16 @@ test("the hero title leads into build paths without a jump CTA", async ({ page }
   await expect(hero.getByRole("heading", { name: catalogCopy.heroTitle })).toBeVisible();
   await expect(hero.locator("button, a, input, select, textarea")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: catalogCopy.buildPathsTitle })).toBeVisible();
-  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toBeVisible();
   await expect(page.getByRole("table", { name: tableCopy.caption })).toBeVisible();
 });
 
-test("starter datasets are curated independently of catalog sort", async ({ page }) => {
+test("starter highlighting stays on the unfiltered catalog", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toBeVisible();
   await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel).first()).toBeVisible();
 
   await page.goto("/?q=weather");
   await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: catalogCopy.firstBuildsTitle })).toHaveCount(0);
+  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel)).toHaveCount(0);
 });
 
 test("catalog pagination keeps global order and canonical URL state", async ({ page }) => {
@@ -426,7 +424,7 @@ test("whitespace-only shared queries remain unfiltered", async ({ page }) => {
   await page.goto("/?q=+++");
 
   await expect(
-    page.getByRole("heading", { name: catalogCopy.firstBuildsTitle }),
+    page.getByRole("heading", { name: catalogCopy.buildPathsTitle }),
   ).toBeVisible();
   await expect(page.getByLabel(catalogCopy.activeFiltersAriaLabel)).toHaveCount(0);
 });

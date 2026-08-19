@@ -42,14 +42,10 @@ export const catalogCopy = {
   searchLabel: "Search by topic, provider, or product use",
   searchPlaceholder: "Try “weather” or “filings”",
   recommendedDatasetId: "nws-weather-api",
-  starterCollectionId: "first-builds",
   catalogEyebrow: "Dataset catalog",
   buildPathsTitle: "Start from a build path",
   buildPathsDescription:
     "Opinionated collections for a first prototype. Each path names the job, not just the domain.",
-  firstBuildsTitle: "Good first builds",
-  firstBuildsDescription:
-    "Beginner, no-key sources with a first project you can finish without paid infrastructure.",
   catalogSectionTitle: "Browse the full catalog",
   viewCollectionLabel: "Open path",
   datasetCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,

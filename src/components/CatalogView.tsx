@@ -61,9 +61,6 @@ export function CatalogView({
   const facetCount = chips.filter((chip) => chip.key !== "query").length;
   const isUnfiltered = chips.length === 0;
   const starterSet = new Set(starterIds);
-  const starters = starterIds
-    .map((id) => datasets.find((dataset) => dataset.id === id))
-    .filter((dataset): dataset is CatalogDataset => Boolean(dataset));
   const orderedResults = sortDatasets(results, sort);
   const paginated = paginate(orderedResults, requestedPage);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -154,26 +151,7 @@ export function CatalogView({
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{trustSummary}</p>
 
         {isUnfiltered && paginated.page === 1 && (
-          <>
-            <BuildPathCards collections={collections} />
-            {starters.length > 0 && (
-              <section aria-labelledby="first-builds-title" className="mt-10">
-                <div className="max-w-3xl">
-                  <h2 id="first-builds-title" className="text-xl font-semibold text-white">
-                    {catalogCopy.firstBuildsTitle}
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {catalogCopy.firstBuildsDescription}
-                  </p>
-                </div>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  {starters.map((dataset) => (
-                    <DatasetCard key={dataset.id} dataset={dataset} featured />
-                  ))}
-                </div>
-              </section>
-            )}
-          </>
+          <BuildPathCards collections={collections} />
         )}
 
         <section

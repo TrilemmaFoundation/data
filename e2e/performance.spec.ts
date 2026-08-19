@@ -13,7 +13,7 @@ const addedDatasetBudget =
 const BUDGETS = {
   javascript: 1_060_000,
   css: 90_000,
-  // Static HTML now includes build-path cards, first-build cards, and the catalog.
+  // Static HTML now includes build-path cards and the catalog.
   html: 175_000 + addedDatasetBudget,
   rsc: 40_000 + addedDatasetBudget,
   gzipCode: 360_000,
