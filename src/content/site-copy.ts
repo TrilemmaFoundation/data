@@ -323,7 +323,7 @@ export const contributeCopy = {
   pythonNotice:
     "Python syntax, live URL, and provider checks still run in repository CI. This studio never executes submitted code.",
   emptyPreview: "Fix validation issues to preview the guide.",
-  loadExampleLabel: "Load Template",
+  loadExampleLabel: "Reset Template",
 } as const;
 
 export const copyButtonCopy = {

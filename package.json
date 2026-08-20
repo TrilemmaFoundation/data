@@ -16,6 +16,7 @@
     "generate-notebooks:check": "tsx scripts/generate-notebooks.ts --check",
     "validate-python-runtime": "tsx scripts/validate-python-runtime.ts",
     "maintenance-report": "tsx scripts/maintenance-report.ts",
+    "maintenance-report:offline": "tsx scripts/maintenance-report.ts --offline",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

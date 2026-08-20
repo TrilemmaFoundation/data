@@ -7,8 +7,14 @@ import { loadVocabulary } from "../src/lib/vocabulary";
 import { loadMaintainers } from "../src/lib/maintainers";
 import { generatedNotebooks, notebookDrift, NOTEBOOKS_PUBLIC_DIR } from "../src/lib/notebooks";
 import { parseCanaryFailureLines } from "../src/lib/python-runtime";
-import { exceptionExpiryWarnings } from "../src/lib/url-validation";
-import { buildMaintenanceReport, formatMaintenanceMarkdown } from "../src/lib/maintenance";
+import { validateDatasetUrls } from "../src/lib/url-validation";
+import { buildMaintenanceReport } from "../src/lib/maintenance";
+import {
+  collectUrlFindings,
+  maintenanceExitCode,
+  writeMaintenanceArtifacts,
+} from "../src/lib/maintenance-run";
+import { sanitizeDiagnostic } from "../src/lib/diagnostics";
 
 function readNotebooks(): Record<string, string> {
   const dir = path.join(process.cwd(), NOTEBOOKS_PUBLIC_DIR);
@@ -44,32 +50,38 @@ function canaryFailuresFromEnv(): string[] {
   return parseCanaryFailureLines(process.env.PYTHON_CANARY_FAILURES ?? "");
 }
 
-function main() {
+async function main() {
+  const offline = process.argv.slice(2).includes("--offline");
   const datasets = getAllDatasets();
   const collections = getAllCollections();
   const vocabulary = loadVocabulary();
   const maintainers = loadMaintainers();
+  const { urlErrors, exceptionWarnings } = await collectUrlFindings({
+    offline,
+    datasets,
+    validateUrls: offline ? undefined : validateDatasetUrls,
+  });
   const report = buildMaintenanceReport({
     datasets,
     collections,
     vocabularyErrors: vocabulary.errors,
     maintainerErrors: maintainers.errors,
-    exceptionWarnings: exceptionExpiryWarnings(),
+    urlErrors,
+    exceptionWarnings,
     notebookDrift: notebookDrift(generatedNotebooks(datasets), readNotebooks()),
     canaryFailures: canaryFailuresFromEnv(),
     changedProviderFiles: changedProviderFiles(),
   });
 
-  const markdown = formatMaintenanceMarkdown(report);
-  const outDir = path.join(process.cwd(), "reports");
-  fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, "maintenance-report.md"), markdown);
-  fs.writeFileSync(path.join(outDir, "maintenance-report.json"), `${JSON.stringify(report, null, 2)}\n`);
-
-  if (process.env.GITHUB_STEP_SUMMARY) {
-    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
-  }
+  const { markdown } = writeMaintenanceArtifacts(report, {
+    outDir: path.join(process.cwd(), "reports"),
+    githubStepSummary: process.env.GITHUB_STEP_SUMMARY,
+  });
   console.log(markdown);
+  process.exit(maintenanceExitCode(urlErrors));
 }
 
-main();
+main().catch((error) => {
+  console.error(sanitizeDiagnostic(String(error)));
+  process.exit(1);
+});

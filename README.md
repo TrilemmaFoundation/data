@@ -115,7 +115,8 @@ npm run validate-datasets:offline  # policy + guide copy + Python syntax, no net
 npm run validate-providers         # bounded live provider contract checks
 npm run generate-notebooks         # rewrite committed beginner/no-key Colab notebooks
 npm run generate-notebooks:check   # fail if committed notebooks drifted
-npm run maintenance-report         # Markdown/JSON maintenance buckets (writes reports/)
+npm run maintenance-report         # live URL checks + Markdown/JSON report; exits 1 after writing artifacts if URLs fail
+npm run maintenance-report:offline # editorial buckets only, no network, exit 0
 npm run validate-python-runtime    # allowlisted live Python canaries (not used in PRs)
 npm run lint                       # Next.js and TypeScript lint checks
 npm test                           # Vitest unit tests
@@ -146,9 +147,11 @@ Pull-request validation is deterministic and credential-free: it checks schema,
 vocabulary/collection/maintainer integrity, the 90-day maintenance policy, guide
 copy, Python syntax, notebook determinism, controlled provider fixtures, lint,
 100% `src/lib` coverage, and the static application. It does not execute
-contributed Python. GitHub Actions runs bounded live source, data-terms, and
-configured provider-contract validation after pushes to `main`, every Monday, and
-on manual dispatch. The same non-PR jobs write a maintenance report; weekly and
+contributed Python. After pushes to `main`, every Monday, and on manual
+dispatch, GitHub Actions runs configured provider-contract checks and
+`npm run maintenance-report`, which performs the live source and data-terms
+URL pass, writes `reports/maintenance-report.*`, and fails only after those
+artifacts exist. Weekly and
 manual runs also execute a small allowlisted Python runtime canary that cannot
 fail the pull-request gate.
 Dataset URLs must use HTTPS without embedded credentials. Live validation

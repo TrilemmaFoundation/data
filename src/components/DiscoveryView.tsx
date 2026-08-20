@@ -5,9 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import type { CatalogDataset } from "@/lib/schema";
 import { reconcileFilterChange } from "@/lib/catalog-chips";
 import {
-  filterDatasets,
+  deriveCatalogPage,
   getFilterOptions,
-  paginate,
   type CatalogSort,
   type DatasetFilters as Filters,
 } from "@/lib/search";
@@ -56,10 +55,13 @@ export function DiscoveryView({
     (nextFilters: Filters, nextSort: CatalogSort, nextPage = 1, push = false) => {
       filtersRef.current = nextFilters;
       sortRef.current = nextSort;
-      const canonicalPage = paginate(
-        filterDatasets(datasets, nextFilters, vocabulary),
+      const canonicalPage = deriveCatalogPage(
+        datasets,
+        nextFilters,
+        nextSort,
         nextPage,
-      ).page;
+        vocabulary,
+      ).paginated.page;
       const query = filtersToParams(nextFilters, nextSort, canonicalPage).toString();
       const nextSearch = query ? `?${query}` : "";
       locationSearchRef.current = nextSearch;
@@ -94,10 +96,13 @@ export function DiscoveryView({
       }
       if (nextSearch === locationSearchRef.current) return;
       const state = searchStringToCatalogState(nextSearch, filterOptions, vocabulary);
-      const canonicalPage = paginate(
-        filterDatasets(datasets, state.filters, vocabulary),
+      const canonicalPage = deriveCatalogPage(
+        datasets,
+        state.filters,
+        state.sort,
         state.page,
-      ).page;
+        vocabulary,
+      ).paginated.page;
       if (searchRef.current) {
         searchRef.current.value = state.filters.query;
       }
@@ -164,16 +169,21 @@ export function DiscoveryView({
     [updateState],
   );
 
+  const { results, paginated } = useMemo(
+    () => deriveCatalogPage(datasets, filters, sort, requestedPage, vocabulary),
+    [datasets, filters, requestedPage, sort, vocabulary],
+  );
+
   return (
     <CatalogView
-      datasets={datasets}
       collections={collections}
       starterIds={starterIds}
       trustSummary={trustSummary}
-      vocabulary={vocabulary}
+      filterOptions={filterOptions}
       filters={filters}
+      results={results}
+      paginated={paginated}
       sort={sort}
-      requestedPage={requestedPage}
       searchInputRef={searchRef}
       resultsTitleRef={resultsTitleRef}
       onFiltersChange={handleChange}

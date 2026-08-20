@@ -5,6 +5,7 @@ import { getVocabulary, toVocabularySnapshot } from "./vocabulary";
 import {
   CATALOG_PAGE_SIZE,
   compareDatasets,
+  deriveCatalogPage,
   EMPTY_FILTERS,
   filterDatasets,
   getDatasetAccessMethods,
@@ -74,16 +75,9 @@ describe("filterDatasets", () => {
       expect(folded).toEqual([...new Set(folded)]);
     }
     expect(getFilterOptions([]).accessMethods).toEqual([]);
-    const withoutCanonical = datasets.map((dataset) => {
-      const { canonical_domains, canonical_tasks, ...rest } = dataset;
-      void canonical_domains;
-      void canonical_tasks;
-      return rest as typeof dataset;
-    });
-    expect(getFilterOptions(withoutCanonical, snapshot).domains).toContain("Natural Hazards");
     expect(
       filterDatasets(
-        withoutCanonical,
+        datasets,
         { ...EMPTY_FILTERS, domains: ["Natural Hazards"] },
         snapshot,
       )
@@ -111,9 +105,9 @@ describe("filterDatasets", () => {
         query: "   ",
         theme: earthquakeCatalog.theme,
         accessMethod: "api",
-        domains: [earthquakeCatalog.domains[0]!],
+        domains: [earthquakeCatalog.canonical_domains[0]!],
         dataTypes: [earthquakeCatalog.data_types[0]!],
-        tasks: [earthquakeCatalog.tasks[0]!],
+        tasks: [earthquakeCatalog.canonical_tasks[0]!],
         difficulty: earthquakeCatalog.difficulty,
         sizes: ["Small"],
         formats: [earthquakeCatalog.formats[0]!],
@@ -196,5 +190,14 @@ describe("filterDatasets", () => {
     const last = paginate(datasets, 99);
     expect(last.page).toBe(Math.ceil(datasets.length / CATALOG_PAGE_SIZE));
     expect(last.end).toBe(datasets.length);
+  });
+
+  it("derives filtered, sorted, and paginated catalog results in one pass", () => {
+    const filters = { ...EMPTY_FILTERS, query: "earthquake" };
+    const sort = { id: "name" as const, desc: false };
+    const derived = deriveCatalogPage(datasets, filters, sort, 1, snapshot);
+    const results = filterDatasets(datasets, filters, snapshot);
+    expect(derived.results).toEqual(results);
+    expect(derived.paginated).toEqual(paginate(sortDatasets(results, sort), 1));
   });
 });

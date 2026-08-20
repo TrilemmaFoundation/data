@@ -6,12 +6,10 @@ import type { CatalogDataset } from "@/lib/schema";
 import { activeChips } from "@/lib/catalog-chips";
 import {
   EMPTY_FILTERS,
-  filterDatasets,
-  getFilterOptions,
   paginate,
-  sortDatasets,
   type CatalogSort,
   type DatasetFilters as Filters,
+  type FilterOptions,
 } from "@/lib/search";
 import { BuildPathCards, type CollectionCardModel } from "@/components/BuildPathCards";
 import { CatalogPagination } from "@/components/CatalogPagination";
@@ -21,18 +19,17 @@ import { DatasetTable } from "@/components/DatasetTable";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
 import { catalogCopy, filterCopy } from "@/content/site-copy";
 
 export function CatalogView({
-  datasets,
   collections,
   starterIds,
   trustSummary,
-  vocabulary,
+  filterOptions,
   filters,
+  results,
+  paginated,
   sort,
-  requestedPage,
   searchInputRef,
   resultsTitleRef,
   onFiltersChange,
@@ -40,14 +37,14 @@ export function CatalogView({
   onSortChange,
   onPageChange,
 }: {
-  datasets: CatalogDataset[];
   collections: CollectionCardModel[];
   starterIds: string[];
   trustSummary: string;
-  vocabulary: VocabularySnapshot;
+  filterOptions: FilterOptions;
   filters: Filters;
+  results: CatalogDataset[];
+  paginated: ReturnType<typeof paginate<CatalogDataset>>;
   sort: CatalogSort;
-  requestedPage: number;
   searchInputRef: RefObject<HTMLInputElement | null>;
   resultsTitleRef: RefObject<HTMLHeadingElement | null>;
   onFiltersChange: (filters: Filters) => void;
@@ -55,14 +52,10 @@ export function CatalogView({
   onSortChange: (sort: CatalogSort) => void;
   onPageChange: (page: number) => void;
 }) {
-  const filterOptions = getFilterOptions(datasets, vocabulary);
-  const results = filterDatasets(datasets, filters, vocabulary);
   const chips = activeChips(filters);
   const facetCount = chips.filter((chip) => chip.key !== "query").length;
   const isUnfiltered = chips.length === 0;
   const starterSet = new Set(starterIds);
-  const orderedResults = sortDatasets(results, sort);
-  const paginated = paginate(orderedResults, requestedPage);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterDialogRef = useRef<HTMLDialogElement>(null);
   const activeFilterTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -80,7 +73,7 @@ export function CatalogView({
     activeFilterTriggerRef.current = trigger;
     filterDialogRef.current?.showModal();
     setFiltersOpen(true);
-  }, []);
+  }, [setFiltersOpen]);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)");
@@ -176,7 +169,6 @@ export function CatalogView({
                   type="search"
                   defaultValue={filters.query}
                   onChange={(event) => onSearchChange(event.target.value)}
-                  onInput={(event) => onSearchChange(event.currentTarget.value)}
                   placeholder={catalogCopy.searchPlaceholder}
                   className="border-white/15 pr-4 pl-12 placeholder:text-white/40 [&::-webkit-search-cancel-button]:appearance-none"
                 />

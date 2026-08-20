@@ -288,8 +288,6 @@ export type CatalogDataset = Pick<
   | "provider"
   | "access_type"
   | "update_frequency"
-  | "domains"
-  | "tasks"
   | "data_types"
   | "formats"
   | "difficulty"
@@ -297,17 +295,11 @@ export type CatalogDataset = Pick<
   | "size_gb_min"
   | "size_gb_max"
   | "api_key_required"
-  | "last_verified"
-  | "source_type"
-  | "catalog_status"
 > & {
   first_project_title: string;
   canonical_domains: string[];
   canonical_tasks: string[];
   keywords: string[];
-  access_friction: FrictionLevel | null;
-  setup_minutes: number | null;
-  registration_required: boolean | null;
 };
 
 export function toCatalogDataset(
@@ -333,8 +325,6 @@ export function toCatalogDataset(
     provider: dataset.provider,
     access_type: dataset.access_type,
     update_frequency: dataset.update_frequency,
-    domains: dataset.domains,
-    tasks: dataset.tasks,
     data_types: dataset.data_types,
     formats: dataset.formats,
     difficulty: dataset.difficulty,
@@ -342,9 +332,6 @@ export function toCatalogDataset(
     size_gb_min: dataset.size_gb_min,
     size_gb_max: dataset.size_gb_max,
     api_key_required: dataset.api_key_required,
-    last_verified: dataset.last_verified,
-    source_type: dataset.source_type,
-    catalog_status: dataset.catalog_status,
     first_project_title: dataset.getting_started.first_project.title,
     canonical_domains,
     canonical_tasks,
@@ -356,9 +343,6 @@ export function toCatalogDataset(
       ...keywordsFor("domains", dataset.domains),
       ...keywordsFor("tasks", dataset.tasks),
     ]),
-    access_friction: dataset.access_profile?.friction ?? null,
-    setup_minutes: dataset.access_profile?.setup_minutes ?? null,
-    registration_required: dataset.access_profile?.registration_required ?? null,
   };
 }
 

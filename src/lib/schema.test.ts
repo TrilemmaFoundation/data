@@ -485,8 +485,6 @@ describe("toCatalogDataset", () => {
       provider: dataset.provider,
       access_type: dataset.access_type,
       update_frequency: dataset.update_frequency,
-      domains: dataset.domains,
-      tasks: dataset.tasks,
       data_types: dataset.data_types,
       formats: dataset.formats,
       difficulty: dataset.difficulty,
@@ -494,22 +492,24 @@ describe("toCatalogDataset", () => {
       size_gb_min: dataset.size_gb_min,
       size_gb_max: dataset.size_gb_max,
       api_key_required: dataset.api_key_required,
-      last_verified: dataset.last_verified,
-      source_type: dataset.source_type,
-      catalog_status: "active",
       first_project_title: dataset.getting_started.first_project.title,
       canonical_domains: dataset.domains,
       canonical_tasks: dataset.tasks,
       keywords: ["Natural Hazards", "Monitoring"],
-      access_friction: null,
-      setup_minutes: null,
-      registration_required: null,
     });
     expect(catalog).not.toHaveProperty("getting_started");
     expect(catalog).not.toHaveProperty("url");
     expect(catalog).not.toHaveProperty("license");
     expect(catalog).not.toHaveProperty("license_url");
     expect(catalog).not.toHaveProperty("url_checks");
+    expect(catalog).not.toHaveProperty("domains");
+    expect(catalog).not.toHaveProperty("tasks");
+    expect(catalog).not.toHaveProperty("last_verified");
+    expect(catalog).not.toHaveProperty("source_type");
+    expect(catalog).not.toHaveProperty("catalog_status");
+    expect(catalog).not.toHaveProperty("access_friction");
+    expect(catalog).not.toHaveProperty("setup_minutes");
+    expect(catalog).not.toHaveProperty("registration_required");
   });
 
   it("uses vocabulary helpers when provided and reports inactive datasets", () => {
@@ -534,9 +534,7 @@ describe("toCatalogDataset", () => {
       "Natural Hazards",
       "quakes",
     ]);
-    expect(catalog.access_friction).toBe("medium");
-    expect(catalog.setup_minutes).toBe(15);
-    expect(catalog.registration_required).toBe(false);
+    expect(catalog).not.toHaveProperty("access_friction");
     expect(isActiveDataset(dataset)).toBe(true);
     expect(isActiveDataset({ catalog_status: "deprecated" })).toBe(false);
     expect(isActiveDataset({})).toBe(true);

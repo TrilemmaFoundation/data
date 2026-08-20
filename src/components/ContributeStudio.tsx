@@ -9,69 +9,14 @@ import { CONTRIBUTE_URL } from "@/lib/seo";
 import { DATASET_THEMES, DIFFICULTIES } from "@/lib/schema";
 import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
 
-const TEMPLATE_YAML = `id: example-dataset
-name: Example Dataset
-description: >
-  Continuously updated example records for building a small bounded monitoring
-  tool for a local workflow.
-theme: Environment & Hazards
-url: https://example.com/dataset
-access_type:
-  - download
-api_key_required: false
-free_to_access: true
-size_gb_min: 0
-size_gb_max: 0.001
-formats:
-  - CSV
-license: Example data terms
-license_url: https://example.com/data-terms
-url_checks:
-  source_marker: Example Dataset Downloads
-  license_marker: Example Dataset Terms of Use
-domains:
-  - Natural Hazards
-data_types:
-  - Event Data
-tasks:
-  - Monitoring
-difficulty: beginner
-geography:
-  - Not applicable
-temporal_coverage: null
-update_frequency: continuous
-provider: Example Agency
-source_type: government
-last_verified: 2026-08-19
-getting_started:
-  overview: >
-    Start with one small extract from the official source. Missing values and
-    provisional status can change a product decision.
-  prerequisites:
-    - Python 3.10 or newer
-    - A notebook environment such as Jupyter or Google Colab
-  access_steps:
-    - Open the official source and review access limits.
-    - Download a bounded sample from the authoritative file or API.
-  python:
-    packages:
-      - pandas
-    code: |
-      import pandas as pd
-
-      data = pd.read_csv("https://example.com/sample.csv")
-      print(data.head())
-  first_project:
-    title: Summarize one local extract
-    goal: Can a beginner confirm the extract is usable for a monitoring prototype?
-    steps:
-      - Inspect the first rows and keep a retrieval timestamp.
-      - Summarize the columns needed for the product signal.
-      - Explain one pattern and one limitation that would change a product decision.
-`;
-
-export function ContributeStudio({ vocabulary }: { vocabulary: VocabularySnapshot }) {
-  const [yamlText, setYamlText] = useState(TEMPLATE_YAML);
+export function ContributeStudio({
+  vocabulary,
+  initialYaml,
+}: {
+  vocabulary: VocabularySnapshot;
+  initialYaml: string;
+}) {
+  const [yamlText, setYamlText] = useState(initialYaml);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const parsed = useMemo(
     () => parseContributionYaml(yamlText, vocabulary),
@@ -167,7 +112,7 @@ export function ContributeStudio({ vocabulary }: { vocabulary: VocabularySnapsho
           <Button type="button" variant="outline" onClick={copyYaml}>
             {copyState === "copied" ? contributeCopy.copiedYamlLabel : contributeCopy.copyYamlLabel}
           </Button>
-          <Button type="button" variant="ghost" onClick={() => setYamlText(TEMPLATE_YAML)}>
+          <Button type="button" variant="ghost" onClick={() => setYamlText(initialYaml)}>
             {contributeCopy.loadExampleLabel}
           </Button>
           <a

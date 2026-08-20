@@ -12,6 +12,7 @@ generated notebook in the pull request.
 
 1. Fork this repository
 2. Copy [`data/datasets/_template.yaml`](data/datasets/_template.yaml)
+   (the Contribution Studio loads this same file, including its placeholders)
 3. Rename it to `<dataset-id>.yaml` (kebab-case, matching the `id` field)
 4. Fill in every metadata and `getting_started` field
 5. For beginner, no-key datasets, run `npm run generate-notebooks` and commit `public/notebooks/<id>.ipynb`
@@ -136,8 +137,10 @@ npm run generate-notebooks:check
 Maintainers can also run the live checks:
 
 ```bash
-npm run validate-datasets  # source and data-terms page identity
+npm run validate-datasets  # policy + guide copy + Python syntax + live page identity
 npm run validate-providers # configured provider response contracts
+npm run maintenance-report # live URL checks, write reports/, fail after artifacts if URLs broke
+npm run maintenance-report:offline # editorial buckets only
 ```
 
 Pull-request CI stays deterministic and does not execute contributed Python.

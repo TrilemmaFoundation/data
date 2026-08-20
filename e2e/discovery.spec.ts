@@ -10,7 +10,7 @@ import {
   tableCopy,
 } from "../src/content/site-copy";
 import { getActiveDatasets, getAllDatasets, getCatalogDatasets } from "../src/lib/datasets";
-import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, filterDatasets } from "../src/lib/search";
+import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, deriveCatalogPage, filterDatasets } from "../src/lib/search";
 import { getVocabulary, toVocabularySnapshot } from "../src/lib/vocabulary";
 import {
   COLLECTIONS_PATH,
@@ -27,6 +27,8 @@ import {
 const DATASET_COUNT = getActiveDatasets().length;
 const CATALOG_PAGES = Math.ceil(DATASET_COUNT / CATALOG_PAGE_SIZE);
 const LAST_PAGE_ITEMS = DATASET_COUNT % CATALOG_PAGE_SIZE || CATALOG_PAGE_SIZE;
+const FIRST_CATALOG_NAME = deriveCatalogPage(getCatalogDatasets(), EMPTY_FILTERS, null, 1)
+  .paginated.items[0]!.name;
 const EARTHQUAKE_HAZARD_COUNT = filterDatasets(
   getCatalogDatasets(),
   { ...EMPTY_FILTERS, query: "earthquake", domains: ["Natural Hazards"] },
@@ -74,6 +76,18 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
   ).toBeVisible();
 });
 
+test("search replaces the URL once per edit", async ({ page }) => {
+  await page.goto("/");
+  const search = page.getByLabel(catalogCopy.searchLabel);
+  await search.fill("earth");
+  await expect(page).toHaveURL(/q=earth/);
+  await search.fill("");
+  await expect(page).not.toHaveURL(/[?&]q=/);
+  await search.fill("earthquake");
+  await expect(page).toHaveURL(/q=earthquake/);
+  await expect(page.getByLabel(catalogCopy.searchLabel)).toHaveValue("earthquake");
+});
+
 test("rapid controls preserve filters selected during pending URL navigation", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
@@ -105,7 +119,9 @@ test("the hero title leads into build paths without a jump CTA", async ({ page }
 
 test("starter highlighting stays on the unfiltered catalog", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText(datasetCardCopy.goodFirstBuildLabel).first()).toBeVisible();
+  await expect(
+    page.getByText(datasetCardCopy.goodFirstBuildLabel).filter({ visible: true }).first(),
+  ).toBeVisible();
 
   await page.goto("/?q=weather");
   await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
@@ -484,7 +500,7 @@ test("catalog search stays wide enough to read and cards use a single guide link
   await expect(page.locator("#drawer-dataset-api-key")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("link", { name: "National Weather Service API", exact: true }),
+    page.getByRole("link", { name: FIRST_CATALOG_NAME, exact: true }),
   ).toBeVisible();
 
   await page.setViewportSize({ width: 1280, height: 900 });

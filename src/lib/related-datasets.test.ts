@@ -21,12 +21,9 @@ describe("related datasets", () => {
     expect(scores[1]!).toBeGreaterThanOrEqual(scores[2]!);
   });
 
-  it("excludes self and inactive rows and drops zero-score matches", () => {
+  it("excludes self and drops zero-score matches", () => {
     const self = catalog.find((item) => item.id === "nws-weather-api")!;
     expect(relatedScore(nws, self)).toBe(Number.NEGATIVE_INFINITY);
-
-    const inactive = { ...self, id: "inactive", catalog_status: "deprecated" as const };
-    expect(relatedScore(nws, inactive)).toBe(Number.NEGATIVE_INFINITY);
 
     const stranger = {
       ...self,
@@ -34,9 +31,7 @@ describe("related datasets", () => {
       name: "Unrelated",
       theme: "Research & Reference" as const,
       canonical_domains: [],
-      domains: ["Research"],
       canonical_tasks: [],
-      tasks: ["Topic Research"],
       data_types: ["Text"],
       difficulty: "advanced" as const,
       access_type: ["download"] as CatalogDataset["access_type"],
@@ -66,7 +61,6 @@ describe("related datasets", () => {
       canonical_tasks: [],
       data_types: [],
       difficulty: nws.difficulty,
-      catalog_status: "active" as const,
     };
     const right = { ...left, id: "zeta-related", name: "Zeta" };
     expect(

@@ -7,6 +7,9 @@ import {
   siteCopy,
   themeLandingCopy,
 } from "../src/content/site-copy";
+import { stringifyContributionYaml } from "../src/lib/contribution";
+import { loadContributionTemplate } from "../src/lib/contribution-template";
+import { getDatasetById } from "../src/lib/datasets";
 import { FEEDBACK_URL } from "../src/lib/seo";
 
 test("collection and theme landings expose unique copy and catalog paths", async ({
@@ -48,20 +51,29 @@ test("guides show trust, related datasets, facet links, and Colab", async ({ pag
 });
 
 test("contribution studio validates, previews, and downloads YAML", async ({ page }) => {
+  const template = loadContributionTemplate();
+  const validYaml = stringifyContributionYaml(getDatasetById("nws-weather-api")!);
+
   await page.goto("/contribute");
+  const editor = page.getByLabel(contributeCopy.yamlLabel);
   await expect(page.getByRole("heading", { name: contributeCopy.title })).toBeVisible();
-  await expect(page.getByLabel(contributeCopy.yamlLabel)).toBeVisible();
-  await page.getByLabel(contributeCopy.yamlLabel).fill("id: not valid");
+  await expect(editor).toHaveValue(template);
+  await expect(page.getByText(contributeCopy.emptyPreview)).toBeVisible();
+
+  await editor.fill("id: not valid");
   await expect(page.getByRole("alert", { name: contributeCopy.errorsLabel })).toBeVisible();
 
   await page.getByRole("button", { name: contributeCopy.loadExampleLabel }).click();
-  const preview = page.getByRole("heading", { name: contributeCopy.previewLabel });
-  await expect(preview).toBeVisible();
+  await expect(editor).toHaveValue(template);
+  await expect(page.getByText(contributeCopy.emptyPreview)).toBeVisible();
+
+  await editor.fill(validYaml);
+  await expect(page.getByRole("heading", { name: "National Weather Service API" })).toBeVisible();
 
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: contributeCopy.downloadLabel }).click();
   const artifact = await download;
-  expect(artifact.suggestedFilename()).toMatch(/\.yaml$/);
+  expect(artifact.suggestedFilename()).toBe("nws-weather-api.yaml");
 });
 
 test("footer feedback uses GitHub and homepage keeps catalog search", async ({ page }) => {

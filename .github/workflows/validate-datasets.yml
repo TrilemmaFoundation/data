@@ -31,16 +31,7 @@ jobs:
         run: npm ci
 
       - name: Validate datasets offline
-        if: github.event_name == 'pull_request'
         run: npm run validate-datasets:offline
-
-      - name: Check generated notebooks
-        if: github.event_name == 'pull_request'
-        run: npm run generate-notebooks:check
-
-      - name: Validate live source page identity
-        if: github.event_name != 'pull_request'
-        run: npm run validate-datasets
 
       - name: Validate provider contracts
         if: github.event_name != 'pull_request'
@@ -74,12 +65,13 @@ jobs:
           fi
           exit "$status"
 
-      - name: Generate maintenance report
-        if: github.event_name != 'pull_request'
+      - name: Generate live maintenance report
+        id: live-maintenance
+        if: always() && github.event_name != 'pull_request' && !cancelled()
         run: npm run maintenance-report
 
       - name: Upload maintenance report
-        if: github.event_name != 'pull_request'
+        if: always() && github.event_name != 'pull_request' && !cancelled()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: maintenance-report

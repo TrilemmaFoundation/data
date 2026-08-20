@@ -1,5 +1,4 @@
 import type { CatalogDataset, Dataset } from "./schema";
-import { isActiveDataset } from "./schema";
 
 export const RELATED_LIMIT = 3;
 
@@ -22,7 +21,6 @@ export function relatedScore(
   sourceTags: { domains: string[]; tasks: string[] } = dataset,
 ): number {
   if (dataset.id === candidate.id) return Number.NEGATIVE_INFINITY;
-  if (!isActiveDataset(candidate)) return Number.NEGATIVE_INFINITY;
   const domainOverlap = overlapCount(sourceTags.domains, candidate.canonical_domains);
   const taskOverlap = overlapCount(sourceTags.tasks, candidate.canonical_tasks);
   const typeOverlap = overlapCount(dataset.data_types, candidate.data_types);

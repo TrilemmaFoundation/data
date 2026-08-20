@@ -111,18 +111,8 @@ export function getFilterOptions(
   datasets: CatalogDataset[],
   snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
 ): FilterOptions {
-  const presentDomains = new Set(
-    datasets.flatMap((dataset) =>
-      dataset.canonical_domains ??
-      dataset.domains.map((value) => canonicalizeSnapshotValue(snapshot, "domains", value)),
-    ),
-  );
-  const presentTasks = new Set(
-    datasets.flatMap((dataset) =>
-      dataset.canonical_tasks ??
-      dataset.tasks.map((value) => canonicalizeSnapshotValue(snapshot, "tasks", value)),
-    ),
-  );
+  const presentDomains = new Set(datasets.flatMap((dataset) => dataset.canonical_domains));
+  const presentTasks = new Set(datasets.flatMap((dataset) => dataset.canonical_tasks));
   const filterableDomains =
     snapshot.filterable.domains.length > 0
       ? snapshot.filterable.domains.filter((label) => presentDomains.has(label))
@@ -149,11 +139,11 @@ export function getFilterOptions(
 }
 
 function datasetDomains(dataset: CatalogDataset): string[] {
-  return dataset.canonical_domains ?? dataset.domains;
+  return dataset.canonical_domains;
 }
 
 function datasetTasks(dataset: CatalogDataset): string[] {
-  return dataset.canonical_tasks ?? dataset.tasks;
+  return dataset.canonical_tasks;
 }
 
 function matchesCanonical(
@@ -184,8 +174,8 @@ const FUSE_OPTIONS = {
     "description",
     "provider",
     "theme",
-    "domains",
-    "tasks",
+    "canonical_domains",
+    "canonical_tasks",
     "data_types",
     "formats",
     "keywords",
@@ -273,4 +263,18 @@ export function sortDatasets(
   return [...datasets].sort(
     (a, b) => compareDatasets(a, b, sort.id) * direction,
   );
+}
+
+export function deriveCatalogPage(
+  datasets: CatalogDataset[],
+  filters: DatasetFilters,
+  sort: CatalogSort,
+  requestedPage: number,
+  snapshot: VocabularySnapshot = EMPTY_VOCABULARY_SNAPSHOT,
+) {
+  const results = filterDatasets(datasets, filters, snapshot);
+  return {
+    results,
+    paginated: paginate(sortDatasets(results, sort), requestedPage),
+  };
 }

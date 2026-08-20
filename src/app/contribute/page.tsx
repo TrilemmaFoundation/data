@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ContributeStudio } from "@/components/ContributeStudio";
 import { contributeCopy } from "@/content/site-copy";
 import { CONTRIBUTE_APP_PATH, pageSocialMetadata } from "@/lib/seo";
+import { loadContributionTemplate } from "@/lib/contribution-template";
 import { getVocabulary, toVocabularySnapshot } from "@/lib/vocabulary";
 
 export const metadata: Metadata = pageSocialMetadata(
@@ -20,7 +21,10 @@ export default function ContributePage() {
         {contributeCopy.description}
       </p>
       <div className="mt-8">
-        <ContributeStudio vocabulary={toVocabularySnapshot(getVocabulary())} />
+        <ContributeStudio
+          vocabulary={toVocabularySnapshot(getVocabulary())}
+          initialYaml={loadContributionTemplate()}
+        />
       </div>
     </div>
   );
