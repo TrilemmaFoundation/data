@@ -4,7 +4,7 @@ summary: >
   Weather, flood, housing, and infrastructure sources for a neighborhood-scale
   planning prototype.
 curator: Trilemma Data
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 dataset_ids:
   - nws-weather-api
   - fema-national-flood-hazard-layer
@@ -14,3 +14,5 @@ dataset_ids:
   - fcc-national-broadband-map
   - cdc-places
   - openfema-disaster-declarations
+  - water-quality-portal
+  - census-building-permits

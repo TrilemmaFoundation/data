@@ -626,6 +626,69 @@ const contracts = {
       z.array(z.record(z.string(), z.unknown())).min(1),
     ),
   },
+  "cdc-nwss-wastewater": {
+    url: "https://data.cdc.gov/resource/ymmh-divb.json?$limit=1",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.array(
+        z.object({
+          site: z.string(),
+          sample_collect_date: z.string(),
+          pcr_target: z.string(),
+        }).passthrough(),
+      ).min(1),
+    ),
+  },
+  "unesco-uis-statistics": {
+    url: "https://api.uis.unesco.org/api/public/data/indicators?indicator=CR.1&geoUnit=USA&start=2020&end=2022",
+    contentTypes: ["application/json"],
+    validate: jsonValidator(
+      z.object({
+        records: z.array(
+          z.object({
+            indicatorId: z.string(),
+            geoUnit: z.string(),
+            year: z.number(),
+            value: z.number().nullable(),
+          }).passthrough(),
+        ).min(1),
+      }).passthrough(),
+    ),
+  },
+  "census-building-permits": {
+    url: "https://www2.census.gov/econ/bps/County/co2025a.txt",
+    range: "bytes=0-4095",
+    contentTypes: ["text/plain", "text/csv", "application/octet-stream"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body).split(/\r?\n/, 1).join();
+      return /survey/i.test(header) && /fips/i.test(header)
+        ? null
+        : "CSV is missing Survey or FIPS header fields";
+    },
+  },
+  "water-quality-portal": {
+    url: "https://www.waterqualitydata.us/data/Result/search?siteid=USGS-01646500&characteristicName=Nitrate&startDateLo=01-01-2024&startDateHi=12-31-2024&mimeType=csv&zip=no&dataProfile=narrowResult",
+    contentTypes: ["text/csv", "text/plain", "application/octet-stream", "application/csv"],
+    validate(body: Uint8Array) {
+      const header = new TextDecoder().decode(body).split(/\r?\n/, 1).join().split(",");
+      return ["MonitoringLocationIdentifier", "CharacteristicName", "ResultMeasureValue"].every(
+        (field) => header.includes(field),
+      )
+        ? null
+        : "CSV is missing MonitoringLocationIdentifier, CharacteristicName, or ResultMeasureValue";
+    },
+  },
+  "eur-lex-cellar": {
+    url: "https://publications.europa.eu/webapi/rdf/sparql?query=PREFIX%20cdm%3A%20%3Chttp%3A%2F%2Fpublications.europa.eu%2Fontology%2Fcdm%23%3E%20SELECT%20%3Fwork%20%3Fdate%20WHERE%20%7B%20%3Fwork%20cdm%3Aresource_legal_id_celex%20%2232016R0679%22%5E%5E%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23string%3E%20%3B%20cdm%3Awork_date_document%20%3Fdate%20.%20%7D%20LIMIT%201&format=application/sparql-results%2Bjson",
+    contentTypes: ["application/sparql-results+json", "application/json"],
+    validate: jsonValidator(
+      z.object({
+        results: z.object({
+          bindings: z.array(z.record(z.string(), z.unknown())).min(1),
+        }),
+      }).passthrough(),
+    ),
+  },
   "cms-open-payments": {
     url: "https://openpaymentsdata.cms.gov/api/1/datastore/query/e6b17c6a-2534-4207-a4a1-6746a14911ff/0?limit=1",
     contentTypes: ["application/json"],

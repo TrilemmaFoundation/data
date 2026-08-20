@@ -1,0 +1,107 @@
+id: census-building-permits
+name: Census Building Permits Survey
+description: >
+  County counts of new privately owned housing units authorized by building
+  permits for building local housing-supply and market-sizing tools.
+theme: Markets & Economics
+url: https://www.census.gov/construction/bps/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - CSV
+  - XLSX
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: new privately-owned residential construction
+  license_marker: federal government materials
+domains:
+  - Housing
+  - Regional Economics
+data_types:
+  - Tabular
+  - Survey Estimates
+tasks:
+  - Market Sizing
+  - Community Comparison
+  - Economic Monitoring
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: monthly and annual county files from 1990-present
+update_frequency: monthly
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    The Building Permits Survey publishes comma-delimited county files for new
+    privately owned residential construction. Start with the latest annual
+    county file and a few rows. Annual files impute nonresponse, and monthly
+    files cover only a sample of permit offices.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the Building Permits Survey page and confirm you want county authorized-unit counts, not housing starts.
+    - Download the documented annual county ASCII file from the Census BPS file directory.
+    - Keep FIPS state and county codes, unit counts, and the survey year.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      permits = pd.read_csv(
+          "https://www2.census.gov/econ/bps/County/co2025a.txt",
+          skiprows=3,
+          header=None,
+          names=[
+              "year",
+              "state_fips",
+              "county_fips",
+              "region",
+              "division",
+              "county_name",
+              "bldgs_1",
+              "units_1",
+              "value_1",
+              "bldgs_2",
+              "units_2",
+              "value_2",
+              "bldgs_34",
+              "units_34",
+              "value_34",
+              "bldgs_5plus",
+              "units_5plus",
+              "value_5plus",
+          ],
+          usecols=range(18),
+          nrows=30,
+          skipinitialspace=True,
+      )
+      permits["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(
+          permits[
+              [
+                  "year",
+                  "state_fips",
+                  "county_fips",
+                  "county_name",
+                  "units_1",
+                  "units_5plus",
+              ]
+          ].head(20)
+      )
+  first_project:
+    title: Rank counties by 2025 authorized housing units
+    goal: Test whether annual permit counts can power a bounded housing-supply comparison.
+    steps:
+      - Keep state FIPS, county FIPS, name, and the imputed 1-unit and 5-or-more-unit counts.
+      - Sum units for one state and list the top counties.
+      - Explain that authorized permits are not completed housing and that monthly files omit many permit offices.

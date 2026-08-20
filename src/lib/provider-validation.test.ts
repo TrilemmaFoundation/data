@@ -198,6 +198,26 @@ const validBodies = {
   "cdc-fluview-ilinet": JSON.stringify([
     { week_ending: "2025-01-04", activity_level: "2" },
   ]),
+  "cdc-nwss-wastewater": JSON.stringify([
+    { site: "103", sample_collect_date: "2023-09-10", pcr_target: "fluav" },
+  ]),
+  "unesco-uis-statistics": JSON.stringify({
+    records: [{ indicatorId: "CR.1", geoUnit: "USA", year: 2022, value: 99.5 }],
+  }),
+  "census-building-permits":
+    "Survey,FIPS,FIPS,Region,Division,County\nDate,State,County,Code,Code,Name\n",
+  "water-quality-portal":
+    "MonitoringLocationIdentifier,CharacteristicName,ResultMeasureValue\nUSGS-01646500,Nitrate,1.2\n",
+  "eur-lex-cellar": JSON.stringify({
+    results: {
+      bindings: [
+        {
+          work: { type: "uri", value: "http://publications.europa.eu/resource/cellar/example" },
+          date: { type: "literal", value: "2016-04-27" },
+        },
+      ],
+    },
+  }),
   "cms-open-payments": JSON.stringify({
     results: [{ teaching_hospital_name: "Example", total_amount_of_payment_usdollars: "10.00" }],
   }),
@@ -325,6 +345,11 @@ const contentTypes = {
   "noaa-swpc-space-weather": "application/json",
   "cpsc-product-recalls": "application/json",
   "cdc-fluview-ilinet": "application/json",
+  "cdc-nwss-wastewater": "application/json",
+  "unesco-uis-statistics": "application/json",
+  "census-building-permits": "text/plain",
+  "water-quality-portal": "text/csv",
+  "eur-lex-cellar": "application/sparql-results+json",
   "cms-open-payments": "application/json",
   "deps-dev-package-graph": "application/json",
   "first-epss": "application/json",

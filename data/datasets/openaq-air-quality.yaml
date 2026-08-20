@@ -1,0 +1,80 @@
+id: openaq-air-quality
+name: OpenAQ Air Quality API
+description: >
+  Harmonized global air-quality measurements from public monitors for building
+  multi-country pollution alerts outside a single national feed.
+theme: Environment & Hazards
+url: https://docs.openaq.org/about/about
+access_type:
+  - api
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+license: OpenAQ Terms of Use with upstream source licenses
+license_url: https://docs.openaq.org/about/terms
+url_checks:
+  source_marker: OpenAQ API provides open access to global air quality
+  license_marker: Terms of Use for Data Users
+domains:
+  - Air Quality
+  - Public Health
+  - Weather
+data_types:
+  - Time Series
+  - Geospatial
+  - Operational Data
+tasks:
+  - Alerting
+  - Monitoring
+  - Community Comparison
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: location-dependent historical measurements through near-real-time updates
+update_frequency: near real time
+provider: OpenAQ
+source_type: nonprofit
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    OpenAQ aggregates publicly available air-quality monitors into one API.
+    Start with a handful of locations in one country. U.S. products should
+    start from AirNow; OpenAQ is a multi-country access layer, coverage is
+    incomplete, and callers must follow each upstream source license.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An OpenAQ API key saved in the OPENAQ_API_KEY environment variable
+  access_steps:
+    - Register for a free OpenAQ API key and save it in the OPENAQ_API_KEY environment variable.
+    - Read the Terms of Use, including upstream source-license and attribution rules.
+    - Request a bounded page of locations for one ISO country code.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.openaq.org/v3/locations",
+          headers={"X-API-Key": os.environ["OPENAQ_API_KEY"]},
+          params={"iso": "IN", "limit": 5, "page": 1},
+          timeout=30,
+      )
+      response.raise_for_status()
+      locations = pd.json_normalize(response.json()["results"])
+      locations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(locations.head(20))
+  first_project:
+    title: List recent monitors in one country
+    goal: Test whether OpenAQ locations can power a bounded non-U.S. air-quality lookup.
+    steps:
+      - Keep location id, name, coordinates, and any license or provider fields from the page.
+      - Choose one location and note whether it is a government monitor or a sensor.
+      - Explain that U.S. products should use AirNow, that coverage is incomplete, and that source licenses still apply.

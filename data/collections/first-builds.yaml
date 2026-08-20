@@ -4,7 +4,7 @@ summary: >
   Beginner, no-key sources with a small first project you can finish in an
   afternoon without paid infrastructure.
 curator: Trilemma Data
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 dataset_ids:
   - nws-weather-api
   - usgs-earthquakes
@@ -14,3 +14,6 @@ dataset_ids:
   - openfema-disaster-declarations
   - fhfa-house-price-index
   - cfpb-consumer-complaints
+  - cdc-nwss-wastewater
+  - census-building-permits
+  - unesco-uis-statistics

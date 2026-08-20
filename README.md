@@ -169,7 +169,7 @@ No application code changes required.
 
 ## Catalog
 
-The catalog currently contains 141 operational datasets spanning natural
+The catalog currently contains 149 operational datasets spanning natural
 hazards, weather, water, climate, flood risk, drought, space weather, global
 disaster alerts, public health, clinical research, cybersecurity, package
 graphs, legislation, sanctions screening, government spending and procurement,
@@ -182,8 +182,11 @@ live transit feeds, aviation, provider directories, drinking water, preprints,
 pageviews, agriculture, tropical cyclones, crime, companies, occupations,
 global forecasts, live OSM, food products, nursing homes, LEI, euro-area
 statistics, patents, vital statistics, mortgages, OECD and national statistics,
-Mauna Loa CO2, sea ice, caselaw, lobbying, Certificate Transparency, and
-public GitHub activity. The YAML files in
+Mauna Loa CO2, sea ice, caselaw, lobbying, Certificate Transparency,
+public GitHub activity, wastewater surveillance, discrete water-quality samples,
+building permits, workplace severe-injury reports, global electricity mix,
+UNESCO education indicators, global air-quality monitors, and EU law. The YAML
+files in
 [`data/datasets`](data/datasets) are the source of truth for the current list.
 
 ## Deploy to Vercel

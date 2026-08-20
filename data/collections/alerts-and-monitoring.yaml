@@ -4,7 +4,7 @@ summary: >
   Official feeds that can power a focused monitor for hazards, health, or
   security without scraping or paid data.
 curator: Trilemma Data
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 dataset_ids:
   - nws-weather-api
   - gdacs-disaster-alerts
@@ -14,3 +14,4 @@ dataset_ids:
   - federal-register-documents
   - cdc-fluview-ilinet
   - noaa-swpc-space-weather
+  - cdc-nwss-wastewater

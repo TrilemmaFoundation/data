@@ -1,0 +1,98 @@
+id: water-quality-portal
+name: Water Quality Portal
+description: >
+  Discrete water-quality sample results from USGS, EPA, and hundreds of partner
+  agencies for building watershed monitoring and local water-quality tools.
+theme: Environment & Hazards
+url: https://www.waterqualitydata.us/wqp_description/
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.5
+formats:
+  - CSV
+  - JSON
+  - TSV
+license: U.S. Public Domain / USGS CC0 guidance
+license_url: https://www.usgs.gov/data-management/data-licensing
+url_checks:
+  source_marker: cooperative service sponsored by the United States Geological Survey
+  license_marker: Data Licensing | U.S. Geological Survey
+domains:
+  - Water Resources
+  - Environmental Health
+data_types:
+  - Tabular
+  - Geospatial
+tasks:
+  - Monitoring
+  - Safety Monitoring
+  - Geographic Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: historical discrete samples through current agency submissions
+update_frequency: continuous
+provider: U.S. Geological Survey and U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    The Water Quality Portal returns discrete sample chemistry, not continuous
+    USGS gauge readings or EPA drinking-water system compliance records. Start
+    with nitrate results for one monitoring location and a one-year window.
+    Sampling is irregular, so a gap is not a clean bill of health.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the Water Quality Portal description and distinguish sample results from gauge time series.
+    - Request a bounded CSV extract for one site, one characteristic, and a short date range.
+    - Keep the monitoring location, characteristic, result value, unit, and activity date.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import io
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://www.waterqualitydata.us/data/Result/search",
+          params={
+              "siteid": "USGS-01646500",
+              "characteristicName": "Nitrate",
+              "startDateLo": "01-01-2024",
+              "startDateHi": "12-31-2024",
+              "mimeType": "csv",
+              "zip": "no",
+              "dataProfile": "narrowResult",
+          },
+          timeout=60,
+      )
+      response.raise_for_status()
+      results = pd.read_csv(io.StringIO(response.text))
+      results["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(
+          results[
+              [
+                  "MonitoringLocationIdentifier",
+                  "ActivityStartDate",
+                  "CharacteristicName",
+                  "ResultMeasureValue",
+                  "ResultMeasure/MeasureUnitCode",
+              ]
+          ].head(20)
+      )
+  first_project:
+    title: Chart recent nitrate samples at one Potomac gauge
+    goal: Test whether discrete nitrate results can power a bounded watershed-quality monitor.
+    steps:
+      - Convert ResultMeasureValue to numeric and keep the activity date, unit, and detection-condition text.
+      - Plot the 2024 samples and note days with no observation.
+      - Explain that irregular sampling is not a continuous water-quality record and is not a drinking-water compliance result.

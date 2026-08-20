@@ -1,0 +1,89 @@
+id: cdc-nwss-wastewater
+name: CDC NWSS Wastewater Data
+description: >
+  Weekly U.S. wastewater viral detections for influenza A and other pathogens
+  for building community-level respiratory-illness monitoring tools.
+theme: Health, Food & Safety
+url: https://www.cdc.gov/wastewater/about-data/index.html
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - JSON
+  - CSV
+license: U.S. Public Domain with CDC attribution and use requirements
+license_url: https://www.cdc.gov/other/agencymaterials.html
+url_checks:
+  source_marker: Wastewater data help communities act quickly
+  license_marker: Most of the information on the CDC and ATSDR websites
+domains:
+  - Public Health
+  - Infectious Disease
+data_types:
+  - Time Series
+  - Tabular
+  - Geospatial
+tasks:
+  - Alerting
+  - Trend Analysis
+  - Regional Comparison
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: site-level wastewater samples from 2022-present
+update_frequency: weekly
+provider: Centers for Disease Control and Prevention
+source_type: government
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    NWSS publishes site-level wastewater viral detections on data.cdc.gov.
+    Start with a few recent influenza A rows. Coverage is incomplete — not
+    every utility reports — and detections are not clinical incidence.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the wastewater about-data page and note sewershed coverage gaps.
+    - Request a bounded JSON extract from the Influenza A wastewater dataset.
+    - Keep site, county, sample date, and detection fields with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://data.cdc.gov/resource/ymmh-divb.json",
+          params={"$limit": 20, "$order": "sample_collect_date DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      wastewater = pd.DataFrame(response.json())
+      wastewater["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(
+          wastewater[
+              [
+                  "site",
+                  "state_territory",
+                  "counties_served",
+                  "sample_collect_date",
+                  "pcr_target",
+                  "pcr_target_detect",
+              ]
+          ].head(20)
+      )
+  first_project:
+    title: Flag recent influenza A wastewater detections
+    goal: Test whether recent site-level influenza A detections can power a bounded community alert.
+    steps:
+      - Inspect site, county, sample date, and pcr_target_detect for the latest rows.
+      - Count detections by state and note sites with missing counties or population served.
+      - Explain that wastewater detections are not case counts and that unsewered communities are missing.

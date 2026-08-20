@@ -4,7 +4,7 @@ summary: >
   Primary legal and screening sources for watching rules, filings, and
   sanctions lists as they change.
 curator: Trilemma Data
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 dataset_ids:
   - federal-register-documents
   - regulations-gov-dockets
@@ -14,3 +14,4 @@ dataset_ids:
   - open-states-legislation
   - legislation-gov-uk
   - senate-lda-filings
+  - eur-lex-cellar

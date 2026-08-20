@@ -1,0 +1,86 @@
+id: ember-electricity
+name: Ember Electricity Data
+description: >
+  Open country electricity generation, demand, and carbon-intensity series for
+  building energy-transition comparison and power-mix monitoring tools.
+theme: Markets & Economics
+url: https://ember-energy.org/data/api/
+access_type:
+  - api
+  - download
+api_key_required: true
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - CSV
+license: Creative Commons Attribution 4.0 International
+license_url: https://ember-energy.org/data/
+url_checks:
+  source_marker: open electricity data on yearly and monthly
+  license_marker: Creative Commons Attribution Licence (CC-BY-4.0)
+domains:
+  - Energy
+  - Electricity
+  - International Statistics
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Country Comparison
+  - Trend Analysis
+  - Market Monitoring
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: yearly series from 2000-present with monthly coverage for a smaller country set
+update_frequency: monthly
+provider: Ember
+source_type: nonprofit
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    Ember publishes compiled country electricity statistics through a REST API.
+    Start with yearly generation for one country and a few recent years. This is
+    not a live grid feed — U.S. operations belong on EIA hourly data and EU
+    transparency on ENTSO-E — and monthly coverage is limited to a subset of
+    countries.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - A free Ember API key saved in the EMBER_API_KEY environment variable
+  access_steps:
+    - Register for a free Ember API key and save it in the EMBER_API_KEY environment variable.
+    - Request yearly electricity generation for one country and a bounded start year.
+    - Keep entity, series, date, and generation values with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import os
+      import pandas as pd
+      import requests
+
+      response = requests.get(
+          "https://api.ember-energy.org/v1/electricity-generation/yearly",
+          params={
+              "entity_code": "USA",
+              "is_aggregate_series": "false",
+              "start_date": "2020",
+              "api_key": os.environ["EMBER_API_KEY"],
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      generation = pd.json_normalize(response.json().get("data", response.json()))
+      generation["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(generation.head(20))
+  first_project:
+    title: Compare U.S. and German yearly generation mix
+    goal: Test whether Ember yearly generation can power a bounded energy-transition comparison.
+    steps:
+      - Repeat the request for DEU and keep comparable series such as coal, gas, wind, and solar.
+      - Chart share or TWh by series for the overlapping years.
+      - Cite Ember under CC BY 4.0 and explain that yearly compiled statistics are not real-time grid operations.

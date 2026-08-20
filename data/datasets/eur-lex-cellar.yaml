@@ -1,0 +1,89 @@
+id: eur-lex-cellar
+name: EUR-Lex Cellar Legislation
+description: >
+  Official EU legal acts and metadata from the Publications Office Cellar for
+  building regulation lookup and EU-law change-monitoring tools.
+theme: Government & Policy
+url: https://op.europa.eu/en/web/cellar
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.05
+formats:
+  - JSON
+  - XML
+  - RDF
+license: Publications Office of the EU legal notices / reuse principles
+license_url: https://op.europa.eu/en/web/about-us/legal-notices
+url_checks:
+  source_marker: common data repository of the Publications Office
+  license_marker: Legal notices for Publications Office of the European Union
+domains:
+  - Legislation
+  - Regulation
+  - Public Policy
+data_types:
+  - Documents
+  - Legal Text
+tasks:
+  - Legal Monitoring
+  - Document Search
+  - Change Monitoring
+difficulty: intermediate
+geography:
+  - Europe
+temporal_coverage: Official Journal acts with Cellar metadata through current publications
+update_frequency: daily
+provider: Publications Office of the European Union
+source_type: intergovernmental
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    Cellar stores EU legal acts behind EUR-Lex. Start with one well-known CELEX
+    identifier and a one-row SPARQL lookup. Language versions and consolidations
+    differ, and a Cellar work URI is not a national gazette entry.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Read the Cellar overview and the Publications Office legal notices before querying.
+    - Choose one CELEX identifier such as 32016R0679 and keep the query bounded with LIMIT 1.
+    - Retain the work URI and document date with the retrieval timestamp.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      query = """
+      PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+      SELECT ?work ?date WHERE {
+        ?work cdm:resource_legal_id_celex "32016R0679"^^<http://www.w3.org/2001/XMLSchema#string> ;
+              cdm:work_date_document ?date .
+      }
+      LIMIT 1
+      """
+      response = requests.get(
+          "https://publications.europa.eu/webapi/rdf/sparql",
+          params={
+              "query": query,
+              "format": "application/sparql-results+json",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      bindings = pd.json_normalize(response.json()["results"]["bindings"])
+      bindings["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(bindings)
+  first_project:
+    title: Resolve one EU regulation by CELEX identifier
+    goal: Test whether a Cellar lookup can power a bounded EU-act watch card.
+    steps:
+      - Confirm that the returned work URI matches CELEX 32016R0679 and keep the document date.
+      - Follow the work URI only for the English expression if you need a title.
+      - Explain that consolidations and language versions can differ and that Cellar is not a national official gazette.

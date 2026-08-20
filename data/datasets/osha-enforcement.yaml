@@ -1,0 +1,67 @@
+id: osha-enforcement
+name: OSHA Severe Injury Reports
+description: >
+  Employer reports of amputations, inpatient hospitalizations, and eye losses
+  for building workplace-safety monitors under federal OSHA jurisdiction.
+theme: Government & Policy
+url: https://www.osha.gov/severe-injury-reports
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 0.05
+formats:
+  - CSV
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Download the full SIR data set
+  license_marker: federal government materials
+domains:
+  - Public Safety
+  - Regulation
+data_types:
+  - Tabular
+  - Event Data
+tasks:
+  - Safety Monitoring
+  - Screening
+  - Regional Comparison
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: federal OSHA severe-injury reports from 2015-present
+update_frequency: monthly
+provider: Occupational Safety and Health Administration
+source_type: government
+last_verified: 2026-08-20
+getting_started:
+  overview: >
+    OSHA publishes employer severe-injury reports for amputations, inpatient
+    hospitalizations, and losses of an eye. Start with a downloaded extract of
+    the full SIR file and the first fifty rows. These records cover federal
+    OSHA jurisdiction only and are not a complete injury census.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+  access_steps:
+    - Open the Severe Injury Reports dashboard and read the federal-jurisdiction limitation.
+    - Download the full SIR data set and save it as osha_severe_injury_reports.csv beside your notebook.
+    - Inspect establishment, event date, and injury fields before summarizing.
+  python:
+    packages:
+      - pandas
+    code: |
+      import pandas as pd
+
+      injuries = pd.read_csv("osha_severe_injury_reports.csv", nrows=50)
+      injuries["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
+      print(injuries.head(20))
+  first_project:
+    title: Count recent severe injuries in one industry
+    goal: Test whether SIR rows can power a bounded workplace-safety watch list.
+    steps:
+      - Keep event date, NAICS or industry, city, and hospitalization or amputation flags from the extract.
+      - Count events in one industry and list establishments with more than one report.
+      - Explain that state-plan states are missing and that narratives are not a complete injury census.
