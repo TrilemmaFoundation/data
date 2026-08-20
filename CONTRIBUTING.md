@@ -31,9 +31,11 @@ as direct actions and end the first project with an interpretation or limitation
 Shared product, navigation, accessibility, and SEO copy lives in
 [`src/content/site-copy.ts`](src/content/site-copy.ts). Changes there are
 application changes and should be submitted separately from a new dataset.
-Keep shared copy concise, practical, and free of hype. Dynamic phrases such as
-result counts stay in the typed helper functions in that file so singular,
-plural, and accessibility wording remain consistent.
+Keep shared copy concise, practical, and free of hype. Headers, subheaders,
+and buttons use Chicago Title Case; body copy and instructional labels stay in
+sentence case. Dynamic phrases such as result counts stay in the typed helper
+functions in that file so singular, plural, and accessibility wording remain
+consistent.
 
 ## Inclusion rules
 

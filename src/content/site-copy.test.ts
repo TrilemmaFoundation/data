@@ -57,7 +57,8 @@ describe("site copy", () => {
     expect(catalogCopy.resultCount(1)).toBe("1 dataset");
     expect(catalogCopy.resultCount(5)).toBe("5 datasets");
     expect(catalogCopy.resultStatus(1)).toBe("1 dataset found");
-    expect(catalogCopy.showResults(5)).toBe("Show 5 datasets");
+    expect(catalogCopy.showResults(1)).toBe("Show 1 Dataset");
+    expect(catalogCopy.showResults(5)).toBe("Show 5 Datasets");
     expect(catalogCopy.pageSummary(1, 8, 1, 8)).toBe("Page 1 of 8 · Showing 1–8");
     expect(catalogCopy.pageSummary(2, 2, 9, 9)).toBe("Page 2 of 2");
     expect(catalogCopy.pageStatus(1, 8, 1, 8, 57)).toBe(

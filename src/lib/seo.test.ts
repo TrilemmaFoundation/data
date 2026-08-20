@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import sitemap from "../app/sitemap";
+import { contributeCopy } from "../content/site-copy";
 import { getDatasetById } from "./datasets";
 import { getAllCollections } from "./collections";
 import * as seo from "./seo";
@@ -60,15 +61,15 @@ describe("SEO helpers", () => {
   });
 
   it("sets matching canonical and social URLs for public routes", () => {
-    const metadata = pageSocialMetadata("/contribute", "Contribution studio", "Draft a dataset YAML file");
+    const metadata = pageSocialMetadata("/contribute", contributeCopy.title, "Draft a dataset YAML file");
     expect(metadata.alternates).toEqual({ canonical: "/contribute" });
     expect(metadata.openGraph).toMatchObject({
       url: "/contribute",
-      title: "Contribution studio",
+      title: contributeCopy.title,
       description: "Draft a dataset YAML file",
     });
     expect(metadata.twitter).toMatchObject({
-      title: "Contribution studio",
+      title: contributeCopy.title,
       images: ["/foundation-white.webp"],
     });
   });
