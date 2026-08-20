@@ -5,7 +5,6 @@ import { allThemeSlugs, themePath } from "@/lib/landing";
 import {
   collectionPath,
   COLLECTIONS_PATH,
-  COMPARE_PATH,
   CONTRIBUTE_APP_PATH,
   datasetPath,
   SITE_URL,
@@ -17,7 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}${COLLECTIONS_PATH}`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}${COMPARE_PATH}`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}${CONTRIBUTE_APP_PATH}`, changeFrequency: "monthly", priority: 0.4 },
     ...allThemeSlugs().map(({ theme }) => ({
       url: `${SITE_URL}${themePath(theme)}`,

@@ -10,7 +10,6 @@ export const siteCopy = {
   datasetsNavigationLabel: "Datasets",
   collectionsNavigationLabel: "Build paths",
   contributeLabel: "Contribute",
-  compareLabel: "Compare",
   feedbackLabel: "Send feedback",
   foundationLinksLabel: "Foundation",
   foundationHomeLabel: "Home",
@@ -208,9 +207,6 @@ export const datasetGuideCopy = {
   relatedTitle: "Related datasets",
   colabLabel: "Open in Colab",
   feedbackLabel: "Report a problem",
-  addToShortlistLabel: "Add to shortlist",
-  removeFromShortlistLabel: "Remove from shortlist",
-  compareLabel: "Compare",
   replacementLabel: "See replacement",
   statusUntilLabel: (date: string) => `Listed until ${date}`,
   accessTypes: (types: Dataset["access_type"]) =>
@@ -310,46 +306,6 @@ export const collectionsCopy = {
   foundationLinkLabel: "Related Foundation work",
   updatedLabel: (date: string) => `Reviewed ${date}`,
   curatorLabel: (curator: string) => `Curated by ${curator}`,
-} as const;
-
-export const shortlistCopy = {
-  barLabel: "Shortlist",
-  emptyLabel: "Shortlist is empty",
-  countLabel: (count: number) =>
-    `${count} dataset${count === 1 ? "" : "s"} shortlisted`,
-  compareLabel: "Compare selected",
-  clearLabel: "Clear shortlist",
-  addLabel: "Add to shortlist",
-  removeLabel: "Remove from shortlist",
-  fullLabel: "Shortlist is full",
-} as const;
-
-export const compareCopy = {
-  title: "Compare datasets",
-  description:
-    "Compare two or three maintained sources side by side. Share the URL, or start from your local shortlist.",
-  emptyTitle: "Choose two or three datasets",
-  emptyDescription:
-    "Add datasets to your shortlist or open this page with an ids query such as ?ids=nws-weather-api,usgs-earthquakes.",
-  oneTitle: "Add one more dataset",
-  oneDescription: "Comparison needs two or three valid active datasets.",
-  invalidTitle: "Those ids cannot be compared",
-  invalidDescription:
-    "Unknown, duplicate, or inactive ids are ignored. Use active catalog datasets only.",
-  openGuideLabel: "Open guide",
-  fieldLabels: {
-    difficulty: "Difficulty",
-    firstBuild: "First build",
-    access: "Access",
-    apiKey: "API key",
-    formats: "Formats",
-    updates: "Update frequency",
-    verified: "Last verified",
-    friction: "Setup friction",
-    setup: "Setup time",
-    sample: "Sample size",
-    source: "Official source",
-  },
 } as const;
 
 export const contributeCopy = {

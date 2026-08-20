@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { CatalogDataset } from "@/lib/schema";
 import { getSizeCategory } from "@/lib/size";
-import { ShortlistToggle } from "@/components/ShortlistToggle";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -87,14 +86,13 @@ export function DatasetCard({
         </div>
       </CardContent>
 
-      <CardFooter className="items-center justify-between border-white/10 bg-brand-black/25 px-4 py-2">
+      <CardFooter className="items-center border-white/10 bg-brand-black/25 px-4 py-2">
         <p
           className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors group-hover:text-white"
           aria-hidden="true"
         >
           {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />
         </p>
-        <ShortlistToggle id={dataset.id} className="h-9 px-2" />
       </CardFooter>
     </Card>
   );

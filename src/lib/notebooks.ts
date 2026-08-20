@@ -16,17 +16,6 @@ export function notebookFilename(id: string): string {
   return `${id}.ipynb`;
 }
 
-export function notebookPublicPath(id: string): string {
-  return `/notebooks/${notebookFilename(id)}`;
-}
-
-export function githubNotebookUrl(
-  datasetId: string,
-  repositoryPath = "TrilemmaFoundation/data",
-): string {
-  return `https://github.com/${repositoryPath}/blob/main/${NOTEBOOKS_PUBLIC_DIR}/${notebookFilename(datasetId)}`;
-}
-
 export function colabNotebookUrl(
   datasetId: string,
   repositoryPath = "TrilemmaFoundation/data",

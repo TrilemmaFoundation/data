@@ -15,7 +15,6 @@ export const GITHUB_REPO_URL = "https://github.com/TrilemmaFoundation/data";
 export const CONTRIBUTE_URL = `${GITHUB_REPO_URL}/blob/main/CONTRIBUTING.md`;
 export const CONTRIBUTE_APP_PATH = "/contribute";
 export const COLLECTIONS_PATH = "/collections";
-export const COMPARE_PATH = "/compare";
 export const FEEDBACK_URL = `${GITHUB_REPO_URL}/issues/new?template=usability.yml`;
 export const DATASET_ISSUE_URL = `${GITHUB_REPO_URL}/issues/new?template=dataset.yml`;
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import * as nav from "./nav";
 import {
   isCollectionsPath,
-  isComparePath,
   isContributePath,
   isDatasetsPath,
 } from "./nav";
@@ -22,12 +22,18 @@ describe("primary navigation current paths", () => {
     expect(isCollectionsPath("/collections")).toBe(true);
     expect(isCollectionsPath("/collections/")).toBe(true);
     expect(isCollectionsPath("/collections/first-builds")).toBe(true);
-    expect(isComparePath("/compare")).toBe(true);
-    expect(isComparePath("/compare/")).toBe(true);
     expect(isContributePath("/contribute")).toBe(true);
     expect(isContributePath("/contribute/")).toBe(true);
     expect(isCollectionsPath("/")).toBe(false);
-    expect(isComparePath("/collections")).toBe(false);
+    expect(isContributePath("/collections")).toBe(false);
+  });
+
+  it("does not treat /compare as a primary destination", () => {
+    expect(nav).not.toHaveProperty("isComparePath");
+    expect(isDatasetsPath("/compare/")).toBe(false);
+    expect(isCollectionsPath("/compare")).toBe(false);
+    expect(isCollectionsPath("/compare/")).toBe(false);
     expect(isContributePath("/compare")).toBe(false);
+    expect(isContributePath("/compare/")).toBe(false);
   });
 });

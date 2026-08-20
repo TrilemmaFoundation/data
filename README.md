@@ -137,7 +137,7 @@ npm run test:e2e
 
 The browser checks report and enforce separate JavaScript, CSS, HTML, static RSC,
 compressed-code, analytics, landing, and notebook-asset budgets, plus automated
-WCAG checks for the catalog, collection/theme landings, compare, contribute, and
+WCAG checks for the catalog, collection/theme landings, contribute, and
 dataset guides. Raise a budget or accessibility exception only with a documented
 reason and intentional review.
 

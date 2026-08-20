@@ -9,14 +9,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteCopy } from "@/content/site-copy";
 import {
   isCollectionsPath,
-  isComparePath,
   isContributePath,
   isDatasetsPath,
 } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import {
   COLLECTIONS_PATH,
-  COMPARE_PATH,
   CONTRIBUTE_APP_PATH,
   FOUNDATION_URL,
 } from "@/lib/seo";
@@ -28,7 +26,6 @@ const primaryLinks = [
     label: siteCopy.collectionsNavigationLabel,
     current: isCollectionsPath,
   },
-  { href: COMPARE_PATH, label: siteCopy.compareLabel, current: isComparePath },
 ] as const;
 
 function desktopLinkClass(current: boolean) {

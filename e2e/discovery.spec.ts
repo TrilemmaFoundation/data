@@ -14,7 +14,6 @@ import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, filterDatasets } from "../src/lib/sea
 import { getVocabulary, toVocabularySnapshot } from "../src/lib/vocabulary";
 import {
   COLLECTIONS_PATH,
-  COMPARE_PATH,
   CONTRIBUTE_APP_PATH,
   FOUNDATION_CHARTER_URL,
   FOUNDATION_PRIVACY_URL,
@@ -333,9 +332,8 @@ test("header and footer expose the product and Foundation destinations", async (
   await expect(
     primary.getByRole("link", { name: siteCopy.collectionsNavigationLabel }),
   ).toHaveAttribute("href", COLLECTIONS_PATH);
-  await expect(
-    primary.getByRole("link", { name: siteCopy.compareLabel }),
-  ).toHaveAttribute("href", COMPARE_PATH);
+  await expect(primary.getByRole("link", { name: "Compare", exact: true })).toHaveCount(0);
+  await expect(primary.locator('a[href="/compare"], a[href="/compare/"]')).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: siteCopy.productLabel, exact: true }),
   ).toHaveCount(0);
@@ -359,9 +357,9 @@ test("header and footer expose the product and Foundation destinations", async (
   ).toHaveAttribute("aria-current", "page");
   await expect(datasetsHome).not.toHaveAttribute("aria-current");
 
-  await page.goto("/compare/");
+  await page.goto("/contribute/");
   await expect(
-    primary.getByRole("link", { name: siteCopy.compareLabel }),
+    primary.getByRole("link", { name: siteCopy.contributeLabel }),
   ).toHaveAttribute("aria-current", "page");
 
   const dataLinks = page.getByRole("navigation", {
@@ -373,6 +371,7 @@ test("header and footer expose the product and Foundation destinations", async (
   await expect(
     dataLinks.getByRole("link", { name: siteCopy.contributeLabel }),
   ).toHaveAttribute("href", CONTRIBUTE_APP_PATH);
+  await expect(dataLinks.locator('a[href="/compare"], a[href="/compare/"]')).toHaveCount(0);
 
   const foundationLinks = page.getByRole("navigation", {
     name: siteCopy.footerFoundationNavigationLabel,

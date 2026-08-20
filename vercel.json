@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/compare",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/compare/",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}

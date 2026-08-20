@@ -2,16 +2,14 @@ import { expect, test } from "@playwright/test";
 import {
   catalogCopy,
   collectionsCopy,
-  compareCopy,
   contributeCopy,
   datasetGuideCopy,
-  shortlistCopy,
   siteCopy,
   themeLandingCopy,
 } from "../src/content/site-copy";
 import { FEEDBACK_URL } from "../src/lib/seo";
 
-test("static collection and theme landings expose unique copy and catalog paths", async ({
+test("collection and theme landings expose unique copy and catalog paths", async ({
   page,
 }) => {
   await page.goto("/collections");
@@ -49,36 +47,6 @@ test("guides show trust, related datasets, facet links, and Colab", async ({ pag
   await expect(page).toHaveURL(/theme=Environment/);
 });
 
-test("shortlist persists and compare sharing uses query ids", async ({ page }) => {
-  await page.goto("/datasets/nws-weather-api");
-  await page.getByRole("button", { name: shortlistCopy.addLabel }).click();
-  await expect(page.getByRole("region", { name: shortlistCopy.barLabel })).toBeVisible();
-
-  await page.goto("/datasets/usgs-earthquakes");
-  await page.getByRole("button", { name: shortlistCopy.addLabel }).click();
-  await page.getByRole("link", { name: shortlistCopy.compareLabel }).click();
-  await expect(page).toHaveURL(/\/compare/);
-  await expect(page.getByRole("heading", { name: compareCopy.title })).toBeVisible();
-  await expect(page.getByRole("table", { name: compareCopy.title })).toBeVisible();
-
-  await page.goto("/compare?ids=nws-weather-api,usgs-earthquakes,cisa-known-exploited-vulnerabilities");
-  await expect(page.getByRole("link", { name: "National Weather Service API" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "USGS Earthquake Catalog" })).toBeVisible();
-
-  await page.evaluate(() => localStorage.clear());
-  await page.goto("/compare?ids=nws-weather-api,usgs-earthquakes");
-  await expect(page.getByRole("table", { name: compareCopy.title })).toBeVisible();
-  await page
-    .getByRole("navigation", { name: siteCopy.footerDataNavigationLabel })
-    .getByRole("link", { name: siteCopy.compareLabel })
-    .click();
-  await expect(page).toHaveURL(/\/compare\/?$/);
-  await expect(page.getByRole("heading", { name: compareCopy.emptyTitle })).toBeVisible();
-
-  await page.goto("/compare?ids=not-a-dataset,also-fake");
-  await expect(page.getByRole("heading", { name: compareCopy.invalidTitle })).toBeVisible();
-});
-
 test("contribution studio validates, previews, and downloads YAML", async ({ page }) => {
   await page.goto("/contribute");
   await expect(page.getByRole("heading", { name: contributeCopy.title })).toBeVisible();
@@ -89,7 +57,6 @@ test("contribution studio validates, previews, and downloads YAML", async ({ pag
   await page.getByRole("button", { name: contributeCopy.loadExampleLabel }).click();
   const preview = page.getByRole("heading", { name: contributeCopy.previewLabel });
   await expect(preview).toBeVisible();
-  await expect(page.getByRole("button", { name: shortlistCopy.addLabel })).toHaveCount(0);
 
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: contributeCopy.downloadLabel }).click();

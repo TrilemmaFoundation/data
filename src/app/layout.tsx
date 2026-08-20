@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Roboto } from "next/font/google";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ShortlistProvider } from "@/components/ShortlistProvider";
-import { ShortlistBar } from "@/components/ShortlistBar";
 import { PageviewAnalytics } from "@/components/PageviewAnalytics";
-import { getCatalogDatasets } from "@/lib/datasets";
 import { FOUNDATION_URL, SITE_URL } from "@/lib/seo";
 import { siteCopy } from "@/content/site-copy";
 import "./globals.css";
@@ -61,8 +58,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  const knownIds = getCatalogDatasets().map((dataset) => dataset.id);
-
   return (
     <html
       lang="en"
@@ -72,14 +67,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main-content" className="skip-link">
           {siteCopy.skipLinkLabel}
         </a>
-        <ShortlistProvider knownIds={knownIds}>
-          <SiteHeader />
-          <main id="main-content" className="flex-1" tabIndex={-1}>
-            {children}
-          </main>
-          <ShortlistBar />
-          <SiteFooter />
-        </ShortlistProvider>
+        <SiteHeader />
+        <main id="main-content" className="flex-1" tabIndex={-1}>
+          {children}
+        </main>
+        <SiteFooter />
         <PageviewAnalytics />
       </body>
     </html>

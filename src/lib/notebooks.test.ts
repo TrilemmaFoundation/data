@@ -3,11 +3,9 @@ import { getDatasetById } from "./datasets";
 import {
   colabNotebookUrl,
   generatedNotebooks,
-  githubNotebookUrl,
   hasGeneratedNotebook,
   notebookDrift,
   notebookFromDataset,
-  notebookPublicPath,
   serializeNotebook,
 } from "./notebooks";
 
@@ -18,9 +16,7 @@ describe("notebooks", () => {
   it("generates notebooks only for active beginner no-key guides", () => {
     expect(hasGeneratedNotebook(nws)).toBe(true);
     expect(hasGeneratedNotebook(edgar)).toBe(false);
-    expect(notebookPublicPath(nws.id)).toBe("/notebooks/nws-weather-api.ipynb");
     expect(colabNotebookUrl(nws.id)).toContain("colab.research.google.com");
-    expect(githubNotebookUrl(nws.id)).toContain("public/notebooks/nws-weather-api.ipynb");
   });
 
   it("serializes a deterministic notebook from dataset YAML", () => {

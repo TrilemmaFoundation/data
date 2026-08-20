@@ -184,7 +184,7 @@ export function ContributeStudio({ vocabulary }: { vocabulary: VocabularySnapsho
         <h2 className="text-sm font-semibold text-white">{contributeCopy.previewLabel}</h2>
         {parsed.dataset && parsed.issues.length === 0 ? (
           <div className="mt-3">
-            <DatasetPage dataset={parsed.dataset} shortlistEnabled={false} />
+            <DatasetPage dataset={parsed.dataset} />
             <pre className="sr-only">{stringifyContributionYaml(parsed.dataset)}</pre>
           </div>
         ) : (

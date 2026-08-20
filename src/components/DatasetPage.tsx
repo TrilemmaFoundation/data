@@ -22,7 +22,6 @@ import {
   sourceTypeLabel,
 } from "@/lib/trust-signals";
 import { CopyButton } from "@/components/CopyButton";
-import { ShortlistToggle } from "@/components/ShortlistToggle";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -77,12 +76,10 @@ export function DatasetPage({
   dataset,
   related = [],
   notebookAvailable = false,
-  shortlistEnabled = true,
 }: {
   dataset: Dataset;
   related?: CatalogDataset[];
   notebookAvailable?: boolean;
-  shortlistEnabled?: boolean;
 }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
@@ -228,17 +225,14 @@ export function DatasetPage({
             </a>
           )}
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {shortlistEnabled ? <ShortlistToggle id={dataset.id} /> : null}
-          <a
-            href={DATASET_ISSUE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-primary hover:text-white"
-          >
-            {datasetGuideCopy.feedbackLabel}
-          </a>
-        </div>
+        <a
+          href={DATASET_ISSUE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-primary hover:text-white"
+        >
+          {datasetGuideCopy.feedbackLabel}
+        </a>
       </header>
 
       <section className="surface mt-6 p-5 sm:p-6" aria-labelledby="at-a-glance">

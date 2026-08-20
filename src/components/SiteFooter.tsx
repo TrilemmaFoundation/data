@@ -3,7 +3,6 @@ import Link from "next/link";
 import { siteCopy } from "@/content/site-copy";
 import {
   COLLECTIONS_PATH,
-  COMPARE_PATH,
   CONTRIBUTE_APP_PATH,
   FEEDBACK_URL,
   FOUNDATION_CHARTER_URL,
@@ -69,9 +68,6 @@ export function SiteFooter() {
               </Link>
               <Link href={COLLECTIONS_PATH} className={footerLinkClass}>
                 {siteCopy.collectionsNavigationLabel}
-              </Link>
-              <Link href={COMPARE_PATH} className={footerLinkClass}>
-                {siteCopy.compareLabel}
               </Link>
               <Link href={CONTRIBUTE_APP_PATH} className={footerLinkClass}>
                 {siteCopy.contributeLabel}

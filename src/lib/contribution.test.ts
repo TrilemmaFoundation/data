@@ -45,6 +45,13 @@ describe("contribution YAML round trip", () => {
     const withSnapshot = parseContributionYaml(yaml, snapshot);
     expect(withSnapshot.dataset?.id).toBe("nws-weather-api");
     expect(withSnapshot.issues.some((issue) => issue.path === "domains")).toBe(true);
+    const invalidTasks = stringifyContributionYaml({
+      ...dataset,
+      tasks: ["Totally Invented Task"],
+    });
+    expect(
+      parseContributionYaml(invalidTasks, snapshot).issues.some((issue) => issue.path === "tasks"),
+    ).toBe(true);
     expect(parseContributionYaml(stringifyContributionYaml(dataset), snapshot).issues).toEqual(
       [],
     );

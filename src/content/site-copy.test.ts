@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { getAllDatasets } from "../lib/datasets";
+import * as copyModule from "./site-copy";
 import {
   accessTypeLabels,
   catalogCopy,
   collectionsCopy,
-  compareCopy,
   contributeCopy,
   copyButtonCopy,
   datasetCardCopy,
@@ -13,7 +13,6 @@ import {
   filterChipPrefixes,
   filterCopy,
   notFoundCopy,
-  shortlistCopy,
   siteCopy,
   tableCopy,
   themeLandingCopy,
@@ -41,13 +40,16 @@ describe("site copy", () => {
       tableCopy,
       themeLandingCopy,
       collectionsCopy,
-      shortlistCopy,
-      compareCopy,
       contributeCopy,
     ]);
 
     expect(values.length).toBeGreaterThan(0);
     expect(values.every((value) => value.trim().length > 0)).toBe(true);
+  });
+
+  it("does not export retired compare or shortlist copy", () => {
+    expect(copyModule).not.toHaveProperty("compareCopy");
+    expect(copyModule).not.toHaveProperty("shortlistCopy");
   });
 
   it("formats result counts and accessibility labels", () => {
@@ -70,8 +72,6 @@ describe("site copy", () => {
     expect(catalogCopy.heroTrust(141, "Aug 11, 2026")).toContain("141");
     expect(catalogCopy.datasetCount(1)).toBe("1 dataset");
     expect(collectionsCopy.updatedLabel("2026-08-19")).toContain("2026-08-19");
-    expect(shortlistCopy.countLabel(1)).toBe("1 dataset shortlisted");
-    expect(shortlistCopy.countLabel(2)).toBe("2 datasets shortlisted");
     expect(datasetGuideCopy.setupMinutes(10)).toBe("10 min");
     expect(datasetGuideCopy.runtimeVerifiedLabel("Aug 19, 2026")).toContain("Aug 19");
     expect(datasetGuideCopy.statusUntilLabel("2026-09-01")).toContain("2026-09-01");

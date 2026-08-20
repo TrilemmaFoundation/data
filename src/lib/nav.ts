@@ -1,4 +1,4 @@
-import { COLLECTIONS_PATH, COMPARE_PATH, CONTRIBUTE_APP_PATH } from "./seo";
+import { COLLECTIONS_PATH, CONTRIBUTE_APP_PATH } from "./seo";
 
 function normalizePath(pathname: string): string {
   return pathname.length > 1 && pathname.endsWith("/")
@@ -19,10 +19,6 @@ export function isDatasetsPath(pathname: string): boolean {
 
 export function isCollectionsPath(pathname: string): boolean {
   return isSectionPath(pathname, COLLECTIONS_PATH);
-}
-
-export function isComparePath(pathname: string): boolean {
-  return isSectionPath(pathname, COMPARE_PATH);
 }
 
 export function isContributePath(pathname: string): boolean {

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import sitemap from "../app/sitemap";
 import { getDatasetById } from "./datasets";
 import { getAllCollections } from "./collections";
+import * as seo from "./seo";
 import {
   collectionJsonLd,
   collectionPath,
@@ -58,16 +60,25 @@ describe("SEO helpers", () => {
   });
 
   it("sets matching canonical and social URLs for public routes", () => {
-    const metadata = pageSocialMetadata("/compare", "Compare datasets", "Side by side");
-    expect(metadata.alternates).toEqual({ canonical: "/compare" });
+    const metadata = pageSocialMetadata("/contribute", "Contribution studio", "Draft a dataset YAML file");
+    expect(metadata.alternates).toEqual({ canonical: "/contribute" });
     expect(metadata.openGraph).toMatchObject({
-      url: "/compare",
-      title: "Compare datasets",
-      description: "Side by side",
+      url: "/contribute",
+      title: "Contribution studio",
+      description: "Draft a dataset YAML file",
     });
     expect(metadata.twitter).toMatchObject({
-      title: "Compare datasets",
+      title: "Contribution studio",
       images: ["/foundation-white.webp"],
     });
+  });
+
+  it("does not advertise a compare route in constants or the sitemap", () => {
+    expect(Object.keys(seo).filter((key) => /compare/i.test(key))).toEqual([]);
+    const constants = Object.values(seo).filter(
+      (value): value is string => typeof value === "string",
+    );
+    expect(constants).not.toContain("/compare");
+    expect(sitemap().map((entry) => entry.url)).not.toContain(`${SITE_URL}/compare`);
   });
 });

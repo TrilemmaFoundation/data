@@ -1,10 +1,8 @@
-import type { BeforeSend, BeforeSendEvent } from "@vercel/analytics/react";
+import type { BeforeSend } from "@vercel/analytics/react";
 
 export const PAGEVIEW_ANALYTICS_SCRIPT = "@vercel/analytics";
 
 const REDACTED_PARAMS = new Set(["q"]);
-
-export type AnalyticsBeforeSendEvent = BeforeSendEvent;
 
 export function redactAnalyticsUrl(url: string): string {
   try {

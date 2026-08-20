@@ -19,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { datasetCardCopy, tableCopy } from "@/content/site-copy";
-import { ShortlistToggle } from "@/components/ShortlistToggle";
 
 const SORT_HEADERS: Array<{ id: SortColumn; label: string }> = [
   { id: "name", label: tableCopy.datasetLabel },
@@ -156,7 +155,6 @@ export function DatasetTable({
                       {datasetCardCopy.goodFirstBuildLabel}
                     </Badge>
                   )}
-                  <ShortlistToggle id={dataset.id} className="h-8 shrink-0 px-2" />
                 </div>
               </TableCell>
               <TableCell>

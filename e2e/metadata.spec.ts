@@ -23,14 +23,14 @@ test("public routes expose canonical and social metadata", async ({ page }) => {
     "summary_large_image",
   );
 
-  await page.goto("/compare");
+  await page.goto("/contribute");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://data.trilemma.foundation/compare",
+    "https://data.trilemma.foundation/contribute",
   );
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
     "content",
-    "https://data.trilemma.foundation/compare",
+    "https://data.trilemma.foundation/contribute",
   );
 });
 
@@ -75,8 +75,8 @@ test("robots and sitemap enumerate the public static application", async ({
   const body = await sitemap.text();
   expect(body).toContain("<loc>https://data.trilemma.foundation</loc>");
   expect(body).toContain("<loc>https://data.trilemma.foundation/collections</loc>");
-  expect(body).toContain("<loc>https://data.trilemma.foundation/compare</loc>");
   expect(body).toContain("<loc>https://data.trilemma.foundation/contribute</loc>");
+  expect(body).not.toContain("<loc>https://data.trilemma.foundation/compare</loc>");
   const datasets = getActiveDatasets();
   for (const dataset of datasets) {
     expect(body).toContain(
@@ -84,6 +84,6 @@ test("robots and sitemap enumerate the public static application", async ({
     );
   }
   const extra =
-    1 + 1 + 1 + 1 + DATASET_THEMES.length + getAllCollections().length;
+    1 + 1 + 1 + DATASET_THEMES.length + getAllCollections().length;
   expect(body.match(/<loc>/g)).toHaveLength(datasets.length + extra);
 });
