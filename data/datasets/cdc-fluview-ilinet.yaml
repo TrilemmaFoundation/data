@@ -75,7 +75,7 @@ getting_started:
       ili["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(ili.head(20))
   first_project:
-    title: Compare recent state ILI activity levels
+    title: Compare Recent State ILI Activity Levels
     goal: Test whether weekly activity categories can power a bounded flu-season dashboard.
     steps:
       - Inspect the returned geography and week fields and keep the latest week.

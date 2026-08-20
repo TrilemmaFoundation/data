@@ -17,7 +17,7 @@ test("collection and theme landings expose unique copy and catalog paths", async
 }) => {
   await page.goto("/collections");
   await expect(page.getByRole("heading", { name: collectionsCopy.title })).toBeVisible();
-  await page.getByRole("link", { name: "Start with a first microproduct" }).click();
+  await page.getByRole("link", { name: "Start with a First Microproduct" }).click();
   await expect(page).toHaveURL(/\/collections\/first-builds\/?$/);
   await expect(page.getByRole("link", { name: collectionsCopy.catalogLinkLabel })).toHaveAttribute(
     "href",

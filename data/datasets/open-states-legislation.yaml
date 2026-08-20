@@ -76,7 +76,7 @@ getting_started:
       bills["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(bills[["identifier", "title", "latest_action_date"]].head(10))
   first_project:
-    title: Watch recently updated bills in one state
+    title: Watch Recently Updated Bills in One State
     goal: Test whether a ten-bill extract can power a focused state-policy inbox.
     steps:
       - Keep bill identifiers, titles, and latest action dates for Colorado.

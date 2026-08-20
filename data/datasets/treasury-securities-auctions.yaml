@@ -90,7 +90,7 @@ getting_started:
       results["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(results[["auction_date", "security_type", "security_term", "result_rate", "bid_to_cover_ratio"]].head(20))
   first_project:
-    title: Summarize recent Treasury auction results
+    title: Summarize Recent Treasury Auction Results
     goal: Compare recent completed auction results by security term and identify which terms had the highest bid-to-cover ratios.
     steps:
       - Separate completed result records from announcements using populated result metrics and retain each CUSIP.

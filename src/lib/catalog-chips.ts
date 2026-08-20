@@ -1,4 +1,5 @@
 import { catalogCopy, filterChipPrefixes, filterCopy } from "@/content/site-copy";
+import { toChicagoTitleCase } from "./chicago-title-case";
 import { EMPTY_FILTERS, type DatasetFilters as Filters } from "./search";
 
 export type ActiveChip = {
@@ -34,7 +35,7 @@ export function activeChips(filters: Filters): ActiveChip[] {
   if (filters.difficulty) {
     chips.push({
       key: "difficulty",
-      label: `${filterChipPrefixes.difficulty}: ${filters.difficulty}`,
+      label: `${filterChipPrefixes.difficulty}: ${toChicagoTitleCase(filters.difficulty)}`,
       next: { ...filters, difficulty: null },
     });
   }

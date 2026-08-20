@@ -71,7 +71,7 @@ getting_started:
       estimates = pd.DataFrame(response.json().get("results", response.json()))
       print(estimates.head())
   first_project:
-    title: Compare one state's reported violent crime across three years
+    title: Compare One State's Reported Violent Crime across Three Years
     goal: Test whether CDE estimates can power a bounded state crime trend.
     steps:
       - Keep year, state, and violent-crime counts from the estimates response.

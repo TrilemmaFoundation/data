@@ -79,7 +79,7 @@ getting_started:
       ]
       print(studies[columns].head(20))
   first_project:
-    title: Find recruiting trials for one condition
+    title: Find Recruiting Trials for One Condition
     goal: Identify recruiting asthma studies and review whether they list usable locations.
     steps:
       - Retrieve a bounded page and retain each study's NCT identifier and update date.

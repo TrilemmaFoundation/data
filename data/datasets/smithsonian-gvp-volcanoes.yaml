@@ -79,7 +79,7 @@ getting_started:
       volcanoes = pd.json_normalize(response.json()["features"])
       print(volcanoes.head())
   first_project:
-    title: Map Iceland's Holocene volcanoes
+    title: Map Iceland's Holocene Volcanoes
     goal: Test whether GVP coordinates can power a bounded volcanic-place lookup.
     steps:
       - Keep volcano name, volcano number, and coordinates from the Iceland extract.

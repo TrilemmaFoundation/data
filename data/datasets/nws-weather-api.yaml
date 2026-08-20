@@ -89,7 +89,7 @@ getting_started:
       hours = pd.json_normalize(forecast.json()["properties"]["periods"])
       print(hours[["startTime", "temperature", "windSpeed", "shortForecast"]].head())
   first_project:
-    title: Flag risky hours for an outdoor plan
+    title: Flag Risky Hours for an Outdoor Plan
     goal: Test whether the hourly forecast can provide a useful weather-risk signal for one location.
     steps:
       - Convert forecast start times to timezone-aware timestamps and select the next 24 hours.

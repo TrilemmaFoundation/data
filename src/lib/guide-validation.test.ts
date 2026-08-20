@@ -50,7 +50,7 @@ const validGuide: Dataset = {
       code: 'import pandas as pd\ndata = pd.read_csv("events.csv")\nprint(data.head())\n',
     },
     first_project: {
-      title: "Profile recent events",
+      title: "Profile Recent Events",
       goal: "See whether a short extract can power an incident monitor.",
       steps: [
         "Inspect the first rows.",
@@ -93,6 +93,23 @@ function guide(overrides: Record<string, unknown> = {}): Dataset {
 describe("validateGuideCopy", () => {
   it("accepts a complete beginner guide", () => {
     expect(validateGuideCopy(validGuide)).toEqual([]);
+  });
+
+  it("requires Chicago Title Case for names and first-project titles", () => {
+    expect(
+      validateGuideCopy(guide({ name: "live events" })),
+    ).toContain('name must use Chicago Title Case ("Live Events")');
+    expect(
+      validateGuideCopy(
+        guide({
+          getting_started: {
+            first_project: { title: "profile recent events" },
+          },
+        }),
+      ),
+    ).toContain(
+      'getting_started.first_project.title must use Chicago Title Case ("Profile Recent Events")',
+    );
   });
 
   it("accepts a U.S. abbreviation inside a single sentence", () => {

@@ -84,7 +84,7 @@ getting_started:
       projects = pd.json_normalize(response.json()["results"])
       print(projects.head())
   first_project:
-    title: List recent NIH CRISPR project awards
+    title: List Recent NIH CRISPR Project Awards
     goal: Test whether RePORTER can power a bounded funding inbox for one research topic.
     steps:
       - Keep application ID, title, organization, fiscal year, and award amount.

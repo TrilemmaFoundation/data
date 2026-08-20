@@ -75,7 +75,7 @@ getting_started:
       observations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(observations[["indicatorId", "geoUnit", "year", "value"]].head())
   first_project:
-    title: Compare primary completion for two countries
+    title: Compare Primary Completion for Two Countries
     goal: Test whether one UIS completion-rate series can power a bounded country comparison.
     steps:
       - Repeat the request for a second country and concatenate the year-value rows.

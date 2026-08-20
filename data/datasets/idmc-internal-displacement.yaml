@@ -70,7 +70,7 @@ getting_started:
       displacement = pd.read_excel(BytesIO(response.content), sheet_name=0)
       print(displacement.head())
   first_project:
-    title: Compare conflict and disaster displacements
+    title: Compare Conflict and Disaster Displacements
     goal: Test whether GIDD country-year rows can power a bounded humanitarian sketch.
     steps:
       - Keep country, year, and conflict versus disaster displacement columns.

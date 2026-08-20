@@ -69,7 +69,7 @@ getting_started:
       certificates["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(certificates[["issuer_name", "common_name", "not_after"]].head())
   first_project:
-    title: List certificates for one domain
+    title: List Certificates for One Domain
     goal: Test whether a CT search can power a bounded issuance monitor.
     steps:
       - Deduplicate certificate ids and keep issuer, common name, and expiry.

@@ -66,7 +66,7 @@ getting_started:
       print(occupations.head())
       print(occupations.columns.tolist())
   first_project:
-    title: Browse published O*NET occupation titles
+    title: Browse Published O*NET Occupation Titles
     goal: Test whether the Occupation Data file can power a bounded job-profile lookup.
     steps:
       - Keep O*NET-SOC code, title, and description as published.

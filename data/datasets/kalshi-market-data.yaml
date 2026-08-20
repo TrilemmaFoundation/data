@@ -78,7 +78,7 @@ getting_started:
       markets["retrieved_at"] = datetime.now(timezone.utc)
       print(markets[["ticker", "title", "yes_bid_dollars", "volume_fp"]].head())
   first_project:
-    title: Find active markets worth monitoring
+    title: Find Active Markets Worth Monitoring
     goal: Identify liquid open markets whose price changes could support a useful event alert.
     steps:
       - Convert price, volume, and liquidity fields to numeric values and inspect missing data.

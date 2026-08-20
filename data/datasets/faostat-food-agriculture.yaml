@@ -76,7 +76,7 @@ getting_started:
       crops["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(crops.head())
   first_project:
-    title: Track U.S. wheat production
+    title: Track U.S. Wheat Production
     goal: Test whether one FAOSTAT series can power a bounded commodity sketch.
     steps:
       - Keep area, item, year, value, and unit from the extract.

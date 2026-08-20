@@ -68,7 +68,7 @@ getting_started:
       ])].copy()
       print(agencies.head(20))
   first_project:
-    title: Compare monthly transit ridership recovery
+    title: Compare Monthly Transit Ridership Recovery
     goal: Compare reported passenger trips for two agencies with the same mode against the prior year.
     steps:
       - Record the file release and filter to two agencies and one common transit mode.

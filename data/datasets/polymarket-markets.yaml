@@ -79,7 +79,7 @@ getting_started:
       markets["retrieved_at"] = datetime.now(timezone.utc)
       print(markets[["question", "volume", "liquidity"]].head())
   first_project:
-    title: Compare liquidity across active markets
+    title: Compare Liquidity across Active Markets
     goal: Identify which active questions have the deepest markets and test whether liquidity and volume tell the same story.
     steps:
       - Convert volume and liquidity fields to numeric values and inspect missing data.

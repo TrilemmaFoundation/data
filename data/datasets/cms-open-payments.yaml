@@ -76,7 +76,7 @@ getting_started:
       payments["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(payments.head(20))
   first_project:
-    title: Profile general payments in one state
+    title: Profile General Payments in One State
     goal: Test whether a 20-row Open Payments extract can support a bounded physician-payment lookup.
     steps:
       - Confirm the query returned Colorado rows and keep recipient, manufacturer, amount, and nature fields.

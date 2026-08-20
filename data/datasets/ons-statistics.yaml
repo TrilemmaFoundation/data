@@ -71,7 +71,7 @@ getting_started:
       observations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(observations.head())
   first_project:
-    title: Read a UK CPIH observation
+    title: Read a UK CPIH Observation
     goal: Test whether the ONS API can power a bounded UK prices card.
     steps:
       - Confirm an observation value returned for the selected dataset and geography.

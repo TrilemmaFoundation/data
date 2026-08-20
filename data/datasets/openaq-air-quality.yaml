@@ -72,7 +72,7 @@ getting_started:
       locations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(locations.head(20))
   first_project:
-    title: List recent monitors in one country
+    title: List Recent Monitors in One Country
     goal: Test whether OpenAQ locations can power a bounded non-U.S. air-quality lookup.
     steps:
       - Keep location id, name, coordinates, and any license or provider fields from the page.

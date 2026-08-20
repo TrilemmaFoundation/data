@@ -11,6 +11,7 @@ import {
 import type { CatalogDataset, Dataset } from "@/lib/schema";
 import { isActiveDataset } from "@/lib/schema";
 import { catalogHref } from "@/lib/catalog-links";
+import { toChicagoTitleCase } from "@/lib/chicago-title-case";
 import { datasetPath, DATASET_ISSUE_URL, FEEDBACK_URL } from "@/lib/seo";
 import { colabNotebookUrl } from "@/lib/notebooks";
 import { formatSizeRange, getSizeCategory } from "@/lib/size";
@@ -30,10 +31,6 @@ import {
   difficultyDescriptions,
   siteCopy,
 } from "@/content/site-copy";
-
-function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
 
 function ConceptPills({
   label,
@@ -112,7 +109,7 @@ export function DatasetPage({
         : datasetGuideCopy.apiKeyNotRequiredLabel,
     ],
     [datasetGuideCopy.factLabels.provider, dataset.provider],
-    [datasetGuideCopy.factLabels.updates, capitalize(dataset.update_frequency)],
+    [datasetGuideCopy.factLabels.updates, toChicagoTitleCase(dataset.update_frequency)],
     [
       datasetGuideCopy.factLabels.verified,
       formatVerifiedDate(dataset.last_verified),
@@ -192,8 +189,8 @@ export function DatasetPage({
       <header className="max-w-4xl">
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className="eyebrow">{datasetGuideCopy.guideEyebrow}</span>
-          <Badge variant="secondary" className="capitalize">
-            {dataset.difficulty}
+          <Badge variant="secondary">
+            {toChicagoTitleCase(dataset.difficulty)}
           </Badge>
         </div>
         <h1 className="font-heading text-3xl font-bold tracking-tight text-balance text-white sm:text-4xl">

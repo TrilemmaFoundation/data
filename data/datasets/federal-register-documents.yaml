@@ -79,7 +79,7 @@ getting_started:
       documents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(documents[["publication_date", "type", "title", "pdf_url"]].head())
   first_project:
-    title: Monitor one agency's new publications
+    title: Monitor One Agency's New Publications
     goal: Identify the latest rules, proposed rules, and notices published by one agency.
     steps:
       - Request the newest documents and group them by document type.

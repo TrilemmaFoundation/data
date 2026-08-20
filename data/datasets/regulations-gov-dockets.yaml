@@ -77,7 +77,7 @@ getting_started:
       documents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(documents.head())
   first_project:
-    title: Track recent EPA proposed rules
+    title: Track Recent EPA Proposed Rules
     goal: Test whether v4 document search can power a bounded comment-period monitor.
     steps:
       - Keep document id, title, posted date, and comment-end date from the page.

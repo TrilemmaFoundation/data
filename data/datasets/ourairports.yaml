@@ -69,7 +69,7 @@ getting_started:
           ].head()
       )
   first_project:
-    title: Map large U.S. airports from the public-domain dump
+    title: Map Large U.S. Airports from the Public-Domain Dump
     goal: Test whether OurAirports can power a bounded aviation directory layer.
     steps:
       - Keep ident, name, municipality, and coordinates for U.S. large airports.

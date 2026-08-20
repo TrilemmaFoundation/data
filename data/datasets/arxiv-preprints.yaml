@@ -85,7 +85,7 @@ getting_started:
       preprints["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(preprints)
   first_project:
-    title: Watch recent machine-learning preprints
+    title: Watch Recent Machine-Learning Preprints
     goal: List five recent cs.LG submissions and their arXiv identifiers.
     steps:
       - Parse the Atom feed and confirm each entry has an id, title, and published date.

@@ -73,7 +73,7 @@ getting_started:
           ].head()
       )
   first_project:
-    title: Chart U.S. life expectancy at birth from GHO
+    title: Chart U.S. Life Expectancy at Birth from GHO
     goal: Test whether one WHO indicator can power a bounded national trend card.
     steps:
       - Keep year, sex dimension, and NumericValue for WHOSIS_000001 in the United States.

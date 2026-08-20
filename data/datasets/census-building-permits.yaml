@@ -99,7 +99,7 @@ getting_started:
           ].head(20)
       )
   first_project:
-    title: Rank counties by 2025 authorized housing units
+    title: Rank Counties by 2025 Authorized Housing Units
     goal: Test whether annual permit counts can power a bounded housing-supply comparison.
     steps:
       - Keep state FIPS, county FIPS, name, and the imputed 1-unit and 5-or-more-unit counts.

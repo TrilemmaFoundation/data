@@ -73,7 +73,7 @@ getting_started:
       problems["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(problems.head(20))
   first_project:
-    title: Summarize reported infusion-pump problems
+    title: Summarize Reported Infusion-Pump Problems
     goal: Identify the most frequently reported product-problem terms for one device type in a bounded year.
     steps:
       - Confirm the API returned product-problem counts for the generic-name query.

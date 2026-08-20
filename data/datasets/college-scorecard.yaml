@@ -81,7 +81,7 @@ getting_started:
       schools = pd.DataFrame(response.json()["results"])
       print(schools.head(20))
   first_project:
-    title: Compare in-state tuition and earnings for California colleges
+    title: Compare In-State Tuition and Earnings for California Colleges
     goal: Rank a bounded set of California institutions by in-state tuition and ten-year median earnings.
     steps:
       - Confirm the API returned the requested fields for a single state page.

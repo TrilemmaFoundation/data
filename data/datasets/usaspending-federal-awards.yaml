@@ -99,7 +99,7 @@ getting_started:
       awards["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(awards.head(20))
   first_project:
-    title: Rank recipients for one federal agency
+    title: Rank Recipients for One Federal Agency
     goal: Find which recipients account for the largest returned award amounts for one agency and fiscal period.
     steps:
       - Confirm the selected award types and whether the returned measure represents obligations or another spending concept.

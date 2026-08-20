@@ -88,7 +88,7 @@ getting_started:
       works["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(works[["id", "display_name", "publication_date", "cited_by_count", "primary_topic.display_name"]].head(20))
   first_project:
-    title: Track recent work on one research topic
+    title: Track Recent Work on One Research Topic
     goal: Identify newly indexed works about wildfire risk published during the last 30 days.
     steps:
       - Review the query and publication-date filter and retain stable OpenAlex IDs for deduplication.

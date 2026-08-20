@@ -70,7 +70,7 @@ getting_started:
       facilities = pd.DataFrame(response.json())
       print(facilities.head())
   first_project:
-    title: Map Colorado GHGRP facilities
+    title: Map Colorado GHGRP Facilities
     goal: Test whether facility records can power a bounded industrial-emissions locator.
     steps:
       - Keep facility identifier, name, county, and coordinates from the bounded extract.

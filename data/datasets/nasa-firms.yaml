@@ -81,7 +81,7 @@ getting_started:
       fires = pd.read_csv(url)
       print(fires[["latitude", "longitude", "acq_date", "frp"]].head())
   first_project:
-    title: Locate today's strongest thermal anomalies
+    title: Locate Today's Strongest Thermal Anomalies
     goal: Find where the latest day's highest-radiative-power detections cluster without treating them as confirmed fires.
     steps:
       - Convert acquisition date and time into one timestamp column.

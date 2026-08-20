@@ -1,5 +1,6 @@
 "use client";
 
+import { toChicagoTitleCase } from "@/lib/chicago-title-case";
 import {
   EMPTY_FILTERS,
   type DatasetFilters as Filters,
@@ -125,7 +126,7 @@ export function DatasetQuickFilters({
         <option value="">{filterCopy.allDifficultiesLabel}</option>
         {options.difficulties.map((difficulty) => (
           <option key={difficulty} value={difficulty}>
-            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            {toChicagoTitleCase(difficulty)}
           </option>
         ))}
       </FilterSelect>

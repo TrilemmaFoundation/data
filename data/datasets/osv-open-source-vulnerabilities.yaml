@@ -73,7 +73,7 @@ getting_started:
       advisories["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(advisories[["id", "summary", "published"]].head(20))
   first_project:
-    title: Check one pinned Python package for known advisories
+    title: Check One Pinned Python Package for Known Advisories
     goal: List OSV advisories that match a specific PyPI package version and note their aliases.
     steps:
       - Confirm the query returned vulnerability IDs for the pinned package version.

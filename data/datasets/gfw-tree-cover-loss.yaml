@@ -76,7 +76,7 @@ getting_started:
       loss["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(loss)
   first_project:
-    title: Rank countries by 2023 tree-cover loss
+    title: Rank Countries by 2023 Tree-Cover Loss
     goal: Test whether GFW country totals can power a bounded deforestation leaderboard.
     steps:
       - Confirm the query returned ISO3 codes and hectare totals for one loss year.

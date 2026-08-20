@@ -75,7 +75,7 @@ getting_started:
       opportunities["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(opportunities.head())
   first_project:
-    title: List posted climate grant opportunities
+    title: List Posted Climate Grant Opportunities
     goal: Test whether search2 can power a bounded federal-funding inbox.
     steps:
       - Keep opportunity number, title, agency, and close date from the bounded response.

@@ -85,7 +85,7 @@ getting_started:
       cities = pd.json_normalize(bindings)
       print(cities.head())
   first_project:
-    title: List a handful of U.S. cities from Wikidata
+    title: List a Handful of U.S. Cities from Wikidata
     goal: Test whether a bounded SPARQL query can seed a reference lookup table.
     steps:
       - Keep item IRI and English label for ten cities.

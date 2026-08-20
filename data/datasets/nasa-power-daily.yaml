@@ -80,7 +80,7 @@ getting_started:
       daily.index = pd.to_datetime(daily.index)
       print(daily.head())
   first_project:
-    title: Profile daily solar resource at one location
+    title: Profile Daily Solar Resource at One Location
     goal: Compare daily solar radiation and temperature for Phoenix during July 2025.
     steps:
       - Confirm parameter units and retrieve one month for a single coordinate in UTC.

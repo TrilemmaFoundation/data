@@ -73,7 +73,7 @@ getting_started:
       )
       print(observations[["observed_at_utc", "WSPD", "WVHT", "ATMP"]].head())
   first_project:
-    title: Monitor one Atlantic buoy
+    title: Monitor One Atlantic Buoy
     goal: Test whether a single station file can power a bounded wind-and-wave condition board.
     steps:
       - Convert the timestamp columns to UTC and drop rows missing wind speed or wave height.

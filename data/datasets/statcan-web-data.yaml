@@ -71,7 +71,7 @@ getting_started:
       series["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(series.head())
   first_project:
-    title: Chart a Canadian labour vector
+    title: Chart a Canadian Labour Vector
     goal: Test whether one WDS vector can power a bounded provincial-or-national labour sketch.
     steps:
       - Confirm twelve vector data points returned for the selected vector id.

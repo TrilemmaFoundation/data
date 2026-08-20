@@ -84,7 +84,7 @@ getting_started:
       events = pd.DataFrame(rows)
       print(events.head())
   first_project:
-    title: Count event types in one GitHub hour
+    title: Count Event Types in One GitHub Hour
     goal: Test whether a streamed hour can power a bounded activity monitor.
     steps:
       - Stream the first 50 events from one hourly gzip and keep type plus repository.

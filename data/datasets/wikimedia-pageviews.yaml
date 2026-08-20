@@ -75,7 +75,7 @@ getting_started:
       pageviews["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(pageviews[["timestamp", "views"]])
   first_project:
-    title: Chart one Wikipedia article's daily pageviews
+    title: Chart One Wikipedia Article's Daily Pageviews
     goal: Describe how views of one article moved across a seven-day window.
     steps:
       - Confirm the response includes daily view counts for the selected article and dates.

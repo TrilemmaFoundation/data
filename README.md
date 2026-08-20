@@ -73,8 +73,8 @@ when the canonical website changes.
 Content has two explicit sources of truth:
 
 - Shared application, navigation, accessibility, and SEO copy lives in
-  [`src/content/site-copy.ts`](src/content/site-copy.ts). Headers, subheaders,
-  and buttons use Chicago Title Case; body copy stays in sentence case.
+  [`src/content/site-copy.ts`](src/content/site-copy.ts). Non-description text
+  uses Chicago Title Case; descriptions and other body copy stay in sentence case.
 - Dataset descriptions and beginner guides live with their metadata in the
   corresponding [`data/datasets/*.yaml`](data/datasets) file.
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, KeyRound, Sparkles } from "lucide-react";
 import type { CatalogDataset } from "@/lib/schema";
+import { toChicagoTitleCase } from "@/lib/chicago-title-case";
 import { getSizeCategory } from "@/lib/size";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,7 +44,7 @@ export function DatasetCard({
             {dataset.difficulty === "beginner" && (
               <Sparkles className="text-secondary" aria-hidden="true" />
             )}
-            {dataset.difficulty}
+            {toChicagoTitleCase(dataset.difficulty)}
           </Badge>
           <span
             className={cn(

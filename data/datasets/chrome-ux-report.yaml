@@ -68,7 +68,7 @@ getting_started:
       record = pd.json_normalize(response.json())
       print(record)
   first_project:
-    title: Read one origin's Core Web Vitals
+    title: Read One Origin's Core Web Vitals
     goal: Test whether CrUX can power a bounded real-user performance card.
     steps:
       - Confirm p75 LCP, INP, and CLS fields returned for the origin.

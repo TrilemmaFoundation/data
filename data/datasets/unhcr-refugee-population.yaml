@@ -76,7 +76,7 @@ getting_started:
       population = pd.DataFrame(response.json()["items"])
       print(population[["year", "coo_name", "refugees", "asylum_seekers"]].head(20))
   first_project:
-    title: Compare displacement stocks by origin
+    title: Compare Displacement Stocks by Origin
     goal: Compare reported refugee and asylum-seeker stocks originating from Afghanistan and Ukraine from 2020 through 2024.
     steps:
       - Retrieve the bounded years and retain origin, asylum, and population-category fields.

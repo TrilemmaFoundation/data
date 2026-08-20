@@ -45,7 +45,7 @@ difficulty: beginner
 # Allowed values: beginner | intermediate | advanced
 
 geography:
-  - Not applicable
+  - Not Applicable
 temporal_coverage: null
 # Use a string like "1960-present" when applicable, otherwise null.
 update_frequency: continuous
@@ -97,7 +97,7 @@ getting_started:
     #   0
     # last_runtime_verified: YYYY-MM-DD
   first_project:
-    title: Replace with a specific project title
+    title: Replace with a Specific Project Title
     goal: Replace with one question that could validate a useful product signal.
     steps:
       - Inspect the first rows and keep a retrieval timestamp.

@@ -81,7 +81,7 @@ getting_started:
           ].head(20)
       )
   first_project:
-    title: Flag recent influenza A wastewater detections
+    title: Flag Recent Influenza A Wastewater Detections
     goal: Test whether recent site-level influenza A detections can power a bounded community alert.
     steps:
       - Inspect site, county, sample date, and pcr_target_detect for the latest rows.

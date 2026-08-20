@@ -91,7 +91,7 @@ getting_started:
       unemployment["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(unemployment)
   first_project:
-    title: Track one country's monthly unemployment rate
+    title: Track One Country's Monthly Unemployment Rate
     goal: Describe how Germany's seasonally adjusted monthly unemployment rate moved over the last twelve published periods.
     steps:
       - Confirm the JSON-stat response contains twelve time periods for the selected geo and adjustment filters.

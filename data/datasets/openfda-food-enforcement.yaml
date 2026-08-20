@@ -73,7 +73,7 @@ getting_started:
       recalls["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(recalls[["recalling_firm", "product_description", "reason_for_recall", "report_date"]].head(20))
   first_project:
-    title: Summarize Class I food recalls in one year
+    title: Summarize Class I Food Recalls in One Year
     goal: Identify which firms and reasons appear most often in Class I food-enforcement reports for a bounded calendar year.
     steps:
       - Confirm the API returned classified enforcement reports for the selected year and Class I filter.

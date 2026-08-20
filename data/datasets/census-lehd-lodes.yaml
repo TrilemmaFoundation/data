@@ -65,7 +65,7 @@ getting_started:
       )
       print(jobs.head())
   first_project:
-    title: Inspect Vermont LODES job flows
+    title: Inspect Vermont LODES Job Flows
     goal: Test whether a one-state OD extract can power a bounded commute sketch.
     steps:
       - Keep workplace geocode, residence geocode, and total jobs from the first rows.

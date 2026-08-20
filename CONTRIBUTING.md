@@ -32,9 +32,10 @@ as direct actions and end the first project with an interpretation or limitation
 Shared product, navigation, accessibility, and SEO copy lives in
 [`src/content/site-copy.ts`](src/content/site-copy.ts). Changes there are
 application changes and should be submitted separately from a new dataset.
-Keep shared copy concise, practical, and free of hype. Headers, subheaders,
-and buttons use Chicago Title Case; body copy and instructional labels stay in
-sentence case. Dynamic phrases such as result counts stay in the typed helper
+Keep shared copy concise, practical, and free of hype. Non-description text
+(headers, labels, buttons, chips, and first-project titles) uses Chicago Title
+Case; descriptions, summaries, overviews, and other body copy stay in sentence
+case. Dynamic phrases such as result counts stay in the typed helper
 functions in that file so singular, plural, and accessibility wording remain
 consistent.
 
@@ -93,6 +94,9 @@ Do **not** add:
   `weekly`, `monthly`, `quarterly`, `annual`, or `occasional`
 - `getting_started` must include an overview, prerequisites, access steps,
   Python packages and code, and a small first project
+- Dataset `name`, collection titles, and `getting_started.first_project.title`
+  use Chicago Title Case. Descriptions, overviews, goals, and steps stay in
+  sentence case
 - The first project must contain at least three distinct, actionable steps
   and end with an interpretation or limitation
 - Descriptions must be one sentence, at least 12 words, and include a `for`

@@ -79,7 +79,7 @@ getting_started:
       income = pd.DataFrame(rows)
       print(income[["GeoName", "TimePeriod", "DataValue", "Unit"]].head(20))
   first_project:
-    title: Compare recent state personal-income estimates
+    title: Compare Recent State Personal-Income Estimates
     goal: Compare the selected BEA personal-income line across California, Texas, and New York.
     steps:
       - Confirm the table, line code, frequency, unit, and most recent five available periods.

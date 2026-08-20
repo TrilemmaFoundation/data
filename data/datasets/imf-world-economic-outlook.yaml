@@ -69,7 +69,7 @@ getting_started:
       growth = pd.DataFrame(values).sort_index()
       print(growth.tail(10))
   first_project:
-    title: Compare three country growth outlooks
+    title: Compare Three Country Growth Outlooks
     goal: Compare recent and projected real GDP growth for the United States, Germany, and Japan.
     steps:
       - Record the WEO release and retrieve only the real GDP growth indicator for three countries.

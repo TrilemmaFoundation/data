@@ -86,7 +86,7 @@ getting_started:
       columns = ["noticeId", "title", "postedDate", "responseDeadLine", "naicsCode", "active"]
       print(opportunities.reindex(columns=columns).head(20))
   first_project:
-    title: Monitor software contract opportunities
+    title: Monitor Software Contract Opportunities
     goal: Identify currently active notices for one NAICS code that still have time before their response deadline.
     steps:
       - Filter the bounded response to active notices and parse available response deadlines.

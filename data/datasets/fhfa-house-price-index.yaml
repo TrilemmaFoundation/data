@@ -74,7 +74,7 @@ getting_started:
       state_prices["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(state_prices[["place_name", "yr", "period", "index_nsa", "index_sa"]].tail(24))
   first_project:
-    title: Compare recent state house-price indexes
+    title: Compare Recent State House-Price Indexes
     goal: Describe how purchase-only monthly indexes moved for three states over the last two years.
     steps:
       - Filter the master file to purchase-only monthly state series and confirm the date range.

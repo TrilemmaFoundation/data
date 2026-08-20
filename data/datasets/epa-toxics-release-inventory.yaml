@@ -70,7 +70,7 @@ getting_started:
       facilities["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(facilities.head())
   first_project:
-    title: Map reporting TRI facilities in one state
+    title: Map Reporting TRI Facilities in One State
     goal: Test whether a short facility extract can support a local fenceline directory.
     steps:
       - Keep facility name, city, ZIP, and coordinates and drop closed sites when a closure flag is present.

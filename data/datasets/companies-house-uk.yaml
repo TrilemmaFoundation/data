@@ -71,7 +71,7 @@ getting_started:
       profile = pd.json_normalize(response.json())
       print(profile.filter(regex="company_name|company_number|company_status|sic").head())
   first_project:
-    title: Look up one UK company's status and SIC codes
+    title: Look Up One UK Company's Status and SIC Codes
     goal: Test whether the public register can power a company-status card.
     steps:
       - Keep company number, name, status, and SIC codes.

@@ -81,7 +81,7 @@ getting_started:
       stocks["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(stocks[["period", "duoarea", "product-name", "value", "units"]].head())
   first_project:
-    title: Track U.S. crude oil weekly stocks
+    title: Track U.S. Crude Oil Weekly Stocks
     goal: Test whether a short crude-stocks window can power an inventory-change alert.
     steps:
       - Sort by period and compute week-to-week stock changes.

@@ -81,7 +81,7 @@ getting_started:
       bindings["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(bindings)
   first_project:
-    title: Resolve one EU regulation by CELEX identifier
+    title: Resolve One EU Regulation by CELEX Identifier
     goal: Test whether a Cellar lookup can power a bounded EU-act watch card.
     steps:
       - Confirm that the returned work URI matches CELEX 32016R0679 and keep the document date.

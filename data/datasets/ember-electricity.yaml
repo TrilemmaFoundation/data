@@ -78,7 +78,7 @@ getting_started:
       generation["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(generation.head(20))
   first_project:
-    title: Compare U.S. and German yearly generation mix
+    title: Compare U.S. and German Yearly Generation Mix
     goal: Test whether Ember yearly generation can power a bounded energy-transition comparison.
     steps:
       - Repeat the request for DEU and keep comparable series such as coal, gas, wind, and solar.

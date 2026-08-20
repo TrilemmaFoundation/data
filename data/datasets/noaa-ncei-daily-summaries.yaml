@@ -91,7 +91,7 @@ getting_started:
       hot_days = hot_days.assign(retrieved_at_utc=pd.Timestamp.now(tz="UTC"))
       print(hot_days[["DATE", "TMAX", "TMAX_ATTRIBUTES"]].head(20))
   first_project:
-    title: Count hot days at one weather station
+    title: Count Hot Days at One Weather Station
     goal: Count days with a maximum temperature of at least 90 degrees Fahrenheit at one station in 2025.
     steps:
       - Verify the station, standard-unit setting, calendar-year coverage, and temperature threshold.

@@ -80,7 +80,7 @@ getting_started:
       cafes = pd.json_normalize(response.json()["elements"])
       print(cafes.filter(regex="id|lat|lon|tags.name").head())
   first_project:
-    title: List cafes inside a Manhattan bounding box
+    title: List Cafes inside a Manhattan Bounding Box
     goal: Test whether a bounded Overpass query can power a neighborhood amenity list.
     steps:
       - Keep OSM id, coordinates, and name for up to 20 cafes.

@@ -66,7 +66,7 @@ getting_started:
       xml["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(xml.head())
   first_project:
-    title: Build an exact-name UN list lookup
+    title: Build an Exact-Name UN List Lookup
     goal: Test whether primary individual names can support a bounded screening prototype.
     steps:
       - Load individuals and keep DATAID plus first and last name fields.

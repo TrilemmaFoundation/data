@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowDown, ArrowUp, ArrowUpDown, KeyRound } from "lucide-react";
+import { toChicagoTitleCase } from "@/lib/chicago-title-case";
 import type { CatalogDataset } from "@/lib/schema";
 import {
   getDatasetAccessMethods,
@@ -183,13 +184,13 @@ export function DatasetTable({
                 </p>
               </TableCell>
               <TableCell>
-                <span className="text-xs font-medium capitalize whitespace-nowrap text-white/85">
-                  {dataset.difficulty}
+                <span className="text-xs font-medium whitespace-nowrap text-white/85">
+                  {toChicagoTitleCase(dataset.difficulty)}
                 </span>
               </TableCell>
               <TableCell>
-                <span className="text-xs font-medium capitalize whitespace-nowrap text-white/85">
-                  {dataset.update_frequency}
+                <span className="text-xs font-medium whitespace-nowrap text-white/85">
+                  {toChicagoTitleCase(dataset.update_frequency)}
                 </span>
               </TableCell>
             </TableRow>

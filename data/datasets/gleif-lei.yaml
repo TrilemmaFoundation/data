@@ -71,7 +71,7 @@ getting_started:
       records = pd.json_normalize(response.json()["data"])
       print(records.filter(regex="id|legalName|jurisdiction|status").head())
   first_project:
-    title: Look up one legal entity by LEI
+    title: Look Up One Legal Entity by LEI
     goal: Test whether GLEIF can power a company-identity card from a single identifier.
     steps:
       - Keep the LEI, legal name, jurisdiction, and registration status.

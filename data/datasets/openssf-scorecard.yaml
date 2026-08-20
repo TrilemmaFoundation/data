@@ -71,7 +71,7 @@ getting_started:
       print(payload.get("repo"), payload.get("score"))
       print(checks[["name", "score", "reason"]].head(10))
   first_project:
-    title: Review one repository's Scorecard checks
+    title: Review One Repository's Scorecard Checks
     goal: Decide whether Scorecard can support an accept-or-review rule for a new dependency.
     steps:
       - Store the aggregate score and the Dangerous-Workflow, Branch-Protection, and Maintained checks.

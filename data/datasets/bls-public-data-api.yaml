@@ -84,7 +84,7 @@ getting_started:
       cpi["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(cpi[["date", "value", "change_12m_pct", "retrieved_at_utc"]].tail(12))
   first_project:
-    title: Calculate a 12-month CPI change
+    title: Calculate a 12-Month CPI Change
     goal: Calculate the 12-month percentage change in the not-seasonally-adjusted U.S. city average CPI-U series.
     steps:
       - Confirm that CUUR0000SA0 is the intended CPI-U series and record its units and not-seasonally-adjusted status.

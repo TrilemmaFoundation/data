@@ -78,7 +78,7 @@ getting_started:
       recalls["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(recalls[["NHTSACampaignNumber", "Component", "ReportReceivedDate"]])
   first_project:
-    title: Build a vehicle recall lookup
+    title: Build a Vehicle Recall Lookup
     goal: Determine which safety campaigns apply to one exact vehicle configuration.
     steps:
       - Query one model year, make, and model and remove duplicate campaign numbers.

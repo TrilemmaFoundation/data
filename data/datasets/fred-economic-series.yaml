@@ -83,7 +83,7 @@ getting_started:
       print(unemployment[["date", "value", "realtime_start"]].tail(12))
       print(inflation[["date", "value", "realtime_start"]].tail(12))
   first_project:
-    title: Build a two-series economic release monitor
+    title: Build a Two-Series Economic Release Monitor
     goal: Track recent unemployment and consumer-price observations with their metadata and vintage dates.
     steps:
       - Record each series source, units, frequency, seasonal adjustment, and permitted use.

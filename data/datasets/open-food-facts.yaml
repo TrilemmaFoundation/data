@@ -75,7 +75,7 @@ getting_started:
       product = pd.json_normalize(response.json()["product"])
       print(product.filter(regex="code|product_name|nutriscore|brands").head())
   first_project:
-    title: Look up one packaged food by barcode
+    title: Look Up One Packaged Food by Barcode
     goal: Test whether Open Food Facts can power a bounded product-fact card.
     steps:
       - Keep barcode, product name, brands, and Nutri-Score.

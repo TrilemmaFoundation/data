@@ -4,9 +4,9 @@ export const siteCopy = {
   name: "Trilemma Data",
   productLabel: "Data",
   foundationName: "Trilemma Foundation",
-  foundationAriaLabel: "Trilemma Foundation main website",
+  foundationAriaLabel: "Trilemma Foundation Main Website",
   primaryNavigationLabel: "Primary",
-  mobileNavigationLabel: "Mobile primary",
+  mobileNavigationLabel: "Mobile Primary",
   datasetsNavigationLabel: "Datasets",
   collectionsNavigationLabel: "Build Paths",
   contributeLabel: "Contribute",
@@ -38,7 +38,7 @@ export const catalogCopy = {
   heroTitle: "Choose a Dataset. Build a Microproduct.",
   heroTrust: (count: number, verified: string) =>
     `${count} actively maintained guides. Oldest source review ${verified}.`,
-  searchLabel: "Search by topic, provider, or product use",
+  searchLabel: "Search by Topic, Provider, or Product Use",
   searchPlaceholder: "Try “weather” or “filings”",
   recommendedDatasetId: "nws-weather-api",
   catalogEyebrow: "Dataset Catalog",
@@ -47,9 +47,9 @@ export const catalogCopy = {
     "Opinionated collections for a first prototype. Each path names the job, not just the domain.",
   catalogSectionTitle: "Browse the Full Catalog",
   viewCollectionLabel: "Open Path",
-  datasetCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
-  activeFiltersAriaLabel: "Active filters",
-  noApiKeyChipLabel: "No API key",
+  datasetCount: (count: number) => `${count} Dataset${count === 1 ? "" : "s"}`,
+  activeFiltersAriaLabel: "Active Filters",
+  noApiKeyChipLabel: "No API Key",
   emptyTitle: "No Datasets Match Those Filters",
   emptyDescription: "Broaden your search or remove a filter to see more sources.",
   clearFiltersLabel: "Clear Filters",
@@ -57,10 +57,10 @@ export const catalogCopy = {
   drawerDescription:
     "Refine the catalog by theme, difficulty, access, type, domain, task, size, format, and geography.",
   closeFiltersLabel: "Close Filters",
-  resultCount: (count: number) => `${count} dataset${count === 1 ? "" : "s"}`,
+  resultCount: (count: number) => `${count} Dataset${count === 1 ? "" : "s"}`,
   resultStatus: (count: number) =>
-    `${catalogCopy.resultCount(count)} found`,
-  paginationLabel: "Dataset catalog pages",
+    `${catalogCopy.resultCount(count)} Found`,
+  paginationLabel: "Dataset Catalog Pages",
   previousPageLabel: "Previous",
   nextPageLabel: "Next",
   pageLabel: (page: number) => `Page ${page}`,
@@ -74,7 +74,7 @@ export const catalogCopy = {
       : `Page ${page} of ${totalPages}, showing ${start}–${end} of ${total} datasets.`,
   showResults: (count: number) =>
     `Show ${count} Dataset${count === 1 ? "" : "s"}`,
-  removeFilter: (label: string) => `Remove ${label} filter`,
+  removeFilter: (label: string) => `Remove ${label} Filter`,
 } as const;
 
 export const filterChipPrefixes = {
@@ -123,7 +123,7 @@ export const tableCopy = {
   difficultyLabel: "Difficulty",
   updatesLabel: "Updates",
   freeKeyLabel: "Key",
-  noKeyLabel: "No key",
+  noKeyLabel: "No Key",
   accessApiLabel: "API",
   accessDownloadLabel: "Download",
   accessBothLabel: "API+DL",
@@ -137,19 +137,19 @@ export const tableCopy = {
     "Technology & Cybersecurity": "Technology",
     "Demographics & Development": "Demographics",
   } satisfies Record<DatasetTheme, string>,
-  moreFormats: (count: number) => `${count} more format${count === 1 ? "" : "s"}`,
+  moreFormats: (count: number) => `${count} More Format${count === 1 ? "" : "s"}`,
   sortBy: (column: string, current: false | "asc" | "desc") =>
     current === "asc"
-      ? `Sort ${column} descending`
+      ? `Sort ${column} Descending`
       : current === "desc"
-        ? `Restore default order`
-        : `Sort ${column} ascending`,
+        ? `Restore Default Order`
+        : `Sort ${column} Ascending`,
 } as const;
 
 export const datasetCardCopy = {
-  goodFirstBuildLabel: "Good first build",
-  apiKeyRequiredLabel: "Free API key required",
-  noApiKeyLabel: "No API key required",
+  goodFirstBuildLabel: "Good First Build",
+  apiKeyRequiredLabel: "Free API Key Required",
+  noApiKeyLabel: "No API Key Required",
   viewGuideLabel: "View Guide",
   firstProjectLabel: "First Project",
   apiKeyStatus: (required: boolean) =>
@@ -201,9 +201,9 @@ export const datasetGuideCopy = {
   registrationRequiredLabel: "Required",
   registrationNotRequiredLabel: "Not Required",
   setupMinutes: (minutes: number) => `${minutes} min`,
-  pythonSyntaxLabel: "Python syntax checked",
-  notebookLabel: "Runnable notebook",
-  runtimeVerifiedLabel: (date: string) => `Runtime verified ${date}`,
+  pythonSyntaxLabel: "Python Syntax Checked",
+  notebookLabel: "Runnable Notebook",
+  runtimeVerifiedLabel: (date: string) => `Runtime Verified ${date}`,
   expectedOutputTitle: "Expected Output",
   relatedTitle: "Related Datasets",
   colabLabel: "Open in Colab",
@@ -218,7 +218,7 @@ export const datasetGuideCopy = {
   accessTitle: "Access the Data",
   pythonTitle: "Run the Python Example",
   pythonDescription: "Install the packages, then run the notebook cell.",
-  pythonExampleAriaLabel: "Python example",
+  pythonExampleAriaLabel: "Python Example",
   firstProjectEyebrow: "Test a Useful Signal",
   detailsTitle: "Dataset Details",
   conceptLabels: {
@@ -318,7 +318,7 @@ export const contributeCopy = {
   errorsLabel: "Validation Issues",
   downloadLabel: "Download YAML",
   copyYamlLabel: "Copy YAML",
-  copiedYamlLabel: "YAML copied",
+  copiedYamlLabel: "YAML Copied",
   githubLabel: "Open Contribution Guide",
   pythonNotice:
     "Python syntax, live URL, and provider checks still run in repository CI. This studio never executes submitted code.",
@@ -329,7 +329,7 @@ export const contributeCopy = {
 export const copyButtonCopy = {
   idleLabel: "Copy Python",
   copiedLabel: "Copied",
-  errorLabel: "Try again",
+  errorLabel: "Try Again",
   copiedAnnouncement: "Python code copied to clipboard.",
   errorAnnouncement: "Copy failed. Select the code and copy it manually.",
 } as const;

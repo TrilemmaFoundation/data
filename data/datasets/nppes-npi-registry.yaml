@@ -76,7 +76,7 @@ getting_started:
       results["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(results.head(10))
   first_project:
-    title: Map public NPIs in one city
+    title: Map Public NPIs in One City
     goal: List a bounded set of Baltimore providers and their primary taxonomies from the v2.1 registry.
     steps:
       - Confirm the response used version 2.1 and returned basic provider names and addresses.

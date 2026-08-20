@@ -80,7 +80,7 @@ getting_started:
       zones["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(zones.head())
   first_project:
-    title: Look up the effective flood zone for one address point
+    title: Look Up the Effective Flood Zone for One Address Point
     goal: Test whether a single geocoded point can power a bounded flood-risk screen.
     steps:
       - Query Flood Hazard Zones for one point and keep FLD_ZONE and SFHA_TF.

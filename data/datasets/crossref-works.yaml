@@ -75,7 +75,7 @@ getting_started:
       works = pd.json_normalize(response.json()["message"]["items"])
       print(works[["DOI", "publisher", "type"]].head(20))
   first_project:
-    title: Monitor recent deposits about one topic
+    title: Monitor Recent Deposits about One Topic
     goal: Identify DOI records about wildfire risk deposited during the last 30 days.
     steps:
       - Retrieve a bounded result set and deduplicate records by DOI.

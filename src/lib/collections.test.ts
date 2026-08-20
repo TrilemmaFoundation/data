@@ -29,7 +29,7 @@ function makeTempDir(): string {
 
 const validYaml = `
 id: first-builds
-title: Start with a first microproduct
+title: Start with a First Microproduct
 summary: Beginner sources with a small first project you can finish today.
 curator: Trilemma Data
 last_updated: 2026-08-19
@@ -87,7 +87,7 @@ describe("collections", () => {
     fs.writeFileSync(path.join(duplicates, "first-builds.yaml"), validYaml);
     fs.writeFileSync(
       path.join(duplicates, "other.yaml"),
-      validYaml.replace("title: Start with a first microproduct", "title: Other"),
+      validYaml.replace("title: Start with a First Microproduct", "title: Other"),
     );
     expect(
       loadCollections(duplicates).errors.flatMap((error) => error.messages).some((message) =>

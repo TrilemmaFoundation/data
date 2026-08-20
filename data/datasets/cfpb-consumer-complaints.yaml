@@ -77,7 +77,7 @@ getting_started:
       complaints["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(complaints[["company", "product", "issue", "date_received"]].head(20))
   first_project:
-    title: Monitor mortgage complaints in one state
+    title: Monitor Mortgage Complaints in One State
     goal: Identify which companies appear most often in recent California mortgage complaints.
     steps:
       - Confirm the API returned complaint records for the Mortgage product and CA state filter.

@@ -83,7 +83,7 @@ getting_started:
       filings = pd.DataFrame(payload["filings"]["recent"])
       print(filings[["filingDate", "form", "accessionNumber", "primaryDocument"]].head())
   first_project:
-    title: Build a material-filing watchlist
+    title: Build a Material-Filing Watchlist
     goal: Determine whether recent 8-K, 10-Q, and 10-K filings can power a timely company-disclosure alert.
     steps:
       - Filter the recent filing history to 8-K, 10-Q, 10-K, and amended versions of those forms.

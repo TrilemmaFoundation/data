@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
+import { isChicagoTitleCase, toChicagoTitleCase } from "./chicago-title-case";
 import { HttpsUrlSchema, uniqueStrings } from "./schema";
 
 const COLLECTIONS_DIR = path.join(process.cwd(), "data", "collections");
@@ -114,6 +115,11 @@ export function loadCollections(dir: string = COLLECTIONS_DIR): {
     }
 
     const collection = parsed.data;
+    if (!isChicagoTitleCase(collection.title)) {
+      messages.push(
+        `title must use Chicago Title Case ("${toChicagoTitleCase(collection.title)}")`,
+      );
+    }
     if (collection.id !== idFromFilename) {
       messages.push(`id "${collection.id}" must match filename "${idFromFilename}"`);
     }

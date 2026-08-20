@@ -1,3 +1,4 @@
+import { datasetCardCopy, datasetGuideCopy } from "../content/site-copy";
 import type { Dataset } from "./schema";
 import { isActiveDataset } from "./schema";
 import { SITE_URL, datasetPath } from "./seo";
@@ -91,18 +92,18 @@ export function notebookFromDataset(dataset: Dataset): Record<string, unknown> {
         ...dataset.getting_started.prerequisites.map((item) => `- ${item}`),
       ]),
       markdownCell([
-        "## Access the data",
+        `## ${datasetGuideCopy.accessTitle}`,
         "",
         ...dataset.getting_started.access_steps.map(
           (step, index) => `${index + 1}. ${step}`,
         ),
       ]),
-      markdownCell(["## Install packages", "", "Run this cell first."]),
+      markdownCell(["## Install Packages", "", "Run this cell first."]),
       codeCell([`# ${install}`, install]),
-      markdownCell(["## Python example"]),
+      markdownCell([`## ${datasetGuideCopy.pythonExampleAriaLabel}`]),
       codeCell(codeLines),
       markdownCell([
-        `## First project: ${dataset.getting_started.first_project.title}`,
+        `## ${datasetCardCopy.firstProjectLabel}: ${dataset.getting_started.first_project.title}`,
         "",
         dataset.getting_started.first_project.goal.trim(),
         "",

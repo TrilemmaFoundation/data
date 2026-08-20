@@ -79,7 +79,7 @@ getting_started:
       gdp = pd.DataFrame(rows)[["countryiso3code", "date", "value"]]
       print(gdp.dropna().head())
   first_project:
-    title: Compare GDP per person over time
+    title: Compare GDP per Person over Time
     goal: Compare long-term GDP-per-capita patterns for three countries while accounting for missing observations.
     steps:
       - Filter the API result to three countries and convert year to an integer.

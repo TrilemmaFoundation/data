@@ -78,7 +78,7 @@ getting_started:
       opinions["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(opinions.head())
   first_project:
-    title: List recent Ninth Circuit opinions
+    title: List Recent Ninth Circuit Opinions
     goal: Test whether GovInfo search can power a bounded federal-opinion inbox.
     steps:
       - Keep package id, title, and dateIssued from the search page.

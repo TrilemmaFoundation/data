@@ -74,7 +74,7 @@ getting_started:
       print(version.json()["versionKey"])
       print(graph.head(20))
   first_project:
-    title: Map one package version's resolved dependencies
+    title: Map One Package Version's Resolved Dependencies
     goal: Test whether a deps.dev graph can power a bounded supply-chain inventory.
     steps:
       - Confirm the version key and list direct versus indirect nodes when relation fields exist.

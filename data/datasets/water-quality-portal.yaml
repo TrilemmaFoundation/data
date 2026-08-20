@@ -90,7 +90,7 @@ getting_started:
           ].head(20)
       )
   first_project:
-    title: Chart recent nitrate samples at one Potomac gauge
+    title: Chart Recent Nitrate Samples at One Potomac Gauge
     goal: Test whether discrete nitrate results can power a bounded watershed-quality monitor.
     steps:
       - Convert ResultMeasureValue to numeric and keep the activity date, unit, and detection-condition text.

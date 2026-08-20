@@ -33,17 +33,17 @@ export function formatVerifiedDate(isoDate: string): string {
 export function sourceTypeLabel(sourceType: Dataset["source_type"]): string {
   switch (sourceType) {
     case "government":
-      return "Government source";
+      return "Government Source";
     case "intergovernmental":
-      return "Intergovernmental source";
+      return "Intergovernmental Source";
     case "academic":
-      return "Academic source";
+      return "Academic Source";
     case "nonprofit":
-      return "Nonprofit source";
+      return "Nonprofit Source";
     case "company":
-      return "Company source";
+      return "Company Source";
     case "community":
-      return "Community source";
+      return "Community Source";
   }
 }
 
@@ -52,7 +52,7 @@ export function catalogStatusLabel(status: CatalogStatus): string {
     case "active":
       return "Active";
     case "temporarily_unavailable":
-      return "Temporarily unavailable";
+      return "Temporarily Unavailable";
     case "deprecated":
       return "Deprecated";
   }
@@ -61,11 +61,11 @@ export function catalogStatusLabel(status: CatalogStatus): string {
 export function frictionLabel(friction: FrictionLevel): string {
   switch (friction) {
     case "low":
-      return "Low setup friction";
+      return "Low Setup Friction";
     case "medium":
-      return "Medium setup friction";
+      return "Medium Setup Friction";
     case "high":
-      return "High setup friction";
+      return "High Setup Friction";
   }
 }
 

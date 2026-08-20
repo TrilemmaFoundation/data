@@ -65,7 +65,7 @@ getting_started:
       )
       print(co2[["date", "average", "deseasonalized"]].tail())
   first_project:
-    title: Chart Mauna Loa monthly CO2
+    title: Chart Mauna Loa Monthly CO2
     goal: Test whether the monthly file can power a simple concentration-trend monitor.
     steps:
       - Drop rows where the monthly average is a missing-value sentinel.

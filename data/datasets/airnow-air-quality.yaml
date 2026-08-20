@@ -96,7 +96,7 @@ getting_started:
       columns = ["UTC", "Parameter", "AQI", "Category", "Latitude", "Longitude"]
       print(observations.reindex(columns=columns).head(20))
   first_project:
-    title: Relay official AQI observations for one area
+    title: Relay Official AQI Observations for One Area
     goal: Display the latest official AirNow AQI values and categories returned for a small geographic area.
     steps:
       - Keep the most recent observation per monitoring site and pollutant without recalculating its AQI or category.

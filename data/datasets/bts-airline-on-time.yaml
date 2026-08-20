@@ -78,7 +78,7 @@ getting_started:
       on_time["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(on_time.head(20))
   first_project:
-    title: Compare arrival delays for a handful of origin airports
+    title: Compare Arrival Delays for a Handful of Origin Airports
     goal: Describe typical arrival delay and cancellation rates from a bounded monthly sample.
     steps:
       - Load the selected columns from one monthly ZIP and confirm origin, airline, delay, and cancellation fields parsed.

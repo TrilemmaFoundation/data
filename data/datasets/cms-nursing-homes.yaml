@@ -84,7 +84,7 @@ getting_started:
           ].head(20)
       )
   first_project:
-    title: Compare nursing homes within one state
+    title: Compare Nursing Homes within One State
     goal: Summarize Five-Star ratings and staffing for facilities in one state.
     steps:
       - Filter records by state while preserving CMS Certification Numbers as text.

@@ -74,7 +74,7 @@ getting_started:
       accidents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(accidents.head())
   first_project:
-    title: List recent U.S. aviation accidents
+    title: List Recent U.S. Aviation Accidents
     goal: Test whether an NTSB extract can power a bounded safety-event inbox.
     steps:
       - Keep NTSB number, event date, location, and injury severity from the extract.

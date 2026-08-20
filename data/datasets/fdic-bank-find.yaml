@@ -78,7 +78,7 @@ getting_started:
       )
       print(banks[["NAME", "CERT", "CITY", "STALP", "ACTIVE"]].head())
   first_project:
-    title: List active FDIC-insured institutions in one state
+    title: List Active FDIC-Insured Institutions in One State
     goal: Test whether BankFind can power a bounded state bank directory.
     steps:
       - Keep certificate number, name, city, and active flag.

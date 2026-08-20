@@ -68,7 +68,7 @@ getting_started:
       awards["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(awards[["id", "title", "awardeeName", "estimatedTotalAmt"]].head())
   first_project:
-    title: List recent NSF quantum awards
+    title: List Recent NSF Quantum Awards
     goal: Test whether a keyword search can power a bounded funding inbox.
     steps:
       - Keep award id, title, awardee, and estimated total amount from the first page.

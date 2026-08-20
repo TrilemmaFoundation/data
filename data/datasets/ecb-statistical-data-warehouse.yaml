@@ -78,7 +78,7 @@ getting_started:
       rates = pd.DataFrame(rows)
       print(rates)
   first_project:
-    title: Chart recent USD per EUR reference rates
+    title: Chart Recent USD per EUR Reference Rates
     goal: Test whether one ECB series can power a bounded FX monitor.
     steps:
       - Keep observation dates and USD-per-EUR values from the EXR dataflow.

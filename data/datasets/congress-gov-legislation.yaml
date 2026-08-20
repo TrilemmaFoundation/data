@@ -73,7 +73,7 @@ getting_started:
       bills = pd.json_normalize(response.json()["bills"])
       print(bills[["congress", "type", "number", "title", "updateDate"]].head(20))
   first_project:
-    title: Monitor recently updated legislation
+    title: Monitor Recently Updated Legislation
     goal: Identify bills in the 119th Congress updated since July 2026 and group them by bill type.
     steps:
       - Retrieve one bounded page and preserve the complete bill identity and update timestamp.

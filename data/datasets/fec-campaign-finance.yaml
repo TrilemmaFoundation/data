@@ -81,7 +81,7 @@ getting_started:
       totals["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(totals[["name", "party_full", "state", "receipts", "disbursements"]].head(20))
   first_project:
-    title: Rank House candidates by reported receipts
+    title: Rank House Candidates by Reported Receipts
     goal: Identify which active House candidates reported the largest receipts in one election cycle.
     steps:
       - Confirm the totals endpoint returned committee-level receipts and disbursements, not contributor names.

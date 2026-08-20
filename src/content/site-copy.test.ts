@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getAllDatasets } from "../lib/datasets";
+import { isChicagoTitleCase } from "../lib/chicago-title-case";
 import * as copyModule from "./site-copy";
 import {
   accessTypeLabels,
@@ -47,16 +48,37 @@ describe("site copy", () => {
     expect(values.every((value) => value.trim().length > 0)).toBe(true);
   });
 
+  it("uses Chicago Title Case for labels, titles, and navigation", () => {
+    const values = collectStrings([
+      filterCopy,
+      filterChipPrefixes,
+      datasetCardCopy,
+      accessTypeLabels,
+    ]);
+    for (const value of values) {
+      expect(isChicagoTitleCase(value), value).toBe(true);
+    }
+    expect(isChicagoTitleCase(siteCopy.mobileNavigationLabel)).toBe(true);
+    expect(isChicagoTitleCase(siteCopy.foundationAriaLabel)).toBe(true);
+    expect(isChicagoTitleCase(catalogCopy.searchLabel)).toBe(true);
+    expect(isChicagoTitleCase(catalogCopy.activeFiltersAriaLabel)).toBe(true);
+    expect(isChicagoTitleCase(catalogCopy.paginationLabel)).toBe(true);
+    expect(isChicagoTitleCase(datasetGuideCopy.pythonSyntaxLabel)).toBe(true);
+    expect(isChicagoTitleCase(datasetGuideCopy.notebookLabel)).toBe(true);
+    expect(isChicagoTitleCase(copyButtonCopy.errorLabel)).toBe(true);
+    expect(isChicagoTitleCase(contributeCopy.copiedYamlLabel)).toBe(true);
+  });
+
   it("does not export retired compare or shortlist copy", () => {
     expect(copyModule).not.toHaveProperty("compareCopy");
     expect(copyModule).not.toHaveProperty("shortlistCopy");
   });
 
   it("formats result counts and accessibility labels", () => {
-    expect(catalogCopy.resultCount(0)).toBe("0 datasets");
-    expect(catalogCopy.resultCount(1)).toBe("1 dataset");
-    expect(catalogCopy.resultCount(5)).toBe("5 datasets");
-    expect(catalogCopy.resultStatus(1)).toBe("1 dataset found");
+    expect(catalogCopy.resultCount(0)).toBe("0 Datasets");
+    expect(catalogCopy.resultCount(1)).toBe("1 Dataset");
+    expect(catalogCopy.resultCount(5)).toBe("5 Datasets");
+    expect(catalogCopy.resultStatus(1)).toBe("1 Dataset Found");
     expect(catalogCopy.showResults(1)).toBe("Show 1 Dataset");
     expect(catalogCopy.showResults(5)).toBe("Show 5 Datasets");
     expect(catalogCopy.pageSummary(1, 8, 1, 8)).toBe("Page 1 of 8 · Showing 1–8");
@@ -68,10 +90,10 @@ describe("site copy", () => {
       "Page 2 of 2, showing 9 of 9 datasets.",
     );
     expect(catalogCopy.removeFilter("Domain: Economics")).toBe(
-      "Remove Domain: Economics filter",
+      "Remove Domain: Economics Filter",
     );
     expect(catalogCopy.heroTrust(141, "Aug 11, 2026")).toContain("141");
-    expect(catalogCopy.datasetCount(1)).toBe("1 dataset");
+    expect(catalogCopy.datasetCount(1)).toBe("1 Dataset");
     expect(collectionsCopy.updatedLabel("2026-08-19")).toContain("2026-08-19");
     expect(datasetGuideCopy.setupMinutes(10)).toBe("10 min");
     expect(datasetGuideCopy.runtimeVerifiedLabel("Aug 19, 2026")).toContain("Aug 19");
@@ -113,8 +135,8 @@ describe("site copy", () => {
   });
 
   it("formats API-key and dataset-detail states", () => {
-    expect(datasetCardCopy.apiKeyStatus(true)).toBe("Free API key required");
-    expect(datasetCardCopy.apiKeyStatus(false)).toBe("No API key required");
+    expect(datasetCardCopy.apiKeyStatus(true)).toBe("Free API Key Required");
+    expect(datasetCardCopy.apiKeyStatus(false)).toBe("No API Key Required");
     expect(
       datasetGuideCopy.detailsSummary({
         provider: "World Bank",

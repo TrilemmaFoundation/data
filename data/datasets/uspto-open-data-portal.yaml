@@ -82,7 +82,7 @@ getting_started:
       applications["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(applications.head())
   first_project:
-    title: List recent utility patent applications
+    title: List Recent Utility Patent Applications
     goal: Test whether File Wrapper search can power a bounded patent-title inbox.
     steps:
       - Keep application number, invention title, and filing date from the first page.

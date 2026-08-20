@@ -71,7 +71,7 @@ getting_started:
       filings["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(filings.head())
   first_project:
-    title: Scan recent LDA filings
+    title: Scan Recent LDA Filings
     goal: Test whether the filings list can power a bounded lobbying-disclosure inbox.
     steps:
       - Keep filing identifier, registrant name, client name, and posted date.

@@ -79,7 +79,7 @@ getting_started:
       trade["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(trade.head())
   first_project:
-    title: Compare U.S. total merchandise exports and imports
+    title: Compare U.S. Total Merchandise Exports and Imports
     goal: Test whether a preview extract can power a bounded trade-balance sketch.
     steps:
       - Keep reporter, period, flow, and primary value from the preview response.

@@ -67,7 +67,7 @@ getting_started:
       california["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(california[["GEOID", "NAME"]].head(20))
   first_project:
-    title: Prepare county boundaries for an ACS map
+    title: Prepare County Boundaries for an ACS Map
     goal: Create a California county layer that can join safely to ACS five-year estimates.
     steps:
       - Read the pinned county vintage and retain GEOID values as strings.

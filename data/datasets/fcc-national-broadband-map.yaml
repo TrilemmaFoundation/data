@@ -90,7 +90,7 @@ getting_started:
       colorado = colorado.assign(retrieved_at_utc=pd.Timestamp.now(tz="UTC"))
       print(colorado[["file_name", "data_type", "state_fips", "record_count"]].head(20))
   first_project:
-    title: Inventory one state's published availability files
+    title: Inventory One State's Published Availability Files
     goal: Test whether a single BDC as-of date can support a bounded coverage-file finder.
     steps:
       - Select the latest as-of date and keep Colorado state-level availability rows.

@@ -86,7 +86,7 @@ getting_started:
       grid["value"] = pd.to_numeric(grid["value"], errors="coerce")
       print(grid[["period", "respondent-name", "type-name", "value", "value-units"]].head())
   first_project:
-    title: Monitor demand against the day-ahead forecast
+    title: Monitor Demand against the Day-Ahead Forecast
     goal: Test whether forecast errors for one balancing authority can trigger a useful grid-demand alert.
     steps:
       - Separate demand and day-ahead forecast rows by their documented type codes.

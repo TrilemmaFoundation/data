@@ -70,7 +70,7 @@ getting_started:
       sample = hospitals[hospitals["state"] == "CA"]
       print(sample[["facility_id", "facility_name", "hospital_type", "hospital_overall_rating"]].head(20))
   first_project:
-    title: Compare hospitals within one state
+    title: Compare Hospitals within One State
     goal: Summarize hospital types, ownership, emergency services, and reported ratings in California.
     steps:
       - Filter records by state while preserving Facility ID as text.

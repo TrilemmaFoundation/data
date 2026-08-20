@@ -87,7 +87,7 @@ getting_started:
       earthquakes = pd.json_normalize(response.json()["features"])
       print(earthquakes[["properties.mag", "properties.place", "properties.time"]].head())
   first_project:
-    title: Profile the past week's earthquakes
+    title: Profile the Past Week's Earthquakes
     goal: Describe where earthquakes were recorded during the last seven days and how their reported magnitudes were distributed.
     steps:
       - Convert event timestamps from milliseconds to UTC datetimes.

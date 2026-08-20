@@ -83,7 +83,7 @@ getting_started:
       articles = pd.DataFrame([records[item] for item in ids])
       print(articles[["uid", "title", "pubdate"]].head(20))
   first_project:
-    title: Track newly indexed biomedical articles
+    title: Track Newly Indexed Biomedical Articles
     goal: Find PubMed records about wildfire smoke added during the last 30 days.
     steps:
       - Save the exact query and retrieve no more than 50 recent PubMed identifiers.

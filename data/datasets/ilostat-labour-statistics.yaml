@@ -75,7 +75,7 @@ getting_started:
       unemployment["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(unemployment.tail())
   first_project:
-    title: Track U.S. ILO unemployment
+    title: Track U.S. ILO Unemployment
     goal: Test whether one ILOSTAT series can power a bounded labour-market chart.
     steps:
       - Confirm observation values returned for the selected series key.

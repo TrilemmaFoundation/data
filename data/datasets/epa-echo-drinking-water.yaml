@@ -73,7 +73,7 @@ getting_started:
       systems["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(systems.head(20))
   first_project:
-    title: Profile active public water systems in one state
+    title: Profile Active Public Water Systems in One State
     goal: Count active Rhode Island public water systems in a bounded ECHO search and note compliance fields that are present.
     steps:
       - Confirm the JSON response includes water-system identifiers for the selected state.

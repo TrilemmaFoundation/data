@@ -59,7 +59,7 @@ getting_started:
       injuries["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(injuries.head(20))
   first_project:
-    title: Count recent severe injuries in one industry
+    title: Count Recent Severe Injuries in One Industry
     goal: Test whether SIR rows can power a bounded workplace-safety watch list.
     steps:
       - Keep event date, NAICS or industry, city, and hospitalization or amputation flags from the extract.

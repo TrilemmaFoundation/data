@@ -63,7 +63,7 @@ getting_started:
       california["Date Local"] = pd.to_datetime(california["Date Local"])
       print(california[["Date Local", "County Code", "Site Num", "Arithmetic Mean", "Units of Measure"]].head(20))
   first_project:
-    title: Compare daily PM2.5 summaries within one state
+    title: Compare Daily PM2.5 Summaries within One State
     goal: Review 2025 daily PM2.5 summaries for California monitoring sites.
     steps:
       - Filter the annual file to California and construct a stable site identifier from state, county, and site codes.

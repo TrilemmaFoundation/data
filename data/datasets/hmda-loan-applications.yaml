@@ -75,7 +75,7 @@ getting_started:
       loans = pd.read_csv(StringIO(response.text), nrows=200)
       print(loans.head())
   first_project:
-    title: Profile Vermont originations
+    title: Profile Vermont Originations
     goal: Test whether a one-state LAR extract can power a bounded mortgage-volume sketch.
     steps:
       - Keep action taken, loan amount, and census tract from the first rows.

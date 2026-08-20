@@ -80,7 +80,7 @@ getting_started:
           ).head()
       )
   first_project:
-    title: Inspect Oslo's next forecast hours
+    title: Inspect Oslo's Next Forecast Hours
     goal: Test whether Locationforecast can power a bounded local planning card.
     steps:
       - Keep time, air temperature, wind speed, and precipitation for the first hours.

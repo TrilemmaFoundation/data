@@ -62,18 +62,18 @@ describe("trust signals", () => {
   });
 
   it("labels source types, statuses, and friction", () => {
-    expect(sourceTypeLabel("government")).toBe("Government source");
-    expect(sourceTypeLabel("intergovernmental")).toBe("Intergovernmental source");
-    expect(sourceTypeLabel("academic")).toBe("Academic source");
-    expect(sourceTypeLabel("nonprofit")).toBe("Nonprofit source");
-    expect(sourceTypeLabel("company")).toBe("Company source");
-    expect(sourceTypeLabel("community")).toBe("Community source");
+    expect(sourceTypeLabel("government")).toBe("Government Source");
+    expect(sourceTypeLabel("intergovernmental")).toBe("Intergovernmental Source");
+    expect(sourceTypeLabel("academic")).toBe("Academic Source");
+    expect(sourceTypeLabel("nonprofit")).toBe("Nonprofit Source");
+    expect(sourceTypeLabel("company")).toBe("Company Source");
+    expect(sourceTypeLabel("community")).toBe("Community Source");
     expect(catalogStatusLabel("active")).toBe("Active");
-    expect(catalogStatusLabel("temporarily_unavailable")).toBe("Temporarily unavailable");
+    expect(catalogStatusLabel("temporarily_unavailable")).toBe("Temporarily Unavailable");
     expect(catalogStatusLabel("deprecated")).toBe("Deprecated");
-    expect(frictionLabel("low")).toBe("Low setup friction");
-    expect(frictionLabel("medium")).toBe("Medium setup friction");
-    expect(frictionLabel("high")).toBe("High setup friction");
+    expect(frictionLabel("low")).toBe("Low Setup Friction");
+    expect(frictionLabel("medium")).toBe("Medium Setup Friction");
+    expect(frictionLabel("high")).toBe("High Setup Friction");
   });
 
   it("describes python example status and catalog summaries", () => {

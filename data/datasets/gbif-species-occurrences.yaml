@@ -85,7 +85,7 @@ getting_started:
       occurrences = pd.json_normalize(response.json()["results"])
       print(occurrences[["key", "eventDate", "decimalLatitude", "decimalLongitude", "datasetKey"]].head(20))
   first_project:
-    title: Map recent monarch butterfly occurrences
+    title: Map Recent Monarch Butterfly Occurrences
     goal: Review recent U.S. monarch butterfly records with usable coordinates.
     steps:
       - Resolve the taxon key and request a bounded period with documented coordinate filters.

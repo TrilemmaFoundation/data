@@ -76,7 +76,7 @@ getting_started:
       alerts["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(alerts.head())
   first_project:
-    title: List recent orange and red earthquake alerts
+    title: List Recent Orange and Red Earthquake Alerts
     goal: Test whether GDACS alert levels can power a bounded international hazard inbox.
     steps:
       - Keep event name, country, alert level, and dates from the GeoJSON properties.

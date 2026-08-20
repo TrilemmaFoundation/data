@@ -68,7 +68,7 @@ getting_started:
       kp["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(kp.tail(12))
   first_project:
-    title: Flag elevated planetary K-index periods
+    title: Flag Elevated Planetary K-Index Periods
     goal: Test whether recent Kp values can trigger a bounded space-weather awareness alert.
     steps:
       - Convert time_tag to timestamps and kp to numbers.

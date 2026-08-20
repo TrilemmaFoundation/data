@@ -78,7 +78,7 @@ getting_started:
       crashes["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(crashes.head())
   first_project:
-    title: Profile one state's fatal crashes
+    title: Profile One State's Fatal Crashes
     goal: Test whether a FARS extract can power a bounded road-safety sketch.
     steps:
       - Keep crash identifier, date, county, and fatality count from the bounded year.

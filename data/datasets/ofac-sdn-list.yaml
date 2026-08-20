@@ -85,7 +85,7 @@ getting_started:
       sdn["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(sdn[["ent_num", "sdn_name", "sdn_type", "program"]].head(20))
   first_project:
-    title: Build an exact-name SDN lookup
+    title: Build an Exact-Name SDN Lookup
     goal: Test whether a small authorized name list can be checked against primary SDN names.
     steps:
       - Load primary SDN names and drop placeholder null tokens such as -0-.

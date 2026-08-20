@@ -74,7 +74,7 @@ getting_started:
       recalls["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(recalls[["RecallNumber", "Title", "RecallDate"]].head(20))
   first_project:
-    title: Summarize first-quarter consumer product recalls
+    title: Summarize First-Quarter Consumer Product Recalls
     goal: Identify which product titles appear most often in a bounded CPSC recall window.
     steps:
       - Confirm the request used RecallDateStart and RecallDateEnd rather than an unfiltered dump.

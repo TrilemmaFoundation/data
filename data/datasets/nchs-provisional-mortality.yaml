@@ -75,7 +75,7 @@ getting_started:
       deaths["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(deaths.head())
   first_project:
-    title: Chart California weekly deaths
+    title: Chart California Weekly Deaths
     goal: Test whether provisional counts can power a bounded mortality sparkline.
     steps:
       - Convert week-ending dates and all-cause counts to usable types.

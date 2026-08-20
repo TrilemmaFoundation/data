@@ -90,7 +90,7 @@ getting_started:
       comparison["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(comparison[["time", "observed_m", "predicted_m", "difference_m", "q"]].head())
   first_project:
-    title: Compare observed and predicted water levels
+    title: Compare Observed and Predicted Water Levels
     goal: Find when observed water level differs most from the tide prediction at one station during one day.
     steps:
       - Confirm that both series use station 9414290, GMT, metric units, and the MLLW tidal datum.

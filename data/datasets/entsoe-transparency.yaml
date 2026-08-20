@@ -79,7 +79,7 @@ getting_started:
       points = pd.read_xml(response.content, xpath=".//Point")
       print(points.head())
   first_project:
-    title: Chart one day of German load
+    title: Chart One Day of German Load
     goal: Test whether a Transparency extract can power a bounded grid-load monitor.
     steps:
       - Parse Point positions and quantities from the XML document.

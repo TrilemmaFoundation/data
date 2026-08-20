@@ -85,7 +85,7 @@ getting_started:
       sample = xr.open_dataset("era5_nyc_sample.nc")
       print(sample)
   first_project:
-    title: Reconstruct one hour of 2-metre temperature
+    title: Reconstruct One Hour of 2-Metre Temperature
     goal: Test whether a tiny ERA5 extract can power a site-history prototype.
     steps:
       - Confirm the NetCDF contains 2-metre temperature for the requested hour and bounding box.

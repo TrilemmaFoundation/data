@@ -73,7 +73,7 @@ getting_started:
       labels["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(labels.head())
   first_project:
-    title: List ibuprofen SPL titles
+    title: List Ibuprofen SPL Titles
     goal: Test whether DailyMed search can power a bounded label-lookup inbox.
     steps:
       - Keep SET ID, title, and published date from the first page.

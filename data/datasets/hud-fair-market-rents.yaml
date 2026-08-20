@@ -72,7 +72,7 @@ getting_started:
       rents["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(rents.head(20))
   first_project:
-    title: Compare two-bedroom FMRs across one state's counties
+    title: Compare Two-Bedroom FMRs across One State's Counties
     goal: Test whether county FMRs can support a bounded rent-burden screen.
     steps:
       - Keep county names and two-bedroom FMR values for Colorado.

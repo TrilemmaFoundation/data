@@ -85,7 +85,7 @@ getting_started:
       counties["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(counties.sort_values("data_value", ascending=False))
   first_project:
-    title: Compare modeled diabetes prevalence across three counties
+    title: Compare Modeled Diabetes Prevalence across Three Counties
     goal: Compare age-adjusted diagnosed-diabetes estimates and uncertainty for three California counties.
     steps:
       - Confirm the release year, DIABETES measure definition, county FIPS codes, and age-adjusted prevalence type.

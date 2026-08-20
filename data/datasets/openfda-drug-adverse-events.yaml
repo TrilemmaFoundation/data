@@ -79,7 +79,7 @@ getting_started:
       reactions["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(reactions.head(20))
   first_project:
-    title: Summarize reported reactions for one drug
+    title: Summarize Reported Reactions for One Drug
     goal: Identify the most frequently reported reaction terms for one drug in a bounded calendar year.
     steps:
       - Review the generic-name query and confirm that the API returned reaction-term counts.

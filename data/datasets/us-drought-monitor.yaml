@@ -78,7 +78,7 @@ getting_started:
       drought["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(drought.head())
   first_project:
-    title: Track one state's weekly drought coverage
+    title: Track One State's Weekly Drought Coverage
     goal: Describe how much of Colorado spent time in D1 or worse during a bounded winter window.
     steps:
       - Convert the week dates and keep D0–D4 percent-of-area columns.

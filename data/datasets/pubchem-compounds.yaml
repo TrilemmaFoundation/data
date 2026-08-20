@@ -71,7 +71,7 @@ getting_started:
       compounds["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(compounds)
   first_project:
-    title: Look up aspirin identifiers
+    title: Look Up Aspirin Identifiers
     goal: Test whether PUG REST can power a bounded compound-reference card.
     steps:
       - Confirm CID, formula, and molecular weight returned for the name query.

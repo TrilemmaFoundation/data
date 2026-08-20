@@ -71,7 +71,7 @@ getting_started:
       stats["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(stats.head())
   first_project:
-    title: Compare state cancer incidence rows
+    title: Compare State Cancer Incidence Rows
     goal: Test whether a USCS public table can power a bounded state-burden sketch.
     steps:
       - Keep geography, site, year, and age-adjusted rate from the extract.

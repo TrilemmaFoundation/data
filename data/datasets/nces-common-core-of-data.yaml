@@ -73,7 +73,7 @@ getting_started:
       colorado["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(colorado.head(20))
   first_project:
-    title: Map open public schools in one state
+    title: Map Open Public Schools in One State
     goal: Test whether a CCD directory extract can power a local school finder.
     steps:
       - Filter to Colorado and keep school name, city, status, and coordinates when present.

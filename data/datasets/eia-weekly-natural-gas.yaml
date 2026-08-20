@@ -79,7 +79,7 @@ getting_started:
       storage["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(storage[["period", "duoarea", "value", "units"]].head())
   first_project:
-    title: Track Lower 48 weekly gas storage
+    title: Track Lower 48 Weekly Gas Storage
     goal: Test whether a short storage window can power an inventory-change alert.
     steps:
       - Sort by period and compute week-to-week storage changes.

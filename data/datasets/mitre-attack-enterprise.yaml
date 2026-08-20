@@ -70,7 +70,7 @@ getting_started:
       ])
       print(techniques[["id", "name", "x_mitre_version"]].head(20))
   first_project:
-    title: Build an Enterprise tactic-to-technique matrix
+    title: Build an Enterprise Tactic-to-Technique Matrix
     goal: Count current Enterprise techniques by tactic and identify areas needing deeper coverage review.
     steps:
       - Filter to current non-revoked attack-pattern objects and expand their kill-chain phases.

@@ -70,7 +70,7 @@ getting_started:
       )
       print(ice[["date", "extent", "area"]].tail())
   first_project:
-    title: Track September Arctic sea-ice extent
+    title: Track September Arctic Sea-Ice Extent
     goal: Describe how September Northern Hemisphere extent has changed across the published record.
     steps:
       - Convert year and month to dates and drop rows with missing extent.

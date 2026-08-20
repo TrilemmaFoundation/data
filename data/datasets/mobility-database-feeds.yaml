@@ -79,7 +79,7 @@ getting_started:
       )
       print(feeds[[column for column in ["id", "provider", "status", license_col] if column in feeds.columns]].head(20))
   first_project:
-    title: Find licensed GTFS feeds for one country
+    title: Find Licensed GTFS Feeds for One Country
     goal: List a bounded set of cataloged GTFS feeds and record each feed's license URL before any download.
     steps:
       - Confirm the API returned feed identifiers and provider names for the bounded request.

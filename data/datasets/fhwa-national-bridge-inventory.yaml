@@ -66,7 +66,7 @@ getting_started:
       bridges["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(bridges.head())
   first_project:
-    title: Rank one jurisdiction's bridges by deck condition
+    title: Rank One Jurisdiction's Bridges by Deck Condition
     goal: Test whether annual inspection ratings can support a local infrastructure watch list.
     steps:
       - Identify the deck, superstructure, and substructure rating fields from the format guide.

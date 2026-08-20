@@ -77,7 +77,7 @@ getting_started:
       debt["tot_pub_debt_out_amt"] = pd.to_numeric(debt["tot_pub_debt_out_amt"])
       print(debt.head())
   first_project:
-    title: Chart recent total public debt
+    title: Chart Recent Total Public Debt
     goal: Test whether daily TPDO can power a bounded national-debt sparkline.
     steps:
       - Convert amounts to numbers and sort by record date.

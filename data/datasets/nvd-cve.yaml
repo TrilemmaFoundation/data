@@ -75,7 +75,7 @@ getting_started:
       records = pd.json_normalize([item["cve"] for item in response.json()["vulnerabilities"]])
       print(records[["id", "published", "lastModified", "vulnStatus"]].head(20))
   first_project:
-    title: Monitor recently modified vulnerabilities
+    title: Monitor Recently Modified Vulnerabilities
     goal: Identify CVE records modified during the last seven days and review their analysis status.
     steps:
       - Retrieve one bounded modification window and exclude rejected records.

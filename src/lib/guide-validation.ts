@@ -1,3 +1,4 @@
+import { isChicagoTitleCase, toChicagoTitleCase } from "./chicago-title-case";
 import type { Dataset } from "./schema";
 
 export const MIN_DESCRIPTION_WORDS = 12;
@@ -268,6 +269,18 @@ function validateMarker(value: string, field: "source_marker" | "license_marker"
 
 export function validateGuideCopy(dataset: Dataset): string[] {
   const messages: string[] = [];
+  if (!isChicagoTitleCase(dataset.name)) {
+    messages.push(
+      `name must use Chicago Title Case ("${toChicagoTitleCase(dataset.name)}")`,
+    );
+  }
+
+  if (!isChicagoTitleCase(dataset.getting_started.first_project.title)) {
+    messages.push(
+      `getting_started.first_project.title must use Chicago Title Case ("${toChicagoTitleCase(dataset.getting_started.first_project.title)}")`,
+    );
+  }
+
   const description = dataset.description.trim();
   const overview = dataset.getting_started.overview.trim();
   const lastStep =

@@ -76,7 +76,7 @@ getting_started:
       gdp["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(gdp.head())
   first_project:
-    title: Track Australian quarterly GDP growth
+    title: Track Australian Quarterly GDP Growth
     goal: Test whether one OECD SDMX series can power a bounded growth monitor.
     steps:
       - Confirm the response contains observation values for the selected series key.

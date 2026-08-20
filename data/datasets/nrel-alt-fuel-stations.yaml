@@ -79,7 +79,7 @@ getting_started:
       stations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(stations[["station_name", "city", "latitude", "longitude", "ev_connector_types"]].head(20))
   first_project:
-    title: Map open EV chargers in one state
+    title: Map Open EV Chargers in One State
     goal: Test whether a bounded station extract can power a local charging finder.
     steps:
       - Keep open electric stations and explode connector types into a countable field.

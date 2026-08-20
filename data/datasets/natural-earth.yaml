@@ -76,7 +76,7 @@ getting_started:
       plt.axis("off")
       plt.show()
   first_project:
-    title: Compare world regions on one map
+    title: Compare World Regions on One Map
     goal: Build a continent map and explain how geometry and projection choices affect its interpretation.
     steps:
       - Inspect the layer's geometry type and coordinate reference system.

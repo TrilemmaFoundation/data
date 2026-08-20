@@ -82,7 +82,7 @@ getting_started:
       estimates["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(estimates[["short_desc", "state_alpha", "year", "Value", "unit_desc"]].head(20))
   first_project:
-    title: Look up one state's corn yield
+    title: Look Up One State's Corn Yield
     goal: Retrieve published Iowa corn-yield estimates for one year and record their units.
     steps:
       - Confirm the API returned yield rows for the selected commodity, state, and year.

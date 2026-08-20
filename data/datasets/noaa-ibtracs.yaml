@@ -69,7 +69,7 @@ getting_started:
       storms["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(storms[["SID", "NAME", "ISO_TIME", "LAT", "LON", "USA_WIND"]].head(20))
   first_project:
-    title: Map recent North Atlantic storm tracks
+    title: Map Recent North Atlantic Storm Tracks
     goal: Plot a bounded sample of North Atlantic best-track points and identify the named storms included.
     steps:
       - Skip the units row, load a bounded CSV sample, and confirm storm ID, time, and lat/lon parsed.

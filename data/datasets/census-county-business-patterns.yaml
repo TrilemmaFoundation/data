@@ -78,7 +78,7 @@ getting_started:
       counties = pd.DataFrame(rows[1:], columns=rows[0])
       print(counties.head())
   first_project:
-    title: Rank one state's counties by establishment counts
+    title: Rank One State's Counties by Establishment Counts
     goal: Test whether CBP can describe which counties hold the most paid employers.
     steps:
       - Keep county name, establishments, employment, and annual payroll as numbers.

@@ -96,7 +96,7 @@ getting_started:
       protein["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(protein.sort_values("protein_per_100g", ascending=False).head(20))
   first_project:
-    title: Compare protein across lentil records
+    title: Compare Protein across Lentil Records
     goal: Compare protein per 100 grams across a bounded set of USDA analytical lentil search results.
     steps:
       - Retain FDC ID and data type and confirm that each selected protein value uses the same per-100-gram basis and unit.

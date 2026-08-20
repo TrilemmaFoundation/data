@@ -131,7 +131,7 @@ test("analytics, landing, and notebook assets stay within attributed budgets", a
     : "out/collections/first-builds/index.html";
   const collectionHtml = fs.readFileSync(collectionHtmlPath);
   expect(collectionHtml.byteLength).toBeLessThan(BUDGETS.html);
-  expect(collectionHtml.toString()).toContain("Start with a first microproduct");
+  expect(collectionHtml.toString()).toContain("Start with a First Microproduct");
 
   const notebookDir = "public/notebooks";
   const notebookBytes = fs.existsSync(notebookDir)

@@ -84,7 +84,7 @@ getting_started:
       places["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(places.head())
   first_project:
-    title: Inventory places in one downtown bounding box
+    title: Inventory Places in One Downtown Bounding Box
     goal: Test whether a 50-row Places extract can power a neighborhood amenity map.
     steps:
       - Confirm the extract stayed inside the bounding box and did not scan the global theme locally.

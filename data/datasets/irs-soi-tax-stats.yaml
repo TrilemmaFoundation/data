@@ -64,7 +64,7 @@ getting_started:
       )
       print(soi.head())
   first_project:
-    title: Profile ZIP-code AGI classes
+    title: Profile ZIP-Code AGI Classes
     goal: Test whether a SOI ZIP extract can power a bounded local-income sketch.
     steps:
       - Keep state, ZIP, AGI class, return counts, and AGI from the first rows.

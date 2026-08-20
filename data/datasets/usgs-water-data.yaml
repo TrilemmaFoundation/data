@@ -89,7 +89,7 @@ getting_started:
       streamflow["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(streamflow[["properties.time", "value", "properties.unit_of_measure", "properties.approval_status", "properties.qualifier"]].tail())
   first_project:
-    title: Compare current streamflow with its recent distribution
+    title: Compare Current Streamflow with Its Recent Distribution
     goal: Determine where the latest discharge measurement at one gauge falls within the returned seven-day sample.
     steps:
       - Confirm the station identifier, discharge parameter code, unit, datum context, and sample completeness.

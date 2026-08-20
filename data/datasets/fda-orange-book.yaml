@@ -73,7 +73,7 @@ getting_started:
       sample = products[products["Trade_Name"].str.upper() == "LIPITOR"]
       print(sample[["Appl_No", "Trade_Name", "Ingredient", "TE_Code", "Approval_Date"]].head())
   first_project:
-    title: Inspect one brand's approved products and exclusivity
+    title: Inspect One Brand's Approved Products and Exclusivity
     goal: Test whether Orange Book fields can support a bounded generic-entry review.
     steps:
       - Keep application number, trade name, ingredient, and TE code for Lipitor.

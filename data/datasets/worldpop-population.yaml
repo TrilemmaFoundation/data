@@ -71,7 +71,7 @@ getting_started:
       sample = layers[layers["popyear"].astype(str) == "2020"]
       print(sample[["iso3", "popyear", "doi", "data_format", "files"]].head())
   first_project:
-    title: List Luxembourg's 2020 WorldPop raster metadata
+    title: List Luxembourg's 2020 WorldPop Raster Metadata
     goal: Test whether REST metadata can locate one country unconstrained population file.
     steps:
       - Keep ISO3, year, DOI, and the published GeoTIFF path for 2020.

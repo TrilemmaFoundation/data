@@ -80,7 +80,7 @@ getting_started:
           "noncomm_positions_short_all",
       ]].head())
   first_project:
-    title: Track speculative positioning in one futures market
+    title: Track Speculative Positioning in One Futures Market
     goal: Test whether weekly COT records can power a bounded positioning monitor.
     steps:
       - Keep report date, market name, open interest, and noncommercial long/short.

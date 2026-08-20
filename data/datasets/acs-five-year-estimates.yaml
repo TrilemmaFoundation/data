@@ -89,7 +89,7 @@ getting_started:
       states = pd.DataFrame(rows[1:], columns=rows[0])
       print(states.head())
   first_project:
-    title: Screen states for a service-market hypothesis
+    title: Screen States for a Service-Market Hypothesis
     goal: Test whether population and median household income can support an initial state-level market-sizing signal.
     steps:
       - Rename the selected estimate and margin-of-error variables and convert them to numeric values.

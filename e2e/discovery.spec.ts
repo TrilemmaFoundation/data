@@ -577,17 +577,17 @@ test("desktop sorting is shareable, reversible, and restores the promoted order"
   const firstDataRow = () => table.getByRole("row").nth(1);
   await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
 
-  await page.getByRole("button", { name: "Sort Dataset ascending" }).click();
+  await page.getByRole("button", { name: tableCopy.sortBy("Dataset", false) }).click();
   await expect(page).toHaveURL((url) =>
     url.searchParams.get("sort") === "name" && url.searchParams.get("order") === "asc",
   );
   await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
 
-  await page.getByRole("button", { name: "Sort Dataset descending" }).click();
+  await page.getByRole("button", { name: tableCopy.sortBy("Dataset", "asc") }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get("order") === "desc");
   await expect(firstDataRow()).not.toContainText("American Community Survey 5-Year Estimates");
 
-  await page.getByRole("button", { name: "Restore default order" }).click();
+  await page.getByRole("button", { name: tableCopy.sortBy("Dataset", "desc") }).click();
   await expect(page).toHaveURL((url) => !url.searchParams.has("sort"));
   await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
 

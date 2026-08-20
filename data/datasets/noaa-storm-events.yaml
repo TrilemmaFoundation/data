@@ -86,7 +86,7 @@ getting_started:
       )
       print(events[["EVENT_ID", "STATE", "EVENT_TYPE", "BEGIN_DATE_TIME"]].head())
   first_project:
-    title: Count 2025 storm-event types in a bounded sample
+    title: Count 2025 Storm-Event Types in a Bounded Sample
     goal: Test whether one yearly details file can power a local hazard-history table.
     steps:
       - Keep event ID, state, event type, and begin time from the first 200 rows.

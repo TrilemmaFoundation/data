@@ -71,7 +71,7 @@ getting_started:
       demographics, _meta = pyreadstat.read_xport(BytesIO(response.content))
       print(demographics.head())
   first_project:
-    title: Describe one NHANES demographics file
+    title: Describe One NHANES Demographics File
     goal: Test whether a public cycle file can power a bounded survey-profile sketch.
     steps:
       - Keep sequence number, interview weight, age, and sex from the demographics table.

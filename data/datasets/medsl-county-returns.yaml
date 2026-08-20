@@ -63,7 +63,7 @@ getting_started:
       )
       print(returns.head())
   first_project:
-    title: Map one year's county presidential margins
+    title: Map One Year's County Presidential Margins
     goal: Test whether county returns can power a bounded result-map prototype.
     steps:
       - Filter to one year and keep county FIPS plus Democratic and Republican votes.

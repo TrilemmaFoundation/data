@@ -89,7 +89,7 @@ getting_started:
       declarations["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(declarations[["disasterNumber", "declarationDate", "incidentType", "designatedArea"]].head())
   first_project:
-    title: Track recent declarations for one state
+    title: Track Recent Declarations for One State
     goal: Summarize which incident types and designated areas appear in the latest declarations.
     steps:
       - Sort the bounded response by declaration date and deduplicate disaster-number and designated-area pairs.

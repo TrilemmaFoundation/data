@@ -70,7 +70,7 @@ getting_started:
       scores["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(scores[["cve", "epss", "percentile", "date"]].head())
   first_project:
-    title: Compare one CVE's exploit probability with its KEV status
+    title: Compare One CVE's Exploit Probability with Its KEV Status
     goal: Test whether EPSS can rank a published CVE before treating it as an active incident.
     steps:
       - Retrieve the current EPSS score and percentile for CVE-2024-3400.

@@ -71,7 +71,7 @@ getting_started:
       print(crimes[["id", "category", "month", "location.street.name"]].head(20))
       print(crimes["category"].value_counts().head())
   first_project:
-    title: Summarise recent street crime around one point
+    title: Summarise Recent Street Crime around One Point
     goal: Test whether category counts can power a neighbourhood safety snapshot.
     steps:
       - Keep crime id, category, month, and anonymised street name.

@@ -25,7 +25,7 @@ describe("activeChips", () => {
       `${filterChipPrefixes.query}: earthquake`,
       `${filterChipPrefixes.theme}: Environment & Hazards`,
       `${filterChipPrefixes.accessMethod}: API`,
-      `${filterChipPrefixes.difficulty}: beginner`,
+      `${filterChipPrefixes.difficulty}: Beginner`,
       `${filterChipPrefixes.domains}: Natural Hazards`,
       `${filterChipPrefixes.dataTypes}: Event Data`,
       `${filterChipPrefixes.tasks}: Monitoring`,
