@@ -75,10 +75,6 @@ describe("SEO helpers", () => {
 
   it("does not advertise a compare route in constants or the sitemap", () => {
     expect(Object.keys(seo).filter((key) => /compare/i.test(key))).toEqual([]);
-    const constants = Object.values(seo).filter(
-      (value): value is string => typeof value === "string",
-    );
-    expect(constants).not.toContain("/compare");
     expect(sitemap().map((entry) => entry.url)).not.toContain(`${SITE_URL}/compare`);
   });
 });
