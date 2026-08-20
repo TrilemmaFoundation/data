@@ -24,52 +24,16 @@ const SMALL_WORDS = new Set([
   "to",
   "up",
   "with",
-  "without",
   "about",
   "across",
-  "after",
   "against",
-  "along",
-  "among",
   "around",
-  "before",
-  "behind",
-  "below",
-  "beneath",
-  "beside",
-  "between",
-  "beyond",
-  "during",
-  "except",
   "inside",
-  "near",
   "per",
-  "since",
-  "than",
-  "through",
-  "throughout",
-  "toward",
-  "towards",
-  "under",
-  "underneath",
-  "until",
-  "upon",
-  "versus",
-  "via",
   "within",
-  "vs",
-  "vs.",
 ]);
 
-const PHRASAL_VERBS = new Set([
-  "look up",
-  "set up",
-  "sign up",
-  "sign in",
-  "log in",
-  "log out",
-  "wake up",
-]);
+const PHRASAL_VERBS = new Set(["look up"]);
 
 function lettersOnly(value: string): string {
   return value.replace(/[^A-Za-z]/g, "");
@@ -83,7 +47,7 @@ function splitAffixes(token: string): { prefix: string; core: string; suffix: st
   return { prefix: match[1] ?? "", core: match[2], suffix: match[3] ?? "" };
 }
 
-export function shouldPreserveTitleToken(token: string): boolean {
+function shouldPreserveTitleToken(token: string): boolean {
   const { core } = splitAffixes(token);
   if (/[A-Za-z0-9]\.[A-Za-z0-9]/.test(core)) return true;
   if (/[*&/]/.test(core) && /[A-Z]/.test(core)) return true;

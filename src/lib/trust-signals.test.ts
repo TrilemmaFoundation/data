@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   catalogStatusLabel,
-  catalogTrustSummary,
   formatVerifiedDate,
   frictionLabel,
   pythonExampleStatus,
@@ -95,11 +94,5 @@ describe("trust signals", () => {
         },
       }),
     ).toMatchObject({ notebook: false, runtimeVerified: "2026-08-18" });
-    expect(catalogTrustSummary(0, null)).toEqual({
-      count: 0,
-      oldestVerified: null,
-      freshness: "verified",
-    });
-    expect(catalogTrustSummary(2, "2026-08-10").count).toBe(2);
   });
 });

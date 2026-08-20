@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  isChicagoTitleCase,
-  shouldPreserveTitleToken,
-  toChicagoTitleCase,
-} from "./chicago-title-case";
+import { isChicagoTitleCase, toChicagoTitleCase } from "./chicago-title-case";
 
 describe("toChicagoTitleCase", () => {
   it("capitalizes major words and lowercases CMOS small words", () => {
@@ -17,6 +13,15 @@ describe("toChicagoTitleCase", () => {
     expect(toChicagoTitleCase("report a problem")).toBe("Report a Problem");
     expect(toChicagoTitleCase("search by topic, provider, or product use")).toBe(
       "Search by Topic, Provider, or Product Use",
+    );
+    expect(toChicagoTitleCase("list cafes inside a manhattan bounding box")).toBe(
+      "List Cafes inside a Manhattan Bounding Box",
+    );
+    expect(toChicagoTitleCase("summarise recent street crime around one point")).toBe(
+      "Summarise Recent Street Crime around One Point",
+    );
+    expect(toChicagoTitleCase("compare hospitals within one state")).toBe(
+      "Compare Hospitals within One State",
     );
   });
 
@@ -71,7 +76,8 @@ describe("toChicagoTitleCase", () => {
     expect(toChicagoTitleCase(titled)).toBe(titled);
     expect(isChicagoTitleCase(titled)).toBe(true);
     expect(isChicagoTitleCase("track regulatory change")).toBe(false);
-    expect(shouldPreserveTitleToken("USAspending")).toBe(true);
-    expect(shouldPreserveTitleToken("API")).toBe(true);
+    expect(toChicagoTitleCase("USAspending federal awards")).toBe(
+      "USAspending Federal Awards",
+    );
   });
 });

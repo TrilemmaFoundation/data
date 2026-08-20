@@ -83,11 +83,3 @@ export function pythonExampleStatus(dataset: Dataset): {
     runtimeVerified: dataset.getting_started.python.last_runtime_verified ?? null,
   };
 }
-
-export function catalogTrustSummary(count: number, oldestVerified: string | null) {
-  return {
-    count,
-    oldestVerified,
-    freshness: oldestVerified ? verificationFreshness(oldestVerified) : "verified",
-  };
-}

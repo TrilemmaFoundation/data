@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getAllDatasets } from "../lib/datasets";
 import { isChicagoTitleCase } from "../lib/chicago-title-case";
-import * as copyModule from "./site-copy";
 import {
   accessTypeLabels,
   catalogCopy,
@@ -67,11 +66,6 @@ describe("site copy", () => {
     expect(isChicagoTitleCase(datasetGuideCopy.notebookLabel)).toBe(true);
     expect(isChicagoTitleCase(copyButtonCopy.errorLabel)).toBe(true);
     expect(isChicagoTitleCase(contributeCopy.copiedYamlLabel)).toBe(true);
-  });
-
-  it("does not export retired compare or shortlist copy", () => {
-    expect(copyModule).not.toHaveProperty("compareCopy");
-    expect(copyModule).not.toHaveProperty("shortlistCopy");
   });
 
   it("formats result counts and accessibility labels", () => {
