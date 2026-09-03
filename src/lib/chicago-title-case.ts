@@ -40,11 +40,14 @@ function lettersOnly(value: string): string {
 }
 
 function splitAffixes(token: string): { prefix: string; core: string; suffix: string } {
-  const match = token.match(/^([^A-Za-z0-9]*)(.*?)([^A-Za-z0-9]*)$/);
-  if (!match || !match[2]) {
+  const match = token.match(/^([^A-Za-z0-9]*)(.*?)([^A-Za-z0-9]*)$/)!;
+  const prefix = match[1]!;
+  const core = match[2]!;
+  const suffix = match[3]!;
+  if (!core) {
     return { prefix: "", core: token, suffix: "" };
   }
-  return { prefix: match[1] ?? "", core: match[2], suffix: match[3] ?? "" };
+  return { prefix, core, suffix };
 }
 
 function shouldPreserveTitleToken(token: string): boolean {
@@ -63,9 +66,9 @@ function shouldPreserveTitleToken(token: string): boolean {
 }
 
 function capitalizeWord(word: string): string {
-  const match = word.match(/^([^A-Za-z]*)(.*)$/);
-  if (!match) return word;
-  const [, prefix, rest] = match;
+  const match = word.match(/^([^A-Za-z]*)(.*)$/)!;
+  const prefix = match[1]!;
+  const rest = match[2]!;
   if (!rest) return word;
   return `${prefix}${rest.charAt(0).toLocaleUpperCase("en-US")}${rest.slice(1).toLocaleLowerCase("en-US")}`;
 }
@@ -99,7 +102,6 @@ function titleCaseToken(
   previous: string | undefined,
 ): string {
   const { prefix, core, suffix } = splitAffixes(token);
-  if (!core) return token;
   if (shouldPreserveTitleToken(core)) return token;
   if (core.includes("-")) {
     return `${prefix}${titleCaseHyphenated(core, isFirst, isLast)}${suffix}`;

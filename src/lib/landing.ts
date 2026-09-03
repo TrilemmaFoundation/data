@@ -20,7 +20,7 @@ export function themeSlug(theme: DatasetTheme): string {
 }
 
 export function themeFromSlug(slug: string): DatasetTheme | null {
-  return SLUG_TO_THEME[slug] ?? null;
+  return Object.hasOwn(SLUG_TO_THEME, slug) ? SLUG_TO_THEME[slug]! : null;
 }
 
 export function allThemeSlugs(): Array<{ theme: DatasetTheme; slug: string }> {

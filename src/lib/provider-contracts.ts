@@ -569,7 +569,9 @@ const contractDefinitions = {
     validate: jsonValidator(
       z.object({
         Results: z.object({
-          Systems: z.array(z.object({ PWSId: z.string() }).passthrough()).min(1),
+          Message: z.literal("Success"),
+          QueryID: z.string().min(1),
+          QueryRows: z.string().regex(/^\d+$/),
         }),
       }),
     ),
@@ -1186,7 +1188,11 @@ const validBodies = {
   }),
   "arxiv-preprints": "<feed xmlns=\"http://www.w3.org/2005/Atom\"><title>ArXiv Query</title></feed>",
   "epa-echo-drinking-water": JSON.stringify({
-    Results: { Systems: [{ PWSId: "RI0000001" }] },
+    Results: {
+      Message: "Success",
+      QueryID: "94",
+      QueryRows: "465",
+    },
   }),
   "noaa-ibtracs": "SID,NAME,ISO_TIME,LAT,LON\nNA0001,EXAMPLE,2025-01-01,20,60",
   "us-drought-monitor": JSON.stringify([

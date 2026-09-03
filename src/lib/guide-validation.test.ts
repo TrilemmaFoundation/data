@@ -140,6 +140,16 @@ describe("validateGuideCopy", () => {
         }),
       ),
     ).toContain("description must be one sentence ending with a period");
+    for (const description of [
+      "Does this qualify? Operational event records support analysis for building a bounded monitoring workflow.",
+      "Watch this source! Operational event records support analysis for building a bounded monitoring workflow.",
+      "Operational event records support analysis for building a bounded monitoring workflow?",
+      "Operational event records support analysis for building a bounded monitoring workflow!",
+    ]) {
+      expect(validateGuideCopy(guide({ description }))).toContain(
+        "description must be one sentence ending with a period",
+      );
+    }
   });
 
   it("rejects short descriptions and descriptions without a use clause", () => {
@@ -218,17 +228,47 @@ describe("validateGuideCopy", () => {
   });
 
   it("rejects embedded credentials in Python examples", () => {
-    expect(
-      validateGuideCopy(
-        guide({
-          getting_started: {
-            python: {
-              code: 'api_key = "supersecretkey"\nimport pandas as pd\n',
+    for (const code of [
+      'api_key = "supersecretkey"\nimport pandas as pd\n',
+      'password = "supersecretkey"\nimport pandas as pd\n',
+      'secret = "supersecretkey"\nimport pandas as pd\n',
+      'params = {"api_key": "supersecretkey"}\n',
+      'headers = {"Authorization": "Bearer supersecretkey"}\n',
+      'headers = {"X-Api-Key": "supersecretkey"}\n',
+      'headers["Authorization"] = "Bearer supersecretkey"\n',
+      'url = "https://example.com/data?api_key=supersecretkey"\n',
+      'url = "https://example.com/data?token=supersecretkey"\n',
+    ]) {
+      expect(
+        validateGuideCopy(
+          guide({
+            getting_started: {
+              python: {
+                code,
+              },
             },
+          }),
+        ),
+      ).toContain("getting_started.python.code must not embed credentials");
+    }
+
+    for (const code of [
+      'params = {"api_key": os.environ["EXAMPLE_API_KEY"]}\n',
+      'headers = {"Authorization": f"Bearer {os.environ[\'EXAMPLE_TOKEN\']}"}\n',
+      'api_key = "<REPLACE_ME>"\n',
+      'api_key = "XXXXXXXXXXXX"\n',
+      'api_key = "CHANGE_ME_NOW"\n',
+      'api_key = "INSERT_API_KEY"\n',
+      'api_key = "short-key"\n',
+    ]) {
+      expect(validateGuideCopy(guide({
+        getting_started: {
+          python: {
+            code: `${code}import pandas as pd\npd.read_csv("events.csv")\n`,
           },
-        }),
-      ),
-    ).toContain("getting_started.python.code must not embed credentials");
+        },
+      }))).not.toContain("getting_started.python.code must not embed credentials");
+    }
   });
 
   it("requires an https source unless a download step loads a local file", () => {
@@ -285,11 +325,137 @@ describe("validateGuideCopy", () => {
     expect(
       validateGuideCopy(
         guide({
+          id: "constructor",
           access_type: ["api"],
           getting_started: {
             access_steps: ["Open the official source.", "Request a sample."],
             python: {
               code: 'import requests\nrequests.get("https://example.com/events.json")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code: 'import requests\nrequests.get("https://example.com/events.json")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code:
+                '# Official docs: https://example.com/live-events\nimport requests\nrequests.get("https://unrelated.example/events.json")\n',
+            },
+          },
+        }),
+      ),
+    ).toContain(sourceError);
+    expect(
+      validateGuideCopy(
+        guide({
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: { code: 'import requests\nrequests.get("https://[")\n' },
+          },
+        }),
+      ),
+    ).toContain(sourceError);
+    expect(
+      validateGuideCopy(
+        guide({
+          url: "https://www.example.com/live-events",
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code: 'import requests\nrequests.get("https://api.example.com/events.json")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          url: "https://www.metoffice.gov.uk/data",
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code: 'import requests\nrequests.get("https://data.metoffice.gov.uk/api")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          url: "https://www.metoffice.gov.uk/data",
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code: 'import requests\nrequests.get("https://evil.gov.uk/api")\n',
+            },
+          },
+        }),
+      ),
+    ).toContain(sourceError);
+    expect(
+      validateGuideCopy(
+        guide({
+          id: "natural-earth",
+          url: "https://www.naturalearthdata.com/",
+          access_type: ["download"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code:
+                'import requests\nrequests.get("https://naturalearth.s3.amazonaws.com/110m_cultural/ne_110m_admin_0_countries.zip")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          id: "chrome-ux-report",
+          url: "https://developer.chrome.com/docs/crux",
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code: 'import requests\nrequests.get("https://chromeuxreport.googleapis.com/v1")\n',
+            },
+          },
+        }),
+      ),
+    ).toEqual([]);
+    expect(
+      validateGuideCopy(
+        guide({
+          access_type: ["api"],
+          getting_started: {
+            access_steps: ["Open the official source.", "Request a sample."],
+            python: {
+              code:
+                'headers = {"User-Agent": "https://unrelated.example/bot"}\npayload = {"url": "https://unrelated.example/events.json"}\nimport requests\nrequests.get("https://example.com/events.json")\nrequests.get("https://data.trilemma.foundation/notebooks/demo.ipynb")\n',
             },
           },
         }),

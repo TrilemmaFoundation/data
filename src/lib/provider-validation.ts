@@ -45,45 +45,58 @@ export async function checkProviderContract(
   const { url, contentTypes, range, validate } = contract;
 
   async function request() {
-    const result = await fetchPinnedHttps(url, {
-      fetchImpl: options.fetchImpl,
-      resolveHost: options.resolveHost,
-      timeoutMs: options.timeoutMs ?? TIMEOUT_MS,
-      agents,
-      headers: {
-        Accept: contentTypes.join(", "),
-        "User-Agent": VALIDATOR_USER_AGENT,
-        ...(range ? { Range: range } : {}),
-      },
-    });
-    if (result.identityError) return [result.identityError];
-    if (!result.response) {
-      return [providerRequestFailure(url, result.message)];
+    const controller = new AbortController();
+    const timer = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? TIMEOUT_MS,
+    );
+    try {
+      const result = await fetchPinnedHttps(url, {
+        fetchImpl: options.fetchImpl,
+        resolveHost: options.resolveHost,
+        signal: controller.signal,
+        agents,
+        headers: {
+          Accept: contentTypes.join(", "),
+          "User-Agent": VALIDATOR_USER_AGENT,
+          ...(range ? { Range: range } : {}),
+        },
+      });
+      if (result.identityError) return [result.identityError];
+      if (!result.response) {
+        return [providerRequestFailure(url, result.message)];
+      }
+
+      const response = result.response;
+      if (!response.ok) return [`provider contract returned HTTP ${response.status}`];
+
+      const declaredLength = Number(response.headers.get("content-length") ?? 0);
+      if (declaredLength > MAX_RESPONSE_BYTES) {
+        await response.body?.cancel().catch(() => undefined);
+        return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
+      }
+
+      const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+      const mediaType = mediaTypeOf(contentType);
+      if (!contentTypes.some((type) => mediaType === mediaTypeOf(type))) {
+        await response.body?.cancel().catch(() => undefined);
+        return [`unexpected provider content type: ${contentType || "missing"}`];
+      }
+
+      const body = await readBoundedBody(
+        response,
+        MAX_RESPONSE_BYTES,
+        controller.signal,
+      );
+      if (!body) {
+        return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
+      }
+
+      const validationError = validate(body);
+      return validationError ? [validationError] : [];
+    } finally {
+      clearTimeout(timer);
     }
-
-    const response = result.response;
-    if (!response.ok) return [`provider contract returned HTTP ${response.status}`];
-
-    const declaredLength = Number(response.headers.get("content-length") ?? 0);
-    if (declaredLength > MAX_RESPONSE_BYTES) {
-      await response.body?.cancel().catch(() => undefined);
-      return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
-    }
-
-    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
-    const mediaType = mediaTypeOf(contentType);
-    if (!contentTypes.some((type) => mediaType === mediaTypeOf(type))) {
-      await response.body?.cancel().catch(() => undefined);
-      return [`unexpected provider content type: ${contentType || "missing"}`];
-    }
-
-    const body = await readBoundedBody(response, MAX_RESPONSE_BYTES);
-    if (!body) {
-      return [`provider response exceeds ${MAX_RESPONSE_BYTES} bytes`];
-    }
-
-    const validationError = validate(body);
-    return validationError ? [validationError] : [];
   }
 
   let errors: string[];

@@ -19,7 +19,9 @@ export function resolveSnapshotAlias(
   kind: VocabularyKind,
   value: string,
 ): string | null {
-  return snapshot.aliases[kind][snapshotKey(value)] ?? null;
+  const aliases = snapshot.aliases[kind];
+  const key = snapshotKey(value);
+  return Object.hasOwn(aliases, key) ? aliases[key] ?? null : null;
 }
 
 export function canonicalizeSnapshotValue(

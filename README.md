@@ -148,9 +148,11 @@ vocabulary/collection/maintainer integrity, the 90-day maintenance policy, guide
 copy, Python syntax, notebook determinism, controlled provider fixtures, lint,
 100% `src/lib` coverage, and the static application. It does not execute
 contributed Python. After pushes to `main`, every Monday, and on manual
-dispatch, GitHub Actions runs configured provider-contract checks and
-`npm run maintenance-report`, which performs the live source and data-terms
-URL pass, writes `reports/maintenance-report.*`, and fails only after those
+dispatch, GitHub Actions runs configured provider-contract checks in the
+dataset-validation job and runs `npm run maintenance-report` in a separate
+live-maintenance job so URL checks do not share a 15-minute clock with
+provider contracts. The report performs the live source and data-terms URL
+pass, writes `reports/maintenance-report.*`, and fails only after those
 artifacts exist. Weekly and
 manual runs also execute a small allowlisted Python runtime canary that cannot
 fail the pull-request gate.

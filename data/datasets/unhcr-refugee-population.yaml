@@ -4,7 +4,7 @@ description: >
   Official refugee, asylum-seeker, displacement, statelessness, return, and
   resettlement statistics for building humanitarian trend and flow tools.
 theme: Demographics & Development
-url: https://api.unhcr.org/population/v1/population/?year=2024&limit=1
+url: https://www.unhcr.org/refugee-statistics
 access_type:
   - api
   - download
@@ -18,7 +18,7 @@ formats:
 license: UNHCR terms of use for datasets
 license_url: https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets
 url_checks:
-  source_marker: UNHCR Refugee Data Finder
+  source_marker: Refugee Data Finder
   license_marker: attribution to UNHCR
 domains:
   - Forced Displacement

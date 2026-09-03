@@ -15,6 +15,15 @@ describe("maintainers", () => {
     const registry = getMaintainers();
     expect(registry.routing.default).toBe("trilemma");
     expect(maintainerForDataset("nws-weather-api", registry).id).toBe("trilemma");
+    expect(maintainerForDataset("constructor", registry).id).toBe("trilemma");
+    expect(maintainerForDataset("toString", registry).id).toBe("trilemma");
+    expect(maintainerForDataset("nws-weather-api", {
+      ...registry,
+      routing: {
+        ...registry.routing,
+        overrides: { "nws-weather-api": "trilemma" },
+      },
+    }).id).toBe("trilemma");
     expect(validateMaintainerOverrides(["nws-weather-api"], registry)).toEqual([]);
   });
 

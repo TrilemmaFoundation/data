@@ -91,7 +91,9 @@ export function maintainerForDataset(
   datasetId: string,
   registry: MaintainersRegistry,
 ): Maintainer {
-  const maintainerId = registry.routing.overrides[datasetId] ?? registry.routing.default;
+  const maintainerId = Object.hasOwn(registry.routing.overrides, datasetId)
+    ? registry.routing.overrides[datasetId]!
+    : registry.routing.default;
   const maintainer = registry.maintainers.find((item) => item.id === maintainerId);
   if (!maintainer) {
     throw new Error(`Missing maintainer "${maintainerId}"`);

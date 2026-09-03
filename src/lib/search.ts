@@ -14,6 +14,7 @@ import {
 import {
   EMPTY_VOCABULARY_SNAPSHOT,
   canonicalizeSnapshotValue,
+  snapshotHasTerms,
   type VocabularySnapshot,
 } from "./vocabulary-snapshot";
 
@@ -113,12 +114,13 @@ export function getFilterOptions(
 ): FilterOptions {
   const presentDomains = new Set(datasets.flatMap((dataset) => dataset.canonical_domains));
   const presentTasks = new Set(datasets.flatMap((dataset) => dataset.canonical_tasks));
+  const hasVocabulary = snapshotHasTerms(snapshot);
   const filterableDomains =
-    snapshot.filterable.domains.length > 0
+    hasVocabulary
       ? snapshot.filterable.domains.filter((label) => presentDomains.has(label))
       : uniqueSorted([...presentDomains]);
   const filterableTasks =
-    snapshot.filterable.tasks.length > 0
+    hasVocabulary
       ? snapshot.filterable.tasks.filter((label) => presentTasks.has(label))
       : uniqueSorted([...presentTasks]);
   return {

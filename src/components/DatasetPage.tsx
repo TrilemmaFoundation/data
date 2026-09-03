@@ -73,10 +73,12 @@ export function DatasetPage({
   dataset,
   related = [],
   notebookAvailable = false,
+  showValidationBadges = true,
 }: {
   dataset: Dataset;
   related?: CatalogDataset[];
   notebookAvailable?: boolean;
+  showValidationBadges?: boolean;
 }) {
   const sizeCategory = getSizeCategory(dataset.size_gb_max);
   const sizeRange = formatSizeRange(dataset.size_gb_min, dataset.size_gb_max);
@@ -246,17 +248,19 @@ export function DatasetPage({
             </div>
           ))}
         </dl>
-        <ul className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-secondary">
-          <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.pythonSyntaxLabel}</li>
-          {pythonStatus.notebook && (
-            <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.notebookLabel}</li>
-          )}
-          {pythonStatus.runtimeVerified && (
-            <li className="rounded-full border border-white/10 px-3 py-1">
-              {datasetGuideCopy.runtimeVerifiedLabel(formatVerifiedDate(pythonStatus.runtimeVerified))}
-            </li>
-          )}
-        </ul>
+        {showValidationBadges && (
+          <ul className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-secondary">
+            <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.pythonSyntaxLabel}</li>
+            {pythonStatus.notebook && (
+              <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.notebookLabel}</li>
+            )}
+            {pythonStatus.runtimeVerified && (
+              <li className="rounded-full border border-white/10 px-3 py-1">
+                {datasetGuideCopy.runtimeVerifiedLabel(formatVerifiedDate(pythonStatus.runtimeVerified))}
+              </li>
+            )}
+          </ul>
+        )}
       </section>
 
       <section id="getting-started" className="scroll-mt-24 pt-10" aria-labelledby="guide-title">

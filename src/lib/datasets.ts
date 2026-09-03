@@ -1,11 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
-import { DatasetSchema, isActiveDataset, toCatalogDataset, type CatalogDataset, type Dataset } from "./schema";
+import {
+  DatasetSchema,
+  MAX_DATASET_FILE_BYTES,
+  isActiveDataset,
+  toCatalogDataset,
+  type CatalogDataset,
+  type Dataset,
+} from "./schema";
 import { getVocabulary } from "./vocabulary";
 
 const DATASETS_DIR = path.join(process.cwd(), "data", "datasets");
-export const MAX_DATASET_FILE_BYTES = 64 * 1024;
+export { MAX_DATASET_FILE_BYTES } from "./schema";
 
 type LoadResult = {
   datasets: Dataset[];

@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import { getAllDatasets } from "../src/lib/datasets";
 import { getAllCollections } from "../src/lib/collections";
 import { loadVocabulary } from "../src/lib/vocabulary";
@@ -15,6 +14,7 @@ import {
   writeMaintenanceArtifacts,
 } from "../src/lib/maintenance-run";
 import { sanitizeDiagnostic } from "../src/lib/diagnostics";
+import { changedProviderFiles } from "./maintenance-history";
 
 function readNotebooks(): Record<string, string> {
   const dir = path.join(process.cwd(), NOTEBOOKS_PUBLIC_DIR);
@@ -25,25 +25,6 @@ function readNotebooks(): Record<string, string> {
       .filter((file) => file.endsWith(".ipynb"))
       .map((file) => [file, fs.readFileSync(path.join(dir, file), "utf8")]),
   );
-}
-
-function changedProviderFiles(): string[] {
-  const result = spawnSync(
-    "git",
-    [
-      "log",
-      "--since=30 days ago",
-      "-G",
-      "^(url:|license_url:)",
-      "--name-only",
-      "--pretty=format:",
-      "--",
-      "data/datasets",
-    ],
-    { encoding: "utf8" },
-  );
-  if (result.status !== 0) return [];
-  return [...new Set((result.stdout ?? "").split("\n").map((line) => line.trim()).filter(Boolean))];
 }
 
 function canaryFailuresFromEnv(): string[] {

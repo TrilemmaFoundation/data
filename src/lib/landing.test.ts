@@ -11,5 +11,8 @@ describe("theme landings", () => {
       expect(themePath(theme)).toBe(`/themes/${slug}`);
     }
     expect(themeFromSlug("missing")).toBeNull();
+    expect(themeFromSlug("constructor")).toBeNull();
+    expect(themeFromSlug("__proto__")).toBeNull();
+    expect(themeFromSlug("toString")).toBeNull();
   });
 });

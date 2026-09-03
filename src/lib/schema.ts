@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const MAX_DATASET_FILE_BYTES = 64 * 1024;
+
 const AccessTypeSchema = z.enum(["download", "api", "both"]);
 export const DIFFICULTIES = [
   "beginner",

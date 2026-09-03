@@ -69,26 +69,32 @@ export function buildMaintenanceReport(input: {
   const deprecated: MaintenanceFinding[] = [];
 
   for (const dataset of input.datasets) {
-    if (isActiveDataset(dataset)) {
-      const freshness = verificationFreshness(dataset.last_verified, today);
-      const age = calendarAgeDays(dataset.last_verified, today);
-      if (freshness === "overdue") {
-        overdue.push(
-          finding(
-            dataset.id,
-            "error",
-            `last_verified ${dataset.last_verified} is ${age} days old; re-verify within ${MAX_VERIFICATION_AGE_DAYS} days`,
-          ),
-        );
-      } else if (freshness === "due_soon") {
-        dueSoon.push(
-          finding(
-            dataset.id,
-            "warning",
-            `last_verified ${dataset.last_verified} is due within ${VERIFICATION_DUE_SOON_DAYS} days`,
-          ),
-        );
-      }
+    const freshness = verificationFreshness(dataset.last_verified, today);
+    const age = calendarAgeDays(dataset.last_verified, today);
+    if (age < 0) {
+      overdue.push(
+        finding(
+          dataset.id,
+          "error",
+          `last_verified ${dataset.last_verified} is in the future`,
+        ),
+      );
+    } else if (freshness === "overdue") {
+      overdue.push(
+        finding(
+          dataset.id,
+          "error",
+          `last_verified ${dataset.last_verified} is ${age} days old; re-verify within ${MAX_VERIFICATION_AGE_DAYS} days`,
+        ),
+      );
+    } else if (freshness === "due_soon") {
+      dueSoon.push(
+        finding(
+          dataset.id,
+          "warning",
+          `last_verified ${dataset.last_verified} is due within ${VERIFICATION_DUE_SOON_DAYS} days`,
+        ),
+      );
     }
 
     if (dataset.catalog_status === "temporarily_unavailable") {
@@ -147,7 +153,13 @@ export function buildMaintenanceReport(input: {
         finding("url-exception", "warning", message),
       ),
       changed_provider_files: (input.changedProviderFiles ?? []).map((file) =>
-        finding(file, "info", "dataset URL or provider contract recently changed"),
+        finding(
+          file,
+          "info",
+          file.endsWith("provider-contracts.ts")
+            ? "provider contract recently changed"
+            : "dataset URL or license URL recently changed",
+        ),
       ),
     },
     editorial: {

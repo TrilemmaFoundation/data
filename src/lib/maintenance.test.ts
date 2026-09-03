@@ -53,7 +53,10 @@ describe("maintenance report", () => {
       exceptionWarnings: ["example.com expires soon"],
       notebookDrift: ["missing generated notebook demo.ipynb"],
       canaryFailures: ["nws-weather-api timed out"],
-      changedProviderFiles: ["nws-weather-api.yaml"],
+      changedProviderFiles: [
+        "data/datasets/nws-weather-api.yaml",
+        "src/lib/provider-contracts.ts",
+      ],
       today: new Date("2026-08-19T00:00:00Z"),
     });
 
@@ -66,6 +69,16 @@ describe("maintenance report", () => {
     expect(report.lifecycle.deprecated[0]?.id).toBe("old-dataset");
     expect(report.editorial.collections[0]?.id).toBe("stale-collection");
     expect(report.sources.broken_urls[0]?.message).toContain("source page mismatch");
+    expect(report.sources.changed_provider_files).toEqual([
+      expect.objectContaining({
+        id: "data/datasets/nws-weather-api.yaml",
+        message: "dataset URL or license URL recently changed",
+      }),
+      expect.objectContaining({
+        id: "src/lib/provider-contracts.ts",
+        message: "provider contract recently changed",
+      }),
+    ]);
     expect(formatMaintenanceMarkdown(report)).toContain("Verification overdue");
     expect(formatMaintenanceMarkdown(report)).toContain("unknown term");
   });
@@ -78,6 +91,56 @@ describe("maintenance report", () => {
     });
     expect(report.verification.overdue).toEqual([]);
     expect(formatMaintenanceMarkdown(report)).toContain("None.");
+  });
+
+  it("reports stale inactive records and future verification dates", () => {
+    const staleUnavailable = {
+      ...nws,
+      id: "stale-unavailable",
+      last_verified: "2026-01-01",
+      catalog_status: "temporarily_unavailable" as const,
+      status_reason: "Provider outage",
+      status_until: "2026-12-01",
+    };
+    const future = {
+      ...nws,
+      id: "future-verification",
+      last_verified: "2026-09-04",
+    };
+    const freshUnavailable = {
+      ...nws,
+      id: "fresh-unavailable",
+      last_verified: "2026-08-10",
+      catalog_status: "temporarily_unavailable" as const,
+      status_reason: "Provider outage",
+      status_until: "2026-12-01",
+    };
+    const dueSoonUnavailable = {
+      ...nws,
+      id: "due-soon-unavailable",
+      last_verified: "2026-06-15",
+      catalog_status: "temporarily_unavailable" as const,
+      status_reason: "Provider outage",
+      status_until: "2026-12-01",
+    };
+    const report = buildMaintenanceReport({
+      datasets: [staleUnavailable, future, freshUnavailable, dueSoonUnavailable],
+      collections: [],
+      today: new Date("2026-09-03T00:00:00Z"),
+    });
+    expect(report.verification.overdue).toEqual([
+      expect.objectContaining({ id: "stale-unavailable" }),
+      expect.objectContaining({
+        id: "future-verification",
+        message: "last_verified 2026-09-04 is in the future",
+      }),
+    ]);
+    expect(report.verification.overdue.map((item) => item.id)).not.toContain(
+      "fresh-unavailable",
+    );
+    expect(report.verification.due_soon).toEqual([
+      expect.objectContaining({ id: "due-soon-unavailable" }),
+    ]);
   });
 
   it("uses default empty collections for omitted operational inputs", () => {

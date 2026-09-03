@@ -10,7 +10,9 @@ import {
 import { mapPool } from "./async-pool";
 
 const MAX_PAGE_BYTES = 1_000_000;
-const RETRY_DELAYS_MS = [250, 750];
+export const URL_CHECK_TIMEOUT_MS = 10_000;
+export const URL_CHECK_CONCURRENCY = 12;
+export const URL_RETRY_DELAYS_MS = [250] as const;
 
 type UrlCheckResult = {
   ok: boolean;
@@ -30,6 +32,7 @@ type CheckUrlOptions = {
   today?: Date;
   expectedMarker?: string;
   agents?: PinnedAgentCache;
+  timeoutMs?: number;
 };
 
 export const EXCEPTION_WARNING_DAYS = 14;
@@ -236,55 +239,77 @@ export async function checkUrl(
   const agents = options.agents ?? new Map();
 
   async function attempt(method: "HEAD" | "GET") {
-    const result = await fetchPinnedHttps(url, {
-      method,
-      fetchImpl,
-      resolveHost,
-      agents,
-      headers: {
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "identity",
-      },
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? URL_CHECK_TIMEOUT_MS,
+    );
+    const finish = <T>(value: T): T => {
+      clearTimeout(timer);
+      return value;
+    };
+    try {
+      const result = await fetchPinnedHttps(url, {
+        method,
+        fetchImpl,
+        resolveHost,
+        agents,
+        signal: controller.signal,
+        headers: {
+          Accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Accept-Encoding": "identity",
+        },
+      });
 
-    if (result.identityError || !result.response) {
-      return {
-        status: result.status,
-        message: result.message,
-        identityError: result.identityError,
-      };
-    }
-
-    const response = result.response;
-    let identityError: string | null = null;
-    if (
-      method === "GET" &&
-      options.expectedMarker &&
-      isReachable(response.status)
-    ) {
-      const finalUrl = result.finalUrl;
-      if (new URL(finalUrl).hostname !== new URL(url).hostname) {
-        identityError = `${url} redirected to unexpected host ${new URL(finalUrl).hostname}`;
-        await response.body?.cancel().catch(() => undefined);
-      } else {
-        const body = await readBoundedBody(response, MAX_PAGE_BYTES);
-        if (!body) {
-          identityError = `${url} response exceeds ${MAX_PAGE_BYTES} bytes`;
-        } else if (
-          !new TextDecoder()
-            .decode(body)
-            .toLocaleLowerCase("en-US")
-            .includes(options.expectedMarker.toLocaleLowerCase("en-US"))
-        ) {
-          identityError = `${url} did not contain expected page marker "${options.expectedMarker}"`;
-        }
+      if (result.identityError || !result.response) {
+        return finish({
+          status: result.status,
+          message: result.message,
+          identityError: result.identityError,
+        });
       }
-    } else {
-      await response.body?.cancel().catch(() => undefined);
+
+      const response = result.response;
+      let identityError: string | null = null;
+      if (
+        method === "GET" &&
+        options.expectedMarker &&
+        isReachable(response.status)
+      ) {
+        const finalUrl = result.finalUrl;
+        if (new URL(finalUrl).hostname !== new URL(url).hostname) {
+          identityError = `${url} redirected to unexpected host ${new URL(finalUrl).hostname}`;
+          await response.body?.cancel().catch(() => undefined);
+        } else {
+          const body = await readBoundedBody(
+            response,
+            MAX_PAGE_BYTES,
+            controller.signal,
+          );
+          if (!body) {
+            identityError = `${url} response exceeds ${MAX_PAGE_BYTES} bytes`;
+          } else if (
+            !new TextDecoder()
+              .decode(body)
+              .toLocaleLowerCase("en-US")
+              .includes(options.expectedMarker.toLocaleLowerCase("en-US"))
+          ) {
+            identityError = `${url} did not contain expected page marker "${options.expectedMarker}"`;
+          }
+        }
+      } else {
+        await response.body?.cancel().catch(() => undefined);
+      }
+      return finish({ status: response.status, message: null, identityError });
+    } catch (error) {
+      return finish({
+        status: null,
+        message: `${method} ${url}: ${error instanceof Error ? error.message : String(error)}`,
+        identityError: null,
+      });
     }
-    return { status: response.status, message: null, identityError };
   }
 
   try {
@@ -304,7 +329,7 @@ export async function checkUrl(
       return { ok: false, messages: [get.identityError] };
     }
 
-    for (const retryDelay of RETRY_DELAYS_MS) {
+    for (const retryDelay of URL_RETRY_DELAYS_MS) {
       if (!isTransient(get.status)) break;
       await delay(retryDelay);
       get = await attempt("GET");
@@ -373,7 +398,7 @@ export async function validateDatasetUrls(
     const results = new Map(
       await mapPool(
         jobs,
-        options.concurrency ?? 3,
+        options.concurrency ?? URL_CHECK_CONCURRENCY,
         async ([key, job]) =>
           [key, await checker(job.url, job.expectedMarker)] as const,
       ),

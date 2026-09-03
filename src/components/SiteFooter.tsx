@@ -69,7 +69,11 @@ export function SiteFooter() {
               <Link href={COLLECTIONS_PATH} className={footerLinkClass}>
                 {siteCopy.collectionsNavigationLabel}
               </Link>
-              <Link href={CONTRIBUTE_APP_PATH} className={footerLinkClass}>
+              <Link
+                href={CONTRIBUTE_APP_PATH}
+                prefetch={false}
+                className={footerLinkClass}
+              >
                 {siteCopy.contributeLabel}
               </Link>
               <a href={FEEDBACK_URL} className={footerLinkClass}>

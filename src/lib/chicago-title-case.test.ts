@@ -28,6 +28,8 @@ describe("toChicagoTitleCase", () => {
   it("keeps first and last words capitalized", () => {
     expect(toChicagoTitleCase("the world we live in")).toBe("The World We Live In");
     expect(toChicagoTitleCase("of mice and men")).toBe("Of Mice and Men");
+    expect(toChicagoTitleCase("---")).toBe("---");
+    expect(toChicagoTitleCase("word--word")).toBe("Word--Word");
   });
 
   it("capitalizes after a colon and leaves period-separated titles intact", () => {

@@ -47,7 +47,7 @@ function codeCell(source: string[]): Record<string, unknown> {
 }
 
 export function notebookFromDataset(dataset: Dataset): Record<string, unknown> {
-  const install = `python -m pip install ${dataset.getting_started.python.packages.join(" ")}`;
+  const install = `%pip install ${dataset.getting_started.python.packages.join(" ")}`;
   const guideUrl = `${SITE_URL}${datasetPath(dataset.id)}`;
   const codeLines = dataset.getting_started.python.code.replace(/\n$/, "").split("\n");
   const projectSteps = dataset.getting_started.first_project.steps.map(

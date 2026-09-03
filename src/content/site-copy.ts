@@ -319,6 +319,7 @@ export const contributeCopy = {
   downloadLabel: "Download YAML",
   copyYamlLabel: "Copy YAML",
   copiedYamlLabel: "YAML Copied",
+  copyYamlErrorLabel: "Copy Failed",
   githubLabel: "Open Contribution Guide",
   pythonNotice:
     "Python syntax, live URL, and provider checks still run in repository CI. This studio never executes submitted code.",

@@ -16,6 +16,7 @@ type PinnedFetchOptions = {
   method?: "HEAD" | "GET";
   headers?: Record<string, string>;
   timeoutMs?: number;
+  signal?: AbortSignal;
   fetchImpl?: typeof fetch;
   resolveHost?: ResolveHost;
   agents?: PinnedAgentCache;
@@ -246,11 +247,14 @@ export async function fetchPinnedHttps(
   const fetchImpl = options.fetchImpl;
   const resolveHost = options.resolveHost ?? resolveHostWithDns;
   const agents = options.agents ?? new Map();
-  const controller = new AbortController();
-  const timer = setTimeout(
-    () => controller.abort(),
-    options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
-  );
+  const controller = options.signal ? null : new AbortController();
+  const signal = options.signal ?? controller!.signal;
+  const timer = controller
+    ? setTimeout(
+        () => controller.abort(),
+        options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+      )
+    : null;
 
   let result: PinnedFetchResult;
   try {
@@ -297,7 +301,7 @@ export async function fetchPinnedHttps(
       const requestInit = {
         method,
         redirect: "manual" as const,
-        signal: controller.signal,
+        signal,
         headers: {
           "User-Agent": VALIDATOR_USER_AGENT,
           ...options.headers,
@@ -352,28 +356,51 @@ export async function fetchPinnedHttps(
       finalUrl: url,
     };
   }
-  clearTimeout(timer);
+  if (timer) clearTimeout(timer);
   return result;
 }
 
 export async function readBoundedBody(
   response: Response,
   maxBytes: number,
+  signal?: AbortSignal,
 ): Promise<Uint8Array | null> {
   if (!response.body) return new Uint8Array();
 
   const reader = response.body.getReader();
+  const abortError = () =>
+    signal!.reason instanceof Error ? signal!.reason : new Error("request aborted");
+  if (signal?.aborted) {
+    await reader.cancel().catch(() => undefined);
+    throw abortError();
+  }
+
+  let rejectAbort: ((reason: Error) => void) | undefined;
+  const aborted = new Promise<never>((_resolve, reject) => {
+    rejectAbort = reject;
+  });
+  const onAbort = () => {
+    rejectAbort?.(abortError());
+    void reader.cancel().catch(() => undefined);
+  };
+  signal?.addEventListener("abort", onAbort, { once: true });
   const chunks: Uint8Array[] = [];
   let size = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > maxBytes) {
-      await reader.cancel();
-      return null;
+  try {
+    while (true) {
+      const { done, value } = signal
+        ? await Promise.race([reader.read(), aborted])
+        : await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
     }
-    chunks.push(value);
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
   }
 
   const body = new Uint8Array(size);

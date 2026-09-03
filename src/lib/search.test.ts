@@ -80,6 +80,16 @@ describe("filterDatasets", () => {
       expect(folded).toEqual([...new Set(folded)]);
     }
     expect(getFilterOptions([]).accessMethods).toEqual([]);
+    expect(getFilterOptions([earthquakeCatalog]).domains).toContain("Natural Hazards");
+    expect(
+      getFilterOptions([earthquakeCatalog], {
+        aliases: {
+          domains: { seismology: "Natural Hazards" },
+          tasks: { monitoring: "Monitoring" },
+        },
+        filterable: { domains: [], tasks: [] },
+      }),
+    ).toMatchObject({ domains: [], tasks: [] });
     expect(
       filterDatasets(
         datasets,

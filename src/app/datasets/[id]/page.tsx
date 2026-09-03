@@ -3,7 +3,12 @@ import { notFound } from "next/navigation";
 import { getAllDatasets, getCatalogDatasets, getDatasetById } from "@/lib/datasets";
 import { hasGeneratedNotebook } from "@/lib/notebooks";
 import { getRelatedDatasets } from "@/lib/related-datasets";
-import { datasetJsonLd, datasetPath, serializeJsonLd } from "@/lib/seo";
+import {
+  datasetJsonLd,
+  datasetPath,
+  pageSocialMetadata,
+  serializeJsonLd,
+} from "@/lib/seo";
 import { DatasetPage } from "@/components/DatasetPage";
 import { notFoundCopy } from "@/content/site-copy";
 
@@ -19,20 +24,11 @@ export async function generateMetadata({
   const { id } = await params;
   const dataset = getDatasetById(id);
   if (!dataset) return { title: notFoundCopy.title };
-  return {
-    title: dataset.name,
-    description: dataset.description,
-    alternates: { canonical: datasetPath(dataset.id) },
-    openGraph: {
-      title: dataset.name,
-      description: dataset.description,
-      url: datasetPath(dataset.id),
-    },
-    twitter: {
-      title: dataset.name,
-      description: dataset.description,
-    },
-  };
+  return pageSocialMetadata(
+    datasetPath(dataset.id),
+    dataset.name,
+    dataset.description,
+  );
 }
 
 export default async function DatasetDetailPage({

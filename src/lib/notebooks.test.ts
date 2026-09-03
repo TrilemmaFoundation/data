@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { getDatasetById } from "./datasets";
+import { getAllDatasets, getDatasetById } from "./datasets";
 import {
   colabNotebookUrl,
   generatedNotebooks,
@@ -25,6 +25,14 @@ describe("notebooks", () => {
   it("serializes a deterministic notebook from dataset YAML", () => {
     const notebook = notebookFromDataset(nws);
     const serialized = serializeNotebook(notebook);
+    const cells = notebook.cells as Array<{ cell_type: string; source: string[] }>;
+    const installCell = cells.find((cell) =>
+      cell.source.some((line) => line.startsWith("%pip install ")),
+    );
+    expect(installCell?.cell_type).toBe("code");
+    expect(installCell?.source.some((line) => line.startsWith("%pip install "))).toBe(true);
+    expect(installCell?.source.join("")).toContain(nws.getting_started.python.packages[0]!);
+    expect(serialized).not.toContain("python -m pip install");
     expect(serialized.endsWith("\n")).toBe(true);
     expect(serialized).toContain(nws.getting_started.python.code.split("\n")[0]!);
     expect(JSON.parse(serialized).cells.length).toBeGreaterThan(5);
@@ -43,6 +51,10 @@ describe("notebooks", () => {
     expect(notebookDrift([], { "extra.ipynb": "{}\n" })).toEqual([
       "unexpected notebook extra.ipynb",
     ]);
+    for (const file of generatedNotebooks(getAllDatasets())) {
+      expect(file.contents, file.filename).toContain("%pip install ");
+      expect(file.contents, file.filename).not.toContain("python -m pip install");
+    }
   });
 
   it("commits generated notebooks for City of Vancouver beginner guides", () => {

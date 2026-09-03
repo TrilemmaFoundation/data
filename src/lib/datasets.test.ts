@@ -174,6 +174,31 @@ describe("loadDatasets", () => {
     );
   });
 
+  it("keeps human-facing sources separate from multi-step API examples", () => {
+    const unhcr = getDatasetById("unhcr-refugee-population")!;
+    expect(unhcr.url).toBe("https://www.unhcr.org/refugee-statistics");
+    expect(unhcr.url).not.toContain("api.unhcr.org");
+    expect(unhcr.url_checks.source_marker).toBe("Refugee Data Finder");
+    expect(unhcr.getting_started.python.code).toContain(
+      "https://api.unhcr.org/population/v1/population/",
+    );
+
+    const echo = getDatasetById("epa-echo-drinking-water")!;
+    expect(echo.getting_started.access_steps.join(" ")).toMatch(/query identifier/i);
+    expect(echo.getting_started.python.code).toContain(
+      "sdw_rest_services.get_systems",
+    );
+    expect(echo.getting_started.python.code).toContain(
+      "sdw_rest_services.get_qid",
+    );
+    expect(echo.getting_started.python.code).toContain(
+      '["Results"]["WaterSystems"]',
+    );
+    expect(echo.getting_started.python.code).not.toContain(
+      'payload.get("Results", payload).get("Systems"',
+    );
+  });
+
   it("keeps Python examples aligned with access-step and first-project fields", () => {
     const cases = [
       {

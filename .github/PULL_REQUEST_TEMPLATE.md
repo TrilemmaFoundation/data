@@ -21,7 +21,7 @@ Thank you for contributing an operational dataset!
 - [ ] Metadata text and URLs contain no control characters
 - [ ] Metadata can be independently verified against the source
 - [ ] `getting_started` includes complete prerequisites and access steps
-- [ ] The Python example is valid, concise, credential-free, and uses the authoritative source
+- [ ] The Python example is valid, concise, credential-free, and fetches the dataset or provider-contract host
 - [ ] The first project has a clear goal and three actionable steps, ending with an interpretation or limitation
 
 ### Exclude if any apply

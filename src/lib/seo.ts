@@ -50,7 +50,12 @@ export function pageSocialMetadata(path: string, title: string, description: str
       card: "summary_large_image" as const,
       title,
       description,
-      images: ["/foundation-white.webp"],
+      images: [
+        {
+          url: "/foundation-white.webp",
+          alt: "Trilemma Foundation",
+        },
+      ],
     },
   };
 }

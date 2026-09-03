@@ -66,6 +66,7 @@ describe("site copy", () => {
     expect(isChicagoTitleCase(datasetGuideCopy.notebookLabel)).toBe(true);
     expect(isChicagoTitleCase(copyButtonCopy.errorLabel)).toBe(true);
     expect(isChicagoTitleCase(contributeCopy.copiedYamlLabel)).toBe(true);
+    expect(isChicagoTitleCase(contributeCopy.copyYamlErrorLabel)).toBe(true);
   });
 
   it("formats result counts and accessibility labels", () => {

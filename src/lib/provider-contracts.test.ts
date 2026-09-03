@@ -26,7 +26,26 @@ describe("provider contract registry", () => {
       expect(catalogIds.has(id)).toBe(true);
     }
     expect(hasProviderContract("constructor")).toBe(false);
+    expect(getProviderContract("constructor")).toBeUndefined();
+    expect(getProviderContract("toString")).toBeUndefined();
     expect(getProviderContract("missing")).toBeUndefined();
+  });
+
+  it("validates the EPA ECHO search step instead of a one-shot systems list", () => {
+    const contract = providerContracts["epa-echo-drinking-water"];
+    const bytes = (value: unknown) => new TextEncoder().encode(JSON.stringify(value));
+    expect(contract.url).toContain("sdw_rest_services.get_systems");
+    expect(contract.url).not.toContain("get_qid");
+    expect(contract.validate(bytes({
+      Results: {
+        Message: "Success",
+        QueryID: "94",
+        QueryRows: "465",
+      },
+    }))).toBeNull();
+    expect(contract.validate(bytes({
+      Results: { Systems: [{ PWSId: "RI0000001" }] },
+    }))).toEqual(expect.stringContaining("response contract mismatch"));
   });
 
   it.each(entries)("accepts the valid %s fixture and rejects the invalid fixture", (

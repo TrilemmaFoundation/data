@@ -65,12 +65,14 @@ describe("SEO helpers", () => {
     expect(metadata.alternates).toEqual({ canonical: "/contribute" });
     expect(metadata.openGraph).toMatchObject({
       url: "/contribute",
+      siteName: "Trilemma Data",
       title: contributeCopy.title,
       description: "Draft a dataset YAML file",
     });
     expect(metadata.twitter).toMatchObject({
+      card: "summary_large_image",
       title: contributeCopy.title,
-      images: ["/foundation-white.webp"],
+      images: [{ url: "/foundation-white.webp", alt: "Trilemma Foundation" }],
     });
   });
 

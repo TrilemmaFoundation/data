@@ -7,6 +7,9 @@ import {
   exceptionExpiryWarnings,
   EXCEPTION_WARNING_DAYS,
   listUrlExceptions,
+  URL_CHECK_CONCURRENCY,
+  URL_CHECK_TIMEOUT_MS,
+  URL_RETRY_DELAYS_MS,
   validateDatasetUrls,
 } from "./url-validation";
 
@@ -503,7 +506,7 @@ describe("checkUrl", () => {
       429,
       "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-08-13",
       "2026-11-11",
-      4,
+      3,
     ],
     [
       "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
@@ -656,7 +659,7 @@ describe("checkUrl", () => {
     ).resolves.toEqual({ ok: true, messages: [] });
   });
 
-  it("uses both retry delays before reporting a transient HTTP failure", async () => {
+  it("uses one retry delay before reporting a transient HTTP failure", async () => {
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce(new Response(null, { status: 405 }))
@@ -672,7 +675,7 @@ describe("checkUrl", () => {
       ok: false,
       messages: ["https://example.com/busy returned HTTP 503"],
     });
-    expect(delay.mock.calls).toEqual([[250], [750]]);
+    expect(delay.mock.calls).toEqual([[250]]);
   });
 
   it("reports Error and non-Error network failures", async () => {
@@ -737,7 +740,7 @@ describe("checkUrl", () => {
       fetchImpl: fetchImpl as typeof fetch,
       delay: vi.fn().mockResolvedValue(undefined),
     });
-    for (let attempt = 0; attempt < 4; attempt++) {
+    for (let attempt = 0; attempt < URL_RETRY_DELAYS_MS.length + 2; attempt++) {
       await vi.advanceTimersByTimeAsync(10_000);
     }
     await expect(pending).resolves.toEqual({
@@ -745,6 +748,55 @@ describe("checkUrl", () => {
       messages: ["GET https://example.com/slow: aborted"],
     });
     vi.useRealTimers();
+  });
+
+  it("keeps the timeout active while reading the response body", async () => {
+    vi.useFakeTimers();
+    const fetchImpl = vi.fn().mockImplementation(() =>
+      Promise.resolve(pageResponse(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode("Expected"));
+          },
+        }),
+        "https://example.com/slow-body",
+      )),
+    );
+    const pending = checkUrl("https://example.com/slow-body", {
+      fetchImpl: fetchImpl as typeof fetch,
+      expectedMarker: "Expected page marker",
+      timeoutMs: 5,
+      delay: vi.fn().mockResolvedValue(undefined),
+    });
+    await vi.advanceTimersByTimeAsync(10);
+    await expect(pending).resolves.toEqual({
+      ok: false,
+      messages: [
+        "GET https://example.com/slow-body: This operation was aborted",
+      ],
+    });
+    vi.useRealTimers();
+  });
+
+  it("reports Error and non-Error failures while reading the response body", async () => {
+    for (const failure of [new Error("stream failed"), "stream failed"]) {
+      const response = pageResponse("Expected", "https://example.com/read-error");
+      Object.defineProperty(response, "body", {
+        get() {
+          throw failure;
+        },
+      });
+      await expect(
+        checkUrl("https://example.com/read-error", {
+          fetchImpl: vi.fn().mockResolvedValue(response) as typeof fetch,
+          expectedMarker: "Expected page marker",
+          delay: vi.fn().mockResolvedValue(undefined),
+        }),
+      ).resolves.toEqual({
+        ok: false,
+        messages: ["GET https://example.com/read-error: stream failed"],
+      });
+    }
   });
 
   it("does not retry a permanent GET failure", async () => {
@@ -766,6 +818,21 @@ describe("checkUrl", () => {
 });
 
 describe("validateDatasetUrls", () => {
+  it("keeps the catalog worst-case retry budget below the maintenance job timeout", () => {
+    const datasets = getAllDatasets();
+    const jobs = new Set(datasets.flatMap((dataset) => [
+      JSON.stringify([dataset.url, dataset.url_checks.source_marker]),
+      JSON.stringify([dataset.license_url, dataset.url_checks.license_marker]),
+    ]));
+    const attempts = URL_RETRY_DELAYS_MS.length + 1;
+    const perJobMs =
+      attempts * URL_CHECK_TIMEOUT_MS +
+      URL_RETRY_DELAYS_MS.reduce((total, delay) => total + delay, 0);
+    const worstCaseMs =
+      Math.ceil(jobs.size / URL_CHECK_CONCURRENCY) * perJobMs;
+    expect(worstCaseMs).toBeLessThan(15 * 60_000);
+  });
+
   it("uses page markers with the default checker", async () => {
     const dataset = {
       id: "one",

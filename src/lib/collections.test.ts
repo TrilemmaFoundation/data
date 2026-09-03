@@ -74,6 +74,18 @@ describe("collections", () => {
     const invalid = makeTempDir();
     fs.writeFileSync(path.join(invalid, "first-builds.yaml"), "id: first-builds\n");
     expect(loadCollections(invalid).errors[0]?.messages.length).toBeGreaterThan(0);
+
+    const badTitle = makeTempDir();
+    fs.writeFileSync(
+      path.join(badTitle, "first-builds.yaml"),
+      validYaml.replace(
+        "title: Start with a First Microproduct",
+        "title: start with a first microproduct",
+      ),
+    );
+    expect(loadCollections(badTitle).errors[0]?.messages).toContain(
+      'title must use Chicago Title Case ("Start with a First Microproduct")',
+    );
   });
 
   it("enforces filename identity, duplicates, size, and file type", () => {

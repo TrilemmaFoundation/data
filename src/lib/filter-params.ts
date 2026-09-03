@@ -29,18 +29,21 @@ function parseList(
     const exact = allowedByKey.get(catalogValueKey(raw));
     if (exact) {
       selected.add(exact);
-      return;
+      return true;
     }
-    if (!kind) return;
+    if (!kind) return false;
     const canonical = resolveSnapshotAlias(snapshot, kind, raw);
     if (canonical && allowedByKey.has(catalogValueKey(canonical))) {
       selected.add(allowedByKey.get(catalogValueKey(canonical))!);
+      return true;
     }
+    return false;
   };
   for (const value of values) {
-    consider(value);
-    for (const part of value.split(",").map((item) => item.trim()).filter(Boolean)) {
-      consider(part);
+    if (!consider(value)) {
+      for (const part of value.split(",").map((item) => item.trim()).filter(Boolean)) {
+        consider(part);
+      }
     }
   }
   return allowed.filter((item) => selected.has(item));

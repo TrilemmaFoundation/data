@@ -45,7 +45,7 @@ describe("filter URL helpers", () => {
   it("round-trips comma-containing values and repeated selections", () => {
     const commaOptions = {
       ...options,
-      domains: ["Climate, Energy", "Geography"],
+      domains: ["Climate", "Climate, Energy", "Energy", "Geography"],
     };
     const filters = {
       ...EMPTY_FILTERS,
@@ -55,6 +55,36 @@ describe("filter URL helpers", () => {
 
     expect(params.getAll("domain")).toEqual(filters.domains);
     expect(parseFilters(params, commaOptions).domains).toEqual(filters.domains);
+  });
+
+  it("drops inherited object keys instead of treating them as aliases", () => {
+    const parsed = parseFilters(
+      new URLSearchParams("domain=constructor&task=__proto__"),
+      options,
+      toVocabularySnapshot(getVocabulary()),
+    );
+    expect(parsed.domains).toEqual([]);
+    expect(parsed.tasks).toEqual([]);
+    expect(
+      parseFilters(
+        new URLSearchParams("domain=toString&task=valueOf"),
+        options,
+        toVocabularySnapshot(getVocabulary()),
+      ),
+    ).toMatchObject({ domains: [], tasks: [] });
+  });
+
+  it("still splits comma-separated values that are not themselves options", () => {
+    const commaOptions = {
+      ...options,
+      domains: ["Climate", "Climate, Energy", "Energy", "Geography"],
+    };
+    expect(
+      parseFilters(new URLSearchParams("domain=Climate,Energy"), commaOptions).domains,
+    ).toEqual(["Climate", "Energy"]);
+    expect(
+      parseFilters(new URLSearchParams("domain=Climate%2C+Energy"), commaOptions).domains,
+    ).toEqual(["Climate, Energy"]);
   });
 
   it("preserves whitespace while a multi-word query is being typed", () => {

@@ -254,6 +254,29 @@ describe("checkProviderContract", () => {
     ]);
   });
 
+  it("keeps the provider timeout active while reading the body", async () => {
+    vi.useFakeTimers();
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode("latitude,longitude\n"));
+          },
+        }),
+        { headers: { "content-type": nasaFirms.valid.contentType } },
+      ),
+    );
+    const pending = checkProviderContract("nasa-firms", {
+      fetchImpl: fetchImpl as typeof fetch,
+      timeoutMs: 5,
+    });
+    await vi.advanceTimersByTimeAsync(5);
+    await expect(pending).resolves.toEqual([
+      "provider contract request failed: This operation was aborted",
+    ]);
+    vi.useRealTimers();
+  });
+
   it("rejects a cross-host redirect and follows a same-host redirect", async () => {
     await expect(
       checkProviderContract("nasa-firms", {

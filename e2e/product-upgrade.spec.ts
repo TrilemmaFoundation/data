@@ -52,28 +52,92 @@ test("guides show trust, related datasets, facet links, and Colab", async ({ pag
 
 test("contribution studio validates, previews, and downloads YAML", async ({ page }) => {
   const template = loadContributionTemplate();
-  const validYaml = stringifyContributionYaml(getDatasetById("nws-weather-api")!);
+  const dataset = getDatasetById("nws-weather-api")!;
+  const alternate = getDatasetById("sec-edgar-apis")!;
+  const validYaml = stringifyContributionYaml(dataset);
 
   await page.goto("/contribute");
   const editor = page.getByLabel(contributeCopy.yamlLabel);
+  const theme = page.getByLabel("Theme");
+  const difficulty = page.getByLabel("Difficulty");
   await expect(page.getByRole("heading", { name: contributeCopy.title })).toBeVisible();
   await expect(editor).toHaveValue(template);
+  await expect(theme).toHaveValue("Environment & Hazards");
+  await expect(difficulty).toHaveValue("beginner");
   await expect(page.getByText(contributeCopy.emptyPreview)).toBeVisible();
+
+  await editor.fill(stringifyContributionYaml(alternate));
+  await expect(theme).toHaveValue(alternate.theme);
+  await expect(difficulty).toHaveValue(alternate.difficulty);
 
   await editor.fill("id: not valid");
   await expect(page.getByRole("alert", { name: contributeCopy.errorsLabel })).toBeVisible();
+  await expect(theme).toHaveValue("");
+  await expect(difficulty).toHaveValue("");
+  await theme.selectOption("Government & Policy");
+  await expect(editor).toHaveValue(/theme: Government & Policy/);
 
   await page.getByRole("button", { name: contributeCopy.loadExampleLabel }).click();
   await expect(editor).toHaveValue(template);
+  await expect(theme).toHaveValue("Environment & Hazards");
+  await expect(difficulty).toHaveValue("beginner");
   await expect(page.getByText(contributeCopy.emptyPreview)).toBeVisible();
 
   await editor.fill(validYaml);
   await expect(page.getByRole("heading", { name: "National Weather Service API" })).toBeVisible();
+  await expect(page.getByText(datasetGuideCopy.pythonSyntaxLabel)).toHaveCount(0);
+
+  await page.getByRole("button", { name: contributeCopy.copyYamlLabel }).click();
+  await expect(page.getByRole("button", { name: contributeCopy.copiedYamlLabel })).toBeVisible();
+  await theme.selectOption("Government & Policy");
+  await expect(page.getByRole("button", { name: contributeCopy.copyYamlLabel })).toBeVisible();
+  await expect(editor).toHaveValue(/theme: Government & Policy/);
 
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: contributeCopy.downloadLabel }).click();
   const artifact = await download;
   expect(artifact.suggestedFilename()).toBe("nws-weather-api.yaml");
+});
+
+test("contribution studio reports clipboard failures", async ({ page }) => {
+  await page.goto("/contribute");
+  await page.evaluate(() => {
+    Object.defineProperty(navigator.clipboard, "writeText", {
+      configurable: true,
+      value: () => Promise.reject(new Error("denied")),
+    });
+  });
+  await page.getByRole("button", { name: contributeCopy.copyYamlLabel }).click();
+  await expect(
+    page.getByRole("button", { name: contributeCopy.copyYamlErrorLabel }),
+  ).toBeVisible();
+  await page.getByLabel(contributeCopy.yamlLabel).fill("id: still-editing");
+  await expect(page.getByRole("button", { name: contributeCopy.copyYamlLabel })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: contributeCopy.copyYamlErrorLabel }),
+  ).toHaveCount(0);
+});
+
+test("contribution studio ignores stale clipboard completions", async ({ page }) => {
+  await page.goto("/contribute");
+  await page.evaluate(() => {
+    Object.defineProperty(navigator.clipboard, "writeText", {
+      configurable: true,
+      value: () =>
+        new Promise<void>((resolve) => {
+          (window as unknown as { __resolveCopy?: () => void }).__resolveCopy = resolve;
+        }),
+    });
+  });
+  await page.getByRole("button", { name: contributeCopy.copyYamlLabel }).click();
+  await page.getByLabel(contributeCopy.yamlLabel).fill("id: still-editing");
+  await page.evaluate(() => {
+    (window as unknown as { __resolveCopy?: () => void }).__resolveCopy?.();
+  });
+  await expect(page.getByRole("button", { name: contributeCopy.copyYamlLabel })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: contributeCopy.copiedYamlLabel }),
+  ).toHaveCount(0);
 });
 
 test("footer feedback uses GitHub and homepage keeps catalog search", async ({ page }) => {

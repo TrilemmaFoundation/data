@@ -46,6 +46,26 @@ test("dataset guides expose canonical metadata and valid JSON-LD", async ({
     "content",
     "USGS Earthquake Catalog",
   );
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
+    "content",
+    siteCopy.name,
+  );
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://data.trilemma.foundation/foundation-white.webp",
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+    "content",
+    "https://data.trilemma.foundation/foundation-white.webp",
+  );
+  await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute(
+    "content",
+    "Trilemma Foundation",
+  );
 
   const jsonLd = JSON.parse(
     (await page.locator('script[type="application/ld+json"]').textContent()) ?? "null",

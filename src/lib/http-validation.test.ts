@@ -107,5 +107,70 @@ describe("pinned HTTP helpers", () => {
   it("returns an empty body when the response has no stream", async () => {
     const body = await readBoundedBody(new Response(null), 100);
     expect(body).toEqual(new Uint8Array());
+    await expect(readBoundedBody(new Response("ok"), 100)).resolves.toEqual(
+      new TextEncoder().encode("ok"),
+    );
+  });
+
+  it("aborts a pending response-body read and cancels the stream", async () => {
+    let cancelled = false;
+    const response = new Response(new ReadableStream<Uint8Array>({
+      cancel() {
+        cancelled = true;
+      },
+    }));
+    const controller = new AbortController();
+    const pending = readBoundedBody(response, 100, controller.signal);
+    controller.abort(new Error("body timed out"));
+    await expect(pending).rejects.toThrow("body timed out");
+    expect(cancelled).toBe(true);
+  });
+
+  it("rejects an already-aborted body read", async () => {
+    const controller = new AbortController();
+    controller.abort("timed out");
+    await expect(
+      readBoundedBody(new Response("body"), 100, controller.signal),
+    ).rejects.toThrow("request aborted");
+  });
+
+  it("returns null when a signaled body exceeds the byte limit", async () => {
+    const controller = new AbortController();
+    await expect(
+      readBoundedBody(new Response("abcdefghij"), 4, controller.signal),
+    ).resolves.toBeNull();
+    await expect(
+      readBoundedBody(new Response("ok"), 100, controller.signal),
+    ).resolves.toEqual(new TextEncoder().encode("ok"));
+  });
+
+  it("uses a caller-supplied abort signal instead of an internal timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchImpl = vi.fn(
+        (_url: string | URL, init?: RequestInit) =>
+          new Promise<Response>((_resolve, reject) => {
+            init?.signal?.addEventListener("abort", () => {
+              reject(init.signal?.reason instanceof Error
+                ? init.signal.reason
+                : new Error("aborted"));
+            });
+          }),
+      );
+      const controller = new AbortController();
+      const pending = fetchPinnedHttps("https://example.com/data", {
+        fetchImpl: fetchImpl as typeof fetch,
+        signal: controller.signal,
+        timeoutMs: 5,
+      });
+      await vi.advanceTimersByTimeAsync(50);
+      controller.abort(new Error("caller aborted"));
+      await expect(pending).resolves.toMatchObject({
+        message: expect.stringContaining("caller aborted"),
+        response: null,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

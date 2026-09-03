@@ -1,4 +1,5 @@
 import { isChicagoTitleCase, toChicagoTitleCase } from "./chicago-title-case";
+import { getProviderContract } from "./provider-contracts";
 import type { Dataset } from "./schema";
 
 export const MIN_DESCRIPTION_WORDS = 12;
@@ -211,8 +212,38 @@ export const GENERIC_PAGE_MARKERS = [
 const GENERIC_PAGE_MARKER_SET = new Set<string>(GENERIC_PAGE_MARKERS);
 
 const LOCAL_READ = /\b(read_csv|read_file|read_parquet|read_excel)\s*\(/;
-const CREDENTIAL_ASSIGNMENT =
-  /\b(?:api[_-]?key|password|secret|token)\s*=\s*["'](?!YOUR|REPLACE|<)[^"']{12,}["']/i;
+const CREDENTIAL_VALUE_PATTERNS = [
+  /(?:\b(?:api[_-]?key|password|secret|token)\b|["'](?:api[_-]?key|password|secret|token)["'])\s*(?:=|:)\s*["']([^"']+)["']/gi,
+  /["'](?:authorization|x-api-key|api-key)["']\s*:\s*["']([^"'{}]+)["']/gi,
+  /\[\s*["'](?:authorization|x-api-key|api-key)["']\s*\]\s*=\s*["']([^"'{}]+)["']/gi,
+  /[?&](?:api[_-]?key|password|secret|token)=([^&"'\s]+)/gi,
+] as const;
+const MULTI_LABEL_PUBLIC_SUFFIXES = new Set([
+  "ac.uk",
+  "co.uk",
+  "gov.uk",
+  "org.uk",
+  "com.au",
+  "gov.au",
+  "org.au",
+  "co.nz",
+  "govt.nz",
+  "gc.ca",
+]);
+const SOURCE_HOST_EXCEPTIONS: Partial<Record<string, readonly string[]>> = {
+  "certificate-transparency-crtsh": ["crt.sh"],
+  "chrome-ux-report": ["chromeuxreport.googleapis.com"],
+  "college-scorecard": ["api.data.gov"],
+  "fbi-crime-data-explorer": ["api.usa.gov"],
+  "hmda-loan-applications": ["ffiec.cfpb.gov"],
+  "medsl-county-returns": ["dataverse.harvard.edu"],
+  "mitre-attack-enterprise": ["raw.githubusercontent.com"],
+  "nhtsa-fars": ["crashviewer.nhtsa.dot.gov"],
+  "overture-maps-places": ["overturemapswestus2.blob.core.windows.net"],
+  "regulations-gov-dockets": ["api.regulations.gov"],
+  "sam-gov-contract-opportunities": ["api.sam.gov"],
+  "un-comtrade": ["comtradeplus.un.org"],
+};
 
 function words(value: string): string[] {
   return value.trim().split(/\s+/).filter(Boolean);
@@ -223,11 +254,11 @@ function sentenceCount(value: string): number {
   for (const abbreviation of ABBREVIATIONS) {
     normalized = normalized.replace(abbreviation, "ABBR");
   }
-  const withoutTerminal = normalized.endsWith(".")
+  const withoutTerminal = /[.!?]$/.test(normalized)
     ? normalized.slice(0, -1)
     : normalized;
   return withoutTerminal
-    .split(/\.\s+/)
+    .split(/[.!?]\s+/)
     .map((part) => part.trim())
     .filter(Boolean).length;
 }
@@ -245,13 +276,88 @@ function firstToken(step: string): string {
   return match?.[1]?.toLocaleLowerCase("en-US") ?? "";
 }
 
+function isCredentialPlaceholder(value: string): boolean {
+  const normalized = value.trim().replace(/^Bearer\s+/i, "").toLocaleUpperCase("en-US");
+  return (
+    /^(?:YOUR|REPLACE|CHANGE|INSERT)(?:_|-|\b)/.test(normalized) ||
+    normalized.startsWith("<") ||
+    /^X{6,}$/.test(normalized)
+  );
+}
+
+function pythonEmbedsCredential(code: string): boolean {
+  for (const pattern of CREDENTIAL_VALUE_PATTERNS) {
+    pattern.lastIndex = 0;
+    for (const match of code.matchAll(pattern)) {
+      const value = match[1]!.trim().replace(/^Bearer\s+/i, "");
+      if (value.length >= 12 && !isCredentialPlaceholder(value)) return true;
+    }
+  }
+  return false;
+}
+
+function registrableDomain(hostname: string): string {
+  const parts = hostname.toLocaleLowerCase("en-US").replace(/^www\./, "").split(".");
+  if (parts.length <= 2) return parts.join(".");
+  const suffix = parts.slice(-2).join(".");
+  return MULTI_LABEL_PUBLIC_SUFFIXES.has(suffix)
+    ? parts.slice(-3).join(".")
+    : suffix;
+}
+
+function hostsAreRelated(left: string, right: string): boolean {
+  const a = left.toLocaleLowerCase("en-US").replace(/^www\./, "");
+  const b = right.toLocaleLowerCase("en-US").replace(/^www\./, "");
+  return (
+    a === b ||
+    a.endsWith(`.${b}`) ||
+    b.endsWith(`.${a}`) ||
+    registrableDomain(a) === registrableDomain(b)
+  );
+}
+
+function pythonSourceUrls(code: string): URL[] {
+  return code.split("\n").flatMap((line) => {
+    const trimmed = line.trim();
+    if (
+      trimmed.startsWith("#") ||
+      /["']User-Agent["']\s*:/.test(line) ||
+      /^\s*(?:json|data|payload)\s*=/.test(line)
+    ) {
+      return [];
+    }
+    return [...line.matchAll(/https:\/\/[^\s"'<>)}\]]+/g)].flatMap((match) => {
+      try {
+        const url = new URL(match[0]!);
+        return url.hostname === "data.trilemma.foundation" ? [] : [url];
+      } catch {
+        return [];
+      }
+    });
+  });
+}
+
 function pythonUsesSource(dataset: Dataset): boolean {
   const code = dataset.getting_started.python.code;
-  if (/https:\/\//i.test(code)) return true;
-  if (!includesDownload(dataset.access_type)) return false;
-  if (!LOCAL_READ.test(code)) return false;
-  return dataset.getting_started.access_steps.some((step) =>
-    /\bdownload\b/i.test(step),
+  const sourceUrls = pythonSourceUrls(code);
+  if (sourceUrls.length > 0) {
+    const acceptedHosts = [
+      new URL(dataset.url).hostname,
+      ...(getProviderContract(dataset.id)
+        ? [new URL(getProviderContract(dataset.id)!.url).hostname]
+        : []),
+      ...(Object.hasOwn(SOURCE_HOST_EXCEPTIONS, dataset.id)
+        ? SOURCE_HOST_EXCEPTIONS[dataset.id]!
+        : []),
+    ];
+    return sourceUrls.every((url) =>
+      acceptedHosts.some((hostname) => hostsAreRelated(url.hostname, hostname)),
+    );
+  }
+  return (
+    includesDownload(dataset.access_type) &&
+    LOCAL_READ.test(code) &&
+    dataset.getting_started.access_steps.some((step) => /\bdownload\b/i.test(step))
   );
 }
 
@@ -324,7 +430,7 @@ export function validateGuideCopy(dataset: Dataset): string[] {
     }
   });
 
-  if (CREDENTIAL_ASSIGNMENT.test(dataset.getting_started.python.code)) {
+  if (pythonEmbedsCredential(dataset.getting_started.python.code)) {
     messages.push("getting_started.python.code must not embed credentials");
   }
 

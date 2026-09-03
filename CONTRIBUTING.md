@@ -104,9 +104,9 @@ Do **not** add:
 - The `getting_started` overview must identify a smallest starting scope and
   state an interpretation limitation
 - Access steps must start with an imperative verb
-- Python examples must be valid Python, use the authoritative source, avoid
-  credentials, and be short enough for a beginner to understand in one notebook
-  cell
+- Python examples must be valid Python, fetch the dataset or provider-contract
+  host (not an unrelated HTTPS URL), avoid embedded credentials, and be short
+  enough for a beginner to understand in one notebook cell
 - Do not invent new fields in ordinary dataset pull requests. Vocabulary,
   collections, and maintainer registries are maintainer-owned editorial
   surfaces and are not required to add a dataset
@@ -155,9 +155,9 @@ intended host, and search the bounded response body for each YAML marker.
 Configured provider checks run after pushes to `main`, every Monday, and on
 manual workflow dispatch; a new YAML dataset does not require one. Provider
 contracts are code-owned, use unauthenticated GET sample URLs, and stay optional
-for download-only datasets and sources that need an API key. Live provider
-and URL checks use bounded concurrency so fragile hosts are not requested all at
-once. A small code-owned allowlist may temporarily accept a bot-protected URL;
+for download-only datasets and sources that need an API key. Live URL checks
+run in a dedicated workflow job after merge. Live provider and URL checks use
+bounded concurrency so fragile hosts are not requested all at once. A small code-owned allowlist may temporarily accept a bot-protected URL;
 every exception is exact, visible in validation output, and has an expiry date.
 Live CI warns 14 days before an exception expires so it can be reconfirmed or removed.
 

@@ -158,6 +158,7 @@ export function SiteHeader() {
           </div>
           <Link
             href={CONTRIBUTE_APP_PATH}
+            prefetch={false}
             aria-current={isContributePath(pathname) ? "page" : undefined}
             className={buttonVariants()}
           >
@@ -208,6 +209,7 @@ export function SiteHeader() {
               })}
               <Link
                 href={CONTRIBUTE_APP_PATH}
+                prefetch={false}
                 aria-current={isContributePath(pathname) ? "page" : undefined}
                 className={cn(buttonVariants(), "w-full justify-start")}
                 onClick={() => setOpenPathname(null)}

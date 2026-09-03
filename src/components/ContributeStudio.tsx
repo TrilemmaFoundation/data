@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { DatasetPage } from "@/components/DatasetPage";
 import { Button } from "@/components/ui/button";
 import { contributeCopy } from "@/content/site-copy";
-import { parseContributionYaml, stringifyContributionYaml } from "@/lib/contribution";
+import {
+  contributionEnumValue,
+  parseContributionYaml,
+  replaceContributionField,
+  stringifyContributionYaml,
+} from "@/lib/contribution";
 import { CONTRIBUTE_URL } from "@/lib/seo";
 import { DATASET_THEMES, DIFFICULTIES } from "@/lib/schema";
 import type { VocabularySnapshot } from "@/lib/vocabulary-snapshot";
@@ -18,16 +23,32 @@ export function ContributeStudio({
 }) {
   const [yamlText, setYamlText] = useState(initialYaml);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const copyGeneration = useRef(0);
   const parsed = useMemo(
     () => parseContributionYaml(yamlText, vocabulary),
     [vocabulary, yamlText],
   );
+  const selectedTheme = contributionEnumValue(yamlText, "theme", DATASET_THEMES);
+  const selectedDifficulty = contributionEnumValue(
+    yamlText,
+    "difficulty",
+    DIFFICULTIES,
+  );
+
+  function updateYaml(updater: (current: string) => string) {
+    copyGeneration.current += 1;
+    setCopyState("idle");
+    setYamlText(updater);
+  }
 
   async function copyYaml() {
+    const generation = copyGeneration.current;
     try {
       await navigator.clipboard.writeText(yamlText);
+      if (generation !== copyGeneration.current) return;
       setCopyState("copied");
     } catch {
+      if (generation !== copyGeneration.current) return;
       setCopyState("error");
     }
   }
@@ -53,13 +74,14 @@ export function ContributeStudio({
           <select
             id="theme-guide"
             className="h-11 rounded-[10px] border border-white/15 bg-brand-black px-3 text-sm text-white"
-            defaultValue={DATASET_THEMES[0]}
+            value={selectedTheme}
             onChange={(event) => {
-              setYamlText((current) =>
-                current.replace(/^theme: .*$/m, `theme: ${event.target.value}`),
+              updateYaml((current) =>
+                replaceContributionField(current, "theme", event.target.value),
               );
             }}
           >
+            <option value="" disabled>Select Theme</option>
             {DATASET_THEMES.map((theme) => (
               <option key={theme}>{theme}</option>
             ))}
@@ -70,13 +92,14 @@ export function ContributeStudio({
           <select
             id="difficulty-guide"
             className="h-11 rounded-[10px] border border-white/15 bg-brand-black px-3 text-sm text-white"
-            defaultValue="beginner"
+            value={selectedDifficulty}
             onChange={(event) => {
-              setYamlText((current) =>
-                current.replace(/^difficulty: .*$/m, `difficulty: ${event.target.value}`),
+              updateYaml((current) =>
+                replaceContributionField(current, "difficulty", event.target.value),
               );
             }}
           >
+            <option value="" disabled>Select Difficulty</option>
             {DIFFICULTIES.map((difficulty) => (
               <option key={difficulty}>{difficulty}</option>
             ))}
@@ -88,7 +111,7 @@ export function ContributeStudio({
         <textarea
           id="dataset-yaml"
           value={yamlText}
-          onChange={(event) => setYamlText(event.target.value)}
+          onChange={(event) => updateYaml(() => event.target.value)}
           spellCheck={false}
           className="min-h-[28rem] w-full rounded-xl border border-white/15 bg-brand-black p-4 font-mono text-xs text-white"
         />
@@ -110,9 +133,17 @@ export function ContributeStudio({
             {contributeCopy.downloadLabel}
           </Button>
           <Button type="button" variant="outline" onClick={copyYaml}>
-            {copyState === "copied" ? contributeCopy.copiedYamlLabel : contributeCopy.copyYamlLabel}
+            {copyState === "copied"
+              ? contributeCopy.copiedYamlLabel
+              : copyState === "error"
+                ? contributeCopy.copyYamlErrorLabel
+                : contributeCopy.copyYamlLabel}
           </Button>
-          <Button type="button" variant="ghost" onClick={() => setYamlText(initialYaml)}>
+          <span className="sr-only" aria-live="polite">
+            {copyState === "copied" ? contributeCopy.copiedYamlLabel : ""}
+            {copyState === "error" ? contributeCopy.copyYamlErrorLabel : ""}
+          </span>
+          <Button type="button" variant="ghost" onClick={() => updateYaml(() => initialYaml)}>
             {contributeCopy.loadExampleLabel}
           </Button>
           <a
@@ -129,7 +160,7 @@ export function ContributeStudio({
         <h2 className="text-sm font-semibold text-white">{contributeCopy.previewLabel}</h2>
         {parsed.dataset && parsed.issues.length === 0 ? (
           <div className="mt-3">
-            <DatasetPage dataset={parsed.dataset} />
+            <DatasetPage dataset={parsed.dataset} showValidationBadges={false} />
             <pre className="sr-only">{stringifyContributionYaml(parsed.dataset)}</pre>
           </div>
         ) : (

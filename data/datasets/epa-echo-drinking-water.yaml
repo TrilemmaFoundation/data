@@ -52,8 +52,8 @@ getting_started:
     - An internet connection
   access_steps:
     - Open the ECHO web-services page and locate Drinking Water System Search.
-    - Query get_systems for one state with JSON output.
-    - Keep the request bounded to that state rather than paging a national extract.
+    - Query get_systems for one state and retain the returned query identifier.
+    - Request the first get_qid result page instead of paging a national extract.
   python:
     packages:
       - pandas
@@ -62,14 +62,23 @@ getting_started:
       import pandas as pd
       import requests
 
-      response = requests.get(
+      search_response = requests.get(
           "https://echodata.epa.gov/echo/sdw_rest_services.get_systems",
           params={"output": "JSON", "p_st": "RI", "p_act": "Y"},
           timeout=30,
       )
-      response.raise_for_status()
-      payload = response.json()
-      systems = pd.json_normalize(payload.get("Results", payload).get("Systems", payload))
+      search_response.raise_for_status()
+      query_id = search_response.json()["Results"]["QueryID"]
+
+      systems_response = requests.get(
+          "https://echodata.epa.gov/echo/sdw_rest_services.get_qid",
+          params={"output": "JSON", "qid": query_id, "pageno": 1},
+          timeout=30,
+      )
+      systems_response.raise_for_status()
+      systems = pd.json_normalize(
+          systems_response.json()["Results"]["WaterSystems"]
+      )
       systems["retrieved_at_utc"] = pd.Timestamp.now(tz="UTC")
       print(systems.head(20))
   first_project:
