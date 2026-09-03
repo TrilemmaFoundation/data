@@ -1,0 +1,81 @@
+id: vancouver-property-tax-report
+name: Vancouver Property Tax Report
+description: >
+  Property assessments, tax levies, zoning, and building details for building
+  parcel-level housing and redevelopment analysis tools.
+theme: Markets & Economics
+url: https://opendata.vancouver.ca/explore/dataset/property-tax-report/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.2
+size_gb_max: 2
+formats:
+  - CSV
+  - JSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Property tax report
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Housing
+  - Finance
+  - Public Policy
+data_types:
+  - Tabular
+  - Longitudinal
+tasks:
+  - Market Monitoring
+  - Trend Analysis
+  - Property Retrieval
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: 2006-present across linked annual datasets
+update_frequency: weekly
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one assessment year and a small API page of parcels. Historical
+    files omit some zoning and previous-value fields, and assessment values are
+    not the same as taxable values.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the notes for the selected assessment year.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep the report year, parcel identifier, values, levy, and zoning fields.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/property-tax-report/records"
+      response = requests.get(url, params={"limit": 100}, timeout=30)
+      response.raise_for_status()
+      properties = pd.json_normalize(response.json()["results"])
+      columns = [
+          "pid",
+          "tax_assessment_year",
+          "current_land_value",
+          "current_improvement_value",
+          "tax_levy",
+          "zoning_district",
+      ]
+      print(properties[columns].head())
+  first_project:
+    title: Compare Land and Improvement Values
+    goal: Test whether one assessment year can support a parcel-level redevelopment signal.
+    steps:
+      - Filter the sample to records with parcel identifiers and both current value fields.
+      - Calculate land value as a share of total assessed value.
+      - Explain why assessment timing, missing historical fields, and taxable-value rules limit comparisons.

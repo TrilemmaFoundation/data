@@ -1,0 +1,78 @@
+id: vancouver-road-closures
+name: Vancouver Road Ahead Current Road Closures
+description: >
+  Current road-closure projects, streets, completion dates, links, and line
+  geometries for building live disruption and routing context tools.
+theme: Geospatial & Infrastructure
+url: https://opendata.vancouver.ca/explore/dataset/road-ahead-current-road-closures/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.0001
+size_gb_max: 0.01
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+  - DWG
+  - Atom
+  - GeoRSS
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Road Ahead current road closures
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Transportation
+  - Infrastructure
+data_types:
+  - Geospatial
+  - Operational Data
+tasks:
+  - Operational Planning
+  - Routing Analysis
+  - Mapping
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: Current road closures
+update_frequency: daily
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with the current closure records from one bounded API page. Locations
+    are tied to street segments and may not show the exact work site, while the
+    separate weekday feeds refresh more often than this daily extract.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the location and feed-refresh notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep project, street, location, completion date, source link, and geometry.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/road-ahead-current-road-closures/records"
+      response = requests.get(url, params={"limit": 100}, timeout=30)
+      response.raise_for_status()
+      closures = pd.DataFrame(response.json()["results"])
+      columns = ["project", "street", "location", "comp_date", "url_link"]
+      print(closures[columns].head())
+      print(closures["geom"].iloc[0]["geometry"]["type"])
+  first_project:
+    title: Map Current Road Closures
+    goal: Test whether the daily extract can add road-work context to a local mobility map.
+    steps:
+      - Plot current line geometries and label each project and completion date.
+      - Flag closures whose completion date has passed at retrieval time.
+      - Explain why segment-level locations and different extract refresh rates limit routing decisions.

@@ -1,0 +1,83 @@
+id: vancouver-property-addresses
+name: Vancouver Property Addresses
+description: >
+  Primary mapped addresses, parcel and site identifiers, local areas, and
+  coordinates for building geocoding and property entity-resolution tools.
+theme: Geospatial & Infrastructure
+url: https://opendata.vancouver.ca/explore/dataset/property-addresses/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.2
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+  - DWG
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Property addresses
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Housing
+  - Infrastructure
+data_types:
+  - Geospatial
+  - Reference Data
+tasks:
+  - Entity Resolution
+  - Mapping
+  - Property Retrieval
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: Current address inventory
+update_frequency: weekly
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one local area and a small API page of mapped addresses. The
+    source contains primary VanMap display addresses and does not include every
+    address, includes duplicates, and has geometry less precise than survey data.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the completeness and precision notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep civic number, street, parcel id, site id, local area, and coordinates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/property-addresses/records"
+      response = requests.get(url, params={"limit": 100}, timeout=30)
+      response.raise_for_status()
+      addresses = pd.json_normalize(response.json()["results"])
+      columns = [
+          "civic_number",
+          "std_street",
+          "p_parcel_id",
+          "site_id",
+          "geo_local_area",
+          "geo_point_2d.lat",
+          "geo_point_2d.lon",
+      ]
+      print(addresses[columns].head())
+  first_project:
+    title: Build a Property Address Crosswalk
+    goal: Test whether parcel and site identifiers can connect address-based Vancouver datasets.
+    steps:
+      - Construct a normalized civic-number and street key.
+      - Measure duplicate address keys and missing parcel or site identifiers.
+      - Explain why primary-address coverage, duplicates, and coordinate precision limit geocoding completeness.

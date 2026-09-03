@@ -1,0 +1,88 @@
+id: vancouver-business-licences
+name: Vancouver Business Licences
+description: >
+  Business licence categories, statuses, dates, locations, and employment
+  counts for building local commercial activity and churn monitors.
+theme: Markets & Economics
+url: https://opendata.vancouver.ca/explore/dataset/business-licences/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.03
+size_gb_max: 0.5
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Business licences
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Regional Economics
+  - Labor Economics
+  - Public Policy
+data_types:
+  - Registry
+  - Geospatial
+  - Longitudinal
+tasks:
+  - Market Monitoring
+  - Trend Analysis
+  - Community Comparison
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: 1997-present across linked datasets
+update_frequency: daily
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one business type and a small page of current licence records.
+    Categories changed in May 2024, home-based business addresses can be
+    withheld, and licence records do not prove that a business is operating.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the category-change and privacy notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep the unique licence identifier, category, status, dates, local area, and employee count.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/records"
+      response = requests.get(
+          url,
+          params={"limit": 100, "order_by": "issueddate DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      licences = pd.json_normalize(response.json()["results"])
+      columns = [
+          "licencersn",
+          "businesstype",
+          "businesssubtype",
+          "status",
+          "issueddate",
+          "localarea",
+          "numberofemployees",
+      ]
+      print(licences[columns].head())
+  first_project:
+    title: Track Business Licence Activity
+    goal: Test whether current licence records can support a neighbourhood commercial activity monitor.
+    steps:
+      - Count issued records by business type and local area.
+      - Compare issue dates and reported employee counts for the largest groups.
+      - Explain why category changes, withheld addresses, and licence status limit conclusions about openings and closures.

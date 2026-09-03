@@ -1,0 +1,85 @@
+id: vancouver-public-trees
+name: Vancouver Public Trees
+description: >
+  Public tree locations, species, dimensions, and planting dates for building
+  urban forestry, biodiversity, and canopy equity maps.
+theme: Environment & Hazards
+url: https://opendata.vancouver.ca/explore/dataset/public-trees/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.02
+size_gb_max: 0.3
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: public tree dataset includes
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Climate
+  - Infrastructure
+  - Research
+data_types:
+  - Geospatial
+  - Inventory
+tasks:
+  - Species Monitoring
+  - Mapping
+  - Coverage Analysis
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: Current inventory with planting dates where available
+update_frequency: daily
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one species and a small API page of mapped trees. Private trees
+    are excluded, records without coordinates are absent, and some attributes
+    may be several years out of date.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the inventory and attribute-age notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep asset id, species, dimensions, planting date, and coordinates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/public-trees/records"
+      response = requests.get(url, params={"limit": 100}, timeout=30)
+      response.raise_for_status()
+      trees = pd.json_normalize(response.json()["results"])
+      columns = [
+          "asset_id",
+          "common_name",
+          "genus_name",
+          "species_name",
+          "height_m",
+          "diameter_cm",
+          "date_planted",
+          "geo_point_2d.lat",
+          "geo_point_2d.lon",
+      ]
+      print(trees[columns].head())
+  first_project:
+    title: Map Public Tree Diversity
+    goal: Test whether species counts can support a local urban-forest diversity map.
+    steps:
+      - Count sampled trees by genus and species.
+      - Compare diameter and height distributions for the most common species.
+      - Explain why private-tree exclusion, missing coordinates, and stale attributes limit canopy conclusions.

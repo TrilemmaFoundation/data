@@ -191,12 +191,31 @@ describe("DatasetSchema", () => {
     },
   );
 
-  it("rejects invalid id casing", () => {
-    const result = DatasetSchema.safeParse({
-      ...validDataset,
-      id: "Live-Events",
-    });
-    expect(result.success).toBe(false);
+  it("accepts kebab-case ids with digits and rejects malformed ids", () => {
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        id: "vancouver-311-service-requests",
+      }).success,
+    ).toBe(true);
+    expect(
+      DatasetSchema.safeParse({
+        ...validDataset,
+        id: "vancouver-business-licences",
+      }).success,
+    ).toBe(true);
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, id: "Live-Events" }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, id: "vancouver-" }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, id: "-311" }).success,
+    ).toBe(false);
+    expect(
+      DatasetSchema.safeParse({ ...validDataset, id: "vancouver--311" }).success,
+    ).toBe(false);
   });
 
   it("requires complete, non-empty getting-started guidance", () => {

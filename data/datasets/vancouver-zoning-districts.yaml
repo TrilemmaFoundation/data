@@ -1,0 +1,83 @@
+id: vancouver-zoning-districts
+name: Vancouver Zoning Districts and Labels
+description: >
+  Zoning polygons, classifications, categories, districts, and CD-1 identifiers
+  for building land-use and development-potential analysis tools.
+theme: Geospatial & Infrastructure
+url: https://opendata.vancouver.ca/explore/dataset/zoning-districts-and-labels/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.005
+size_gb_max: 0.1
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+  - DWG
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Zoning districts and labels
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Housing
+  - Infrastructure
+  - Public Policy
+data_types:
+  - Geospatial
+  - Polygon
+tasks:
+  - Spatial Analysis
+  - Mapping
+  - Site Selection
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: Current zoning snapshot
+update_frequency: weekly
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one zoning classification and a small page of district polygons.
+    Some features are less precise than survey data, and the dataset does not
+    replace the Zoning and Development By-law.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the accuracy and by-law notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep object id, classification, category, district, CD-1 number, and geometry.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/zoning-districts-and-labels/records"
+      response = requests.get(url, params={"limit": 100}, timeout=30)
+      response.raise_for_status()
+      zoning = pd.DataFrame(response.json()["results"])
+      columns = [
+          "object_id",
+          "zoning_classification",
+          "zoning_category",
+          "zoning_district",
+          "cd_1_number",
+      ]
+      print(zoning[columns].head())
+      print(zoning["geom"].iloc[0]["geometry"]["type"])
+  first_project:
+    title: Summarize Zoning by Classification
+    goal: Test whether district polygons can support a neighbourhood land-use inventory.
+    steps:
+      - Count district features by zoning classification and category.
+      - Identify classifications with multiple zoning districts or CD-1 identifiers.
+      - Explain why polygon precision and the authoritative by-law limit development-potential claims.

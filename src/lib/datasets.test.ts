@@ -88,11 +88,11 @@ describe("loadDatasets", () => {
       getAllDatasets().map((dataset) => [dataset.id, dataset.theme]),
     );
     const groups = {
-      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "epa-echo-drinking-water", "epa-toxics-release-inventory", "fema-national-flood-hazard-layer", "gdacs-disaster-alerts", "nasa-firms", "nasa-power-daily", "noaa-ibtracs", "noaa-swpc-space-weather", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "us-drought-monitor", "usgs-earthquakes", "usgs-water-data", "met-norway-locationforecast", "noaa-storm-events", "noaa-gml-co2", "nsidc-sea-ice-index", "noaa-ndbc-buoys", "epa-ghgrp", "fema-nfip-redacted-claims", "gfw-tree-cover-loss", "smithsonian-gvp-volcanoes", "copernicus-era5", "water-quality-portal", "openaq-air-quality"],
-      "Government & Policy": ["congress-gov-legislation", "fec-campaign-finance", "federal-register-documents", "ofac-sdn-list", "open-states-legislation", "sam-gov-contract-opportunities", "usaspending-federal-awards", "legislation-gov-uk", "uk-police-street-crime", "fbi-crime-data-explorer", "nih-reporter-projects", "nsf-awards", "grants-gov-opportunities", "senate-lda-filings", "regulations-gov-dockets", "govinfo-uscourts", "medsl-county-returns", "un-sc-consolidated-list", "osha-enforcement", "eur-lex-cellar"],
-      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "census-international-trade", "cfpb-consumer-complaints", "eia-weekly-petroleum-status", "fhfa-house-price-index", "fred-economic-series", "hud-fair-market-rents", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions", "gleif-lei", "companies-house-uk", "fdic-bank-find", "cftc-commitment-of-traders", "census-county-business-patterns", "ecb-statistical-data-warehouse", "oecd-sdmx-statistics", "un-comtrade", "ilostat-labour-statistics", "irs-soi-tax-stats", "treasury-debt-to-the-penny", "hmda-loan-applications", "eia-weekly-natural-gas", "entsoe-transparency", "census-building-permits", "ember-electricity"],
+      "Environment & Hazards": ["airnow-air-quality", "epa-airdata-daily-summaries", "epa-echo-drinking-water", "epa-toxics-release-inventory", "fema-national-flood-hazard-layer", "gdacs-disaster-alerts", "nasa-firms", "nasa-power-daily", "noaa-ibtracs", "noaa-swpc-space-weather", "nws-weather-api", "noaa-ncei-daily-summaries", "noaa-tides-currents", "openfema-disaster-declarations", "us-drought-monitor", "usgs-earthquakes", "usgs-water-data", "met-norway-locationforecast", "noaa-storm-events", "noaa-gml-co2", "nsidc-sea-ice-index", "noaa-ndbc-buoys", "epa-ghgrp", "fema-nfip-redacted-claims", "gfw-tree-cover-loss", "smithsonian-gvp-volcanoes", "copernicus-era5", "water-quality-portal", "openaq-air-quality", "vancouver-public-trees"],
+      "Government & Policy": ["congress-gov-legislation", "fec-campaign-finance", "federal-register-documents", "ofac-sdn-list", "open-states-legislation", "sam-gov-contract-opportunities", "usaspending-federal-awards", "legislation-gov-uk", "uk-police-street-crime", "fbi-crime-data-explorer", "nih-reporter-projects", "nsf-awards", "grants-gov-opportunities", "senate-lda-filings", "regulations-gov-dockets", "govinfo-uscourts", "medsl-county-returns", "un-sc-consolidated-list", "osha-enforcement", "eur-lex-cellar", "vancouver-311-service-requests", "vancouver-council-voting-records", "vancouver-parking-tickets"],
+      "Markets & Economics": ["bea-regional-gdp-income", "bls-public-data-api", "census-international-trade", "cfpb-consumer-complaints", "eia-weekly-petroleum-status", "fhfa-house-price-index", "fred-economic-series", "hud-fair-market-rents", "imf-world-economic-outlook", "kalshi-market-data", "polymarket-markets", "sec-edgar-apis", "treasury-securities-auctions", "gleif-lei", "companies-house-uk", "fdic-bank-find", "cftc-commitment-of-traders", "census-county-business-patterns", "ecb-statistical-data-warehouse", "oecd-sdmx-statistics", "un-comtrade", "ilostat-labour-statistics", "irs-soi-tax-stats", "treasury-debt-to-the-penny", "hmda-loan-applications", "eia-weekly-natural-gas", "entsoe-transparency", "census-building-permits", "ember-electricity", "vancouver-business-licences", "vancouver-issued-building-permits", "vancouver-property-tax-report"],
       "Health, Food & Safety": ["cdc-fluview-ilinet", "cdc-places", "clinicaltrials-studies", "cms-care-compare-hospitals", "cms-open-payments", "cpsc-product-recalls", "nhtsa-vehicle-recalls", "nppes-npi-registry", "openfda-drug-adverse-events", "openfda-food-enforcement", "usda-fooddata-central", "open-food-facts", "cms-nursing-homes", "cdc-social-vulnerability-index", "fda-orange-book", "nchs-provisional-mortality", "nhanes", "cdc-uscs-cancer-statistics", "nhtsa-fars", "openfda-device-events", "dailymed-drug-labels", "cdc-nwss-wastewater"],
-      "Geospatial & Infrastructure": ["bts-airline-on-time", "census-tiger-line", "eia-hourly-electric-grid", "fcc-national-broadband-map", "fhwa-national-bridge-inventory", "fta-ntd-monthly-ridership", "mobility-database-feeds", "natural-earth", "nrel-alt-fuel-stations", "overture-maps-places", "osm-overpass", "ourairports", "census-lehd-lodes", "ntsb-aviation-accidents"],
+      "Geospatial & Infrastructure": ["bts-airline-on-time", "census-tiger-line", "eia-hourly-electric-grid", "fcc-national-broadband-map", "fhwa-national-bridge-inventory", "fta-ntd-monthly-ridership", "mobility-database-feeds", "natural-earth", "nrel-alt-fuel-stations", "overture-maps-places", "osm-overpass", "ourairports", "census-lehd-lodes", "ntsb-aviation-accidents", "vancouver-property-addresses", "vancouver-road-closures", "vancouver-zoning-districts"],
       "Research & Reference": ["arxiv-preprints", "crossref-works", "gbif-species-occurrences", "openalex-scholarly-works", "pubmed-citations", "wikimedia-pageviews", "wikidata-query", "uspto-open-data-portal", "pubchem-compounds"],
       "Technology & Cybersecurity": ["cisa-known-exploited-vulnerabilities", "deps-dev-package-graph", "mitre-attack-enterprise", "nvd-cve", "osv-open-source-vulnerabilities", "first-epss", "openssf-scorecard", "github-archive", "chrome-ux-report", "certificate-transparency-crtsh", "ripe-stat"],
       "Demographics & Development": ["acs-five-year-estimates", "college-scorecard", "eurostat-statistics", "nces-common-core-of-data", "unhcr-refugee-population", "usda-nass-quick-stats", "world-development-indicators", "onet-occupations", "worldpop-population", "who-gho-indicators", "faostat-food-agriculture", "ons-statistics", "statcan-web-data", "idmc-internal-displacement", "unesco-uis-statistics"],
@@ -101,6 +101,134 @@ describe("loadDatasets", () => {
     expect([...Object.keys(themes)].sort()).toEqual([...grouped].sort());
     for (const [theme, ids] of Object.entries(groups)) {
       for (const id of ids) expect(themes[id], id).toBe(theme);
+    }
+  });
+
+  it("keeps City of Vancouver OpenDataSoft entries internally consistent", () => {
+    const expectedIds = [
+      "vancouver-311-service-requests",
+      "vancouver-business-licences",
+      "vancouver-council-voting-records",
+      "vancouver-issued-building-permits",
+      "vancouver-parking-tickets",
+      "vancouver-property-addresses",
+      "vancouver-property-tax-report",
+      "vancouver-public-trees",
+      "vancouver-road-closures",
+      "vancouver-zoning-districts",
+    ];
+    const vancouver = expectedIds.map((id) => {
+      const dataset = getDatasetById(id);
+      expect(dataset, id).toBeDefined();
+      return dataset!;
+    });
+
+    const sourceUrls = vancouver.map((dataset) => dataset.url);
+    const sourceMarkers = vancouver.map((dataset) =>
+      dataset.url_checks.source_marker.trim().toLocaleLowerCase("en-US"),
+    );
+    expect(new Set(sourceUrls).size).toBe(sourceUrls.length);
+    expect(new Set(sourceMarkers).size).toBe(sourceMarkers.length);
+
+    for (const dataset of vancouver) {
+      expect(dataset.provider, dataset.id).toBe("City of Vancouver");
+      expect(dataset.source_type, dataset.id).toBe("government");
+      expect(dataset.catalog_status, dataset.id).toBe("active");
+      expect(dataset.difficulty, dataset.id).toBe("beginner");
+      expect(dataset.api_key_required, dataset.id).toBe(false);
+      expect(dataset.access_type, dataset.id).toEqual(["both"]);
+      expect(dataset.geography, dataset.id).toEqual([
+        "Vancouver, British Columbia, Canada",
+      ]);
+      expect(dataset.license, dataset.id).toBe(
+        "Open Government Licence - Vancouver",
+      );
+      expect(dataset.license_url, dataset.id).toBe(
+        "https://opendata.vancouver.ca/pages/licence/",
+      );
+      expect(dataset.url_checks.license_marker, dataset.id).toBe(
+        "Open Government Licence - Vancouver",
+      );
+
+      const sourceSlug = dataset.url.match(
+        /^https:\/\/opendata\.vancouver\.ca\/explore\/dataset\/([^/]+)\/$/,
+      )?.[1];
+      const apiSlug = dataset.getting_started.python.code.match(
+        /https:\/\/opendata\.vancouver\.ca\/api\/explore\/v2\.1\/catalog\/datasets\/([^/]+)\/records/,
+      )?.[1];
+      expect(sourceSlug, `${dataset.id} source slug`).toBeTruthy();
+      expect(apiSlug, `${dataset.id} API slug`).toBe(sourceSlug);
+    }
+
+    const serviceRequests = vancouver.find(
+      (dataset) => dataset.id === "vancouver-311-service-requests",
+    )!;
+    expect(serviceRequests.id).toContain("311");
+    expect(serviceRequests.id).not.toContain("3-1-1");
+    expect(serviceRequests.url).toContain("/3-1-1-service-requests/");
+    expect(serviceRequests.getting_started.python.code).toContain(
+      "/3-1-1-service-requests/records",
+    );
+    expect(serviceRequests.getting_started.python.code).not.toContain(
+      "/311-service-requests/",
+    );
+  });
+
+  it("keeps Python examples aligned with access-step and first-project fields", () => {
+    const cases = [
+      {
+        id: "vancouver-311-service-requests",
+        guide: [/timestamp/i, /coord/i],
+        python: [
+          '"service_request_open_timestamp"',
+          '"service_request_close_date"',
+          '"latitude"',
+          '"longitude"',
+        ],
+      },
+      {
+        id: "vancouver-issued-building-permits",
+        guide: [/permit category/i],
+        python: ['"permitcategory"'],
+      },
+      {
+        id: "vancouver-property-addresses",
+        guide: [/coord/i],
+        python: ['"geo_point_2d.lat"', '"geo_point_2d.lon"'],
+      },
+      {
+        id: "vancouver-public-trees",
+        guide: [/coord/i],
+        python: ['"geo_point_2d.lat"', '"geo_point_2d.lon"'],
+      },
+      {
+        id: "vancouver-road-closures",
+        guide: [/geometry/i],
+        python: ['"geom"', '"geometry"'],
+      },
+      {
+        id: "vancouver-zoning-districts",
+        guide: [/geometry/i],
+        python: ['"geom"', '"geometry"'],
+      },
+    ] as const;
+
+    for (const { id, guide, python } of cases) {
+      const dataset = getDatasetById(id);
+      expect(dataset, id).toBeDefined();
+      const prose = [
+        dataset!.getting_started.overview,
+        ...dataset!.getting_started.access_steps,
+        ...dataset!.getting_started.first_project.steps,
+      ].join("\n");
+      for (const pattern of guide) {
+        expect(prose, id).toMatch(pattern);
+      }
+      for (const token of python) {
+        expect(dataset!.getting_started.python.code, `${id} ${token}`).toContain(
+          token,
+        );
+      }
     }
   });
 

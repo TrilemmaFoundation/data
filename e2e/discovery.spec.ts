@@ -174,7 +174,10 @@ test("pagination previous and next stay put when the page list changes", async (
     next: await next.boundingBox(),
   };
 
-  await pagination.getByRole("button", { name: catalogCopy.pageLabel(2) }).click();
+  await pagination.getByRole("button", {
+    name: catalogCopy.pageLabel(2),
+    exact: true,
+  }).click();
   const after = {
     previous: await previous.boundingBox(),
     next: await next.boundingBox(),

@@ -1,0 +1,89 @@
+id: vancouver-issued-building-permits
+name: Vancouver Issued Building Permits
+description: >
+  Issued permits, project values, work types, uses, descriptions, and processing
+  times for building construction pipeline and development hotspot tools.
+theme: Markets & Economics
+url: https://opendata.vancouver.ca/explore/dataset/issued-building-permits/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.2
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Issued building permits
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Housing
+  - Regional Economics
+  - Public Policy
+data_types:
+  - Event Data
+  - Geospatial
+  - Time Series
+tasks:
+  - Market Monitoring
+  - Geographic Analysis
+  - Trend Analysis
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: 2017-present
+update_frequency: daily
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one permit category and a small recent API page. The records
+    describe permits when first issued, not their current status or later
+    changes, and some addresses cannot be geocoded.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the issuance and geocoding notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep permit number, issue date, value, elapsed days, permit category, work type, use, and local area.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/issued-building-permits/records"
+      response = requests.get(
+          url,
+          params={"limit": 100, "order_by": "issuedate DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      permits = pd.json_normalize(response.json()["results"])
+      columns = [
+          "permitnumber",
+          "issuedate",
+          "projectvalue",
+          "permitelapseddays",
+          "permitcategory",
+          "typeofwork",
+          "propertyuse",
+          "geolocalarea",
+      ]
+      print(permits[columns].head())
+  first_project:
+    title: Compare Building Permit Timelines
+    goal: Test whether issued permits can support a neighbourhood construction pipeline monitor.
+    steps:
+      - Group the sample by permit category and local area.
+      - Compare median project value and elapsed days across groups.
+      - Explain why issued-only records, applicant response time, and missing coordinates limit performance conclusions.

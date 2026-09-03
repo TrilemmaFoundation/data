@@ -50,6 +50,11 @@ describe("filterDatasets", () => {
     ["legislation", "congress-gov-legislation"],
     ["biodiversity", "gbif-species-occurrences"],
     ["refugee", "unhcr-refugee-population"],
+    ["3-1-1", "vancouver-311-service-requests"],
+    ["311", "vancouver-311-service-requests"],
+    ["business licences", "vancouver-business-licences"],
+    ["licenses", "vancouver-business-licences"],
+    ["zoning districts", "vancouver-zoning-districts"],
   ])("searches %s metadata", (query, id) => {
     expect(filterDatasets(datasets, { ...EMPTY_FILTERS, query }).map((dataset) => dataset.id))
       .toContain(id);
@@ -115,6 +120,56 @@ describe("filterDatasets", () => {
         geographies: [earthquakeCatalog.geography[0]!],
       }, snapshot).map((dataset) => dataset.id),
     ).toContain("usgs-earthquakes");
+  });
+
+  it("filters City of Vancouver geography and GIS formats without collapsing Atom", () => {
+    expect(
+      filterDatasets(datasets, {
+        ...EMPTY_FILTERS,
+        geographies: ["Vancouver, British Columbia, Canada"],
+      })
+        .map((dataset) => dataset.id)
+        .sort(),
+    ).toEqual(
+      expect.arrayContaining([
+        "vancouver-311-service-requests",
+        "vancouver-business-licences",
+        "vancouver-council-voting-records",
+        "vancouver-issued-building-permits",
+        "vancouver-parking-tickets",
+        "vancouver-property-addresses",
+        "vancouver-property-tax-report",
+        "vancouver-public-trees",
+        "vancouver-road-closures",
+        "vancouver-zoning-districts",
+      ]),
+    );
+    expect(
+      filterDatasets(datasets, { ...EMPTY_FILTERS, formats: ["DWG"] }).map(
+        (dataset) => dataset.id,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "vancouver-property-addresses",
+        "vancouver-road-closures",
+        "vancouver-zoning-districts",
+      ]),
+    );
+    const atom = filterDatasets(datasets, { ...EMPTY_FILTERS, formats: ["Atom"] }).map(
+      (dataset) => dataset.id,
+    );
+    const atomXml = filterDatasets(datasets, {
+      ...EMPTY_FILTERS,
+      formats: ["Atom XML"],
+    }).map((dataset) => dataset.id);
+    expect(atom).toContain("vancouver-road-closures");
+    expect(atom).not.toContain("arxiv-preprints");
+    expect(atomXml).toContain("arxiv-preprints");
+    expect(atomXml).not.toContain("vancouver-road-closures");
+
+    const formats = getFilterOptions(datasets).formats;
+    expect(formats).toContain("Atom");
+    expect(formats).toContain("Atom XML");
   });
 
   it("collapses case-variant tags into one filter option and still matches them", () => {

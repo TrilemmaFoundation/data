@@ -1,0 +1,88 @@
+id: vancouver-311-service-requests
+name: Vancouver 3-1-1 Service Requests
+description: >
+  Resident service requests, locations, departments, statuses, and closure
+  details for building neighbourhood issue and response-time monitors.
+theme: Government & Policy
+url: https://opendata.vancouver.ca/explore/dataset/3-1-1-service-requests/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.1
+size_gb_max: 1
+formats:
+  - CSV
+  - JSON
+  - GeoJSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: 3-1-1 service requests
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Public Policy
+  - Infrastructure
+data_types:
+  - Event Data
+  - Geospatial
+  - Time Series
+tasks:
+  - Complaint Monitoring
+  - Community Comparison
+  - Trend Analysis
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: June 2009-present across linked datasets
+update_frequency: daily
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one service-request type and a small recent API page. Some
+    addresses are suppressed for privacy, some records cannot be geocoded, and
+    the case-management system changed in August 2022.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the privacy and system-change notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep request type, department, timestamps, status, local area, and coordinates.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/3-1-1-service-requests/records"
+      response = requests.get(
+          url,
+          params={"limit": 100, "order_by": "service_request_open_timestamp DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      requests_311 = pd.json_normalize(response.json()["results"])
+      columns = [
+          "service_request_type",
+          "department",
+          "status",
+          "service_request_open_timestamp",
+          "service_request_close_date",
+          "local_area",
+          "latitude",
+          "longitude",
+      ]
+      print(requests_311[columns].head())
+  first_project:
+    title: Map Recent 3-1-1 Requests
+    goal: Test whether recent request counts can support a neighbourhood issue monitor.
+    steps:
+      - Group the sample by service-request type and local area.
+      - Calculate closure durations where both timestamps are available.
+      - Explain how privacy suppression, missing coordinates, and the 2022 system change limit comparisons.

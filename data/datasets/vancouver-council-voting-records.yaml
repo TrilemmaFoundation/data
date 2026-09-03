@@ -1,0 +1,85 @@
+id: vancouver-council-voting-records
+name: Vancouver Council Voting Records
+description: >
+  Individual councillor votes, agenda descriptions, decisions, and meeting
+  timestamps for building voting-bloc and policy-topic analysis tools.
+theme: Government & Policy
+url: https://opendata.vancouver.ca/explore/dataset/council-voting-records/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.2
+formats:
+  - CSV
+  - JSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: Council voting records
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Public Policy
+  - Legislation
+data_types:
+  - Event Data
+  - Panel Data
+  - Text
+tasks:
+  - Policy Monitoring
+  - Topic Research
+  - Trend Analysis
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: 2016-present
+update_frequency: occasional
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one meeting date and a small API page of individual votes.
+    Meeting minutes remain the official record, excluded vote types reduce
+    coverage, and consent votes may be entered after a meeting.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the excluded-vote and official-record notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep vote number, date, agenda description, councillor, vote, and decision.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/council-voting-records/records"
+      response = requests.get(
+          url,
+          params={"limit": 100, "order_by": "vote_date DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      votes = pd.json_normalize(response.json()["results"])
+      columns = [
+          "vote_number",
+          "vote_date",
+          "agenda_description",
+          "council_member",
+          "vote",
+          "decision",
+      ]
+      print(votes[columns].head())
+  first_project:
+    title: Compare Council Voting Patterns
+    goal: Test whether individual votes can support a bounded councillor-similarity view.
+    steps:
+      - Pivot the sample into councillors by vote number.
+      - Calculate agreement rates only where both councillors recorded eligible votes.
+      - Explain why excluded motions, consent entries, and official minutes limit voting-bloc conclusions.

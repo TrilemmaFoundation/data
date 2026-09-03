@@ -1,0 +1,86 @@
+id: vancouver-parking-tickets
+name: Vancouver Parking Tickets
+description: >
+  Parking infractions, dates, statuses, bylaws, and 100-block locations for
+  building enforcement hotspot and curb-demand analysis tools.
+theme: Government & Policy
+url: https://opendata.vancouver.ca/explore/dataset/parking-tickets/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.02
+size_gb_max: 0.5
+formats:
+  - CSV
+  - JSON
+license: Open Government Licence - Vancouver
+license_url: https://opendata.vancouver.ca/pages/licence/
+url_checks:
+  source_marker: parking ticket records data available
+  license_marker: Open Government Licence - Vancouver
+domains:
+  - Transportation
+  - Public Policy
+  - Regulation
+data_types:
+  - Event Data
+  - Time Series
+tasks:
+  - Monitoring
+  - Trend Analysis
+  - Geographic Analysis
+difficulty: beginner
+geography:
+  - Vancouver, British Columbia, Canada
+temporal_coverage: 2010-present across linked datasets
+update_frequency: quarterly
+provider: City of Vancouver
+source_type: government
+last_verified: 2026-09-03
+getting_started:
+  overview: >
+    Start with one year and a small API page of infractions. Locations are
+    aggregated to 100-block units, Vancouver Police Department tickets are
+    excluded, and records do not show later status changes.
+  prerequisites:
+    - Python 3.10 or newer
+    - A notebook environment such as Jupyter or Google Colab
+    - An internet connection
+  access_steps:
+    - Open the official dataset page and review the location and coverage notes.
+    - Query a bounded page through the OpenDataSoft API.
+    - Keep infraction date, block, street, bylaw, section, status, and description.
+  python:
+    packages:
+      - pandas
+      - requests
+    code: |
+      import pandas as pd
+      import requests
+
+      url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/parking-tickets/records"
+      response = requests.get(
+          url,
+          params={"limit": 100, "order_by": "entrydate DESC"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      tickets = pd.json_normalize(response.json()["results"])
+      columns = [
+          "entrydate",
+          "block",
+          "street",
+          "bylaw",
+          "section",
+          "status",
+          "infractiontext",
+      ]
+      print(tickets[columns].head())
+  first_project:
+    title: Find Parking Enforcement Hotspots
+    goal: Test whether ticket counts can support a coarse block-level enforcement map.
+    steps:
+      - Group sampled tickets by street, 100-block, and infraction description.
+      - Compare counts across dates and ticket statuses.
+      - Explain why block aggregation, agency exclusions, and issue-date status limit parking-demand conclusions.
