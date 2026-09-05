@@ -79,7 +79,7 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--foundation-shell-height, 116px) + 16px);
+    scroll-padding-top: calc(var(--foundation-shell-height, 52px) + 16px);
   }
   button,
   a,
@@ -132,3 +132,5 @@
   .feature-surface { border: 1px solid var(--tf-soft-periwinkle); border-radius: var(--tf-radius-card); background: var(--tf-primary-navy); color: var(--tf-on-dark); box-shadow: 0 12px 32px rgba(10,10,20,.08); }
   .feature-surface a:focus-visible { --tw-ring-color: var(--tf-focus-dark); --tw-ring-offset-color: var(--tf-primary-navy); }
 }
+
+.data-header { position: sticky; top: 0; z-index: 60; }

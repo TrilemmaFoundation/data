@@ -55,7 +55,7 @@ function SortHeader({
   return (
     <TableHead
       scope="col"
-      className="sticky top-[var(--foundation-shell-height,116px)] z-[1] bg-card"
+      className="sticky top-[var(--foundation-shell-height,52px)] z-[1] bg-card"
       aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
     >
       <button
@@ -116,7 +116,7 @@ export function DatasetTable({
               onSortChange={onSortChange}
             />
           ))}
-          <TableHead scope="col" className="sticky top-[var(--foundation-shell-height,116px)] z-[1] bg-card">
+          <TableHead scope="col" className="sticky top-[var(--foundation-shell-height,52px)] z-[1] bg-card">
             <span className="inline-flex min-h-8 items-center">{tableCopy.formatsLabel}</span>
           </TableHead>
           {SORT_HEADERS.slice(3).map((column) => (

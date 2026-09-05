@@ -13,21 +13,7 @@ for (const width of [320, 390, 768, 1023, 1024, 1280, 1536]) {
     }
   });
 }
-test('short landscape menu and keyboard restoration', async ({ page }) => {
-  await page.setViewportSize({ width: 844, height: 390 });
-  await page.goto('/');
-  const toggle = page.getByRole('button', { name: 'Open site menu' });
-  await toggle.click();
-  await expect(page.locator('main')).toHaveJSProperty('inert', true);
-  const menu = page.getByRole('navigation', { name: 'Mobile site navigation' });
-  await menu.getByRole('button', { name: 'About', exact: true }).click();
-  const last = menu.getByRole('link', { name: 'Manifesto', exact: true });
-  await last.focus();
-  await expect(last).toBeInViewport();
-  await page.keyboard.press('Escape');
-  await expect(toggle).toBeFocused();
-  await expect(page.locator('main')).toHaveJSProperty('inert', false);
-});
+
 test('200% text and reduced motion retain search and reading context', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -45,7 +31,7 @@ test('guide anchors use the shared shell offset without an extra fixed-header ga
     await page.setViewportSize(viewport);
     await page.goto('/datasets/usgs-earthquakes');
     await page.locator('a[href="#getting-started"]').click();
-    const shell = await page.locator('.foundation-header').boundingBox();
+    const shell = await page.locator('.data-header').boundingBox();
     const section = await page.locator('#getting-started').boundingBox();
     expect(section!.y - shell!.height).toBeGreaterThanOrEqual(16);
     expect(section!.y - shell!.height).toBeLessThanOrEqual(33);
@@ -77,22 +63,21 @@ test('contribution labels stay directly above their controls when the form reflo
 });
 
 
-test('current-app mobile links restore focus and isolate auxiliary content', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const toggle = page.getByRole('button', { name: 'Open site menu' });
-  await toggle.click();
-  for (const region of await page.locator('[data-foundation-background]').all()) {
-    await expect(region).toHaveJSProperty('inert', true);
-  }
-  const menu = page.getByRole('navigation', { name: 'Mobile site navigation' });
-  await menu.getByRole('button', { name: 'Resources', exact: true }).click();
-  const currentApp = menu.getByRole('link', { name: 'Catalog', exact: true });
-  await currentApp.focus();
-  await currentApp.press('Enter');
-  await expect(menu).toHaveCount(0);
-  await expect(toggle).toBeFocused();
-  for (const region of await page.locator('[data-foundation-background]').all()) {
-    await expect(region).toHaveJSProperty('inert', false);
+
+
+test('only local navigation is rendered and offsets track its actual height', async ({ page }) => {
+  for (const width of [320, 390, 768, 1023, 1024, 1280, 1536]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const header = page.locator('.data-header');
+    await expect(header).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Data navigation', exact: true })).toBeVisible();
+    await expect(page.locator('.foundation-header, .foundation-header-bar')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Open site menu' })).toHaveCount(0);
+    const box = await header.boundingBox();
+    expect(box!.y).toBe(0);
+    expect(box!.height).toBeLessThan(width >= 1024 ? 65 : 120);
+    await expect.poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--foundation-shell-height')))).toBeCloseTo(box!.height, 0);
+    for (const link of await header.locator('a').all()) await expect(link).toBeInViewport({ ratio: 1 });
   }
 });

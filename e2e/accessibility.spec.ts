@@ -21,15 +21,6 @@ test("mobile catalog and filter drawer pass automated accessibility checks", asy
   await page.goto("/");
   await expectNoAccessibilityViolations(page);
 
-  await page
-    .getByRole("button", { name: "Open site menu" })
-    .click();
-  await expect(
-    page.getByRole("navigation", { name: "Mobile site navigation" }),
-  ).toBeVisible();
-  await expectNoAccessibilityViolations(page);
-  await page.keyboard.press("Escape");
-
   await page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expectNoAccessibilityViolations(page);

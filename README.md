@@ -50,23 +50,18 @@ Generated Colab notebooks for beginner, no-key guides are committed under
 
 Trilemma Data is a product extension of the main
 [Trilemma Foundation website](https://www.trilemma.foundation/), not a separate
-brand. The main website is the canonical visual reference; this alignment was
-reviewed against website revision `1beb70d`.
+brand. The main website is the canonical visual reference. The versioned
+[design contract](src/design/README.md) records its source revision, tokens,
+interaction rules, and checksums.
 
-The shared foundation is intentionally small:
+- Ghost-white `#F1F1F9` reading and catalog surfaces with navy `#1E1E44` feature areas
+- Ink `#0A0A14` text, periwinkle `#8E8ECD` primary actions, and peach `#FFC999` secondary actions
+- Azure `#5858C8` links and light-surface focus; amber `#FF9940` dark-surface focus
+- Roboto typography, 10px controls, 16px cards, and 44px minimum interactive targets
 
-- Navy `#1E1E44` for the page canvas
-- Black `#0A0A14` for chrome, cards, menus, and code
-- Orange `#FF9940` for primary actions and focus
-- Blue `#6CA8E4` for secondary information
-- White `#FFFFFF` and muted gray `#BDBDBD` for content
-- Roboto typography and the canonical `public/foundation-white.webp` logo
-
-Controls use 10px corners, 44–48px targets, compact hard shadows, and visible
-orange focus rings. Catalog pagination uses denser 32px controls so dataset
-rows stay the visual priority. Content surfaces use restrained 12–16px corners and
-elevation. Update the documented values, logo, and brand-contract test together
-when the canonical website changes.
+Data renders only its local header (Datasets, Build Paths, Contribute), with
+sticky offsets measured from its actual height. The shared Foundation footer
+remains. Run `npm run check:design` when updating the vendored contract.
 
 ## Editing content
 

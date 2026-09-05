@@ -12,7 +12,7 @@ test('every exported route renders the shared shell without runtime errors', asy
   for (const path of routes) {
     await page.goto(path);
     await expect(page.locator('main h1')).toHaveCount(1);
-    await expect(page.locator('.foundation-header')).toBeVisible();
+    await expect(page.locator('.data-header')).toBeVisible();
     await expect(page.locator('.foundation-footer')).toBeVisible();
   }
   expect(errors).toEqual([]);

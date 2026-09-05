@@ -254,77 +254,7 @@ test("long active filters do not create mobile horizontal scrolling", async ({ p
   expect(widths.scroll).toBe(widths.client);
 });
 
-test("mobile navigation overlays content and restores focus on Escape", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
 
-  const trigger = page.locator('button[aria-controls="foundation-mobile-navigation"]');
-  const hero = page.getByRole("heading", { name: catalogCopy.heroTitle });
-  const before = await hero.boundingBox();
-
-  await trigger.click();
-  await expect(
-    page.getByRole("navigation", { name: "Mobile site navigation" }),
-  ).toBeVisible();
-  expect((await hero.boundingBox())?.y).toBe(before?.y);
-  const firstLink = page
-    .getByRole("navigation", { name: "Mobile site navigation" })
-    .getByRole("link", { name: /Tournaments/ });
-  await expect(firstLink).toBeFocused();
-  await expect(firstLink).toHaveAttribute("href", "https://2026.trilemma.foundation/");
-  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
-
-  await page.keyboard.press("Shift+Tab");
-  await expect(trigger).toBeFocused();
-  await page.keyboard.press("Shift+Tab");
-  await expect(
-    page
-      .getByRole("navigation", { name: "Mobile site navigation" })
-      .getByRole("button", { name: "About", exact: true }),
-  ).toBeFocused();
-
-  await page.keyboard.press("Escape");
-  const navigation = page.getByRole("navigation", {
-    name: "Mobile site navigation",
-  });
-  await expect(navigation).toBeHidden();
-  await expect(trigger).toBeFocused();
-  await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
-
-  await trigger.click();
-  await navigation.getByRole("button", { name: "Resources", exact: true }).click();
-  await navigation.getByRole("link", { name: /^Catalog/ }).click();
-  await expect(navigation).toBeHidden();
-  await expect(page).toHaveURL((url) => url.pathname === "/");
-});
-
-test("mobile navigation closes from its toggle and on route changes", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  await page.goto("/datasets/nws-weather-api/");
-
-  const trigger = page.getByRole("button", {
-    name: "Open site menu",
-  });
-  const navigation = page.getByRole("navigation", {
-    name: "Mobile site navigation",
-  });
-
-  await trigger.click();
-  await page.getByRole("button", { name: "Close site menu" }).click();
-  await expect(navigation).toBeHidden();
-  await expect(trigger).toBeFocused();
-
-  await trigger.click();
-  await page.goBack();
-  await expect(page).toHaveURL((url) => url.pathname === "/");
-  await expect(navigation).toBeHidden();
-  await page.goForward();
-  await expect(page).toHaveURL(/\/datasets\/nws-weather-api\/?$/);
-  await expect(navigation).toBeHidden();
-});
 
 test("header and footer expose shared and local destinations", async ({ page }) => {
   await page.goto("/");
@@ -339,30 +269,12 @@ test("header and footer expose shared and local destinations", async ({ page }) 
     await expect(local.getByRole("link", { name: label, exact: true })).toHaveAttribute("aria-current", "page");
     await expect(datasets).not.toHaveAttribute("aria-current");
   }
-  await page.getByRole("button", { name: "Resources", exact: true }).click();
-  await expect(page.getByRole("link", { name: /^Catalog/ })).toHaveAttribute("href", "/");
-  await expect(page.getByRole("link", { name: /^Catalog/ })).not.toHaveAttribute("target");
   const legal = page.getByRole("navigation", { name: "Legal links" });
   for (const [label, href] of [["Charter", FOUNDATION_CHARTER_URL], ["Privacy Policy", FOUNDATION_PRIVACY_URL], ["Participation Terms", FOUNDATION_TERMS_URL]]) {
     await expect(legal.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", href);
   }
 });
 
-test("mobile navigation stays closed after crossing the desktop breakpoint", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "Open site menu" }).click();
-  const navigation = page.getByRole("navigation", {
-    name: "Mobile site navigation",
-  });
-  await expect(navigation).toBeVisible();
-
-  await page.setViewportSize({ width: 1024, height: 900 });
-  await expect(navigation).toBeHidden();
-  await page.setViewportSize({ width: 390, height: 844 });
-  await expect(navigation).toBeHidden();
-});
 
 test("whitespace-only shared queries remain unfiltered", async ({ page }) => {
   await page.goto("/?q=+++");
