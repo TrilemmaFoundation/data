@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "tsx scripts/dev.ts",
     "build": "next build",
-    "lint": "eslint",
+    "lint": "eslint && npm run check:design",
     "validate-datasets": "tsx scripts/validate-datasets.ts",
     "validate-datasets:offline": "tsx scripts/validate-datasets.ts --offline",
     "validate-providers": "tsx scripts/validate-providers.ts",
@@ -20,7 +20,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "check:design": "node scripts/check-design-contract.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

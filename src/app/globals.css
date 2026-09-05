@@ -1,7 +1,14 @@
+@import "../design/tokens.css";
+@import "../design/chrome.css";
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
 
 @theme inline {
+  --container-reading: var(--tf-width-reading);
+  --container-content: var(--tf-width-content);
+  --container-wide: var(--tf-width-wide);
+  --color-feature-foreground: var(--tf-on-dark);
+  --color-link: var(--tf-azure-bold);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand-navy: var(--brand-navy);
@@ -27,39 +34,39 @@
   --color-card: var(--card);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-lg: var(--tf-radius-button);
+  --radius-xl: var(--tf-radius-card);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  color-scheme: dark;
-  --brand-navy: #1e1e44;
-  --brand-black: #0a0a14;
-  --brand-orange: #ff9940;
-  --brand-blue: #6ca8e4;
-  --brand-white: #ffffff;
-  --background: var(--brand-navy);
-  --foreground: var(--brand-white);
-  --card: #11131d;
-  --card-foreground: var(--brand-white);
-  --popover: #12141c;
-  --popover-foreground: var(--brand-white);
-  --primary: var(--brand-orange);
-  --primary-foreground: var(--brand-black);
-  --secondary: var(--brand-blue);
-  --secondary-foreground: var(--brand-black);
-  --muted: #161822;
-  --muted-foreground: #bdbdbd;
-  --accent: #5858c8;
-  --accent-foreground: var(--brand-white);
-  --destructive: #ef6a6a;
-  --border: #222534;
-  --input: #222534;
-  --ring: var(--brand-orange);
-  --radius: 0.625rem;
+  color-scheme: light;
+  --brand-navy: var(--tf-primary-navy);
+  --brand-black: var(--tf-ink-black);
+  --brand-orange: var(--tf-digital-amber);
+  --brand-blue: var(--tf-azure-bold);
+  --brand-white: var(--tf-ghost-white);
+  --background: var(--tf-ghost-white);
+  --foreground: var(--tf-ink-black);
+  --card: var(--tf-ghost-white);
+  --card-foreground: var(--tf-ink-black);
+  --popover: var(--tf-ghost-white);
+  --popover-foreground: var(--tf-ink-black);
+  --primary: var(--tf-soft-periwinkle);
+  --primary-foreground: var(--tf-primary-navy);
+  --secondary: var(--tf-peach-glow);
+  --secondary-foreground: var(--tf-primary-navy);
+  --muted: color-mix(in srgb, var(--tf-soft-periwinkle) 12%, var(--tf-ghost-white));
+  --muted-foreground: var(--tf-primary-navy);
+  --accent: var(--tf-soft-periwinkle);
+  --accent-foreground: var(--tf-primary-navy);
+  --destructive: var(--tf-destructive);
+  --border: var(--tf-soft-periwinkle);
+  --input: var(--tf-azure-bold);
+  --ring: var(--tf-azure-bold);
+  --radius: 1rem;
 }
 
 @layer base {
@@ -72,7 +79,7 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: calc(var(--foundation-shell-height, 116px) + 16px);
   }
   button,
   a,
@@ -92,11 +99,11 @@
   }
 
   .surface {
-    @apply rounded-xl border border-white/10 bg-card/90 shadow-[0_4px_4px_rgba(10,10,20,0.45)];
+    @apply rounded-xl border border-border bg-card shadow-[0_12px_32px_rgba(10,10,20,0.08)];
   }
 
   .eyebrow {
-    @apply text-xs font-bold tracking-[0.18em] text-primary uppercase;
+    @apply text-xs font-bold tracking-[0.2em] text-link uppercase;
   }
 }
 
@@ -112,4 +119,16 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+@layer base {
+  body { font-size: 16px; line-height: 1.625; overflow-wrap: anywhere; }
+  h1, h2, h3, h4 { color: var(--tf-primary-navy); letter-spacing: -.025em; }
+  :is(input, select, textarea) { color-scheme: light; }
+  :is(section, h2, h3)[id] { scroll-margin-top: 1rem; }
+}
+
+@layer components {
+  .feature-surface { border: 1px solid var(--tf-soft-periwinkle); border-radius: var(--tf-radius-card); background: var(--tf-primary-navy); color: var(--tf-on-dark); box-shadow: 0 12px 32px rgba(10,10,20,.08); }
+  .feature-surface a:focus-visible { --tw-ring-color: var(--tf-focus-dark); --tw-ring-offset-color: var(--tf-primary-navy); }
 }

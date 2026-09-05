@@ -17,11 +17,11 @@ export default function CollectionsPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <nav className="mb-4 text-sm text-muted-foreground">
-        <Link href="/" className="rounded-sm hover:text-primary">
+        <Link href="/" className="rounded-sm hover:text-link">
           {siteCopy.datasetsNavigationLabel}
         </Link>
       </nav>
-      <h1 className="font-heading text-3xl font-bold text-white sm:text-4xl">
+      <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">
         {collectionsCopy.title}
       </h1>
       <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">
@@ -29,17 +29,17 @@ export default function CollectionsPage() {
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {collections.map((collection) => (
-          <article key={collection.id} className="surface group relative p-5">
-            <h2 className="text-xl font-semibold text-white">
+          <article key={collection.id} className="feature-surface group relative p-5">
+            <h2 className="text-xl font-semibold text-feature-foreground">
               <Link
                 href={collectionPath(collection.id)}
-                className={cn(stretchedLinkClassName, "hover:text-primary")}
+                className={cn(stretchedLinkClassName, "hover:text-[var(--tf-digital-amber)]")}
               >
                 {collection.title}
               </Link>
             </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{collection.summary}</p>
-            <p className="mt-3 text-xs text-secondary">
+            <p className="mt-2 text-base leading-relaxed text-feature-foreground">{collection.summary}</p>
+            <p className="mt-3 text-xs text-feature-foreground">
               {catalogCopy.datasetCount(collection.dataset_ids.length)} ·{" "}
               {collectionsCopy.updatedLabel(collection.last_updated)}
             </p>

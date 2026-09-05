@@ -55,19 +55,19 @@ function SortHeader({
   return (
     <TableHead
       scope="col"
-      className="sticky top-16 z-[1] bg-card"
+      className="sticky top-[var(--foundation-shell-height,116px)] z-[1] bg-card"
       aria-sort={sorted ? sorted === "asc" ? "ascending" : "descending" : undefined}
     >
       <button
         type="button"
-        className="inline-flex min-h-8 items-center gap-1 rounded-sm text-left uppercase hover:text-white"
+        className="inline-flex min-h-8 items-center gap-1 rounded-sm text-left uppercase hover:text-foreground"
         onClick={() => onSortChange(nextSort(column, sort))}
         aria-label={tableCopy.sortBy(label, sorted)}
       >
         {label}
         {sorted === "asc" ? <ArrowUp className="size-3.5" aria-hidden="true" />
           : sorted === "desc" ? <ArrowDown className="size-3.5" aria-hidden="true" />
-            : <ArrowUpDown className="size-3.5 text-white/50" aria-hidden="true" />}
+            : <ArrowUpDown className="size-3.5 text-muted-foreground" aria-hidden="true" />}
       </button>
     </TableHead>
   );
@@ -116,7 +116,7 @@ export function DatasetTable({
               onSortChange={onSortChange}
             />
           ))}
-          <TableHead scope="col" className="sticky top-16 z-[1] bg-card">
+          <TableHead scope="col" className="sticky top-[var(--foundation-shell-height,116px)] z-[1] bg-card">
             <span className="inline-flex min-h-8 items-center">{tableCopy.formatsLabel}</span>
           </TableHead>
           {SORT_HEADERS.slice(3).map((column) => (
@@ -140,12 +140,12 @@ export function DatasetTable({
                 <div className="flex min-w-0 items-start gap-1.5">
                   <Link
                     href={`/datasets/${dataset.id}`}
-                    className="min-w-0 rounded-sm text-[0.9375rem] leading-snug font-semibold text-white hover:text-primary"
+                    className="min-w-0 rounded-sm text-[0.9375rem] leading-snug font-semibold text-foreground hover:text-link"
                     title={`${dataset.description} — ${dataset.provider}`}
                   >
                     <span className="block truncate">{dataset.name}</span>
                     <span
-                      className="block truncate text-xs font-normal leading-4 text-secondary"
+                      className="block truncate text-xs font-normal leading-4 text-muted-foreground"
                       aria-hidden="true"
                     >
                       {dataset.first_project_title}
@@ -159,22 +159,22 @@ export function DatasetTable({
                 </div>
               </TableCell>
               <TableCell>
-                <span className="text-xs whitespace-nowrap text-white/75" title={dataset.theme}>
+                <span className="text-xs whitespace-nowrap text-muted-foreground" title={dataset.theme}>
                   {tableCopy.themeShort[dataset.theme]}
                 </span>
               </TableCell>
               <TableCell>
-                <p className="flex items-center gap-1 text-xs whitespace-nowrap text-white">
+                <p className="flex items-center gap-1 text-xs whitespace-nowrap text-foreground">
                   <span className="font-medium">{accessLabel(dataset)}</span>
-                  <span className="text-white/40" aria-hidden="true">·</span>
-                  <KeyRound className="size-3 shrink-0 text-secondary" aria-hidden="true" />
+                  <span className="text-muted-foreground" aria-hidden="true">·</span>
+                  <KeyRound className="size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
                   <span className="text-muted-foreground">
                     {dataset.api_key_required ? tableCopy.freeKeyLabel : tableCopy.noKeyLabel}
                   </span>
                 </p>
               </TableCell>
               <TableCell>
-                <p className="text-xs whitespace-nowrap text-white/85">
+                <p className="text-xs whitespace-nowrap text-muted-foreground">
                   {formats[0]}
                   {formats.length > 1 && (
                     <span className="text-muted-foreground" aria-label={tableCopy.moreFormats(formats.length - 1)}>
@@ -184,12 +184,12 @@ export function DatasetTable({
                 </p>
               </TableCell>
               <TableCell>
-                <span className="text-xs font-medium whitespace-nowrap text-white/85">
+                <span className="text-xs font-medium whitespace-nowrap text-muted-foreground">
                   {toChicagoTitleCase(dataset.difficulty)}
                 </span>
               </TableCell>
               <TableCell>
-                <span className="text-xs font-medium whitespace-nowrap text-white/85">
+                <span className="text-xs font-medium whitespace-nowrap text-muted-foreground">
                   {toChicagoTitleCase(dataset.update_frequency)}
                 </span>
               </TableCell>

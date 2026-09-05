@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { filterCopy, siteCopy } from "../src/content/site-copy";
+import { filterCopy } from "../src/content/site-copy";
 
 async function expectNoAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page })
@@ -22,10 +22,10 @@ test("mobile catalog and filter drawer pass automated accessibility checks", asy
   await expectNoAccessibilityViolations(page);
 
   await page
-    .getByRole("button", { name: siteCopy.openNavigationLabel })
+    .getByRole("button", { name: "Open site menu" })
     .click();
   await expect(
-    page.getByRole("navigation", { name: siteCopy.mobileNavigationLabel }),
+    page.getByRole("navigation", { name: "Mobile site navigation" }),
   ).toBeVisible();
   await expectNoAccessibilityViolations(page);
   await page.keyboard.press("Escape");

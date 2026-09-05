@@ -8,18 +8,14 @@ const root = process.cwd();
 describe("brand contract", () => {
   it("keeps the canonical Trilemma colors", () => {
     const css = readFileSync(join(root, "src/app/globals.css"), "utf8");
-    const tokens = {
-      "--brand-navy": "#1e1e44",
-      "--brand-black": "#0a0a14",
-      "--brand-orange": "#ff9940",
-      "--brand-blue": "#6ca8e4",
-      "--brand-white": "#ffffff",
-      "--muted-foreground": "#bdbdbd",
-    } as const;
-
-    for (const [token, value] of Object.entries(tokens)) {
-      expect(css).toContain(`${token}: ${value};`);
+    const tokens = readFileSync(join(root, "src/design/tokens.css"), "utf8").toLowerCase();
+    for (const value of ["#1e1e44", "#0a0a14", "#ff9940", "#5858c8", "#8e8ecd", "#ffc999", "#f1f1f9"]) {
+      expect(tokens).toContain(value);
     }
+    expect(css).toContain("--background: var(--tf-ghost-white)");
+    expect(css).toContain("--foreground: var(--tf-ink-black)");
+    expect(css).toContain("--primary: var(--tf-soft-periwinkle)");
+    expect(tokens).toContain("--tf-action-primary-hover-foreground: var(--tf-ghost-white)");
   });
 
   it("keeps the canonical Foundation logo", () => {

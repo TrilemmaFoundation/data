@@ -205,3 +205,8 @@ road-closure data. The YAML files in
 5. Create the DNS record Vercel shows (usually a CNAME) at your DNS provider
 
 Static export is configured via `output: "export"` in `next.config.ts`.
+
+## Shared Foundation design
+
+See the [versioned design contract](src/design/README.md) and the
+[implementation, route coverage, and visual evidence](design-validation/README.md).

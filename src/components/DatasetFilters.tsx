@@ -33,7 +33,7 @@ function FilterCheckbox({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white">
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground">
       <Checkbox checked={checked} onCheckedChange={(value) => onCheckedChange(value === true)} />
       <span>{label}</span>
     </label>
@@ -61,7 +61,7 @@ function FilterSelect({
     <label
       htmlFor={id}
       className={cn(
-        "min-w-0 font-semibold text-white",
+        "min-w-0 font-semibold text-foreground",
         compact ? "flex-1 text-xs" : "block text-sm",
         className,
       )}
@@ -72,7 +72,7 @@ function FilterSelect({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "h-11 w-full min-w-0 rounded-[10px] border border-white/15 bg-brand-black/70 text-sm font-medium text-white shadow-[0_4px_4px_rgba(10,10,20,0.3)]",
+          "h-11 w-full min-w-0 rounded-[10px] border border-input bg-background text-sm font-medium text-foreground shadow-[0_4px_4px_rgba(10,10,20,0.3)]",
           compact ? "mt-0 px-2" : "mt-1.5 px-3",
         )}
       >
@@ -179,12 +179,12 @@ function AdvancedGroup({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group rounded-lg border border-white/10 bg-brand-black/25 p-4">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-white marker:content-none">
+    <details className="group rounded-lg border border-border bg-background p-4">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-sm text-sm font-semibold text-foreground marker:content-none">
         <span>{title}{count > 0 ? ` (${count})` : ""}</span>
-        <span aria-hidden="true" className="text-lg text-primary transition-transform group-open:rotate-45">+</span>
+        <span aria-hidden="true" className="text-lg text-link transition-transform group-open:rotate-45">+</span>
       </summary>
-      <fieldset className="mt-4 border-t border-white/10 pt-3">
+      <fieldset className="mt-4 border-t border-border pt-3">
         <legend className="sr-only">{title}</legend>
         <div className="space-y-1">{children}</div>
       </fieldset>
@@ -200,7 +200,7 @@ export function DatasetFilters({ options, filters, onChange }: DatasetFiltersPro
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-white">
+        <p className="text-sm font-semibold text-foreground">
           {filterCopy.advancedFiltersLabel}
         </p>
         <Button

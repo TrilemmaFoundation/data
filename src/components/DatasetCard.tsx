@@ -28,7 +28,7 @@ export function DatasetCard({
     <Card
       data-catalog-card
       className={cn(
-        "group relative flex h-full flex-col border-white/10 bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
+        "group relative flex h-full flex-col border-border bg-card/90 transition duration-200 [--card-spacing:--spacing(3)] hover:border-primary/50 hover:bg-card",
         featured && "border-primary/50",
       )}
     >
@@ -40,16 +40,16 @@ export function DatasetCard({
       </Link>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <Badge variant="secondary" className="capitalize text-secondary">
+          <Badge variant="secondary" className="capitalize text-muted-foreground">
             {dataset.difficulty === "beginner" && (
-              <Sparkles className="text-secondary" aria-hidden="true" />
+              <Sparkles className="text-muted-foreground" aria-hidden="true" />
             )}
             {toChicagoTitleCase(dataset.difficulty)}
           </Badge>
           <span
             className={cn(
               "text-xs font-medium",
-              featured ? "font-bold text-primary" : "text-muted-foreground",
+              featured ? "font-bold text-link" : "text-muted-foreground",
             )}
           >
             {featured ? datasetCardCopy.goodFirstBuildLabel : sizeCategory}
@@ -57,13 +57,13 @@ export function DatasetCard({
         </div>
         <CardTitle
           aria-hidden="true"
-          className="pt-1 text-lg font-semibold text-balance text-white group-hover:text-primary"
+          className="pt-1 text-lg font-semibold text-balance text-foreground group-hover:text-link"
         >
           {dataset.name}
         </CardTitle>
         <CardDescription className="line-clamp-2 leading-5">{dataset.description}</CardDescription>
-        <p className="line-clamp-2 text-xs leading-5 text-secondary">
-          <span className="font-semibold text-white/80">{datasetCardCopy.firstProjectLabel}: </span>
+        <p className="line-clamp-2 text-xs leading-5 text-muted-foreground">
+          <span className="font-semibold text-muted-foreground">{datasetCardCopy.firstProjectLabel}: </span>
           {dataset.first_project_title}
         </p>
       </CardHeader>
@@ -73,7 +73,7 @@ export function DatasetCard({
           <Badge variant="outline" className="rounded-full" title={dataset.theme}>
             {tableCopy.themeShort[dataset.theme]}
           </Badge>
-          <span className="whitespace-nowrap text-white/80">
+          <span className="whitespace-nowrap text-muted-foreground">
             {dataset.formats[0]}
             {dataset.formats.length > 1 ? ` +${dataset.formats.length - 1}` : ""}
           </span>
@@ -81,15 +81,15 @@ export function DatasetCard({
             className="ml-auto flex items-center gap-1 whitespace-nowrap text-muted-foreground"
             title={datasetCardCopy.apiKeyStatus(dataset.api_key_required)}
           >
-            <KeyRound className="size-3.5 text-secondary" aria-hidden="true" />
+            <KeyRound className="size-3.5 text-muted-foreground" aria-hidden="true" />
             {dataset.api_key_required ? tableCopy.freeKeyLabel : tableCopy.noKeyLabel}
           </span>
         </div>
       </CardContent>
 
-      <CardFooter className="items-center border-white/10 bg-brand-black/25 px-4 py-2">
+      <CardFooter className="items-center border-border bg-background px-4 py-2">
         <p
-          className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors group-hover:text-white"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-link transition-colors group-hover:text-foreground"
           aria-hidden="true"
         >
           {datasetCardCopy.viewGuideLabel} <ArrowRight aria-hidden="true" />

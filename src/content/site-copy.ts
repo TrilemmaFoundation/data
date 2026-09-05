@@ -317,6 +317,7 @@ export const contributeCopy = {
   previewLabel: "Guide Preview",
   errorsLabel: "Validation Issues",
   downloadLabel: "Download YAML",
+  downloadError: "Download failed. Your draft is preserved. Try again or copy the YAML.",
   copyYamlLabel: "Copy YAML",
   copiedYamlLabel: "YAML Copied",
   copyYamlErrorLabel: "Copy Failed",

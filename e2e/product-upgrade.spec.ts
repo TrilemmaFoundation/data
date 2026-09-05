@@ -162,3 +162,13 @@ test("pageviews do not emit custom analytics events", async ({ page }) => {
   await page.goto("/datasets/nws-weather-api");
   expect(customEvents).toEqual([]);
 });
+
+test('download errors preserve contribution text and allow recovery', async ({ page }) => {
+  await page.goto('/contribute');
+  const editor = page.getByLabel(contributeCopy.yamlLabel);
+  await editor.fill('# retained draft');
+  await page.evaluate(() => { URL.createObjectURL = () => { throw new Error('Synthetic download failure'); }; });
+  await page.getByRole('button', { name: contributeCopy.downloadLabel }).click();
+  await expect(page.getByRole('alert').filter({ hasText: contributeCopy.downloadError })).toBeVisible();
+  await expect(editor).toHaveValue('# retained draft');
+});

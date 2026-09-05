@@ -13,6 +13,11 @@ export default defineConfig({
     ...devices["Desktop Chrome"],
     permissions: ["clipboard-read", "clipboard-write"],
   },
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", testMatch: "**/design-experience.spec.ts", use: { ...devices["Desktop Firefox"], permissions: [] } },
+    { name: "webkit", testMatch: "**/design-experience.spec.ts", use: { ...devices["Desktop Safari"], permissions: [] } },
+  ],
   webServer: {
     command: "npx serve out --listen 43917 --no-clipboard",
     url: "http://127.0.0.1:43917",

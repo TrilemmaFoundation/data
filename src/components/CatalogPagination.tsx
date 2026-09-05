@@ -34,7 +34,7 @@ export function CatalogPagination({
   if (totalPages <= 1) return null;
   return (
     <nav
-      className="mt-1.5 flex flex-col gap-1 border-t border-white/10 pt-1.5 lg:flex-row lg:items-center lg:justify-end"
+      className="mt-1.5 flex flex-col gap-1 border-t border-border pt-1.5 lg:flex-row lg:items-center lg:justify-end"
       aria-label={catalogCopy.paginationLabel}
     >
       <p className="text-center text-xs text-muted-foreground lg:sr-only" aria-live="polite">
@@ -43,7 +43,7 @@ export function CatalogPagination({
       <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 sm:w-auto sm:grid-cols-[auto_minmax(16rem,max-content)_auto] sm:justify-end">
         <button
           type="button"
-          className={cn(controlClass, "gap-1 border-white/15 px-2.5 text-white hover:border-primary/60")}
+          className={cn(controlClass, "gap-1 border-border px-2.5 text-foreground hover:border-primary/60")}
           disabled={page === 1}
           onClick={() => onPageChange(page - 1)}
         >
@@ -62,7 +62,7 @@ export function CatalogPagination({
                   "min-w-8 px-2",
                   item === page
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-white/15 bg-card text-white hover:border-primary/60",
+                    : "border-border bg-card text-foreground hover:border-primary/60",
                 )}
                 aria-current={item === page ? "page" : undefined}
                 aria-label={catalogCopy.pageLabel(item)}
@@ -75,7 +75,7 @@ export function CatalogPagination({
         </div>
         <button
           type="button"
-          className={cn(controlClass, "gap-1 border-white/15 px-2.5 text-white hover:border-primary/60")}
+          className={cn(controlClass, "gap-1 border-border px-2.5 text-foreground hover:border-primary/60")}
           disabled={page === totalPages}
           onClick={() => onPageChange(page + 1)}
         >

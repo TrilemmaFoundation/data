@@ -124,7 +124,7 @@ export function DatasetPage({
         href={dataset.license_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex max-w-full items-start gap-1 text-primary hover:text-white"
+        className="inline-flex max-w-full items-start gap-1 text-link hover:text-foreground"
       >
         <span className="min-w-0 break-words">{dataset.license}</span>
         <ExternalLink className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
@@ -159,28 +159,28 @@ export function DatasetPage({
       >
         <ol className="flex flex-wrap items-center gap-2">
           <li>
-            <Link href="/" className="rounded-sm hover:text-primary">
+            <Link href="/" className="rounded-sm hover:text-link">
               {siteCopy.datasetsNavigationLabel}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-white/80">
+          <li aria-current="page" className="text-muted-foreground">
             {dataset.name}
           </li>
         </ol>
       </nav>
 
       {!active && (
-        <div className="mb-5 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-white" role="status">
+        <div className="mb-5 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-foreground" role="status">
           <p className="font-semibold">{catalogStatusLabel(dataset.catalog_status)}</p>
-          {dataset.status_reason ? <p className="mt-1 text-white/80">{dataset.status_reason}</p> : null}
+          {dataset.status_reason ? <p className="mt-1 text-muted-foreground">{dataset.status_reason}</p> : null}
           {dataset.status_until ? (
-            <p className="mt-1 text-white/80">{datasetGuideCopy.statusUntilLabel(dataset.status_until)}</p>
+            <p className="mt-1 text-muted-foreground">{datasetGuideCopy.statusUntilLabel(dataset.status_until)}</p>
           ) : null}
           {dataset.replacement_id ? (
             <Link
               href={datasetPath(dataset.replacement_id)}
-              className="mt-2 inline-flex font-semibold text-primary hover:text-white"
+              className="mt-2 inline-flex font-semibold text-link hover:text-foreground"
             >
               {datasetGuideCopy.replacementLabel}
             </Link>
@@ -195,7 +195,7 @@ export function DatasetPage({
             {toChicagoTitleCase(dataset.difficulty)}
           </Badge>
         </div>
-        <h1 className="font-heading text-3xl font-bold tracking-tight text-balance text-white sm:text-4xl">
+        <h1 className="font-heading text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl">
           {dataset.name}
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
@@ -228,14 +228,14 @@ export function DatasetPage({
           href={DATASET_ISSUE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-primary hover:text-white"
+          className="mt-4 inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-link hover:text-foreground"
         >
           {datasetGuideCopy.feedbackLabel}
         </a>
       </header>
 
       <section className="surface mt-6 p-5 sm:p-6" aria-labelledby="at-a-glance">
-        <h2 id="at-a-glance" className="text-xl font-semibold text-white">
+        <h2 id="at-a-glance" className="text-xl font-semibold text-foreground">
           {datasetGuideCopy.atAGlanceTitle}
         </h2>
         <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -244,18 +244,18 @@ export function DatasetPage({
               <dt className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
                 {label}
               </dt>
-              <dd className="mt-1.5 text-sm font-medium break-words text-white">{value}</dd>
+              <dd className="mt-1.5 text-sm font-medium break-words text-foreground">{value}</dd>
             </div>
           ))}
         </dl>
         {showValidationBadges && (
-          <ul className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-secondary">
-            <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.pythonSyntaxLabel}</li>
+          <ul className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-muted-foreground">
+            <li className="rounded-full border border-border px-3 py-1">{datasetGuideCopy.pythonSyntaxLabel}</li>
             {pythonStatus.notebook && (
-              <li className="rounded-full border border-white/10 px-3 py-1">{datasetGuideCopy.notebookLabel}</li>
+              <li className="rounded-full border border-border px-3 py-1">{datasetGuideCopy.notebookLabel}</li>
             )}
             {pythonStatus.runtimeVerified && (
-              <li className="rounded-full border border-white/10 px-3 py-1">
+              <li className="rounded-full border border-border px-3 py-1">
                 {datasetGuideCopy.runtimeVerifiedLabel(formatVerifiedDate(pythonStatus.runtimeVerified))}
               </li>
             )}
@@ -263,10 +263,10 @@ export function DatasetPage({
         )}
       </section>
 
-      <section id="getting-started" className="scroll-mt-24 pt-10" aria-labelledby="guide-title">
+      <section id="getting-started" className="pt-10" aria-labelledby="guide-title">
         <div className="max-w-3xl">
           <p className="eyebrow">{datasetGuideCopy.beginnerGuideEyebrow}</p>
-          <h2 id="guide-title" className="mt-2 text-3xl font-bold text-white sm:text-4xl">
+          <h2 id="guide-title" className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
             {datasetGuideCopy.guideTitle}
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">{guide.overview}</p>
@@ -274,16 +274,16 @@ export function DatasetPage({
 
         <div className="mt-8 grid gap-5 lg:grid-cols-2">
           <article className="surface p-6">
-            <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-primary">
+            <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-link">
               1
             </span>
-            <h3 className="mt-5 text-xl font-semibold text-white">
+            <h3 className="mt-5 text-xl font-semibold text-foreground">
               {datasetGuideCopy.setupTitle}
             </h3>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <ul className="mt-4 space-y-3 text-base leading-relaxed text-muted-foreground">
               {guide.prerequisites.map((item) => (
                 <li key={item} className="flex gap-3">
-                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-secondary" aria-hidden="true" />
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -291,16 +291,16 @@ export function DatasetPage({
           </article>
 
           <article className="surface p-6">
-            <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-primary">
+            <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-link">
               2
             </span>
-            <h3 className="mt-5 text-xl font-semibold text-white">
+            <h3 className="mt-5 text-xl font-semibold text-foreground">
               {datasetGuideCopy.accessTitle}
             </h3>
-            <ol className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <ol className="mt-4 space-y-3 text-base leading-relaxed text-muted-foreground">
               {guide.access_steps.map((item, index) => (
                 <li key={item} className="flex gap-3">
-                  <span className="font-mono text-xs font-bold text-secondary">{index + 1}.</span>
+                  <span className="font-mono text-xs font-bold text-muted-foreground">{index + 1}.</span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -309,7 +309,7 @@ export function DatasetPage({
               href={dataset.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-semibold text-primary hover:text-white"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-semibold text-link hover:text-foreground"
             >
               {datasetGuideCopy.officialSourceLabel}{" "}
               <ExternalLink className="size-4" aria-hidden="true" />
@@ -317,13 +317,13 @@ export function DatasetPage({
           </article>
 
           <article className="surface overflow-hidden lg:col-span-2">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 sm:px-6">
               <div className="flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-primary">
+                <span className="grid size-9 place-items-center rounded-full bg-primary/15 font-bold text-link">
                   3
                 </span>
                 <div>
-                  <h3 className="font-semibold text-white">
+                  <h3 className="font-semibold text-foreground">
                     {datasetGuideCopy.pythonTitle}
                   </h3>
                   <p className="text-xs text-muted-foreground">
@@ -334,19 +334,19 @@ export function DatasetPage({
               <CopyButton value={guide.python.code} />
             </div>
             <div
-              className="overflow-x-auto bg-brand-black p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
+              className="overflow-x-auto bg-background p-5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
               tabIndex={0}
               aria-label={datasetGuideCopy.pythonExampleAriaLabel}
             >
-              <p className="mb-4 font-mono text-xs text-secondary">{installCommand}</p>
-              <pre className="min-w-max font-mono text-[0.82rem] leading-6 text-white/85">
+              <p className="mb-4 font-mono text-xs text-muted-foreground">{installCommand}</p>
+              <pre className="min-w-max font-mono text-[0.82rem] leading-6 text-muted-foreground">
                 <code>{guide.python.code}</code>
               </pre>
             </div>
             {guide.python.expected_output && (
-              <div className="border-t border-white/10 px-5 py-4 sm:px-6">
-                <h4 className="text-sm font-semibold text-white">{datasetGuideCopy.expectedOutputTitle}</h4>
-                <pre className="mt-2 overflow-x-auto font-mono text-xs leading-5 text-white/80">
+              <div className="border-t border-border px-5 py-4 sm:px-6">
+                <h4 className="text-sm font-semibold text-foreground">{datasetGuideCopy.expectedOutputTitle}</h4>
+                <pre className="mt-2 overflow-x-auto font-mono text-xs leading-5 text-muted-foreground">
                   <code>{guide.python.expected_output}</code>
                 </pre>
               </div>
@@ -355,22 +355,22 @@ export function DatasetPage({
 
           <article className="surface p-6 lg:col-span-2">
             <div className="flex gap-4">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 font-bold text-primary">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 font-bold text-link">
                 4
               </span>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 text-primary">
+                <div className="flex items-center gap-2 text-link">
                   <Lightbulb className="size-5" aria-hidden="true" />
                   <p className="text-xs font-bold tracking-wider uppercase">
                     {datasetGuideCopy.firstProjectEyebrow}
                   </p>
                 </div>
-                <h3 className="mt-2 text-xl font-semibold text-white">{guide.first_project.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.first_project.goal}</p>
+                <h3 className="mt-2 text-xl font-semibold text-foreground">{guide.first_project.title}</h3>
+                <p className="mt-2 text-base leading-relaxed text-muted-foreground">{guide.first_project.goal}</p>
                 <ol className="mt-5 grid gap-3 md:grid-cols-3">
                   {guide.first_project.steps.map((step, index) => (
-                    <li key={step} className="rounded-lg border border-white/10 bg-brand-black/25 p-4 text-sm leading-6 text-white/80">
-                      <span className="mb-2 block font-mono text-xs font-bold text-secondary">
+                    <li key={step} className="rounded-lg border border-border bg-background p-4 text-base leading-relaxed text-muted-foreground">
+                      <span className="mb-2 block font-mono text-xs font-bold text-muted-foreground">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       {step}
@@ -386,7 +386,7 @@ export function DatasetPage({
       {related.length > 0 && (
         <section className="mt-10" aria-labelledby="related-title">
           <div className="surface p-6 sm:p-7">
-            <h2 id="related-title" className="text-xl font-semibold text-white">
+            <h2 id="related-title" className="text-xl font-semibold text-foreground">
               {datasetGuideCopy.relatedTitle}
             </h2>
             <ul className="mt-4 grid gap-3 md:grid-cols-3">
@@ -394,9 +394,9 @@ export function DatasetPage({
                 <li key={item.id}>
                   <Link
                     href={datasetPath(item.id)}
-                    className="block rounded-lg border border-white/10 p-4 hover:border-primary/50"
+                    className="block rounded-lg border border-border p-4 hover:border-primary/50"
                   >
-                    <p className="font-semibold text-white">{item.name}</p>
+                    <p className="font-semibold text-foreground">{item.name}</p>
                     <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                       {item.first_project_title}
                     </p>
@@ -411,12 +411,12 @@ export function DatasetPage({
       <section className="mt-10" aria-labelledby="explore-title">
         <div className="surface p-6 sm:p-7">
           <div className="flex items-start gap-4">
-            <TerminalSquare className="mt-1 size-6 shrink-0 text-secondary" aria-hidden="true" />
+            <TerminalSquare className="mt-1 size-6 shrink-0 text-muted-foreground" aria-hidden="true" />
             <div className="min-w-0 flex-1">
-              <h2 id="explore-title" className="text-xl font-semibold text-white">
+              <h2 id="explore-title" className="text-xl font-semibold text-foreground">
                 {datasetGuideCopy.detailsTitle}
               </h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              <p className="mt-2 text-base leading-relaxed text-muted-foreground">
                 {datasetGuideCopy.detailsSummary({
                   provider: dataset.provider,
                   sourceType: dataset.source_type,
@@ -469,7 +469,7 @@ export function DatasetPage({
                   href={FEEDBACK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary hover:text-white"
+                  className="font-semibold text-link hover:text-foreground"
                 >
                   {siteCopy.feedbackLabel}
                 </a>
