@@ -270,7 +270,7 @@ test("header and footer expose shared and local destinations", async ({ page }) 
     await expect(datasets).not.toHaveAttribute("aria-current");
   }
   const legal = page.getByRole("navigation", { name: "Legal links" });
-  for (const [label, href] of [["Charter", FOUNDATION_CHARTER_URL], ["Privacy Policy", FOUNDATION_PRIVACY_URL], ["Participation Terms", FOUNDATION_TERMS_URL]]) {
+  for (const [label, href] of [["Charter", FOUNDATION_CHARTER_URL], ["Privacy Policy", FOUNDATION_PRIVACY_URL], ["Terms and Conditions", FOUNDATION_TERMS_URL]]) {
     await expect(legal.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", href);
   }
 });

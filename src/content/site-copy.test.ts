@@ -57,7 +57,8 @@ describe("site copy", () => {
     for (const value of values) {
       expect(isChicagoTitleCase(value), value).toBe(true);
     }
-    expect(isChicagoTitleCase(siteCopy.mobileNavigationLabel)).toBe(true);
+    expect(isChicagoTitleCase(siteCopy.termsLabel)).toBe(true);
+    expect(siteCopy.termsLabel).toBe("Terms and Conditions");
     expect(isChicagoTitleCase(siteCopy.foundationAriaLabel)).toBe(true);
     expect(isChicagoTitleCase(catalogCopy.searchLabel)).toBe(true);
     expect(isChicagoTitleCase(catalogCopy.activeFiltersAriaLabel)).toBe(true);
