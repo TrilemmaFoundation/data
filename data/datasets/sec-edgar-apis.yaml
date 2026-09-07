@@ -71,7 +71,7 @@ getting_started:
       import requests
 
       headers = {
-          "User-Agent": "TrilemmaDataGuide/1.0 contact@trilemma.foundation"
+          "User-Agent": "TrilemmaDataGuide/1.0 matt@trilemma.foundation"
       }
       response = requests.get(
           "https://data.sec.gov/submissions/CIK0000320193.json",
