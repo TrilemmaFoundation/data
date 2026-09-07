@@ -17,7 +17,7 @@ formats:
 license: U.S. Government public data / NOAA disclaimer
 license_url: https://www.noaa.gov/disclaimer
 url_checks:
-  source_marker: Trends in CO2 Mauna Loa
+  source_marker: Trends in CO2 - NOAA Global Monitoring Laboratory
   license_marker: NOAA Disclaimer and Copyright
 domains:
   - Climate

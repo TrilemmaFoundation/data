@@ -22,7 +22,7 @@ formats:
 license: NASA Earthdata CC0 data-use policy
 license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy
 url_checks:
-  source_marker: FIRMS US/Canada API
+  source_marker: API - Area - NASA | LANCE | FIRMS
   license_marker: NASA Earthdata Data Use Policy
 
 domains:

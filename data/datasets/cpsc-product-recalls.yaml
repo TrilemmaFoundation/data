@@ -17,7 +17,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: CPSC Recalls and Recall Information
+  source_marker: Recalls &amp; Product Safety Warnings | CPSC.gov
   license_marker: federal government materials
 domains:
   - Consumer Safety

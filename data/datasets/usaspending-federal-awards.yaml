@@ -21,7 +21,7 @@ formats:
 license: U.S. Government public data / federal copyright guidance
 license_url: https://www.usa.gov/government-copyright
 url_checks:
-  source_marker: USAspending.gov API
+  source_marker: files.usaspending.gov
   license_marker: federal government materials
 
 domains:

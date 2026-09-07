@@ -20,8 +20,8 @@ formats:
 license: U.S. Public Domain / NWS usage policy
 license_url: https://www.weather.gov/disclaimer/
 url_checks:
-  source_marker: NWS API Web Service
-  license_marker: NWS Disclaimer and Credits
+  source_marker: National Weather Service API at api.weather.gov
+  license_marker: Weather.gov Disclaimer
 
 domains:
   - Weather

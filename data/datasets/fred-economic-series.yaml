@@ -17,7 +17,7 @@ formats:
 license: FRED API terms of use and series-specific source rights
 license_url: https://fred.stlouisfed.org/docs/api/terms_of_use.html
 url_checks:
-  source_marker: FRED API Documentation
+  source_marker: FRED&reg; API Overview
   license_marker: API Terms of Use
 domains:
   - Macroeconomics

@@ -18,7 +18,7 @@ formats:
 license: Creative Commons Attribution 4.0
 license_url: https://www.onetcenter.org/license_db.html
 url_checks:
-  source_marker: O*NET 30.3 Database
+  source_marker: O*NET Database at O*NET Resource Center
   license_marker: Creative Commons Attribution 4.0 International License
 domains:
   - Labor Economics

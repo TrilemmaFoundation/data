@@ -19,8 +19,8 @@ formats:
 license: NCBI PubChem data-use and copyright terms
 license_url: https://www.ncbi.nlm.nih.gov/home/about/policies/
 url_checks:
-  source_marker: PUG REST Documentation
-  license_marker: NCBI Copyright and Disclaimers
+  source_marker: PUG REST - PubChem
+  license_marker: Policies and Disclaimers - NCBI
 domains:
   - Chemistry
   - Biomedical Research

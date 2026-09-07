@@ -17,8 +17,8 @@ formats:
 license: BEA Data API terms of service
 license_url: https://apps.bea.gov/api/signup/
 url_checks:
-  source_marker: BEA Data API User Guide
-  license_marker: BEA API Terms of Service
+  source_marker: BEA Data Application Programming Interface (API)
+  license_marker: BEA Data Application Programming Interface (API)
 domains:
   - Regional Economics
   - National Accounts

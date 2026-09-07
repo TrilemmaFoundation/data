@@ -124,8 +124,8 @@ This project uses Next.js static export (`output: "export"`). After `npm run bui
 
 The browser suite starts that static server automatically. It also reads each
 built dataset guide HTML file and checks that the YAML copy, source links,
-Python example, first project, and JSON-LD are present. Install Chromium once
-with `npx playwright install chromium`, then run the build and suite:
+Python example, first project, and JSON-LD are present. Install the Playwright browsers once
+with `npx playwright install chromium firefox webkit`, then run the build and suite:
 
 ```bash
 npm run build

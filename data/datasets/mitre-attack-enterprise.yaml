@@ -18,7 +18,7 @@ formats:
 license: MITRE ATT&CK terms of use
 license_url: https://attack.mitre.org/resources/legal-and-branding/terms-of-use/
 url_checks:
-  source_marker: ATT&CK Data and Tools
+  source_marker: ATT&CK Data & Tools
   license_marker: non-exclusive, royalty-free license
 domains:
   - Cybersecurity

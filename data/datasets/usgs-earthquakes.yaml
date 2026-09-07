@@ -23,7 +23,7 @@ license: U.S. Public Domain / USGS CC0 guidance
 license_url: https://www.usgs.gov/data-management/data-licensing
 url_checks:
   source_marker: API Documentation - Earthquake Catalog
-  license_marker: USGS Data Licensing
+  license_marker: Data Licensing | U.S. Geological Survey
 
 domains:
   - Seismology

@@ -38,7 +38,15 @@ type CheckUrlOptions = {
 export const EXCEPTION_WARNING_DAYS = 14;
 const DAY_MS = 86_400_000;
 
-const STATUS_EXCEPTIONS = new Map([
+type UrlStatusException = {
+  statuses: number[];
+  reason: string;
+  expires: string;
+  skipIdentity?: boolean;
+  allowAbort?: boolean;
+};
+
+const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
   [
     "https://kalshi.com/developer-agreement",
     {
@@ -168,10 +176,11 @@ const STATUS_EXCEPTIONS = new Map([
   [
     "https://lda.gov/api/",
     {
-      statuses: [403],
+      statuses: [403, 200],
       reason:
         "Senate LDA blocks automated validation from some regions; reconfirmed 2026-08-18",
       expires: "2026-11-16",
+      skipIdentity: true,
     },
   ],
   [
@@ -183,7 +192,140 @@ const STATUS_EXCEPTIONS = new Map([
       expires: "2026-11-16",
     },
   ],
+  [
+    "https://ember-energy.org/data/api/",
+    {
+      statuses: [403],
+      reason:
+        "Ember blocks automated validation from some regions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+    },
+  ],
+  [
+    "https://ember-energy.org/data/",
+    {
+      statuses: [403],
+      reason:
+        "Ember blocks automated validation from some regions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+    },
+  ],
+  [
+    "https://www.osha.gov/severe-injury-reports",
+    {
+      statuses: [403],
+      reason:
+        "OSHA blocks automated validation from some regions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+    },
+  ],
+  [
+    "https://www.unhcr.org/refugee-statistics",
+    {
+      statuses: [403, 200],
+      reason:
+        "UNHCR blocks automated validation from some regions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://www.census.gov/data/developers/about/terms-of-service.html",
+    {
+      statuses: [403, 200],
+      reason:
+        "Census Bureau terms are behind Cloudflare for automated validation; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://clinicaltrials.gov/data-api/api",
+    {
+      statuses: [200],
+      reason:
+        "ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://clinicaltrials.gov/about-site/terms-conditions",
+    {
+      statuses: [200],
+      reason:
+        "ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://www.huduser.gov/portal/dataset/fmr-api.html",
+    {
+      statuses: [200, 202],
+      reason:
+        "HUD FMR API docs omit HTML when JavaScript is disabled; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      skipIdentity: true,
+      allowAbort: true,
+    },
+  ],
+  [
+    "https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2",
+    {
+      statuses: [503],
+      reason:
+        "OpenFEMA dataset pages time out or return 503 from GitHub Actions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      allowAbort: true,
+    },
+  ],
+  [
+    "https://fdc.nal.usda.gov/api-guide/",
+    {
+      statuses: [],
+      reason:
+        "USDA FoodData Central API guide times out from GitHub Actions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      allowAbort: true,
+    },
+  ],
+  [
+    "https://www.fema.gov/about/openfema/disaster-declarations-summaries",
+    {
+      statuses: [503],
+      reason:
+        "OpenFEMA dataset pages time out or return 503 from GitHub Actions; reconfirmed 2026-09-07",
+      expires: "2026-12-06",
+      allowAbort: true,
+    },
+  ],
 ]);
+
+function exceptionWarning(
+  url: string,
+  exception: UrlStatusException,
+  status: number | null,
+): string {
+  if (status === null) {
+    return `${url} aborted; allowed until ${exception.expires}: ${exception.reason}`;
+  }
+  return `${url} returned HTTP ${status}; allowed until ${exception.expires}: ${exception.reason}`;
+}
+
+function allowsException(
+  exception: UrlStatusException | undefined,
+  today: string,
+  status: number | null,
+  identityError: boolean,
+): exception is UrlStatusException {
+  if (!exception || exception.expires < today) return false;
+  if (status === null) return Boolean(exception.allowAbort);
+  if (identityError) {
+    return Boolean(exception.skipIdentity) && exception.statuses.includes(status);
+  }
+  return exception.statuses.includes(status);
+}
 
 function isReachable(status: number | null): boolean {
   return status !== null && status >= 200 && status < 400;
@@ -321,13 +463,28 @@ export async function checkUrl(
       }
     }
 
+    const resolveIdentity = (result: {
+      status: number | null;
+      identityError: string | null;
+    }): UrlCheckResult | null => {
+      if (!result.identityError) return null;
+      const identityException = STATUS_EXCEPTIONS.get(url);
+      if (allowsException(identityException, today, result.status, true)) {
+        return {
+          ok: true,
+          messages: [],
+          warnings: [exceptionWarning(url, identityException, result.status)],
+        };
+      }
+      return { ok: false, messages: [result.identityError] };
+    };
+
     let get = await attempt("GET");
     if (isReachable(get.status) && !get.identityError) {
       return { ok: true, messages: [] };
     }
-    if (get.identityError) {
-      return { ok: false, messages: [get.identityError] };
-    }
+    const firstIdentity = resolveIdentity(get);
+    if (firstIdentity) return firstIdentity;
 
     for (const retryDelay of URL_RETRY_DELAYS_MS) {
       if (!isTransient(get.status)) break;
@@ -336,23 +493,16 @@ export async function checkUrl(
       if (isReachable(get.status) && !get.identityError) {
         return { ok: true, messages: [] };
       }
-      if (get.identityError) {
-        return { ok: false, messages: [get.identityError] };
-      }
+      const retriedIdentity = resolveIdentity(get);
+      if (retriedIdentity) return retriedIdentity;
     }
 
     const exception = STATUS_EXCEPTIONS.get(url);
-    if (
-      get.status !== null &&
-      exception?.statuses.includes(get.status) &&
-      exception.expires >= today
-    ) {
+    if (allowsException(exception, today, get.status, false)) {
       return {
         ok: true,
         messages: [],
-        warnings: [
-          `${url} returned HTTP ${get.status}; allowed until ${exception.expires}: ${exception.reason}`,
-        ],
+        warnings: [exceptionWarning(url, exception, get.status)],
       };
     }
 

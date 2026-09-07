@@ -19,7 +19,7 @@ formats:
 license: Open Government Licence v3.0
 license_url: https://www.legislation.gov.uk/developer
 url_checks:
-  source_marker: legislation.gov.uk developer
+  source_marker: legislation.gov.uk
   license_marker: Open Government Licence v3.0
 domains:
   - Legislation

@@ -157,9 +157,12 @@ manual workflow dispatch; a new YAML dataset does not require one. Provider
 contracts are code-owned, use unauthenticated GET sample URLs, and stay optional
 for download-only datasets and sources that need an API key. Live URL checks
 run in a dedicated workflow job after merge. Live provider and URL checks use
-bounded concurrency so fragile hosts are not requested all at once. A small code-owned allowlist may temporarily accept a bot-protected URL;
-every exception is exact, visible in validation output, and has an expiry date.
-Live CI warns 14 days before an exception expires so it can be reconfirmed or removed.
+bounded concurrency so fragile hosts are not requested all at once. A small code-owned allowlist may temporarily accept a bot-protected URL,
+a JavaScript shell that has no crawlable marker text, or a host that aborts
+from GitHub Actions. Every exception is exact, visible in validation output,
+and has an expiry date. Status exceptions apply only to the listed HTTP
+codes; identity skips do not apply to unlisted statuses. Live CI warns 14
+days before an exception expires so it can be reconfirmed or removed.
 
 ## What happens after merge
 

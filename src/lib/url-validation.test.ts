@@ -649,6 +649,95 @@ describe("checkUrl", () => {
     });
   });
 
+  it("skips page-identity checks for allowlisted JavaScript shells", async () => {
+    const url = "https://clinicaltrials.gov/data-api/api";
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response("<html><title>ClinicalTrials.gov</title></html>", {
+        status: 200,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        expectedMarker: "ClinicalTrials.gov API",
+        today: new Date("2026-09-07T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-07`,
+      ],
+    });
+  });
+
+  it("skips page-identity checks after a transient retry on an allowlisted shell", async () => {
+    const url = "https://clinicaltrials.gov/about-site/terms-conditions";
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(
+        new Response("<html></html>", {
+          status: 200,
+          headers: { "content-type": "text/html" },
+        }),
+      );
+    const delay = vi.fn().mockResolvedValue(undefined);
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        expectedMarker: "ClinicalTrials.gov Terms and Conditions",
+        delay,
+        today: new Date("2026-09-07T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-07`,
+      ],
+    });
+    expect(delay).toHaveBeenCalledWith(250);
+  });
+
+  it("does not skip identity checks for unlisted statuses on an allowlisted shell", async () => {
+    const url = "https://clinicaltrials.gov/data-api/api";
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response("<html></html>", {
+        status: 201,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        expectedMarker: "ClinicalTrials.gov API",
+        today: new Date("2026-09-07T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: false,
+      messages: [`${url} did not contain expected page marker "ClinicalTrials.gov API"`],
+    });
+  });
+
+  it("allows an abort on OpenFEMA pages that time out from GitHub Actions", async () => {
+    const url = "https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2";
+    const fetchImpl = vi.fn().mockRejectedValue(new Error("This operation was aborted"));
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        today: new Date("2026-09-07T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} aborted; allowed until 2026-12-06: OpenFEMA dataset pages time out or return 503 from GitHub Actions; reconfirmed 2026-09-07`,
+      ],
+    });
+  });
+
   it("accepts the first GET response", async () => {
     const fetchImpl = vi
       .fn()

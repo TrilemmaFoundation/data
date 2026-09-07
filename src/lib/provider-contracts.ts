@@ -103,14 +103,13 @@ const contractDefinitions = {
     ),
   },
   "mitre-attack-enterprise": {
-    url: "https://attack-taxii.mitre.org/api/v21/collections/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019/objects/?limit=1",
+    url: "https://attack-taxii.mitre.org/api/v21/collections/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019/",
     contentTypes: ["application/taxii+json;version=2.1"],
     validate: jsonValidator(
       z.object({
-        objects: z.array(z.object({
-          id: z.string(),
-          type: z.string(),
-        })).min(1),
+        id: z.string(),
+        title: z.string(),
+        media_types: z.array(z.string()).min(1),
       }),
     ),
   },
@@ -1038,7 +1037,9 @@ const validBodies = {
     values: { NGDP_RPCH: { USA: { "2025": 2.1 } } },
   }),
   "mitre-attack-enterprise": JSON.stringify({
-    objects: [{ id: "attack-pattern--example", type: "attack-pattern" }],
+    id: "x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019",
+    title: "Enterprise ATT&CK",
+    media_types: ["application/taxii+json;version=2.1"],
   }),
   "nasa-power-daily": JSON.stringify({
     geometry: { coordinates: [-112.074, 33.4484] },
