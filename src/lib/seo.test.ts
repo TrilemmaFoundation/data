@@ -80,4 +80,10 @@ describe("SEO helpers", () => {
     expect(Object.keys(seo).filter((key) => /compare/i.test(key))).toEqual([]);
     expect(sitemap().map((entry) => entry.url)).not.toContain(`${SITE_URL}/compare`);
   });
+
+  it("points legal destinations at the canonical www documents", () => {
+    expect(seo.FOUNDATION_PRIVACY_URL).toBe("https://www.trilemma.foundation/privacy");
+    expect(seo.FOUNDATION_TERMS_URL).toBe("https://www.trilemma.foundation/terms");
+    expect(seo.FOUNDATION_CHARTER_URL).toBe("https://www.trilemma.foundation/charter");
+  });
 });

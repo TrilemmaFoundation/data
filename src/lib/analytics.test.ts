@@ -8,6 +8,9 @@ describe("analytics redaction", () => {
     expect(redactAnalyticsUrl("/?q=secret+query&theme=Weather")).toBe(
       "/?theme=Weather",
     );
+    expect(redactAnalyticsUrl("/?theme=Weather&email=name@example.com")).toBe(
+      "/?theme=Weather",
+    );
     expect(redactAnalyticsUrl("/datasets/nws-weather-api")).toBe(
       "/datasets/nws-weather-api",
     );
@@ -24,6 +27,9 @@ describe("analytics redaction", () => {
     expect(beforeSend({ type: "pageview", url: "/?q=name@example.com" })).toEqual({
       type: "pageview",
       url: "/",
+    });
+    expect(beforeSend({ type: "span" } as { type: "span" })).toEqual({
+      type: "span",
     });
   });
 

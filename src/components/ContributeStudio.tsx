@@ -167,6 +167,7 @@ export function ContributeStudio({
           >
             {contributeCopy.githubLabel}
           </a>
+          <p className="text-xs text-muted-foreground">{contributeCopy.githubHandoff}</p>
         </div>
       </div>
       <div className="min-w-0">

@@ -18,7 +18,7 @@ export const siteCopy = {
   teamLabel: "Team",
   charterLabel: "Charter",
   privacyLabel: "Privacy Policy",
-  termsLabel: "Participation Terms",
+  termsLabel: "Terms and Conditions",
   footerDataNavigationLabel: "Data Links",
   footerFoundationNavigationLabel: "Foundation Links",
   footerLegalNavigationLabel: "Legal Links",
@@ -322,6 +322,8 @@ export const contributeCopy = {
   copiedYamlLabel: "YAML Copied",
   copyYamlErrorLabel: "Copy Failed",
   githubLabel: "Open Contribution Guide",
+  githubHandoff:
+    "You are leaving Trilemma Foundation websites. GitHub processes issues, pull requests, profile data, and repository content under GitHub’s policies.",
   pythonNotice:
     "Python syntax, live URL, and provider checks still run in repository CI. This studio never executes submitted code.",
   emptyPreview: "Fix validation issues to preview the guide.",
