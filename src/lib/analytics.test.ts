@@ -28,9 +28,7 @@ describe("analytics redaction", () => {
       type: "pageview",
       url: "/",
     });
-    expect(beforeSend({ type: "span" } as { type: "span" })).toEqual({
-      type: "span",
-    });
+    expect(beforeSend({ type: "event" } as never)).toEqual({ type: "event" });
   });
 
   it("does not define or import custom analytics events", () => {
