@@ -38,7 +38,7 @@ temporal_coverage: historical discrete samples through current agency submission
 update_frequency: continuous
 provider: U.S. Geological Survey and U.S. Environmental Protection Agency
 source_type: government
-last_verified: 2026-08-20
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Water Quality Portal returns discrete sample chemistry, not continuous

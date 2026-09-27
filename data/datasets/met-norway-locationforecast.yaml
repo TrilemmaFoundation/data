@@ -36,7 +36,7 @@ temporal_coverage: current forecasts out to about nine days
 update_frequency: continuous
 provider: Norwegian Meteorological Institute
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Locationforecast returns JSON weather for any latitude and longitude.

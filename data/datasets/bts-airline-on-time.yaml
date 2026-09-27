@@ -37,7 +37,7 @@ temporal_coverage: January 1995-present
 update_frequency: monthly
 provider: Bureau of Transportation Statistics
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     BTS publishes monthly on-time performance for U.S. reporting carriers. Start

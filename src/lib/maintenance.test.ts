@@ -85,7 +85,7 @@ describe("maintenance report", () => {
 
   it("renders empty sections when the catalog is clean", () => {
     const report = buildMaintenanceReport({
-      datasets: [nws],
+      datasets: [{ ...nws, last_verified: "2026-08-18" }],
       collections,
       today: new Date("2026-08-19T00:00:00Z"),
     });

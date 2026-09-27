@@ -39,7 +39,7 @@ temporal_coverage: series-specific coverage published with each OECD dataset
 update_frequency: monthly
 provider: Organisation for Economic Co-operation and Development
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     OECD publishes SDMX-JSON for named datasets such as quarterly GDP growth.

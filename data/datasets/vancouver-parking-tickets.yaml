@@ -37,7 +37,7 @@ temporal_coverage: 2010-present across linked datasets
 update_frequency: quarterly
 provider: City of Vancouver
 source_type: government
-last_verified: 2026-09-03
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Start with one year and a small API page of infractions. Locations are

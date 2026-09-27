@@ -36,7 +36,7 @@ temporal_coverage: 1950-present
 update_frequency: monthly
 provider: NOAA National Centers for Environmental Information
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Storm Events publishes yearly details, locations, and fatalities CSVs.

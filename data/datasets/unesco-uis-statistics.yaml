@@ -37,7 +37,7 @@ temporal_coverage: indicator series with country-specific starts
 update_frequency: annual
 provider: UNESCO Institute for Statistics
 source_type: intergovernmental
-last_verified: 2026-08-20
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The UIS Data API returns internationally comparable education indicators.

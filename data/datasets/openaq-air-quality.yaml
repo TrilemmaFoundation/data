@@ -37,7 +37,7 @@ temporal_coverage: location-dependent historical measurements through near-real-
 update_frequency: near real time
 provider: OpenAQ
 source_type: nonprofit
-last_verified: 2026-08-20
+last_verified: 2026-09-27
 getting_started:
   overview: >
     OpenAQ aggregates publicly available air-quality monitors into one API.

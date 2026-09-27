@@ -37,7 +37,7 @@ temporal_coverage: 2001-present annual loss years
 update_frequency: annual
 provider: World Resources Institute
 source_type: nonprofit
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Global Forest Watch exposes UMD/Hansen tree-cover loss through a SQL query

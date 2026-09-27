@@ -38,7 +38,7 @@ temporal_coverage: euro-area series with varying starts
 update_frequency: daily
 provider: European Central Bank
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The ECB SDMX 2.1 API returns official euro-area statistics. Start with one

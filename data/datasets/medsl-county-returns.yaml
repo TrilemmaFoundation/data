@@ -36,7 +36,7 @@ temporal_coverage: presidential general elections compiled by MEDSL
 update_frequency: occasional
 provider: MIT Election Data and Science Lab
 source_type: academic
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     MEDSL publishes county presidential returns on Harvard Dataverse. Start

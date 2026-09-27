@@ -39,7 +39,7 @@ temporal_coverage: table-specific Statistics Canada series
 update_frequency: monthly
 provider: Statistics Canada
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Web Data Service returns cube metadata and vector series as JSON. Start

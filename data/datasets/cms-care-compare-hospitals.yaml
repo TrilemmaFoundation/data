@@ -37,7 +37,7 @@ temporal_coverage: current provider records with archived releases
 update_frequency: monthly
 provider: Centers for Medicare & Medicaid Services
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Hospital General Information lists Medicare-registered hospitals with

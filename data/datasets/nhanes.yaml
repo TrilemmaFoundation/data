@@ -37,7 +37,7 @@ temporal_coverage: NHANES cycles from 1999-present with two-year public files
 update_frequency: occasional
 provider: National Center for Health Statistics
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     NHANES public files include demographics, examination, and lab tables by

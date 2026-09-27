@@ -37,7 +37,7 @@ temporal_coverage: continuously updated sudden-onset disaster alerts
 update_frequency: near real time
 provider: Global Disaster Alert and Coordination System
 source_type: intergovernmental
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     GDACS publishes multi-hazard alerts as a searchable GeoJSON event list.

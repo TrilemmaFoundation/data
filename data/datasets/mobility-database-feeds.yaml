@@ -36,7 +36,7 @@ temporal_coverage: continuously updated feed catalog
 update_frequency: continuous
 provider: MobilityData
 source_type: nonprofit
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Mobility Database API lists GTFS, GTFS Realtime, and GBFS feeds with

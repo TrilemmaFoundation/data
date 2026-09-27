@@ -39,7 +39,7 @@ temporal_coverage: 1993-present daily totals with earlier incomplete splits
 update_frequency: daily
 provider: U.S. Department of the Treasury Bureau of the Fiscal Service
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Fiscal Data reports total public debt outstanding each business day, split

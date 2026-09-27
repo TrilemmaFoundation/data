@@ -37,7 +37,7 @@ temporal_coverage: mid-1970s-present depending on geography and index flavor
 update_frequency: monthly
 provider: Federal Housing Finance Agency
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 
 access_profile:
   friction: low

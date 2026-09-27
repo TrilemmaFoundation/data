@@ -38,7 +38,7 @@ temporal_coverage: current LEI records with daily golden copies
 update_frequency: daily
 provider: Global Legal Entity Identifier Foundation
 source_type: nonprofit
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     GLEIF publishes Legal Entity Identifiers and reference data under CC0.

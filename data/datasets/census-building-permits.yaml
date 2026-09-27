@@ -36,7 +36,7 @@ temporal_coverage: monthly and annual county files from 1990-present
 update_frequency: monthly
 provider: U.S. Census Bureau
 source_type: government
-last_verified: 2026-08-20
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Building Permits Survey publishes comma-delimited county files for new

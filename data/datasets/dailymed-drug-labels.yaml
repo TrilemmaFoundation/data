@@ -40,7 +40,7 @@ temporal_coverage: currently published SPL labels with historical versions
 update_frequency: daily
 provider: U.S. National Library of Medicine
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     DailyMed REST returns Structured Product Labeling metadata and sections.

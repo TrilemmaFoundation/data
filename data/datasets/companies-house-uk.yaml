@@ -38,7 +38,7 @@ temporal_coverage: live companies on the public register
 update_frequency: daily
 provider: Companies House
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Companies House API returns public register records for UK companies.

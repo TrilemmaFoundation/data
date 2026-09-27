@@ -35,7 +35,7 @@ temporal_coverage: rolling 28-day CrUX collection windows
 update_frequency: daily
 provider: Google
 source_type: company
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The CrUX API returns origin-level p75 metrics such as LCP and INP. Start

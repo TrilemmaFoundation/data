@@ -36,7 +36,7 @@ temporal_coverage: posted, forecasted, and closed federal opportunities
 update_frequency: daily
 provider: Grants.gov
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Grants.gov search2 returns opportunity summaries without authentication.

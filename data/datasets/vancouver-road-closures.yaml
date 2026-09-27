@@ -40,7 +40,7 @@ temporal_coverage: Current road closures
 update_frequency: daily
 provider: City of Vancouver
 source_type: government
-last_verified: 2026-09-03
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Start with the current closure records from one bounded API page. Locations

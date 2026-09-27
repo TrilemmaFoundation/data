@@ -36,7 +36,7 @@ temporal_coverage: certificates submitted to participating CT logs
 update_frequency: continuous
 provider: Sectigo crt.sh
 source_type: company
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     crt.sh queries public Certificate Transparency logs. Start with one

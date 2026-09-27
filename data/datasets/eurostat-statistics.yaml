@@ -38,7 +38,7 @@ temporal_coverage: series-specific coverage published in each data code
 update_frequency: monthly
 provider: Eurostat
 source_type: intergovernmental
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Eurostat's Statistics API returns JSON-stat for a data code such as monthly

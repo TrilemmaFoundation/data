@@ -37,7 +37,7 @@ temporal_coverage: 2016-present
 update_frequency: occasional
 provider: City of Vancouver
 source_type: government
-last_verified: 2026-09-03
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Start with one meeting date and a small API page of individual votes.

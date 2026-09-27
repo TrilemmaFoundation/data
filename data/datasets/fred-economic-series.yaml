@@ -35,7 +35,7 @@ temporal_coverage: varies by series with historical vintages available through A
 update_frequency: daily
 provider: Federal Reserve Bank of St. Louis
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 
 access_profile:
   friction: high

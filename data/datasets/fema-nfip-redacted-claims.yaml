@@ -40,7 +40,7 @@ temporal_coverage: historical NFIP claims through the current OpenFEMA extract
 update_frequency: monthly
 provider: Federal Emergency Management Agency
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     OpenFEMA publishes redacted NFIP claim records with occupancy, dates, and

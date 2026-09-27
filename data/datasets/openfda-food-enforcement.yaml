@@ -37,7 +37,7 @@ temporal_coverage: 2004-present
 update_frequency: weekly
 provider: U.S. Food and Drug Administration
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The openFDA food-enforcement API returns classified FDA Recall Enterprise

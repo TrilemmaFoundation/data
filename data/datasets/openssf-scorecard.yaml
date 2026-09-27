@@ -36,7 +36,7 @@ temporal_coverage: continuously rescored public repositories
 update_frequency: continuous
 provider: Open Source Security Foundation
 source_type: nonprofit
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     OpenSSF Scorecard publishes precomputed checks for public GitHub projects.

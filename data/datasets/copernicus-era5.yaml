@@ -38,7 +38,7 @@ temporal_coverage: 1940-present
 update_frequency: daily
 provider: Copernicus Climate Change Service
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     ERA5 is a global reanalysis on the Climate Data Store. Start with one

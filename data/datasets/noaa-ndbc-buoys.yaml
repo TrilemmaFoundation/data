@@ -38,7 +38,7 @@ temporal_coverage: station-specific realtime and historical observations
 update_frequency: near real time
 provider: NOAA National Data Buoy Center
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     NDBC publishes a station-page text file of recent meteorological and wave

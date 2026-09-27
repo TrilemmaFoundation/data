@@ -39,7 +39,7 @@ temporal_coverage: 1978-present
 update_frequency: daily
 provider: National Snow and Ice Data Center
 source_type: academic
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Sea Ice Index provides daily and monthly Northern Hemisphere extent

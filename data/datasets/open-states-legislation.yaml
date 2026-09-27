@@ -37,7 +37,7 @@ temporal_coverage: current sessions with historical coverage by jurisdiction
 update_frequency: daily
 provider: Open States / Plural Policy
 source_type: nonprofit
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Open States API v3 returns bills and legislators for U.S. states. Start with

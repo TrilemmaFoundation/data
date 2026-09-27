@@ -35,7 +35,7 @@ temporal_coverage: coverage varies by legislative collection
 update_frequency: daily
 provider: Library of Congress
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Congress.gov API exposes bills and their actions, sponsors, committees,

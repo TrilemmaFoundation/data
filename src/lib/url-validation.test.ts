@@ -504,57 +504,50 @@ describe("checkUrl", () => {
     [
       "https://kalshi.com/developer-agreement",
       429,
-      "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-08-13",
+      "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-09-27",
       "2026-11-11",
       3,
     ],
     [
       "https://www.nhtsa.gov/nhtsa-datasets-and-apis",
       403,
-      "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "NHTSA blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-11",
       2,
     ],
     [
       "https://www.nhtsa.gov/about-nhtsa/terms-use",
       403,
-      "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "NHTSA blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-11",
       2,
     ],
     [
       "https://www.noaa.gov/disclaimer",
       403,
-      "NOAA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "NOAA blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-11",
       2,
     ],
     [
       "https://www.transit.dot.gov/ntd/monthly-ridership",
       403,
-      "FTA blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "FTA blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-13",
       2,
     ],
     [
       "https://www.gbif.org/terms",
       403,
-      "GBIF blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "GBIF blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-13",
       2,
     ],
     [
       "https://www.imf.org/en/about/copyright-and-terms",
       403,
-      "IMF blocks automated validation from some regions; reconfirmed 2026-08-13",
+      "IMF blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-13",
-      2,
-    ],
-    [
-      "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
-      403,
-      "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
-      "2026-11-12",
       2,
     ],
     [
@@ -567,7 +560,7 @@ describe("checkUrl", () => {
     [
       "https://www.unhcr.org/what-we-do/data-and-publications/data-and-statistics/terms-use-datasets",
       403,
-      "UNHCR blocks automated validation from some regions; reconfirmed 2026-08-14",
+      "UNHCR blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-12",
       2,
     ],
@@ -581,35 +574,35 @@ describe("checkUrl", () => {
     [
       "https://www.fcc.gov/BroadbandData",
       403,
-      "FCC blocks automated validation from some regions; reconfirmed 2026-08-17",
+      "FCC blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-15",
       2,
     ],
     [
       "https://volcano.si.edu/",
       403,
-      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-16",
       2,
     ],
     [
       "https://volcano.si.edu/gvp_webservices.cfm",
       403,
-      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-16",
       2,
     ],
     [
       "https://lda.gov/api/",
       403,
-      "Senate LDA blocks automated validation from some regions; reconfirmed 2026-08-18",
+      "Senate LDA blocks automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-16",
       2,
     ],
     [
       "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list",
       403,
-      "UN Security Council pages block automated validation from some regions; reconfirmed 2026-08-18",
+      "UN Security Council pages block automated validation from some regions; reconfirmed 2026-09-27",
       "2026-11-16",
       2,
     ],
@@ -634,6 +627,29 @@ describe("checkUrl", () => {
       expect(fetchImpl).toHaveBeenCalledTimes(expectedAttempts);
     },
   );
+
+  it("skips page identity when the UN consolidated list returns an AWS WAF challenge", async () => {
+    const url = "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list";
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response("<html><title></title></html>", {
+        status: 202,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    await expect(
+      checkUrl(url, {
+        fetchImpl: fetchImpl as typeof fetch,
+        expectedMarker: "UN Security Council Consolidated List",
+        today: new Date("2026-09-27T00:00:00Z"),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      messages: [],
+      warnings: [
+        `${url} returned HTTP 202; allowed until 2026-11-16: UN Security Council pages block automated validation from some regions; reconfirmed 2026-09-27`,
+      ],
+    });
+  });
 
   it("rejects an expired protected-URL exception", async () => {
     const url = "https://www.nhtsa.gov/nhtsa-datasets-and-apis";
@@ -667,7 +683,7 @@ describe("checkUrl", () => {
       ok: true,
       messages: [],
       warnings: [
-        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-07`,
+        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-27`,
       ],
     });
   });
@@ -695,7 +711,7 @@ describe("checkUrl", () => {
       ok: true,
       messages: [],
       warnings: [
-        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-07`,
+        `${url} returned HTTP 200; allowed until 2026-12-06: ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-27`,
       ],
     });
     expect(delay).toHaveBeenCalledWith(250);

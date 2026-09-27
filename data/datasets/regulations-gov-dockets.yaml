@@ -37,7 +37,7 @@ temporal_coverage: federal dockets and comments available through regulations.go
 update_frequency: daily
 provider: U.S. General Services Administration
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The regulations.gov v4 API searches dockets and documents with an

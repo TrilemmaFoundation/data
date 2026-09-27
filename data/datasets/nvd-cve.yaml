@@ -35,7 +35,7 @@ temporal_coverage: 1999-present
 update_frequency: continuous
 provider: National Institute of Standards and Technology
 source_type: government
-last_verified: 2026-08-13
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The NVD enriches CVE records with CVSS metrics, weaknesses, references, and

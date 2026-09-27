@@ -40,7 +40,7 @@ temporal_coverage: annual FARS files from 1975-present
 update_frequency: annual
 provider: National Highway Traffic Safety Administration
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     FARS is a census of fatal crashes on U.S. public roads. Start with one

@@ -38,7 +38,7 @@ temporal_coverage: weekly petroleum series with history varying by product
 update_frequency: weekly
 provider: U.S. Energy Information Administration
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     EIA's petroleum weekly stocks route returns inventory series used in the

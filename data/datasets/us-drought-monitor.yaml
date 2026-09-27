@@ -39,7 +39,7 @@ temporal_coverage: 2000-present
 update_frequency: weekly
 provider: National Drought Mitigation Center
 source_type: academic
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The U.S. Drought Monitor REST services return weekly None and D0–D4 area

@@ -37,7 +37,7 @@ temporal_coverage: continuously updated designations
 update_frequency: continuous
 provider: Office of Foreign Assets Control
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 
 access_profile:
   friction: low

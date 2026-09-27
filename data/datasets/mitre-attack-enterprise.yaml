@@ -37,7 +37,7 @@ temporal_coverage: current versioned knowledge base
 update_frequency: occasional
 provider: MITRE
 source_type: nonprofit
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Enterprise ATT&CK represents documented adversary behaviors and their

@@ -40,7 +40,7 @@ temporal_coverage: historical and current NTSB civil aviation investigations
 update_frequency: daily
 provider: National Transportation Safety Board
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     NTSB CAROL and the aviation query page expose accident records with

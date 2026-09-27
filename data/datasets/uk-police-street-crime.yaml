@@ -38,7 +38,7 @@ temporal_coverage: 2014-present street-level records
 update_frequency: monthly
 provider: data.police.uk
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Police API returns street-level crimes for a point or custom area.

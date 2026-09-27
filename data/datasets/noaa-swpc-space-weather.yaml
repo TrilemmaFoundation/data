@@ -37,7 +37,7 @@ temporal_coverage: continuously updated operational products
 update_frequency: near real time
 provider: NOAA Space Weather Prediction Center
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     SWPC publishes JSON products for planetary K-index and related scales.

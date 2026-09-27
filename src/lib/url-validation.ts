@@ -52,7 +52,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [429],
       reason:
-        "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-08-13",
+        "Kalshi rate-limits automated validation from GitHub Actions; reconfirmed 2026-09-27",
       expires: "2026-11-11",
     },
   ],
@@ -61,7 +61,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "NHTSA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-11",
     },
   ],
@@ -70,7 +70,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "NHTSA blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "NHTSA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-11",
     },
   ],
@@ -79,7 +79,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "NOAA blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "NOAA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-11",
     },
   ],
@@ -88,7 +88,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "FTA blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "FTA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-13",
     },
   ],
@@ -97,7 +97,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "GBIF blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "GBIF blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-13",
     },
   ],
@@ -106,17 +106,8 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "IMF blocks automated validation from some regions; reconfirmed 2026-08-13",
+        "IMF blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-13",
-    },
-  ],
-  [
-    "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy",
-    {
-      statuses: [403],
-      reason:
-        "NASA Earthdata blocks automated validation from some regions; reconfirmed 2026-08-14",
-      expires: "2026-11-12",
     },
   ],
   [
@@ -133,7 +124,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "UNHCR blocks automated validation from some regions; reconfirmed 2026-08-14",
+        "UNHCR blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-12",
     },
   ],
@@ -151,7 +142,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "FCC blocks automated validation from some regions; reconfirmed 2026-08-17",
+        "FCC blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-15",
     },
   ],
@@ -160,7 +151,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-16",
     },
   ],
@@ -169,7 +160,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-08-18",
+        "Smithsonian GVP blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-16",
     },
   ],
@@ -178,7 +169,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403, 200],
       reason:
-        "Senate LDA blocks automated validation from some regions; reconfirmed 2026-08-18",
+        "Senate LDA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-16",
       skipIdentity: true,
     },
@@ -186,10 +177,11 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
   [
     "https://main.un.org/securitycouncil/en/content/un-sc-consolidated-list",
     {
-      statuses: [403],
+      statuses: [403, 202],
       reason:
-        "UN Security Council pages block automated validation from some regions; reconfirmed 2026-08-18",
+        "UN Security Council pages block automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-11-16",
+      skipIdentity: true,
     },
   ],
   [
@@ -215,7 +207,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403],
       reason:
-        "OSHA blocks automated validation from some regions; reconfirmed 2026-09-07",
+        "OSHA blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-12-06",
     },
   ],
@@ -224,7 +216,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403, 200],
       reason:
-        "UNHCR blocks automated validation from some regions; reconfirmed 2026-09-07",
+        "UNHCR blocks automated validation from some regions; reconfirmed 2026-09-27",
       expires: "2026-12-06",
       skipIdentity: true,
     },
@@ -234,7 +226,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [403, 200],
       reason:
-        "Census Bureau terms are behind Cloudflare for automated validation; reconfirmed 2026-09-07",
+        "Census Bureau terms are behind Cloudflare for automated validation; reconfirmed 2026-09-27",
       expires: "2026-12-06",
       skipIdentity: true,
     },
@@ -244,7 +236,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [200],
       reason:
-        "ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-07",
+        "ClinicalTrials.gov serves a JavaScript shell without crawlable API copy; reconfirmed 2026-09-27",
       expires: "2026-12-06",
       skipIdentity: true,
     },
@@ -254,7 +246,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [200],
       reason:
-        "ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-07",
+        "ClinicalTrials.gov serves a JavaScript shell without crawlable terms copy; reconfirmed 2026-09-27",
       expires: "2026-12-06",
       skipIdentity: true,
     },
@@ -264,7 +256,7 @@ const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
     {
       statuses: [200, 202],
       reason:
-        "HUD FMR API docs omit HTML when JavaScript is disabled; reconfirmed 2026-09-07",
+        "HUD FMR API docs omit HTML when JavaScript is disabled; reconfirmed 2026-09-27",
       expires: "2026-12-06",
       skipIdentity: true,
       allowAbort: true,

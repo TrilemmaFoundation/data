@@ -37,7 +37,7 @@ temporal_coverage: 2010-present monthly statistics
 update_frequency: monthly
 provider: U.S. Census Bureau
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Census International Trade API returns monthly U.S. imports and exports

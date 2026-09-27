@@ -46,7 +46,7 @@ update_frequency: continuous
 
 provider: U.S. Geological Survey
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 
 access_profile:
   friction: low

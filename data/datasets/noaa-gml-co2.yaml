@@ -35,7 +35,7 @@ temporal_coverage: 1958-present
 update_frequency: monthly
 provider: NOAA Global Monitoring Laboratory
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     NOAA GML publishes monthly mean carbon dioxide mole fractions from the Mauna

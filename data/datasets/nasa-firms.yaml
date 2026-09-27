@@ -20,10 +20,10 @@ formats:
   - Shapefile
   - KML
 license: NASA Earthdata CC0 data-use policy
-license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software/data-use-policy
+license_url: https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance
 url_checks:
   source_marker: API - Area - NASA | LANCE | FIRMS
-  license_marker: NASA Earthdata Data Use Policy
+  license_marker: Data Use and Citation Guidance
 
 domains:
   - Wildfires
@@ -45,7 +45,7 @@ update_frequency: near real time
 
 provider: NASA Earthdata FIRMS
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 
 access_profile:
   friction: high

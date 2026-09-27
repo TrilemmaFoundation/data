@@ -37,7 +37,7 @@ temporal_coverage: 2006-present across linked annual datasets
 update_frequency: weekly
 provider: City of Vancouver
 source_type: government
-last_verified: 2026-09-03
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Start with one assessment year and a small API page of parcels. Historical

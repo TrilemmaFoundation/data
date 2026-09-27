@@ -39,7 +39,7 @@ temporal_coverage: federal election cycles with nightly processed updates
 update_frequency: daily
 provider: Federal Election Commission
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The OpenFEC API exposes candidate and committee financial totals from FEC

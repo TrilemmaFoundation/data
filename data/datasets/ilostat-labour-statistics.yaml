@@ -39,7 +39,7 @@ temporal_coverage: country-specific labour series published by ILOSTAT
 update_frequency: monthly
 provider: International Labour Organization
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     ILOSTAT SDMX returns labour indicators such as unemployment rate by sex

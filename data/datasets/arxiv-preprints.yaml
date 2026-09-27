@@ -36,7 +36,7 @@ temporal_coverage: 1991-present
 update_frequency: daily
 provider: arXiv
 source_type: academic
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The arXiv API returns Atom feeds of e-print metadata. Start with one

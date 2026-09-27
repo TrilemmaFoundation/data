@@ -37,7 +37,7 @@ temporal_coverage: 2021-present
 update_frequency: daily
 provider: Forum of Incident Response and Security Teams
 source_type: nonprofit
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     EPSS estimates the probability that a published CVE will be exploited in

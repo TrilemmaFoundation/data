@@ -38,7 +38,7 @@ temporal_coverage: platform series from 2015-present with bidding-zone changes
 update_frequency: near real time
 provider: ENTSO-E
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Transparency Platform REST API returns XML for load, generation, and

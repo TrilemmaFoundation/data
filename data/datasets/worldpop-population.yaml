@@ -38,7 +38,7 @@ temporal_coverage: 2000-2020 global per-country estimates
 update_frequency: occasional
 provider: WorldPop, University of Southampton
 source_type: academic
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     WorldPop REST metadata lists per-country population rasters. Start with one

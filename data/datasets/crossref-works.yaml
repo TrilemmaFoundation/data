@@ -35,7 +35,7 @@ temporal_coverage: historical registered works through current deposits
 update_frequency: continuous
 provider: Crossref
 source_type: nonprofit
-last_verified: 2026-08-13
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Crossref exposes metadata deposited by DOI registrants, including titles,

@@ -39,7 +39,7 @@ temporal_coverage: 1934-present failures with current institutions
 update_frequency: weekly
 provider: Federal Deposit Insurance Corporation
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     BankFind Suite exposes institution and branch records through a public API.

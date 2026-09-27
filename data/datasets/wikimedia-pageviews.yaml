@@ -36,7 +36,7 @@ temporal_coverage: 2015-07-01-present
 update_frequency: daily
 provider: Wikimedia Foundation
 source_type: community
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Wikimedia Analytics API reports pageviews for Wikimedia projects.

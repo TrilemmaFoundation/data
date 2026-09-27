@@ -39,7 +39,7 @@ temporal_coverage: 1997-present across linked datasets
 update_frequency: daily
 provider: City of Vancouver
 source_type: government
-last_verified: 2026-09-03
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Start with one business type and a small page of current licence records.

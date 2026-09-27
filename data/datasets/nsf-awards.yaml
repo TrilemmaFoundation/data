@@ -36,7 +36,7 @@ temporal_coverage: historical and active NSF awards
 update_frequency: daily
 provider: U.S. National Science Foundation
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The NSF Awards API searches Research.gov award records by keyword. Start

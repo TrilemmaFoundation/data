@@ -40,7 +40,7 @@ temporal_coverage: continuously updated compound records
 update_frequency: daily
 provider: National Center for Biotechnology Information
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     PubChem PUG REST returns compound records by name or CID. Start with one

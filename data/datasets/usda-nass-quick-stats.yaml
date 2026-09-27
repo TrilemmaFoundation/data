@@ -39,7 +39,7 @@ temporal_coverage: Census of Agriculture years plus ongoing surveys
 update_frequency: occasional
 provider: USDA National Agricultural Statistics Service
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Quick Stats exposes published NASS survey and census estimates. Start with

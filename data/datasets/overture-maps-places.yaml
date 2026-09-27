@@ -37,7 +37,7 @@ temporal_coverage: monthly releases
 update_frequency: monthly
 provider: Overture Maps Foundation
 source_type: nonprofit
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Overture Places is a global point layer published as GeoParquet. Start with

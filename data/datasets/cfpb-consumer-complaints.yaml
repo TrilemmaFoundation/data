@@ -38,7 +38,7 @@ temporal_coverage: 2011-present
 update_frequency: daily
 provider: Consumer Financial Protection Bureau
 source_type: government
-last_verified: 2026-08-14
+last_verified: 2026-09-27
 
 access_profile:
   friction: low

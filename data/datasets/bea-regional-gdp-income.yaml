@@ -36,7 +36,7 @@ temporal_coverage: varies by Regional table, including series from 1998-present
 update_frequency: quarterly
 provider: U.S. Bureau of Economic Analysis
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The BEA Regional API provides state, county, and metro GDP, personal

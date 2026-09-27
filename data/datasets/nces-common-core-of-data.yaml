@@ -37,7 +37,7 @@ temporal_coverage: annual school-year directories
 update_frequency: annual
 provider: National Center for Education Statistics
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     CCD preliminary directory files list public schools with NCES IDs, addresses,

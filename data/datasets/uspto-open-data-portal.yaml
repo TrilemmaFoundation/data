@@ -41,7 +41,7 @@ temporal_coverage: daily File Wrapper bibliographic records and weekly bulk file
 update_frequency: weekly
 provider: United States Patent and Trademark Office
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     USPTO Open Data Portal replaced PatentsView for bibliographic search and

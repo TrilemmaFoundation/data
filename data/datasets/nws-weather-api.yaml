@@ -44,7 +44,7 @@ update_frequency: continuous
 
 provider: National Weather Service
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 
 access_profile:
   friction: medium

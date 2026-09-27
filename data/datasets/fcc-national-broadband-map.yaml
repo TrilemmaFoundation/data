@@ -38,7 +38,7 @@ temporal_coverage: biannual BDC filings with interim map updates
 update_frequency: monthly
 provider: Federal Communications Commission
 source_type: government
-last_verified: 2026-08-17
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The National Broadband Map exposes a public data API over Broadband Data

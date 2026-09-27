@@ -38,7 +38,7 @@ temporal_coverage: reporter-specific annual and monthly trade statistics
 update_frequency: monthly
 provider: United Nations Statistics Division
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     Comtrade preview returns up to 500 trade records without a key. Start with

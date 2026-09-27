@@ -38,7 +38,7 @@ temporal_coverage: LDA registrations and quarterly activity reports
 update_frequency: daily
 provider: United States Senate
 source_type: government
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     The Senate LDA API lists lobbying filings, registrants, and clients. Start

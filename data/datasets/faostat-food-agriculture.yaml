@@ -39,7 +39,7 @@ temporal_coverage: item- and country-specific FAOSTAT series
 update_frequency: annual
 provider: Food and Agriculture Organization of the United Nations
 source_type: intergovernmental
-last_verified: 2026-08-18
+last_verified: 2026-09-27
 getting_started:
   overview: >
     FAOSTAT's JSON API returns one domain, item, and area at a time. Start
