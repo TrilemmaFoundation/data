@@ -15,6 +15,7 @@ export const GITHUB_REPO_URL = "https://github.com/TrilemmaFoundation/data";
 export const CONTRIBUTE_URL = `${GITHUB_REPO_URL}/blob/main/CONTRIBUTING.md`;
 export const CONTRIBUTE_APP_PATH = "/contribute";
 export const COLLECTIONS_PATH = "/collections";
+export const APPS_PATH = "/apps";
 export const FEEDBACK_URL = `${GITHUB_REPO_URL}/issues/new?template=usability.yml`;
 export const DATASET_ISSUE_URL = `${GITHUB_REPO_URL}/issues/new?template=dataset.yml`;
 
@@ -24,6 +25,10 @@ export function datasetPath(id: string): string {
 
 export function collectionPath(id: string): string {
   return `/collections/${id}`;
+}
+
+export function appPath(slug: string): string {
+  return `${APPS_PATH}/${slug}`;
 }
 
 export function pageSocialMetadata(path: string, title: string, description: string) {

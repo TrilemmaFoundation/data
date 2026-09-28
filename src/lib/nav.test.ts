@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as nav from "./nav";
 import {
+  isAppsPath,
   isCollectionsPath,
   isContributePath,
   isDatasetsPath,
@@ -14,17 +15,27 @@ describe("primary navigation current paths", () => {
     expect(isDatasetsPath("/themes/environment-hazards")).toBe(true);
     expect(isDatasetsPath("/themes/environment-hazards/")).toBe(true);
     expect(isDatasetsPath("/collections")).toBe(false);
+    expect(isDatasetsPath("/apps")).toBe(false);
     expect(isDatasetsPath("/compare")).toBe(false);
     expect(isDatasetsPath("/contribute")).toBe(false);
   });
 
   it("scopes the other primary destinations to their routes", () => {
+    expect(isAppsPath("/apps")).toBe(true);
+    expect(isAppsPath("/apps/")).toBe(true);
+    expect(isAppsPath("/apps/travelcanary")).toBe(true);
+    expect(isAppsPath("/apps/travelcanary/")).toBe(true);
+    expect(isAppsPath("/app")).toBe(false);
+    expect(isAppsPath("/apps-extra")).toBe(false);
+    expect(isAppsPath("/datasets/apps")).toBe(false);
     expect(isCollectionsPath("/collections")).toBe(true);
     expect(isCollectionsPath("/collections/")).toBe(true);
     expect(isCollectionsPath("/collections/first-builds")).toBe(true);
     expect(isContributePath("/contribute")).toBe(true);
     expect(isContributePath("/contribute/")).toBe(true);
     expect(isCollectionsPath("/")).toBe(false);
+    expect(isCollectionsPath("/apps")).toBe(false);
+    expect(isContributePath("/apps")).toBe(false);
     expect(isContributePath("/collections")).toBe(false);
   });
 

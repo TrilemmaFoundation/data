@@ -8,6 +8,7 @@ export const siteCopy = {
   primaryNavigationLabel: "Primary",
   mobileNavigationLabel: "Mobile Primary",
   datasetsNavigationLabel: "Datasets",
+  appsNavigationLabel: "Apps",
   collectionsNavigationLabel: "Build Paths",
   contributeLabel: "Contribute",
   feedbackLabel: "Send Feedback",
@@ -32,6 +33,31 @@ export const siteCopy = {
     "Curated build paths and authoritative sources for focused microproducts. Trilemma links to source data; it does not host or relicense it.",
   copyright: (year: number) =>
     `© ${year} Trilemma Foundation. All rights reserved.`,
+} as const;
+
+export const appsCopy = {
+  title: "Apps",
+  description:
+    "Explore six data-powered projects, their source code, and the data behind them.",
+  detailsLabel: "Explore App",
+  sourcesTitle: "Data Sources",
+  sourceDisclosure:
+    "This is a reviewed source inventory, not a live feed-health report. Availability depends on each app's configuration and the provider's current service.",
+  sourceRoleLabel: "Role",
+  sourceAvailabilityLabel: "Availability",
+  sourceCoverageLabel: "Coverage",
+  officialSourceLabel: "Official Source",
+  sourceEvidenceLabel: "Project Source Evidence",
+  guideLabel: "Dataset Guide",
+  reviewedLabel: "Source Map Reviewed",
+  statusLabels: {
+    alpha: "Alpha",
+    beta: "Beta",
+    archived: "Archived",
+  },
+  liveAppLabel: "Live App",
+  archiveLabel: "Archive",
+  sourceCodeLabel: "Source Code",
 } as const;
 
 export const catalogCopy = {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const families = ['/', '/collections', '/collections/first-builds', '/themes/environment-hazards', '/datasets/usgs-earthquakes', '/datasets/nasa-firms', '/contribute', '/404'];
+const families = ['/', '/apps', '/collections', '/collections/first-builds', '/themes/environment-hazards', '/datasets/usgs-earthquakes', '/datasets/nasa-firms', '/contribute', '/404'];
 for (const width of [320, 390, 768, 1023, 1024, 1280, 1536]) {
   test(`shared surfaces reflow at ${width}px`, async ({ page, browserName }, info) => {
     test.skip(browserName !== 'chromium' && ![390, 1280].includes(width));
@@ -22,6 +22,24 @@ test('200% text and reduced motion retain search and reading context', async ({ 
     await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('main h1')).toBeVisible();
+  }
+});
+
+test('TravelCanary source list remains readable at narrow and desktop widths and 200% text', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium');
+  for (const width of [320, 390, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/apps/travelcanary');
+    const sources = page.locator('main section[aria-labelledby="app-sources-title"] li');
+    expect(await sources.count()).toBeGreaterThan(20);
+    await sources.last().scrollIntoViewIfNeeded();
+    await expect(sources.last()).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    if (width === 390) {
+      await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await expect(page.getByRole('heading', { level: 1, name: 'TravelCanary' })).toBeVisible();
+    }
   }
 });
 

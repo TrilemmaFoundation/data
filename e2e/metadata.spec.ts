@@ -4,6 +4,15 @@ import { getActiveDatasets } from "../src/lib/datasets";
 import { getAllCollections } from "../src/lib/collections";
 import { DATASET_THEMES } from "../src/lib/schema";
 
+const appNames = [
+  ["titanskies", "TitanSkies"],
+  ["hyperoptions", "HyperOptions"],
+  ["travelcanary", "TravelCanary"],
+  ["househunter", "HouseHunter"],
+  ["rockyroad", "RockyRoad"],
+  ["stackingsats", "StackingSats"],
+] as const;
+
 test("public routes expose canonical and social metadata", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('meta[name="referrer"]')).toHaveAttribute(
@@ -81,6 +90,17 @@ test("dataset guides expose canonical metadata and valid JSON-LD", async ({
   );
 });
 
+test("Apps listing and each project have their own canonical and social metadata", async ({ page }) => {
+  for (const [path, title] of [["/apps", "Apps"], ...appNames.map(([slug, name]) => [`/apps/${slug}`, name])] as const) {
+    await page.goto(path);
+    const canonical = `https://data.trilemma.foundation${path}`;
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", canonical);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", canonical);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
+  }
+});
+
 test("robots and sitemap enumerate the public static application", async ({
   request,
 }) => {
@@ -96,6 +116,10 @@ test("robots and sitemap enumerate the public static application", async ({
   expect(body).toContain("<loc>https://data.trilemma.foundation</loc>");
   expect(body).toContain("<loc>https://data.trilemma.foundation/collections</loc>");
   expect(body).toContain("<loc>https://data.trilemma.foundation/contribute</loc>");
+  expect(body).toContain("<loc>https://data.trilemma.foundation/apps</loc>");
+  for (const [slug] of appNames) {
+    expect(body).toContain(`<loc>https://data.trilemma.foundation/apps/${slug}</loc>`);
+  }
   expect(body).not.toContain("<loc>https://data.trilemma.foundation/compare</loc>");
   const datasets = getActiveDatasets();
   for (const dataset of datasets) {
@@ -105,5 +129,5 @@ test("robots and sitemap enumerate the public static application", async ({
   }
   const extra =
     1 + 1 + 1 + DATASET_THEMES.length + getAllCollections().length;
-  expect(body.match(/<loc>/g)).toHaveLength(datasets.length + extra);
+  expect(body.match(/<loc>/g)).toHaveLength(datasets.length + extra + 7);
 });

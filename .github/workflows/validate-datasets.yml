@@ -32,6 +32,10 @@ jobs:
       - name: Validate datasets offline
         run: npm run validate-datasets:offline
 
+      - name: Check reviewed app source snapshots
+        if: github.event_name == 'schedule'
+        run: npx vitest run src/content/apps.test.ts
+
       - name: Validate provider contracts
         if: github.event_name != 'pull_request'
         run: npm run validate-providers
