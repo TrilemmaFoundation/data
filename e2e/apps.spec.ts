@@ -1,14 +1,15 @@
 import { existsSync, readdirSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-const appNames = [
-  ["titanskies", "TitanSkies"],
-  ["hyperoptions", "HyperOptions"],
-  ["travelcanary", "TravelCanary"],
-  ["househunter", "HouseHunter"],
-  ["rockyroad", "RockyRoad"],
-  ["stackingsats", "StackingSats"],
+const appIdentities = [
+  { slug: "titanskies", name: "TitanSkies", accent: "#0369A1", image: "/apps/titanskies-white.webp" },
+  { slug: "hyperoptions", name: "HyperOptions", accent: "#DFAB40", letter: "H" },
+  { slug: "travelcanary", name: "TravelCanary", accent: "#0F766E", image: "/apps/travelcanary-white.webp" },
+  { slug: "househunter", name: "HouseHunter", accent: "#56D1C8", letter: "H" },
+  { slug: "rockyroad", name: "RockyRoad", accent: "#B95732", letter: "R" },
+  { slug: "stackingsats", name: "StackingSats", accent: "#F7931A", image: "/apps/stackingsats.svg" },
 ] as const;
+const appNames = appIdentities.map(({ slug, name }) => [slug, name] as const);
 
 test("the seven Apps routes are exported and show the right project", async ({ page, request }) => {
   expect(existsSync("out/apps.html")).toBe(true);
@@ -64,6 +65,82 @@ test("all six app cards fit in the desktop viewport at 100% zoom", async ({ page
     const lastCardBottom = await cards.last().evaluate((card) => card.getBoundingClientRect().bottom);
     expect(lastCardBottom).toBeLessThanOrEqual(height);
     await expect(cards.last().getByRole("link", { name: /Source Code/ })).toBeInViewport();
+  }
+});
+
+test("each app has its own rendered color and a working local mark on cards and details", async ({ page, request }) => {
+  await page.goto("/apps");
+  const cards = page.getByRole("article");
+  const backgrounds = new Set<string>();
+  const edges = new Set<string>();
+
+  for (const [index, identity] of appIdentities.entries()) {
+    const card = cards.nth(index);
+    const style = await card.evaluate((element) => {
+      const css = getComputedStyle(element);
+      return {
+        accent: css.getPropertyValue("--app-accent").trim(),
+        background: css.backgroundColor,
+        edge: css.borderLeftColor,
+        edgeWidth: parseFloat(css.borderLeftWidth),
+      };
+    });
+    expect(style.accent, identity.slug).toBe(identity.accent);
+    expect(style.edgeWidth, identity.slug).toBeGreaterThanOrEqual(3);
+    backgrounds.add(style.background);
+    edges.add(style.edge);
+
+    await expect(card.getByRole("heading", { level: 2, name: identity.name })).toBeVisible();
+    await expect(card.getByRole("link", { name: identity.name, exact: true })).toHaveAttribute("href", `/apps/${identity.slug}`);
+    if ("image" in identity) {
+      const logo = card.locator(`img[src="${identity.image}"]`);
+      await expect(logo).toBeVisible();
+      expect((await request.get(identity.image)).ok(), identity.image).toBe(true);
+      expect(await logo.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0), identity.slug).toBe(true);
+    } else {
+      await expect(card.locator(".app-mark")).toHaveText(identity.letter);
+      await expect(card.locator("img")).toHaveCount(0);
+    }
+  }
+  expect(backgrounds.size).toBe(6);
+  expect(edges.size).toBe(6);
+
+  for (const identity of appIdentities) {
+    await page.goto(`/apps/${identity.slug}`);
+    const header = page.locator(".app-detail-header");
+    await expect(header.getByRole("heading", { level: 1, name: identity.name })).toBeVisible();
+    expect(await header.evaluate((element) => getComputedStyle(element).getPropertyValue("--app-accent").trim())).toBe(identity.accent);
+    if ("image" in identity) {
+      const logo = header.locator(`img[src="${identity.image}"]`);
+      await expect(logo).toBeVisible();
+      expect(await logo.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0), identity.slug).toBe(true);
+    } else {
+      await expect(header.locator(".app-mark")).toHaveText(identity.letter);
+    }
+  }
+});
+
+test("branded cards reflow without horizontal clipping on narrow screens and at 200% text", async ({ page }) => {
+  for (const { width, zoom } of [
+    { width: 320, zoom: false },
+    { width: 320, zoom: true },
+    { width: 390, zoom: false },
+    { width: 390, zoom: true },
+    { width: 768, zoom: false },
+  ]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/apps");
+    if (zoom) await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    for (const [index, identity] of appIdentities.entries()) {
+      const card = page.getByRole("article").nth(index);
+      await expect(card.getByRole("heading", { level: 2, name: identity.name })).toBeVisible();
+      await card.scrollIntoViewIfNeeded();
+      const bounds = await card.boundingBox();
+      expect(bounds!.x, identity.slug).toBeGreaterThanOrEqual(-1);
+      expect(bounds!.x + bounds!.width, identity.slug).toBeLessThanOrEqual(width + 1);
+      await expect(card.getByRole("link", { name: /Source Code/ })).toBeVisible();
+    }
   }
 });
 

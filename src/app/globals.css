@@ -131,6 +131,39 @@
 @layer components {
   .feature-surface { border: 1px solid var(--tf-soft-periwinkle); border-radius: var(--tf-radius-card); background: var(--tf-primary-navy); color: var(--tf-on-dark); box-shadow: 0 12px 32px rgba(10,10,20,.08); }
   .feature-surface a:focus-visible { --tw-ring-color: var(--tf-focus-dark); --tw-ring-offset-color: var(--tf-primary-navy); }
+
+  .app-card, .app-detail-header {
+    --app-highlight: color-mix(in srgb, var(--app-accent) 55%, white 45%);
+    border: 1px solid color-mix(in srgb, var(--app-accent) 55%, white 45%);
+    border-left-width: 3px;
+    background: radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--app-accent) 15%, transparent), transparent 65%), color-mix(in srgb, var(--tf-primary-navy) 72%, var(--app-accent) 28%);
+    color: var(--tf-on-dark);
+    box-shadow: 0 12px 32px rgba(10,10,20,.1);
+  }
+  .app-card { transition: border-color 150ms ease, box-shadow 150ms ease; }
+  .app-card:hover, .app-card:focus-within { border-color: var(--app-highlight); box-shadow: 0 16px 36px rgba(10,10,20,.16); }
+  .app-card h2, .app-detail-header h1 { color: var(--tf-on-dark); }
+  .app-mark {
+    display: inline-flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: .75rem;
+    background: rgba(255,255,255,.06);
+    color: var(--app-highlight);
+    font-weight: 700;
+  }
+  .app-detail-header .app-mark { width: 3rem; height: 3rem; font-size: 1.25rem; }
+  .app-identity { flex-wrap: wrap; line-height: 1.15; }
+  .app-identity-name { flex: none; max-width: 100%; }
+  .app-card .app-identity:hover, .app-detail-link { color: var(--app-highlight); }
+  .app-actions a { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.06); color: var(--tf-on-dark); }
+  .app-actions .app-action-featured { border-color: var(--app-highlight); }
+  .app-actions a:hover { border-color: var(--app-highlight); background: rgba(255,255,255,.14); }
+  .app-card a:focus-visible, .app-detail-header a:focus-visible { --tw-ring-color: var(--tf-focus-dark); --tw-ring-offset-color: color-mix(in srgb, var(--tf-primary-navy) 72%, var(--app-accent) 28%); }
 }
 
 .data-header { position: sticky; top: 0; z-index: 60; }

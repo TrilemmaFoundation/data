@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppActions } from "@/components/AppActions";
+import { AppIdentity } from "@/components/AppIdentity";
 import { Badge } from "@/components/ui/badge";
 import { apps, getAppBySlug, type AppSource } from "@/content/apps";
+import { appVisuals } from "@/content/app-visuals";
 import { appsCopy } from "@/content/site-copy";
 import { appPath, APPS_PATH, datasetPath, pageSocialMetadata } from "@/lib/seo";
 
@@ -34,12 +37,17 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
       <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
         <Link href={APPS_PATH} className="rounded-sm hover:text-link">{appsCopy.title}</Link>
       </nav>
-      {app.status && (
-        <div className="mb-2"><Badge variant="outline">{appsCopy.statusLabels[app.status]}</Badge></div>
-      )}
-      <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">{app.title}</h1>
-      <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{app.summary}</p>
-      <div className="mt-5"><AppActions app={app} /></div>
+      <div
+        className="app-detail-header rounded-2xl p-5 sm:p-6"
+        style={{ "--app-accent": appVisuals[app.slug as keyof typeof appVisuals].accent } as CSSProperties}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <AppIdentity app={app} level={1} />
+          {app.status && <Badge variant="outline" className="rounded-full border-white/50 bg-white/10 text-white">{appsCopy.statusLabels[app.status]}</Badge>}
+        </div>
+        <p className="mt-3 max-w-3xl text-base leading-7 text-feature-foreground">{app.summary}</p>
+        <div className="mt-5"><AppActions app={app} /></div>
+      </div>
 
       <section aria-labelledby="app-sources-title" className="mt-10">
         <h2 id="app-sources-title" className="text-2xl font-semibold">{appsCopy.sourcesTitle}</h2>
