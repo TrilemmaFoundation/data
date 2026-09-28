@@ -20,6 +20,11 @@ Each dataset includes searchable metadata, authoritative source links, practical
 access instructions, a copyable Python example, and a small project for testing
 a useful product signal.
 
+The Apps directory showcases six data-powered projects. Each app page cites the
+external sources behind it, links to matching dataset guides where available,
+and links to its hosted experience or archive and source code. The projects run
+outside this static site.
+
 The catalog optimizes for beginner clarity, contribution simplicity, and dataset
 quality — not catalog size.
 
@@ -59,19 +64,23 @@ interaction rules, and checksums.
 - Azure `#5858C8` links and light-surface focus; amber `#FF9940` dark-surface focus
 - Roboto typography, 10px controls, 16px cards, and 44px minimum interactive targets
 
-Data renders only its local header (Datasets, Build Paths, Contribute), with
+Data renders only its local header (Datasets, Apps, Build Paths, Contribute), with
 sticky offsets measured from its actual height. The shared Foundation footer
 remains. Run `npm run check:design` when updating the vendored contract.
 
 ## Editing content
 
-Content has two explicit sources of truth:
+Content has three explicit sources of truth:
 
 - Shared application, navigation, accessibility, and SEO copy lives in
   [`src/content/site-copy.ts`](src/content/site-copy.ts). Non-description text
   uses Chicago Title Case; descriptions and other body copy stay in sentence case.
 - Dataset descriptions and beginner guides live with their metadata in the
   corresponding [`data/datasets/*.yaml`](data/datasets) file.
+- App descriptions, availability, outbound links, and grouped source citations
+  live in [`src/content/apps`](src/content/apps). Each reviewed snapshot records
+  its product revision and review date. Review these at least every 90 days and
+  when a project changes; a listed source is not a claim that its feed is live.
 
 Each dataset selects one broad catalog theme. Domain and task tags are
 normalized through [`data/vocabulary.yaml`](data/vocabulary.yaml): aliases

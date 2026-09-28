@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { siteCopy } from "@/content/site-copy";
-import { isCollectionsPath, isContributePath, isDatasetsPath } from "@/lib/nav";
+import { isAppsPath, isCollectionsPath, isContributePath, isDatasetsPath } from "@/lib/nav";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -22,6 +22,7 @@ export function SiteHeader() {
     <nav className="foundation-local-inner" aria-label="Data navigation">
       <Link href="/" className="foundation-local-brand" aria-label="Trilemma Data home">Data</Link>
       <Link href="/" aria-current={isDatasetsPath(pathname) ? "page" : undefined}>{siteCopy.datasetsNavigationLabel}</Link>
+      <Link href="/apps" aria-current={isAppsPath(pathname) ? "page" : undefined}>{siteCopy.appsNavigationLabel}</Link>
       <Link href="/collections" aria-current={isCollectionsPath(pathname) ? "page" : undefined}>{siteCopy.collectionsNavigationLabel}</Link>
       <Link href="/contribute" prefetch={false} aria-current={isContributePath(pathname) ? "page" : undefined}>{siteCopy.contributeLabel}</Link>
     </nav>

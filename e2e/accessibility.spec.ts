@@ -44,3 +44,11 @@ test("collection, theme, and contribute pages pass accessibility checks", async 
     await expectNoAccessibilityViolations(page);
   }
 });
+
+test("Apps listing, long source map, and archive page pass accessibility checks", async ({ page }) => {
+  for (const path of ["/apps", "/apps/travelcanary", "/apps/stackingsats"]) {
+    await page.goto(path);
+    await expect(page.locator("main h1")).toBeVisible();
+    await expectNoAccessibilityViolations(page);
+  }
+});
