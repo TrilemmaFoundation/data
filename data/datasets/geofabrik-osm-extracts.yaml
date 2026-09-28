@@ -1,0 +1,86 @@
+id: geofabrik-osm-extracts
+name: Geofabrik OpenStreetMap Extracts
+description: >
+  Daily regional OpenStreetMap PBF extracts from Geofabrik for building local
+  place search, road networks, and other geographic products.
+theme: Geospatial & Infrastructure
+url: https://download.geofabrik.de/north-america/canada/prince-edward-island.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 100
+formats:
+  - PBF
+license: OpenStreetMap contributors under the Open Database License 1.0; attribution and share-alike duties apply.
+license_url: https://www.openstreetmap.org/copyright
+url_checks:
+  source_marker: Download OpenStreetMap data for this region
+  license_marker: Open Data Commons Open Database License
+domains:
+  - Geography
+  - Transportation
+data_types:
+  - Geospatial
+  - Vector Data
+tasks:
+  - Mapping
+  - Routing Analysis
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: current regional extracts with dated archives
+update_frequency: daily
+provider: Geofabrik GmbH and OpenStreetMap contributors
+source_type: community
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Geofabrik republishes regional OpenStreetMap extracts as PBF files. Start
+    with Prince Edward Island rather than a national file and count road ways.
+    The extract is a dated community map, not a complete or authoritative road inventory.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection and about 20 MB of free disk space
+    - The requests and osmium Python packages
+  access_steps:
+    - Open the official Prince Edward Island extract page and note its update time.
+    - Download the latest PBF while preserving OpenStreetMap attribution and ODbL terms.
+    - Count a small class of features before building a local graph or search index.
+  python:
+    packages:
+      - requests
+      - osmium
+    code: |
+      from pathlib import Path
+      import osmium
+      import requests
+
+      url = "https://download.geofabrik.de/north-america/canada/prince-edward-island-latest.osm.pbf"
+      path = Path("prince-edward-island-latest.osm.pbf")
+      with requests.get(url, stream=True, timeout=60) as response:
+          response.raise_for_status()
+          with path.open("wb") as output:
+              for chunk in response.iter_content(chunk_size=1024 * 1024):
+                  output.write(chunk)
+
+      class RoadCounter(osmium.SimpleHandler):
+          def __init__(self):
+              super().__init__()
+              self.count = 0
+
+          def way(self, way):
+              if "highway" in way.tags:
+                  self.count += 1
+
+      roads = RoadCounter()
+      roads.apply_file(str(path))
+      print(f"{roads.count} mapped road ways in this dated extract")
+  first_project:
+    title: Scope a Local Road Dataset
+    goal: Check whether one small OSM extract can support a local route-planning prototype.
+    steps:
+      - Record the extract's download time, region, file size, and required attribution.
+      - Count road ways and inspect which highway tags appear in the region.
+      - Explain why mapped ways are not proof of current road access or complete routing coverage.

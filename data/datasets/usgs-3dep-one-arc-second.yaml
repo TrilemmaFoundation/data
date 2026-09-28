@@ -1,0 +1,56 @@
+id: usgs-3dep-one-arc-second
+name: USGS 3DEP One Arc-Second Elevation
+description: >
+  USGS one arc-second elevation GeoTIFF tiles for measuring terrain relief and ruggedness across mapped regions.
+theme: Geospatial & Infrastructure
+url: https://www.usgs.gov/3d-elevation-program/about-3dep-products-services
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.0003
+size_gb_max: 100
+formats: [GeoTIFF]
+license: USGS 3DEP elevation data are public domain; cite the tile vintage and retain vertical-datum metadata.
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: 1 arc-second dataset. Ground spacing is approximately 30 meters
+  license_marker: federal government materials
+domains: [Natural Hazards]
+data_types: [Raster]
+tasks: [Mapping]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: current and historical one arc-second tile vintages
+update_frequency: occasional
+provider: U.S. Geological Survey
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The National Map stages 3DEP one arc-second GeoTIFF tiles, including historical versions pinned by HouseHunter.
+    Start with one small coastal tile; a bare raster value cannot be interpreted without no-data, unit, and datum metadata.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests and rasterio Python packages]
+  access_steps:
+    - Review the official 3DEP resolution and vertical-datum documentation.
+    - Download one pinned one arc-second GeoTIFF tile.
+    - Inspect its bounds, no-data value, and a small overview before comparing terrain.
+  python:
+    packages: [requests, rasterio]
+    code: |
+      import requests
+      from rasterio.io import MemoryFile
+
+      url = "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/historical/n32w081/USGS_1_n32w081_20220725.tif"
+      response = requests.get(url, timeout=35)
+      response.raise_for_status()
+      with MemoryFile(response.content) as memory:
+          with memory.open() as tile:
+              overview = tile.read(1, out_shape=(36, 36), masked=True)
+              print(tile.bounds, tile.nodata, float(overview.min()), float(overview.max()))
+  first_project:
+    title: Inspect One Elevation Tile
+    goal: Show a tile's geographic bounds and the range of sampled elevation values.
+    steps:
+      - Download one small official 3DEP GeoTIFF.
+      - Display its bounds, no-data marker, and overview value range.
+      - Explain why different vintages and vertical references must be reconciled before comparison.

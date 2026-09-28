@@ -1,0 +1,59 @@
+id: chrr-mental-health-supplement-2025
+name: CHR&R 2025 Mental Health Supplement
+description: >
+  County Health Rankings supplemental county provider counts for building a noncommercial mental-health access comparison.
+theme: Health, Food & Safety
+url: https://www.countyhealthrankings.org/health-data/methodology-and-sources/data-documentation
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.01
+size_gb_max: 0.02
+formats: [CSV]
+license: CHR&R permits personal and nonprofit analysis with attribution; commercial use requires prior written consent.
+license_url: https://www.countyhealthrankings.org/terms-use
+url_checks:
+  source_marker: SUPPLEMENTAL DATA RELEASE
+  license_marker: personal or non-profit purposes
+domains: [Public Health]
+data_types: [Tabular]
+tasks: [Community Comparison]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: 2025 provider input in the March 2026 supplement
+update_frequency: annual
+provider: County Health Rankings & Roadmaps
+source_type: academic
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The March 2026 CHR&R supplemental CSV includes 2025 NPPES-derived county
+    mental-health provider measures. Start with two rows and the v062 fields;
+    provider counts indicate listed supply, not appointment access.
+    Nonprofit or personal use only.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the CHR&R supplement documentation and noncommercial terms.
+    - Stream two county rows from the official supplemental CSV.
+    - Review the v062 numerator with the published denominator definition.
+  python:
+    packages: [requests]
+    code: |
+      import csv
+      import itertools
+      import requests
+
+      url = ("https://www.countyhealthrankings.org/sites/default/files/"
+             "media/document/analytic_supplement_20260325%5B1%5D.csv")
+      with requests.get(url, stream=True, timeout=30) as response:
+          response.raise_for_status()
+          lines = (line.decode("utf-8-sig") for line in response.iter_lines())
+          for row in itertools.islice(csv.DictReader(lines), 2):
+              print(row["fipscode"], row["v062_numerator"], row["v062_denominator"])
+  first_project:
+    title: Inspect Mental Health Provider Supply
+    goal: Show two county provider-supply records with the published measure definition.
+    steps:
+      - Stream two rows and retain their county FIPS codes.
+      - Calculate a rate only with the documented denominator.
+      - Explain why provider listings are not verified care availability.

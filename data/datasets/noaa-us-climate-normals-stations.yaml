@@ -1,0 +1,62 @@
+id: noaa-us-climate-normals-stations
+name: NOAA U.S. Climate Normals Station Archives
+description: >
+  NOAA's maintained 1991-2020 station climate-normal archives for comparing typical local temperature and precipitation.
+theme: Environment & Hazards
+url: https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.02
+size_gb_max: 0.06
+formats: [TAR.GZ, CSV]
+license: NOAA-produced station normals are public domain; cite NCEI and retain period and release version.
+license_url: https://gml.noaa.gov/about/disclaimer.html
+url_checks:
+  source_marker: 1991–2020 U.S. Climate Normals
+  license_marker: information on government servers are in the public domain
+domains: [Climate]
+data_types: [Tabular]
+tasks: [Community Comparison]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: 1991-2020 thirty-year station normals, release v1.0.1
+update_frequency: occasional
+provider: NOAA National Centers for Environmental Information
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    NCEI publishes annual/seasonal and monthly v1.0.1 station TAR.GZ archives.
+    Start with the Central Park monthly station CSV from the exact archive HouseHunter pins.
+    A 30-year station normal is a climatological baseline, not a current forecast,
+    and a station may not represent a whole county.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read NCEI's Climate Normals product description and NOAA reuse notice.
+    - Download the versioned monthly station archive.
+    - Inspect one station's normal values and quality flags.
+  python:
+    packages: [requests]
+    code: |
+      import csv
+      import io
+      import tarfile
+      import requests
+
+      url = ("https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/archive/"
+             "us-climate-normals_1991-2020_v1.0.1_monthly_multivariate_by-station_c20230404.tar.gz")
+      response = requests.get(url, timeout=90)
+      response.raise_for_status()
+      with tarfile.open(fileobj=io.BytesIO(response.content), mode="r:gz") as archive:
+          station = "USW00094728.csv"
+          with archive.extractfile(station) as file:
+              row = next(csv.DictReader(io.TextIOWrapper(file, encoding="utf-8")))
+      print(row["STATION"], row["month"], row["MLY-TAVG-NORMAL"].strip(), "°F")
+  first_project:
+    title: Inspect a Station Climate Normal
+    goal: Compare one fixed-period station normal with a current condition without confusing them.
+    steps:
+      - Read a station's monthly temperature normal.
+      - Record the 1991-2020 period and v1.0.1 release.
+      - Explain why a station normal is neither a current observation nor a county average.

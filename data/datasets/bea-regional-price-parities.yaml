@@ -1,0 +1,77 @@
+id: bea-regional-price-parities
+name: BEA Regional Price Parities
+description: >
+  BEA state and metropolitan Regional Price Parity archives for comparing
+  relative consumer price levels across U.S. regions.
+theme: Markets & Economics
+url: https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - CSV
+  - ZIP
+license: BEA information is public domain unless stated otherwise; cite BEA as source.
+license_url: https://www.bea.gov/help/faq/147
+url_checks:
+  source_marker: Regional Price Parities
+  license_marker: information posted on this web site is in the public domain
+domains:
+  - Regional Economics
+  - Inflation
+data_types:
+  - Tabular
+  - Time Series
+tasks:
+  - Regional Comparison
+  - Market Sizing
+difficulty: intermediate
+geography:
+  - United States states and metropolitan areas
+temporal_coverage: 2008-2024 in the current MARPP and SARPP archives
+update_frequency: annual
+provider: U.S. Bureau of Economic Analysis
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    BEA provides separate metropolitan MARPP and state SARPP archives. Start
+    with five rows of the all-items metropolitan table from its versioned ZIP.
+    An RPP is a relative price index, not a household budget or county-level
+    cost measurement; state and metro values should not be mixed as one grain.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official BEA RPP page and public-domain reuse guidance.
+    - Download the MARPP archive and identify its metropolitan CSV member.
+    - Keep the table, unit, geography, and year when interpreting values.
+  python:
+    packages:
+      - requests
+    code: |
+      import csv
+      import io
+      import itertools
+      from zipfile import ZipFile
+      import requests
+
+      response = requests.get("https://apps.bea.gov/regional/zip/MARPP.zip", timeout=30)
+      response.raise_for_status()
+      archive = ZipFile(io.BytesIO(response.content))
+      with archive.open("MARPP_MSA_2008_2024.csv") as member:
+          rows = csv.DictReader(io.TextIOWrapper(member, encoding="utf-8-sig"))
+          metros = (row for row in rows if "Metropolitan Statistical Area" in row["GeoName"])
+          for row in itertools.islice(metros, 5):
+              print(row["GeoFIPS"].strip(), row["GeoName"], row["Description"], row["2024"])
+  first_project:
+    title: Inspect Metropolitan Price Parities
+    goal: Check one published RPP year for a regional cost comparison.
+    steps:
+      - Filter to all-items index rows and retain BEA metropolitan identifiers.
+      - Compare two metros using the same year and table line.
+      - Explain why the index is not a direct household cost estimate.

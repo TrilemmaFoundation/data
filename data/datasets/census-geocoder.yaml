@@ -1,0 +1,74 @@
+id: census-geocoder
+name: Census Geocoder Address Lookup
+description: >
+  U.S. Census Bureau address-to-tract geocoding responses for assigning a
+  user-entered address to its reviewed Census geography.
+theme: Geospatial & Infrastructure
+url: https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  Census API terms permit search and analysis; identify the Census source and
+  state that Census does not endorse or certify the resulting application.
+license_url: https://www.census.gov/data/developers/about/terms-of-service.html
+url_checks:
+  source_marker: Single Record Geocoding Service Requests
+  license_marker: not endorsed or certified by the Census Bureau
+domains:
+  - Geography
+data_types:
+  - Geospatial
+tasks:
+  - Geographic Analysis
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current address-range benchmark with selectable geography vintage
+update_frequency: occasional
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The Census Geocoder returns address matches and Census tract geography
+    for one submitted U.S. address. Start with the Census Bureau's own public
+    example address and request the current 2020 geography vintage. Do not
+    send confidential addresses in a tutorial; an approximate range match
+    needs review before it is used as a property location.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official geocoding request format and API terms.
+    - Request one public example address with an explicit benchmark and vintage.
+    - Inspect the returned tract identifier and match quality.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress",
+          params={"address": "4600 Silver Hill Rd, Washington, DC 20233",
+                  "benchmark": "Public_AR_Current", "vintage": "Census2020_Current",
+                  "format": "json"}, timeout=30,
+      )
+      response.raise_for_status()
+      for match in response.json()["result"]["addressMatches"][:5]:
+          tracts = match["geographies"].get("Census Tracts", [])
+          print(match["matchedAddress"], [tract["GEOID"] for tract in tracts])
+  first_project:
+    title: Check a Census Tract Match
+    goal: Inspect a public example address before using geocoding in a local lookup.
+    steps:
+      - Keep the matched address, coordinates, benchmark, vintage, and tract GEOID.
+      - Handle zero or multiple matches without silently choosing one.
+      - Explain why address-range coordinates can differ from a parcel location.

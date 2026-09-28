@@ -1,0 +1,87 @@
+id: fema-national-risk-index
+name: FEMA National Risk Index
+description: >
+  FEMA tract and county natural-hazard risk and annualized-loss layers for comparing
+  residential hazard context and screening locations with consistent geographic units.
+theme: Environment & Hazards
+url: https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/National_Risk_Index_Census_Tracts/FeatureServer
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.000001
+size_gb_max: 5
+formats:
+  - JSON
+  - CSV
+  - GeoPackage
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: National_Risk_Index_Census_Tracts (FeatureServer)
+  license_marker: federal government materials
+domains:
+  - Natural Hazards
+  - Housing
+data_types:
+  - Geospatial
+  - Numeric Data
+tasks:
+  - Risk Assessment
+  - Mapping
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: periodically revised FEMA risk-model releases
+update_frequency: occasional
+provider: Federal Emergency Management Agency
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    FEMA publishes separate tract and county National Risk Index layers. Start
+    with five tract records from the official ArcGIS service and keep the NRI
+    version. The composite building-loss rate is modeled, not a prediction for an individual home.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Open FEMA's National Risk Index data resources and distinguish its tract and county layers.
+    - Query a bounded sample of the tract FeatureServer layer without geometry.
+    - Keep tract identifiers and the model version when comparing risk fields.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = (
+          "https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/"
+          "National_Risk_Index_Census_Tracts/FeatureServer/0/query"
+      )
+      response = requests.get(
+          url,
+          params={
+              "where": "1=1",
+              "outFields": "TRACTFIPS,ALR_VALB,NRI_VER",
+              "returnGeometry": "false",
+              "resultRecordCount": 5,
+              "f": "json",
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      result = response.json()
+      if "error" in result:
+          raise RuntimeError(result["error"])
+      for feature in result["features"]:
+          print(feature["attributes"])
+  first_project:
+    title: Compare Tract Hazard Context
+    goal: Test whether a bounded tract sample supports a location-screening prototype.
+    steps:
+      - Read the tract identifier, model version, and composite building-loss rate field.
+      - Compare only tracts from the same NRI version and keep missing values distinct from zero.
+      - Explain why a modeled tract loss rate cannot estimate the risk or insurance cost of a particular home.

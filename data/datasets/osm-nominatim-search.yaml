@@ -1,0 +1,76 @@
+id: osm-nominatim-search
+name: OpenStreetMap Nominatim Search
+description: >
+  Public Nominatim place-search responses derived from OpenStreetMap for
+  checking one user-requested address or road candidate.
+theme: Geospatial & Infrastructure
+url: https://nominatim.org/release-docs/latest/api/Search/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  ODbL 1.0 data with OpenStreetMap attribution. Public service allows at most
+  one request per second per application, requires an identifying User-Agent,
+  forbids autocomplete and systematic queries, and may withdraw access.
+license_url: https://operations.osmfoundation.org/policies/nominatim/
+url_checks:
+  source_marker: Search - Nominatim
+  license_marker: maximum of 1 request per second
+domains:
+  - Geography
+data_types:
+  - Geospatial
+tasks:
+  - Search
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: current OpenStreetMap search index
+update_frequency: near real time
+provider: OpenStreetMap Foundation
+source_type: community
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Read the public Nominatim usage policy before calling this shared service:
+    at most one request per second per application, a distinct identifying
+    User-Agent, attribution, caching, no autocomplete, and no systematic or
+    bulk queries. Start with one public landmark address. ODbL share-alike
+    applies to the OSM-derived data; keep a provider switch available if the
+    public service withdraws access.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the Nominatim policy and ODbL conditions in full.
+    - Search one public landmark address with an identifying User-Agent.
+    - Inspect the returned location and OSM attribution.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://nominatim.openstreetmap.org/search",
+          params={"q": "1600 Pennsylvania Avenue NW, Washington, DC",
+                  "format": "jsonv2", "limit": 1},
+          headers={"User-Agent": "TrilemmaDataCatalogExample/1.0 (https://data.trilemma.foundation/)"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      for place in response.json():
+          print(place["display_name"], place["lat"], place["lon"])
+  first_project:
+    title: Inspect One Public Place Match
+    goal: Check one user-triggered place candidate with the shared Nominatim API.
+    steps:
+      - Display OpenStreetMap attribution with the result.
+      - Require user confirmation before treating a road match as a property.
+      - Explain why a public demo service is unsuitable for bulk geocoding.

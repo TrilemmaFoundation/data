@@ -1,0 +1,61 @@
+id: arc-appalachian-counties
+name: ARC Appalachian Counties
+description: >
+  The Appalachian Regional Commission's maintained county membership list for building regional comparison and eligibility tools.
+theme: Demographics & Development
+url: https://www.arc.gov/appalachian-counties-served-by-arc/
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [HTML, XLSX]
+license: ARC-produced material is public domain; cite ARC and check linked third-party materials separately.
+license_url: https://www.arc.gov/arc-web-and-privacy-policy/
+url_checks:
+  source_marker: Appalachian Counties Served by ARC
+  license_marker: Material provided on this website and produced by ARC is not copyrighted
+domains: [Demographics]
+data_types: [Tabular]
+tasks: [Community Comparison]
+difficulty: beginner
+geography: [United States counties]
+temporal_coverage: current ARC county membership; check the fiscal-year caveats
+update_frequency: annual
+provider: Appalachian Regional Commission
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    ARC maintains a public county list and notes fiscal-year exceptions, including Schoharie County for FY 2026.
+    Start with Alabama's 37 named counties. Names alone do not give a county FIPS code or prove grant eligibility.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the official county list and its fiscal-year notes.
+    - Fetch the Alabama row from the ARC-maintained page.
+    - Join to an authoritative FIPS table before a county-level analysis.
+  python:
+    packages: [requests]
+    code: |
+      import html
+      import re
+      import requests
+
+      url = "https://www.arc.gov/appalachian-counties-served-by-arc/"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      match = re.search(
+          r'<strong><a href="https://www.arc.gov/alabama/">Alabama</a>.*?</strong>(.*?)</p>',
+          response.text, re.S,
+      )
+      if not match:
+          raise ValueError("ARC Alabama county list not found")
+      names = html.unescape(re.sub(r"<[^>]+>", "", match.group(1))).strip()
+      print(names[:160])
+  first_project:
+    title: Compare ARC County Membership
+    goal: Show which sampled counties are within the ARC region while retaining the fiscal-year caveat.
+    steps:
+      - Extract county names for one state from the ARC list.
+      - Resolve names to state-qualified county FIPS identifiers.
+      - Explain why ARC membership does not by itself establish current grant eligibility.

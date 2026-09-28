@@ -1,0 +1,58 @@
+id: chrr-community-conditions-2025
+name: CHR&R 2025 Community Conditions
+description: >
+  County Health Rankings 2025 county community-condition measures for building a noncommercial county context comparison.
+theme: Health, Food & Safety
+url: https://p3eplmys2rvchkjx.svcs.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/County%20Health%20Rankings%202025/FeatureServer/2?f=pjson
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [JSON, GeoJSON]
+license: CHR&R permits personal and nonprofit analysis with attribution; commercial use requires prior written consent.
+license_url: https://www.countyhealthrankings.org/terms-use
+url_checks:
+  source_marker: fed47aeb4d334339a73e20088181e544
+  license_marker: personal or non-profit purposes
+domains: [Public Health]
+data_types: [Geospatial]
+tasks: [Community Comparison, Mapping]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: 2025 annual county release
+update_frequency: annual
+provider: County Health Rankings & Roadmaps
+source_type: academic
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The official CHR&R 2025 ArcGIS county layer includes community-condition
+    measures used by HouseHunter. Start with one county's attributes;
+    measure periods and coverage differ, so the layer is not a current
+    measurement of every county condition. Nonprofit or personal use only.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read CHR&R's 2025 documentation and noncommercial terms.
+    - Query one county feature from the official 2025 layer.
+    - Check measure definitions and years before comparing counties.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = ("https://p3eplmys2rvchkjx.svcs.arcgis.com/"
+             "P3ePLMYs2RVChkJx/arcgis/rest/services/"
+             "County%20Health%20Rankings%202025/FeatureServer/2/query")
+      response = requests.get(url, params={"where": "1=1", "outFields": "*",
+                                           "resultRecordCount": 1, "f": "json"}, timeout=20)
+      response.raise_for_status()
+      row = response.json()["features"][0]["attributes"]
+      print(row.get("statecode"), row.get("countycode"), len(row))
+  first_project:
+    title: Compare County Conditions
+    goal: Inspect the source and vintage of one 2025 county record.
+    steps:
+      - Query one county feature and retain its FIPS identifiers.
+      - Look up the selected measure's definition and measurement year.
+      - Explain that different measure vintages limit direct comparisons.

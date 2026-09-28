@@ -1,0 +1,63 @@
+id: bls-qcew-county-high-level
+name: BLS QCEW County High-Level Archives
+description: >
+  BLS county employment and wage annual-average archives for comparing local labor-market conditions.
+theme: Markets & Economics
+url: https://www.bls.gov/cew/downloadable-data-files.htm
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.03
+size_gb_max: 0.05
+formats: [ZIP, XLSX]
+license: BLS publications are public domain; cite BLS and keep the release year and industry classification.
+license_url: https://www.bls.gov/bls/linksite.htm
+url_checks:
+  source_marker: County High-Level
+  license_marker: everything that we publish, both in hard copy and electronically, is in the public domain
+domains: [Labor Economics]
+data_types: [Tabular]
+tasks: [Community Comparison]
+difficulty: intermediate
+geography: [United States counties]
+temporal_coverage: annual QCEW county averages; HouseHunter pins final 2024 and 2025 archives
+update_frequency: quarterly
+provider: U.S. Bureau of Labor Statistics
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    BLS publishes County High-Level Excel ZIPs apart from its Public Data API.
+    Start with one row from the 2025 annual-average workbook; HouseHunter also
+    pins 2024. QCEW covers jobs subject to unemployment-insurance laws, not
+    every worker or current job openings.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests and openpyxl Python packages]
+  access_steps:
+    - Read the QCEW file layout and BLS public-domain notice.
+    - Download the exact 2025 County High-Level annual archive.
+    - Inspect the area, ownership, industry, employment, and wage columns.
+  python:
+    packages: [requests, openpyxl]
+    code: |
+      import io
+      import itertools
+      import zipfile
+      import requests
+      from openpyxl import load_workbook
+
+      url = "https://data.bls.gov/cew/data/files/2025/xls/2025_all_county_high_level.zip"
+      response = requests.get(url, timeout=60)
+      response.raise_for_status()
+      with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+          name = next(n for n in archive.namelist() if n.endswith("allhlcn25.xlsx"))
+          workbook = load_workbook(io.BytesIO(archive.read(name)), read_only=True, data_only=True)
+      for row in itertools.islice(workbook.active.values, 3):
+          print(row[:6])
+      workbook.close()
+  first_project:
+    title: Compare County Employment
+    goal: Compare fixed-year county employment and wages at one ownership and industry grain.
+    steps:
+      - Select one county and industry from the high-level workbook.
+      - Compare annual-average employment and wages at the same grain.
+      - Explain which workers the QCEW coverage omits.

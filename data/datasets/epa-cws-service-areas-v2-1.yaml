@@ -1,0 +1,63 @@
+id: epa-cws-service-areas-v2-1
+name: EPA Community Water Service Areas Version 2.1
+description: >
+  EPA's pinned community-water-system boundaries and census-block allocations for local drinking-water coverage analysis.
+theme: Geospatial & Infrastructure
+url: https://www.epa.gov/ground-water-and-drinking-water/public-water-system-service-areas
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.4
+size_gb_max: 1.1
+formats: [GeoPackage, CSV]
+license: >
+  EPA-produced data are public domain unless otherwise specified; check source metadata
+  for state-supplied boundary limitations and cite EPA. Modeled areas are estimates.
+license_url: https://edg.epa.gov/epa_data_license.html
+url_checks:
+  source_marker: Public Water System Service Areas
+  license_marker: all data produced by the U.S EPA is by default in the public domain
+domains: [Water Resources, Public Safety]
+data_types: [Geospatial, Tabular]
+tasks: [Mapping, Monitoring]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: version 2.1 pinned by HouseHunter, released November 2025
+update_frequency: occasional
+provider: U.S. Environmental Protection Agency
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    HouseHunter pins EPA's version 2.1 GeoPackage and matching 2020 Census block
+    allocation table from the EPA model's version history. Read only a few
+    allocation rows with an HTTP byte range. Version 3 is now current, so do
+    not silently mix it with the pinned version 2.1 or interpret modeled
+    boundaries as exact household service.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the EPA service-area documentation and public-domain notice.
+    - Fetch the beginning of the exact version 2.1 block allocation CSV.
+    - Keep the version 2.1 GeoPackage and block table together for full analysis.
+  python:
+    packages: [requests]
+    code: |
+      import csv
+      import io
+      import requests
+
+      url = ("https://media.githubusercontent.com/media/USEPA/ORD_SAB_Model/"
+             "main/Version_History/2_1/Census_Tables/Blocks_V_2_1.csv")
+      response = requests.get(url, headers={"Range": "bytes=0-8191"}, timeout=30)
+      response.raise_for_status()
+      assert response.status_code == 206, "Server did not honor bounded byte range"
+      rows = csv.DictReader(io.StringIO(response.content.decode("utf-8", errors="ignore")))
+      for row in list(rows)[:3]:
+          print(row["GEOID20"], row["PWSID"], row["Pop20_AW"])
+  first_project:
+    title: Inspect One Water Service Allocation
+    goal: Identify the population allocation attached to a water system and census block.
+    steps:
+      - Read a few pinned version 2.1 block rows and retain their PWSIDs.
+      - Compare the matching boundary provenance before using the allocation.
+      - Explain why modeled service areas do not establish an exact household provider.

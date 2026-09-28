@@ -1,0 +1,59 @@
+id: photon-geocoding
+name: Photon Place Search
+description: >
+  OpenStreetMap-based Photon place-search results for adding small-scale geocoding to a map application.
+theme: Geospatial & Infrastructure
+url: https://photon.komoot.io/api/?q=Zurich&limit=2
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [GeoJSON]
+license: >
+  Komoot permits reasonable free use of its public demo without uptime guarantees;
+  OpenStreetMap-derived data requires ODbL attribution and share-alike compliance.
+license_url: https://github.com/komoot/photon/blob/master/README.md
+url_checks:
+  source_marker: '"name":"Zurich","'
+  license_marker: number of requests stay in a reasonable
+domains: [Geography]
+data_types: [Geospatial]
+tasks: [Search, Mapping]
+difficulty: beginner
+geography: [Global]
+temporal_coverage: current Photon search index
+update_frequency: occasional
+provider: Komoot Photon
+source_type: company
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Komoot's public Photon demo answers small place searches without a key.
+    Start with one query and two results; the demo may throttle heavy use and
+    has no availability guarantee, while OpenStreetMap attribution still applies.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the Photon public demo policy and OpenStreetMap data terms.
+    - Search for one place with a two-result limit.
+    - Inspect each candidate's name and coordinates before using it.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://photon.komoot.io/api/",
+          params={"q": "Zurich", "limit": 2},
+          headers={"User-Agent": "TrilemmaDataCatalog/1.0"}, timeout=20,
+      )
+      response.raise_for_status()
+      for place in response.json()["features"]:
+          print(place["properties"].get("name"), place["geometry"]["coordinates"])
+  first_project:
+    title: Search for Map Destinations
+    goal: Show two geocoding candidates with their source coordinates.
+    steps:
+      - Query one place name with a bounded result count.
+      - Display candidate labels and coordinates for user selection.
+      - Explain that similarly named places require location confirmation.

@@ -1,0 +1,61 @@
+id: fbi-cde-agency-summaries
+name: FBI CDE Agency Crime Summaries
+description: >
+  FBI Crime Data Explorer agency-level offense and reporting-population responses for cautious local safety comparisons.
+theme: Government & Policy
+url: https://cde.ucr.cjis.gov/LATEST/agency/byStateAbbr/RI
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.003
+formats: [JSON]
+license: Publicly released FBI UCR data are public domain; cite the FBI and preserve agency reporting coverage.
+license_url: https://ucr.fbi.gov/data_quality_guidelines
+url_checks:
+  source_marker: '"ori":"RI0020100"'
+  license_marker: publicly-released UCR crime data are considered public domain
+domains: [Crime, Public Safety]
+data_types: [Time Series]
+tasks: [Agency Comparison]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: agency summaries for 2023-2025 in HouseHunter's pinned manifest
+update_frequency: annual
+provider: Federal Bureau of Investigation
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The CDE's agency catalog and summarized agency/offense endpoint are distinct
+    from the key-gated FBI state-estimates API. Start with one Rhode Island ORI
+    and one offense family. Participation and suppression can make agency or
+    county comparisons incomplete; a missing value is not zero crime.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the FBI CDE methodology and public-domain guidance.
+    - Fetch a small state agency catalog and choose one ORI.
+    - Inspect a dated offense summary and its reporting-population fields.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      base = "https://cde.ucr.cjis.gov/LATEST"
+      catalog = requests.get(f"{base}/agency/byStateAbbr/RI", timeout=20)
+      catalog.raise_for_status()
+      agency = catalog.json()["KENT"][0]
+      summary = requests.get(
+          f"{base}/summarized/agency/{agency['ori']}/violent-crime",
+          params={"from": "01-2023", "to": "12-2025", "type": "totals"}, timeout=20,
+      )
+      summary.raise_for_status()
+      series = next(iter(summary.json()["offenses"]["actuals"].values()))
+      print(agency["ori"], agency["agency_name"], series.get("01-2025"))
+  first_project:
+    title: Inspect Agency Crime Coverage
+    goal: Compare agency offense counts while retaining reporting coverage.
+    steps:
+      - Fetch one ORI and its dated violent-crime summary.
+      - Inspect the corresponding population and submission fields.
+      - Explain why voluntary reporting prevents treating null or suppressed counts as zero.

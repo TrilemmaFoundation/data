@@ -1,0 +1,63 @@
+id: usgs-national-trails-geopackage
+name: USGS National Trails GeoPackages
+description: >
+  State-level National Transportation Database trail segments for measuring mapped outdoor access and trail density.
+theme: Geospatial & Infrastructure
+url: https://www.usgs.gov/national-digital-trails/how-access-or-view-usgs-trails-dataset
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.006
+size_gb_max: 2
+formats: [ZIP, GeoPackage]
+license: U.S. Geological Survey National Transportation Database trail data are public domain; cite the source and preserve the product date.
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: trails dataset is a feature class in the USGS National Transportation Database
+  license_marker: federal government materials
+domains: [Transportation]
+data_types: [Geospatial]
+tasks: [Mapping]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: periodically refreshed state and District of Columbia trail extracts
+update_frequency: occasional
+provider: U.S. Geological Survey
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    USGS stages state-level transportation GeoPackages containing Trans_TrailSegment.
+    Start with the 5.8 MB District of Columbia archive; mapped segments do not prove legal public access or trail condition.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the USGS National Trails download instructions and staged-product update policy.
+    - Download one small state GeoPackage ZIP.
+    - Query a single Trans_TrailSegment row while retaining the archive date.
+  python:
+    packages: [requests]
+    code: |
+      import io
+      import sqlite3
+      import tempfile
+      import zipfile
+      from pathlib import Path
+      import requests
+
+      url = "https://prd-tnm.s3.amazonaws.com/StagedProducts/Tran/GPKG/TRAN_District_of_Columbia_State_GPKG.zip"
+      response = requests.get(url, timeout=35)
+      response.raise_for_status()
+      with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+          member = next(name for name in archive.namelist() if name.endswith(".gpkg"))
+          with tempfile.TemporaryDirectory() as directory:
+              path = Path(directory) / "trails.gpkg"
+              path.write_bytes(archive.read(member))
+              with sqlite3.connect(path) as db:
+                  print(db.execute("SELECT name, lengthmiles FROM Trans_TrailSegment LIMIT 1").fetchone())
+  first_project:
+    title: Inspect a Trail Segment
+    goal: Display one dated USGS trail record and its mapped length.
+    steps:
+      - Download one small official state archive.
+      - Read a Trans_TrailSegment row from its GeoPackage.
+      - Explain that the mapped line does not establish access rights or current trail condition.

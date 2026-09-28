@@ -1,0 +1,75 @@
+id: census-pep-county-totals
+name: Census PEP County Population Totals
+description: >
+  Vintage 2025 county population estimates from the U.S. Census Bureau for
+  comparing county sizes and applying population-based eligibility thresholds.
+theme: Demographics & Development
+url: https://www.census.gov/data/datasets/time-series/demo/popest/2020s-counties-total.html
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 0.01
+formats:
+  - CSV
+license: U.S. government published statistics; cite the Census Bureau and retain vintage.
+license_url: https://www.census.gov/about/policies/citation.html
+url_checks:
+  source_marker: CO-EST2025-alldata
+  license_marker: Public-Use Statement
+domains:
+  - Demographics
+  - Population
+data_types:
+  - Tabular
+  - Survey Estimates
+tasks:
+  - Community Comparison
+  - Market Sizing
+difficulty: beginner
+geography:
+  - United States counties
+temporal_coverage: 2020-2025 annual estimates, vintage 2025
+update_frequency: annual
+provider: U.S. Census Bureau
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The Census Population Estimates Program publishes a versioned county CSV.
+    Start with five rows from the Vintage 2025 all-data file and retain the
+    year and county FIPS components. Estimates can be revised in later vintages
+    and do not measure the population of a neighborhood or tract.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official Vintage 2025 county data page and citation guidance.
+    - Download the county totals CSV and inspect its FIPS and population columns.
+    - Keep the vintage fixed when comparing or ranking counties.
+  python:
+    packages:
+      - requests
+    code: |
+      import csv
+      import io
+      import itertools
+      import requests
+
+      response = requests.get(
+          "https://www2.census.gov/programs-surveys/popest/datasets/"
+          "2020-2025/counties/totals/co-est2025-alldata.csv", timeout=30,
+      )
+      response.raise_for_status()
+      rows = csv.DictReader(io.StringIO(response.text))
+      for row in itertools.islice((row for row in rows if row["COUNTY"] != "000"), 5):
+          print(row["STATE"], row["COUNTY"], row["CTYNAME"], row["POPESTIMATE2025"])
+  first_project:
+    title: Inspect Five County Estimates
+    goal: Test a fixed-vintage population floor for a county comparison tool.
+    steps:
+      - Join state and county FIPS components without dropping leading zeroes.
+      - Count which sampled counties exceed a chosen population threshold.
+      - Explain why later estimates may differ from this pinned vintage.

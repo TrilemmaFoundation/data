@@ -1,0 +1,68 @@
+id: fcc-bdc-county-fixed-summary
+name: FCC BDC County Fixed Broadband Summary
+description: >
+  FCC Broadband Data Collection county-level fixed-availability summary tables for local service-coverage comparisons.
+theme: Geospatial & Infrastructure
+url: https://help.bdc.fcc.gov/hc/en-us/articles/10467446103579-How-to-Use-the-FCC-s-National-Broadband-Map
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats: [ZIP, CSV]
+license: >
+  FCC government works are not subject to domestic copyright protection and
+  the FCC requests credit; this public aggregate excludes restricted Location
+  Fabric records. Preserve the filing vintage and residential/technology filters.
+license_url: https://opendata.fcc.gov/Wireline/Geography-Lookup-Table/v5vt-e7vw
+url_checks:
+  source_marker: availability data for fixed broadband services
+  license_marker: proper credit be given
+domains: [Infrastructure]
+data_types: [Tabular]
+tasks: [Mapping]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: December 2025 filing pinned by HouseHunter; later filings are separate vintages
+update_frequency: occasional
+provider: Federal Communications Commission
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    HouseHunter pins the FCC's December 2025 Fixed Broadband Summary by
+    Geography Type for county 100/20 availability shares. Download that public
+    ZIP from the map's Data Download page, then read only a few rows locally.
+    Its share describes reported serviceable locations, not actual subscriptions,
+    performance, affordability, or all residents.
+  prerequisites: [Python 3.10 or newer, The pandas Python package, The public FCC December 2025 summary ZIP]
+  access_steps:
+    - Review the FCC's map download instructions and attribution notice.
+    - Download the December 2025 Fixed Broadband Summary by Geography Type ZIP from https://broadbandmap.fcc.gov/data-download and retain its dated filename.
+    - Keep the ZIP beside the Python script and inspect county rows without loading the whole file.
+  python:
+    packages: [pandas]
+    code: |
+      from pathlib import Path
+      from zipfile import ZipFile
+      import pandas as pd
+
+      archive_path = Path("bdc_us_fixed_broadband_summary_by_geography_D25_03sep2026.zip")
+      with ZipFile(archive_path) as archive:
+          csv_name = next(name for name in archive.namelist() if name.endswith(".csv"))
+          with archive.open(csv_name) as stream:
+              for chunk in pd.read_csv(stream, chunksize=5000):
+                  counties = chunk.loc[
+                      chunk["geography_type"].eq("County") & chunk["biz_res"].eq("R"),
+                      ["geography_id", "technology", "speed_100_20"],
+                  ]
+                  if not counties.empty:
+                      print(counties.head(3).to_string(index=False))
+                      break
+  first_project:
+    title: Inspect County Broadband Availability
+    goal: Read a few residential county 100/20 shares from the pinned FCC filing.
+    steps:
+      - Download and retain the dated December 2025 summary ZIP.
+      - Compare county rows only within the same residential and technology category.
+      - Explain why reported availability is not measured service quality or subscriptions.
