@@ -218,6 +218,21 @@ test("country warning partitions show separate guide decisions for each system",
   await expect(systems.filter({ hasText: "DWD direct CAP recovery" }).getByRole("link", { name: /Data guide/ })).toHaveAttribute("href", "/datasets/dwd-cap-warnings");
 });
 
+test("TravelCanary source groups and countries have usable jump links", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/apps/travelcanary");
+  const groups = page.getByRole("navigation", { name: "Data source groups" });
+  await groups.getByRole("link", { name: "National warnings" }).click();
+  await expect(page).toHaveURL(/#source-group-national-warnings$/);
+  await expect(page.getByRole("heading", { name: "National warnings" })).toBeInViewport();
+  const countries = page.getByRole("navigation", { name: "National warning countries" });
+  await page.getByText("Jump to a country", { exact: true }).click();
+  await countries.getByRole("link", { name: "Germany (DE)" }).click();
+  await expect(page).toHaveURL(/#source-germany-de-warning-systems$/);
+  await expect(page.getByRole("heading", { name: "Germany (DE) warning systems" })).toBeInViewport();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test("Bitview is discoverable as a dataset guide with a runnable notebook", async ({ page }) => {
   await page.goto("/?q=Bitview");
   await expect(page.getByRole("link", { name: "Bitview Bitcoin Series" })).toBeVisible();

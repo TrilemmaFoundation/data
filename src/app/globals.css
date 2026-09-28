@@ -145,6 +145,7 @@
   .app-card h2, .app-detail-header h1 { color: var(--tf-on-dark); }
   .app-mark {
     display: inline-flex;
+    overflow: hidden;
     width: 2.5rem;
     height: 2.5rem;
     flex: none;
@@ -156,6 +157,7 @@
     color: var(--app-highlight);
     font-weight: 700;
   }
+  .app-mark-titanskies img { transform: scale(1.8); }
   .app-detail-header .app-mark { width: 3rem; height: 3rem; font-size: 1.25rem; }
   .app-identity { flex-wrap: wrap; line-height: 1.15; }
   .app-identity-name { flex: none; max-width: 100%; }

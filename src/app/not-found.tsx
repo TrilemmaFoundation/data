@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { notFoundCopy } from "@/content/site-copy";
+import { APPS_PATH } from "@/lib/seo";
 
 export default function NotFound() {
   return (
@@ -13,9 +13,10 @@ export default function NotFound() {
       <p className="mt-4 max-w-md leading-7 text-muted-foreground">
         {notFoundCopy.description}
       </p>
-      <Link href="/" className={cn(buttonVariants(), "mt-7")}>
-        {notFoundCopy.backLabel}
-      </Link>
+      <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <Link href="/" className={buttonVariants()}>{notFoundCopy.datasetsLabel}</Link>
+        <Link href={APPS_PATH} className={buttonVariants({ variant: "outline" })}>{notFoundCopy.appsLabel}</Link>
+      </div>
     </div>
   );
 }

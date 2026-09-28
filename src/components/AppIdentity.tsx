@@ -11,7 +11,7 @@ export function AppIdentity({ app, level }: { app: AppEntry; level: 1 | 2 }) {
   const mark = visual.mark.kind === "wordmark" ? (
     <Image src={visual.mark.src} alt={app.title} width={138} height={48} className="block h-10 w-auto max-w-full sm:h-12" />
   ) : (
-    <span className="app-mark" aria-hidden="true">
+    <span className={`app-mark${app.slug === "titanskies" ? " app-mark-titanskies" : ""}`} aria-hidden="true">
       {visual.mark.kind === "image" ? (
         <Image src={visual.mark.src} alt="" width={size - 8} height={size - 8} className="h-full w-full object-contain" />
       ) : visual.mark.letter}

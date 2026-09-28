@@ -23,7 +23,8 @@ a useful product signal.
 The Apps directory showcases six data-powered projects. Each app page cites the
 external sources behind it, links to matching dataset guides where available,
 labels related guides when they cover a different artifact, and links to its
-hosted experience or archive and source code. The projects run outside this
+hosted experience or archive and source code. Long source maps provide group
+and country jump links. The projects run outside this
 static site. Their cards and detail headers use Hypertrial's project marks and
 accent colors from website revision
 `914f1c0a5fa86b0f763ed99d57aac1564f342e53`; this presentation snapshot is

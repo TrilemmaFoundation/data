@@ -590,15 +590,19 @@ test("every dataset guide reflows on a mobile viewport", async ({ page }) => {
 });
 
 test("the global not-found page offers route-neutral recovery", async ({ page }) => {
-  await page.goto("/missing-page");
-
-  await expect(
-    page.getByRole("heading", { level: 1, name: notFoundCopy.title }),
-  ).toBeVisible();
-  await expect(page.getByText(notFoundCopy.description)).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: notFoundCopy.backLabel }),
-  ).toHaveAttribute("href", "/");
+  for (const path of ["/missing-page", "/apps/not-a-project"]) {
+    await page.goto(path);
+    await expect(
+      page.getByRole("heading", { level: 1, name: notFoundCopy.title }),
+    ).toBeVisible();
+    await expect(page.getByText(notFoundCopy.description)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: notFoundCopy.datasetsLabel }),
+    ).toHaveAttribute("href", "/");
+    await expect(
+      page.getByRole("link", { name: notFoundCopy.appsLabel }),
+    ).toHaveAttribute("href", "/apps");
+  }
 });
 
 for (const width of [320, 390, 768, 1023, 1024, 1280, 1536]) {

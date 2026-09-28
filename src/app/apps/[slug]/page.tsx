@@ -10,6 +10,8 @@ import { appVisuals } from "@/content/app-visuals";
 import { appsCopy } from "@/content/site-copy";
 import { appPath, APPS_PATH, datasetPath, pageSocialMetadata } from "@/lib/seo";
 
+const anchorId = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-$/, "");
+
 export function generateStaticParams() {
   return apps.map((app) => ({ slug: app.slug }));
 }
@@ -59,12 +61,40 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
             {appsCopy.sourceEvidenceLabel}<span className="sr-only"> (opens in a new tab)</span>
           </a>
         </p>
+        <nav aria-label="Data source groups" className="mt-6">
+          <p className="text-sm font-semibold">Jump to a source group</p>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {Array.from(groups.keys(), (group) => (
+              <li key={group}>
+                <a href={`#source-group-${anchorId(group)}`} className="inline-flex min-h-11 items-center rounded-full border border-[var(--tf-soft-periwinkle)] bg-white px-3 text-sm font-semibold text-link hover:underline">
+                  {group}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
         {Array.from(groups, ([group, sources]) => (
-          <section key={group} aria-labelledby={`source-group-${group.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="mt-8">
-            <h3 id={`source-group-${group.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="text-xl font-semibold">{group}</h3>
+          <section key={group} aria-labelledby={`source-group-${anchorId(group)}`} className="mt-8">
+            <h3 id={`source-group-${anchorId(group)}`} className="text-xl font-semibold">{group}</h3>
+            {group === "National warnings" && (
+              <details className="mt-4 rounded-xl border border-[var(--tf-soft-periwinkle)] bg-white p-4">
+                <summary className="cursor-pointer font-semibold text-link">Jump to a country</summary>
+                <nav aria-label="National warning countries">
+                  <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    {sources.map((source) => (
+                      <li key={source.name}>
+                        <a href={`#source-${anchorId(source.name)}`} className="inline-flex min-h-11 w-full items-center rounded-lg border border-[var(--tf-soft-periwinkle)] px-3 py-2 text-sm text-link hover:underline">
+                          {source.name.replace(/ warning systems$/, "")}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </details>
+            )}
             <ul className="mt-4 grid gap-4 md:grid-cols-2">
               {sources.map((source) => (
-                <li key={source.name} className="rounded-2xl border border-[var(--tf-soft-periwinkle)] bg-white p-5">
+                <li key={source.name} id={group === "National warnings" ? `source-${anchorId(source.name)}` : undefined} className="rounded-2xl border border-[var(--tf-soft-periwinkle)] bg-white p-5">
                   <h4 className="text-lg font-semibold text-foreground">{source.name}</h4>
                   <p className="mt-2 text-sm"><strong>{appsCopy.sourceRoleLabel}:</strong> {source.role}</p>
                   <p className="mt-1 text-sm"><strong>{appsCopy.sourceAvailabilityLabel}:</strong> {source.availability}</p>
