@@ -3,12 +3,12 @@ import { apps, getAppBySlug } from "./apps";
 import { getActiveDatasets } from "../lib/datasets";
 
 const expectedApps = [
-  { slug: "titanskies", title: "TitanSkies", status: undefined, liveUrl: "https://www.titanskies.com/", archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/titanskies" },
-  { slug: "hyperoptions", title: "HyperOptions", status: undefined, liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/hyperoptions" },
-  { slug: "travelcanary", title: "TravelCanary", status: "beta", liveUrl: "https://travelcanary.org/", archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/travelcanary" },
-  { slug: "househunter", title: "HouseHunter", status: "alpha", liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/househunter" },
-  { slug: "rockyroad", title: "RockyRoad", status: "alpha", liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/rockyroad" },
-  { slug: "stackingsats", title: "StackingSats", status: "archived", liveUrl: undefined, archiveUrl: "https://stackingsats.org/", sourceUrl: "https://github.com/hypertrial/stacksats" },
+  { slug: "titanskies", title: "TitanSkies", status: undefined, liveUrl: "https://www.titanskies.com/", archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/titanskies" },
+  { slug: "hyperoptions", title: "HyperOptions", status: undefined, liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/hyperoptions" },
+  { slug: "travelcanary", title: "TravelCanary", status: "beta", liveUrl: "https://travelcanary.org/", archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/travelcanary" },
+  { slug: "househunter", title: "HouseHunter", status: "alpha", liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/househunter" },
+  { slug: "rockyroad", title: "RockyRoad", status: "alpha", liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/rockyroad" },
+  { slug: "stackingsats", title: "StackingSats", status: "archived", liveUrl: undefined, archiveUrl: "https://stackingsats.org/", brkUrl: "https://bitview.space/", sourceUrl: "https://github.com/hypertrial/stacksats" },
 ] as const;
 
 function expectHttps(raw: string) {
@@ -21,8 +21,8 @@ function expectHttps(raw: string) {
 
 describe("reviewed app catalog", () => {
   it("has exactly the six intended routes, availability states, and outbound destinations", () => {
-    expect(apps.map(({ slug, title, status, liveUrl, archiveUrl, sourceUrl }) => ({
-      slug, title, status, liveUrl, archiveUrl, sourceUrl,
+    expect(apps.map(({ slug, title, status, liveUrl, archiveUrl, brkUrl, sourceUrl }) => ({
+      slug, title, status, liveUrl, archiveUrl, brkUrl, sourceUrl,
     }))).toEqual(expectedApps);
     expect(new Set(apps.map(({ slug }) => slug)).size).toBe(6);
     expect(getAppBySlug("")).toBeUndefined();
@@ -45,7 +45,7 @@ describe("reviewed app catalog", () => {
       const today = new Date();
       const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
       expect(todayUtc - reviewDate.getTime(), `${app.slug}: source map is older than 90 days`).toBeLessThanOrEqual(90 * 24 * 60 * 60 * 1000);
-      for (const url of [app.sourceUrl, app.sourceEvidenceUrl, app.liveUrl, app.archiveUrl]) {
+      for (const url of [app.sourceUrl, app.sourceEvidenceUrl, app.liveUrl, app.archiveUrl, app.brkUrl]) {
         if (url) expectHttps(url);
       }
       expect(app.sourceEvidenceUrl, app.slug).toContain(app.sourceRevision);

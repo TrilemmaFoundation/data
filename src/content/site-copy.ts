@@ -57,6 +57,7 @@ export const appsCopy = {
   },
   liveAppLabel: "Live App",
   archiveLabel: "Archive",
+  exploreBrkLabel: "Explore BRK Data",
   sourceCodeLabel: "Source Code",
 } as const;
 

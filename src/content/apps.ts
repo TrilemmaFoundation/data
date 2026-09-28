@@ -23,6 +23,7 @@ export type AppEntry = {
   status?: "alpha" | "beta" | "archived";
   liveUrl?: string;
   archiveUrl?: string;
+  brkUrl?: string;
   sourceUrl: string;
   sourceRevision: string;
   sourceEvidenceUrl: string;
