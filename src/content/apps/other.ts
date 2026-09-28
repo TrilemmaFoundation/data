@@ -19,7 +19,7 @@ export const otherApps = [
         availability: "Configured public WCS forecast; a failed or stale run can retain a dated prior forecast.",
         officialUrl: "https://www.weather.gc.ca/firework/index_e.html",
         coverage: "Canada and adjoining areas covered by the FireWork model.",
-        noGuideReason: "A FireWork-specific guide has not passed the Data catalog review.",
+        guideId: "eccc-firework-smoke",
       },
       {
         name: "NOAA HRRR-Smoke",
@@ -28,7 +28,7 @@ export const otherApps = [
         availability: "Configured public GRIB forecast; freshness and fallback are checked per run.",
         officialUrl: "https://rapidrefresh.noaa.gov/hrrr/HRRRsmoke/",
         coverage: "United States model domain.",
-        noGuideReason: "A HRRR-Smoke-specific guide has not passed the Data catalog review.",
+        guideId: "noaa-hrrr-smoke",
       },
       {
         name: "EPA AirNow",
@@ -46,7 +46,7 @@ export const otherApps = [
         availability: "Configured public observation feed; stations and timestamps may be incomplete or stale.",
         officialUrl: "https://www2.gov.bc.ca/gov/content/environment/air-land-water/air/air-quality/current-air-quality-data",
         coverage: "British Columbia stations.",
-        noGuideReason: "A guide for this B.C. hourly feed has not passed catalog review.",
+        guideId: "bc-unverified-hourly-pm25",
       },
       {
         name: "INECC SINAICA",
@@ -55,7 +55,7 @@ export const otherApps = [
         availability: "Gated by SINAICA_ENABLED; disabled sources and failed reads are reported as unavailable or dated.",
         officialUrl: "https://sinaica.inecc.gob.mx/",
         coverage: "Participating Mexico monitoring stations.",
-        noGuideReason: "A SINAICA-specific guide has not passed catalog review.",
+        noGuideReason: "SINAICA publishes preliminary hourly data, but the reviewed provider pages do not state terms permitting automated reuse of that exact feed; catalog reuse eligibility is unverified.",
       },
       {
         name: "ECCC Air Quality Health Index",
@@ -64,7 +64,7 @@ export const otherApps = [
         availability: "Configured public feed; observations can be missing or stale.",
         officialUrl: "https://weather.gc.ca/airquality/pages/index_e.html",
         coverage: "Participating Canadian stations.",
-        noGuideReason: "An AQHI observation guide has not passed catalog review.",
+        guideId: "eccc-aqhi-observations",
       },
       {
         name: "NIFC WFIGS",
@@ -73,16 +73,22 @@ export const otherApps = [
         availability: "Configured public service with per-run freshness checks and dated fallback.",
         officialUrl: "https://data-nifc.opendata.arcgis.com/",
         coverage: "United States incidents and perimeters.",
-        noGuideReason: "A WFIGS incident-layer guide has not passed catalog review.",
+        guideIds: [
+          { id: "wfigs-current-incidents", label: "Incident locations" },
+          { id: "wfigs-current-perimeters", label: "Fire perimeters" },
+        ],
       },
       {
         name: "NRCan CWFIS",
         group: "Wildfire context",
-        role: "Agency-reported Canadian wildfire incident points and perimeters.",
+        role: "Canadian wildfire incident records and NRCan M3 estimated fire-perimeter context.",
         availability: "Configured public service with per-run freshness checks and dated fallback.",
         officialUrl: "https://cwfis.cfs.nrcan.gc.ca/",
         coverage: "Canada incidents and perimeters.",
-        noGuideReason: "A CWFIS incident-layer guide has not passed catalog review.",
+        guideIds: [
+          { id: "cwfif-active-wildland-fires", label: "Active wildfire records" },
+          { id: "cwfis-m3-perimeter-estimates", label: "M3 perimeter estimates" },
+        ],
       },
       {
         name: "Natural Earth oceans and populated places",
@@ -92,7 +98,7 @@ export const otherApps = [
         officialUrl: "https://www.naturalearthdata.com/",
         evidenceUrl: "https://github.com/hypertrial/titanskies/blob/3cf6db94229dc8eb195f4caf662da01eb0e83691/scripts/generate_geo.py",
         coverage: "North America within the generated map and city catalog.",
-        noGuideReason: "The existing Natural Earth guide covers 110m country boundaries, not these 50m ocean and 10m populated-place artifacts.",
+        guideId: "natural-earth",
       },
     ],
   },
@@ -113,7 +119,7 @@ export const otherApps = [
         availability: "Enabled, unofficial public JSON access for personal local use; chain and new watches fail closed if the ticker universe cannot load.",
         officialUrl: "https://www.nasdaq.com/market-activity/stocks",
         evidenceUrl: "https://github.com/hypertrial/hyperoptions/blob/e23909d37cdf65f40967bc5c4194a8dcda967602/backend/src/options_api/nasdaq.py",
-        noGuideReason: "No Nasdaq option-chain guide has passed the Data catalog's access and reuse review.",
+        noGuideReason: "These unofficial Nasdaq site JSON endpoints have no published permission for automated option-chain reuse; Nasdaq's licensed Data Link products are different feeds, so catalog reuse eligibility is unverified.",
       },
       {
         name: "Yahoo Finance",
@@ -122,7 +128,7 @@ export const otherApps = [
         availability: "Enabled through an unofficial client, with verified local caches. Training on Yahoo-derived histories is gated while rights remain unverified.",
         officialUrl: "https://finance.yahoo.com/",
         evidenceUrl: "https://github.com/hypertrial/hyperoptions/blob/e23909d37cdf65f40967bc5c4194a8dcda967602/docs/source-rights.md",
-        noGuideReason: "Automated history and option-quote reuse rights have not qualified for a Data guide.",
+        noGuideReason: "Yahoo's terms require prior permission for automated collection; this unofficial client has no verified grant for historical-price or option-quote analysis.",
       },
       {
         name: "U.S. Treasury interest rates",
@@ -131,7 +137,7 @@ export const otherApps = [
         availability: "Configured public XML source; unavailable dates withhold dependent calculations.",
         officialUrl: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml",
         evidenceUrl: "https://github.com/hypertrial/hyperoptions/blob/e23909d37cdf65f40967bc5c4194a8dcda967602/backend/src/options_api/market_sources.py",
-        noGuideReason: "The existing Treasury auctions guide covers a different data product; yield-curve guide review is pending.",
+        guideId: "treasury-yield-curve",
       },
       {
         name: "SEC EDGAR submissions",
@@ -166,7 +172,7 @@ export const otherApps = [
           { label: "County layer", href: "https://www.arcgis.com/home/item.html?id=39485e8035d446a5bff03259508ae355&sublayer=0" },
         ],
         coverage: "85,154 tracts and 3,232 counties/county equivalents in the pinned source layers.",
-        noGuideReason: "FEMA National Flood Hazard Layer is a different dataset; a National Risk Index guide has not passed review.",
+        guideId: "fema-national-risk-index",
       },
       {
         name: "County Health Rankings & Roadmaps 2025",
@@ -178,7 +184,10 @@ export const otherApps = [
           { label: "Community Conditions county layer", href: "https://p3eplmys2rvchkjx.svcs.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/County%20Health%20Rankings%202025/FeatureServer/2" },
           { label: "Mental-health supplement", href: "https://www.countyhealthrankings.org/sites/default/files/media/document/analytic_supplement_20260325%5B1%5D.csv" },
         ],
-        noGuideReason: "The NPPES registry guide does not cover these CHR&R published products; guide review is pending.",
+        guideIds: [
+          { id: "chrr-community-conditions-2025", label: "2025 county conditions" },
+          { id: "chrr-mental-health-supplement-2025", label: "2025 provider supplement" },
+        ],
       },
       {
         name: "BEA Regional Price Parities",
@@ -190,7 +199,7 @@ export const otherApps = [
           { label: "MSA archive", href: "https://apps.bea.gov/regional/zip/MARPP.zip" },
           { label: "State archive", href: "https://apps.bea.gov/regional/zip/SARPP.zip" },
         ],
-        noGuideReason: "The existing BEA GDP and income guide does not cover Regional Price Parities.",
+        guideId: "bea-regional-price-parities",
       },
       {
         name: "Realtor.com Research Data",
@@ -207,7 +216,7 @@ export const otherApps = [
         availability: "Pinned 2025 county totals, acquired by maintainers and packaged only as derived county reference values.",
         officialUrl: "https://www.census.gov/programs-surveys/popest.html",
         additionalUrls: [{ label: "Pinned county file", href: "https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/counties/totals/co-est2025-alldata.csv" }],
-        noGuideReason: "A Census PEP county-totals guide has not passed catalog review.",
+        guideId: "census-pep-county-totals",
       },
       {
         name: "FBI Crime Data Explorer",
@@ -216,7 +225,7 @@ export const otherApps = [
         availability: "Pinned agency response manifest and manually staged reference archives; suppression and less than 90% coverage remain null.",
         officialUrl: "https://cde.ucr.cjis.gov/LATEST/webapp/",
         evidenceUrl: "https://github.com/hypertrial/househunter/blob/eea3dfffb5bd728afff4e63edda27959e7d86f97/config/ranking/source-lock-v2.json",
-        noGuideReason: "The existing FBI guide starts with state estimates, not this pinned agency response and archive contract.",
+        guideId: "fbi-cde-agency-summaries",
       },
       {
         name: "EPA Safe Drinking Water Information System",
@@ -224,7 +233,7 @@ export const otherApps = [
         role: "Public-water-system inventory and violation records contributing to Safety Factors.",
         availability: "Pinned 2026Q2 bulk submission staged by maintainers; excludes private wells and is not real-time water-quality measurement.",
         officialUrl: "https://echo.epa.gov/tools/data-downloads/sdwa-download-summary",
-        noGuideReason: "The existing ECHO web-service guide is not the pinned SDWIS bulk archive used here.",
+        guideId: "epa-sdwis-bulk-submission",
       },
       {
         name: "EPA Community Water System Service Areas",
@@ -232,7 +241,7 @@ export const otherApps = [
         role: "Modeled and supplied public-water boundaries allocated to 2020 Census block population for county coverage context.",
         availability: "Pinned version 2.1 GeoPackage and block table, acquired by maintainers; insufficient allocatable coverage remains null.",
         officialUrl: "https://www.epa.gov/ground-water-and-drinking-water/public-water-system-service-areas",
-        noGuideReason: "A guide for the service-area model and allocation table has not passed review.",
+        guideId: "epa-cws-service-areas-v2-1",
       },
       {
         name: "HRSA Area Health Resources Files",
@@ -240,7 +249,7 @@ export const otherApps = [
         role: "2024–2025 county primary-care and dental provider supply for Health utility.",
         availability: "Pinned AHRF archive acquired by maintainers; provider counts are availability proxies.",
         officialUrl: "https://data.hrsa.gov/data/download",
-        noGuideReason: "An AHRF county guide has not passed catalog review.",
+        guideId: "hrsa-ahrf-county",
       },
       {
         name: "Census ACS 2024 Five-Year Estimates",
@@ -249,7 +258,7 @@ export const otherApps = [
         availability: "Pinned table-based summary files B25034, B25035, B25103, B25077, and B08303; maintainer-generated housing-stock assets are bundled, not fetched at runtime.",
         officialUrl: "https://www.census.gov/programs-surveys/acs/data/summary-file.html",
         coverage: "Tract and county housing stock across the 50 states, DC, and Puerto Rico; separate county ranking inputs.",
-        noGuideReason: "The existing ACS guide starts from the Data API, not these pinned table-based Summary File artifacts.",
+        guideId: "census-acs-2024-table-summary",
       },
       {
         name: "BLS Quarterly Census of Employment and Wages",
@@ -257,7 +266,7 @@ export const otherApps = [
         role: "County employment and wage context for Opportunity utility.",
         availability: "Pinned final 2024 and 2025 county high-level archives acquired by maintainers.",
         officialUrl: "https://www.bls.gov/cew/",
-        noGuideReason: "The BLS Public Data API guide covers a different access product; a QCEW archive guide is pending.",
+        guideId: "bls-qcew-county-high-level",
       },
       {
         name: "FCC Broadband Data Collection",
@@ -265,7 +274,7 @@ export const otherApps = [
         role: "December 2025 terrestrial fixed 100/20 served share of broadband-serviceable locations for Opportunity utility.",
         availability: "Pinned county summary archive staged by maintainers; Location Fabric is denied and this is not population coverage.",
         officialUrl: "https://www.fcc.gov/BroadbandData",
-        noGuideReason: "The existing National Broadband Map guide uses the API, not the manually staged county summary archive.",
+        guideId: "fcc-bdc-county-fixed-summary",
       },
       {
         name: "NOAA U.S. Climate Normals",
@@ -273,7 +282,7 @@ export const otherApps = [
         role: "1991–2020 annual and monthly in-county station climate values for optional filters.",
         availability: "Pinned v1.0.1 station archives acquired by maintainers; climate is null without a fully qualifying station.",
         officialUrl: "https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals",
-        noGuideReason: "A Climate Normals station archive guide has not passed catalog review.",
+        guideId: "noaa-us-climate-normals-stations",
       },
       {
         name: "Census TIGER/Line",
@@ -291,7 +300,7 @@ export const otherApps = [
         availability: "Pinned 1,645 reviewed 1-arc-second tiles; maintainer-only acquisition and no normal startup fetch.",
         officialUrl: "https://www.usgs.gov/3d-elevation-program",
         evidenceUrl: "https://github.com/hypertrial/househunter/blob/eea3dfffb5bd728afff4e63edda27959e7d86f97/config/mountain/source-lock-v2.json",
-        noGuideReason: "A 3DEP elevation-tile guide has not passed catalog review.",
+        guideId: "usgs-3dep-one-arc-second",
       },
       {
         name: "USGS Protected Areas Database",
@@ -300,7 +309,7 @@ export const otherApps = [
         availability: "Pinned anonymous MapServer object inventory; maintainer-only capture.",
         officialUrl: "https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download",
         evidenceUrl: "https://github.com/hypertrial/househunter/blob/eea3dfffb5bd728afff4e63edda27959e7d86f97/config/mountain/source-lock-v2.json",
-        noGuideReason: "A PAD-US 4.1 layer guide has not passed catalog review.",
+        guideId: "usgs-pad-us-4-1",
       },
       {
         name: "USGS National Transportation Database trails",
@@ -309,7 +318,7 @@ export const otherApps = [
         availability: "Pinned 51 state/DC GPKG extracts dated 2026-02-12; maintainer-only build input.",
         officialUrl: "https://www.usgs.gov/national-digital-trails/how-access-or-view-usgs-trails-dataset",
         evidenceUrl: "https://github.com/hypertrial/househunter/blob/eea3dfffb5bd728afff4e63edda27959e7d86f97/config/mountain/source-lock-v2.json",
-        noGuideReason: "A National Transportation Database trail-extract guide has not passed review.",
+        guideId: "usgs-national-trails-geopackage",
       },
       {
         name: "Appalachian Regional Commission county list",
@@ -318,7 +327,7 @@ export const otherApps = [
         availability: "Reviewed 2026 county list packaged as a fixed FIPS reference.",
         officialUrl: "https://www.arc.gov/appalachian-counties-served-by-arc/",
         evidenceUrl: "https://github.com/hypertrial/househunter/blob/eea3dfffb5bd728afff4e63edda27959e7d86f97/config/ranking/appalachia-counties.json",
-        noGuideReason: "A guide for the ARC county list has not passed catalog review.",
+        guideId: "arc-appalachian-counties",
       },
       {
         name: "State homeschool law references",
@@ -339,7 +348,7 @@ export const otherApps = [
         role: "Matches a user-entered address or fallback coordinates to its 2020 Census tract.",
         availability: "Called only on explicit lookup; a provider outage is not treated as an empty match.",
         officialUrl: "https://geocoding.geo.census.gov/geocoder/",
-        noGuideReason: "A Census Geocoder lookup guide has not passed catalog review.",
+        guideId: "census-geocoder",
       },
       {
         name: "OpenStreetMap Nominatim",
@@ -347,7 +356,7 @@ export const otherApps = [
         role: "Fallback street search only when Census returns a valid empty address-match list; Census still supplies the tract ID.",
         availability: "Optional HTTPS endpoint, disableable by operator; approximate road matches require user confirmation.",
         officialUrl: "https://nominatim.openstreetmap.org/",
-        noGuideReason: "Nominatim address search is a different service from the existing OSM Overpass guide.",
+        guideId: "osm-nominatim-search",
       },
     ],
   },
@@ -370,7 +379,7 @@ export const otherApps = [
         officialUrl: "https://openrouteservice.org/",
         additionalUrls: [{ label: "Hosted optimization API", href: "https://api.heigit.org/vroom/v0/optimization" }],
         coverage: "Canada and United States within the hosted provider's route limits.",
-        noGuideReason: "A provider-specific directions and optimization guide has not passed catalog review.",
+        noGuideReason: "The hosted directions and VROOM responses are computed route services over OSM, not a separate source dataset; their free APIs require a key and no authorized key was available to verify a runnable exact-endpoint example. The local OSM extract has its own Geofabrik guide.",
       },
       {
         name: "Photon",
@@ -378,7 +387,7 @@ export const otherApps = [
         role: "Place search and stop selection, with cached and deduplicated results.",
         availability: "Default hosted public demo service; usage limits and outages can interrupt search.",
         officialUrl: "https://photon.komoot.io/",
-        noGuideReason: "A Photon geocoding guide has not passed catalog review.",
+        guideId: "photon-geocoding",
       },
       {
         name: "OpenStreetMap regional extracts via Geofabrik",
@@ -389,7 +398,7 @@ export const otherApps = [
         additionalUrls: [{ label: "OSM data and license", href: "https://www.openstreetmap.org/copyright" }],
         coverage: "PEI sample or Canada plus United States, depending on the selected extract profile.",
         evidenceUrl: "https://github.com/hypertrial/rockyroad/blob/5acf684a8de1ea0cdb85506ecda72dbe73e150b3/config/regions.yaml",
-        noGuideReason: "The existing OSM Overpass guide does not cover Geofabrik PBF extracts.",
+        guideId: "geofabrik-osm-extracts",
       },
     ],
   },
@@ -427,7 +436,7 @@ export const otherApps = [
         availability: "Optional network extra and explicit helper calls only; no archived-website feed.",
         officialUrl: "https://www.coingecko.com/en/api",
         evidenceUrl: "https://github.com/hypertrial/stacksats/blob/9ba73643c4478ddd92650557a90e91e64674f587/stacksats/data/btc_price_fetcher.py",
-        noGuideReason: "A CoinGecko price API guide has not passed catalog review.",
+        guideId: "coingecko-bitcoin-price",
       },
       {
         name: "Coinbase",
@@ -435,7 +444,7 @@ export const otherApps = [
         role: "Fallback current BTC/USD spot quote for export helpers.",
         availability: "Optional network extra and explicit helper calls only; no archived-website feed.",
         officialUrl: "https://api.coinbase.com/v2/prices/BTC-USD/spot",
-        noGuideReason: "A Coinbase spot-price guide has not passed catalog review.",
+        guideId: "coinbase-bitcoin-spot-price",
       },
       {
         name: "Bitstamp",
@@ -443,7 +452,7 @@ export const otherApps = [
         role: "Fallback current BTC/USD ticker price for export helpers.",
         availability: "Optional network extra and explicit helper calls only; no archived-website feed.",
         officialUrl: "https://www.bitstamp.net/api/",
-        noGuideReason: "A Bitstamp ticker guide has not passed catalog review.",
+        guideId: "bitstamp-bitcoin-ticker",
       },
       {
         name: "Kraken",
@@ -451,7 +460,7 @@ export const otherApps = [
         role: "Fallback current BTC/USD ticker price for export helpers.",
         availability: "Optional network extra and explicit helper calls only; no archived-website feed.",
         officialUrl: "https://docs.kraken.com/api/docs/rest-api/get-ticker-information/",
-        noGuideReason: "A Kraken ticker guide has not passed catalog review.",
+        guideId: "kraken-bitcoin-ticker",
       },
       {
         name: "Binance",
@@ -459,7 +468,7 @@ export const otherApps = [
         role: "Fallback current BTC/USDT price and historical kline lookup helper.",
         availability: "Optional network extra and explicit helper calls only; BTC/USDT is a proxy for USD, not the same quote.",
         officialUrl: "https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints",
-        noGuideReason: "A Binance market-data guide has not passed catalog review.",
+        guideId: "binance-bitcoin-ticker",
       },
     ],
   },

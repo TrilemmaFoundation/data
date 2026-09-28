@@ -1,0 +1,861 @@
+{
+  "sourceRevision": "1ff2fdfa06b38880175a03aed10cfe60352bd0f6",
+  "reviewedAt": "2026-09-28",
+  "countries": {
+    "AT": [
+      {
+        "id": "at-alert",
+        "name": "AT-Alert",
+        "status": "active",
+        "officialUrl": "https://warnung.at-alert.at/",
+        "accessUrl": "https://warnung.at-alert.at/api/rpc/alert/list",
+        "termsUrl": "https://www.rtr.at/rtr/service/opendata/OD_Nutzungsbedingungen.de.html",
+        "guideId": "at-alert-public-warnings"
+      }
+    ],
+    "BE": [
+      {
+        "id": "be-alert-cap",
+        "name": "BE-Alert",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.be-alert.be/en/",
+        "accessUrl": "https://publicalerts.be/CapGateway/feed?outdated=false",
+        "termsUrl": null,
+        "noGuideReason": "Gateway is JSON discovery with linked CAP. A sampled Actual/Public Alert was registration confirmation (event Test, Unknown severity), not an emergency. Website terms do not establish all gateway issuer rights. Need real emergency taxonomy/geometry, updates/cancellations and complete-query semantics; do not publish registration prose."
+      }
+    ],
+    "BG": [
+      {
+        "id": "bg-alert-web",
+        "name": "BG-ALERT",
+        "status": "evidence_gated",
+        "officialUrl": "https://bg-alert.bg/",
+        "accessUrl": "https://bg-alert.bg/",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed BG-ALERT surface for BG does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      }
+    ],
+    "HR": [
+      {
+        "id": "hr-public-warning",
+        "name": "SRUUK",
+        "status": "blocked",
+        "officialUrl": "https://civilna-zastita.gov.hr/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed SRUUK authority page for HR does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "dhmz-cap",
+        "name": "DHMZ direct CAP warnings",
+        "status": "active",
+        "officialUrl": "https://meteo.hr/proizvodi.php?section=podaci&param=xml_korisnici",
+        "accessUrl": "https://meteo.hr/upozorenja/cap_hr_today.xml",
+        "termsUrl": "https://meteo.hr/proizvodi.php?section=podaci&param=xml_korisnici",
+        "guideId": "dhmz-cap-warnings"
+      }
+    ],
+    "CY": [
+      {
+        "id": "cy-alert-news",
+        "name": "Cyprus public warning system",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.gov.cy/moi/en/civil-defence/",
+        "accessUrl": "https://www.gov.cy/moi/en/civil-defence/",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Cyprus public warning system surface for CY does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      }
+    ],
+    "CZ": [
+      {
+        "id": "chmi-hydrology",
+        "name": "CHMI hydrology and flash-flood risk",
+        "status": "active",
+        "officialUrl": "https://opendata.chmi.cz/hydrology/",
+        "accessUrl": "https://opendata.chmi.cz/hydrology/now/data/",
+        "termsUrl": "https://www.chmi.cz/-/jak-mohu-pou%C5%BE%C3%ADvat-otev%C5%99en%C3%A1-data-%C4%8Dhm%C3%BA-",
+        "guideIds": [
+          {
+            "id": "chmi-current-hydrology",
+            "label": "Station observations"
+          },
+          {
+            "id": "chmi-flash-flood-risk",
+            "label": "Flash-flood risk"
+          }
+        ]
+      }
+    ],
+    "DK": [
+      {
+        "id": "dk-police-emergency-rss",
+        "name": "S!RENEN",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.sirenen.dk/",
+        "accessUrl": "https://via.ritzau.dk/rss/short-messages/latest",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed S!RENEN surface for DK does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      }
+    ],
+    "EE": [
+      {
+        "id": "ee-public-warning",
+        "name": "EE-ALARM",
+        "status": "blocked",
+        "officialUrl": "https://www.olevalmis.ee/en/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed EE-ALARM authority page for EE does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      }
+    ],
+    "FI": [
+      {
+        "id": "fi-public-warning",
+        "name": "Finland public warning system",
+        "status": "blocked",
+        "officialUrl": "https://www.suomi.fi/guides/preparedness",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Finland public warning system authority page for FI does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "fmi-cap",
+        "name": "FMI CAP warnings",
+        "status": "active",
+        "officialUrl": "https://alerts.fmi.fi/cap/profile/current/",
+        "accessUrl": "https://alerts.fmi.fi/cap/feed/rss_en-GB.rss",
+        "termsUrl": "https://en.ilmatieteenlaitos.fi/open-data-licence",
+        "guideId": "fmi-cap-warnings"
+      }
+    ],
+    "FR": [
+      {
+        "id": "fr-alert",
+        "name": "FR-Alert",
+        "status": "active",
+        "officialUrl": "https://fr-alert.gouv.fr/les-alertes",
+        "accessUrl": "https://fr-alert.gouv.fr/les-alertes",
+        "termsUrl": "https://www.fr-alert.gouv.fr/mentions-legales",
+        "noGuideReason": "The official FR-Alert site and legal-terms page failed HTTPS certificate validation on 2026-09-28, so a supported live Python access path and current reuse terms could not be verified."
+      },
+      {
+        "id": "meteofrance-vigilance",
+        "name": "Météo-France Vigilance API",
+        "status": "credential_gated",
+        "officialUrl": "https://www.data.gouv.fr/dataservices/api-bulletin-vigilance",
+        "accessUrl": "https://public-api.meteofrance.fr/public/DPVigilance/v1",
+        "termsUrl": null,
+        "noGuideReason": "Free registered API, but no credentials provisioned. Current subscription quota, token lifetime, departmental/coastal mappings and lifecycle fixtures must be verified before implementing a reader; no account creation is included."
+      }
+    ],
+    "DE": [
+      {
+        "id": "lhp-flood",
+        "name": "LHP flood warnings",
+        "status": "active",
+        "officialUrl": "https://www.hochwasserzentralen.de/",
+        "accessUrl": "https://api.hochwasserzentralen.de/public/v1/data/alerts?format=geojson&lang=en",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "guideId": "lhp-germany-flood-warnings"
+      },
+      {
+        "id": "bbk-mowas-rss",
+        "name": "BBK civil-protection RSS",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.bbk.bund.de/DE/Warnung-Vorsorge/Warn-App-NINA/warn-app-nina_node.html",
+        "accessUrl": "https://warnung.bund.de/api31/mowas/rss/110000000000.rss",
+        "termsUrl": null,
+        "noGuideReason": "Official location RSS returned empty HTTP 200 feeds with old channel publication dates. Federal warning redistribution permits unchanged content, but state/municipal issuer rights and normalized presentation remain unverified. Need real emergency/update/cancel fixtures, exact district geometry, severity and complete-state withdrawal semantics."
+      },
+      {
+        "id": "dwd-cap",
+        "name": "DWD direct CAP recovery",
+        "status": "active",
+        "officialUrl": "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/",
+        "accessUrl": "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_EN.zip",
+        "termsUrl": "https://www.govdata.de/dl-de/by-2-0",
+        "guideId": "dwd-cap-warnings"
+      }
+    ],
+    "GR": [
+      {
+        "id": "gr-112-news",
+        "name": "112 Greece",
+        "status": "evidence_gated",
+        "officialUrl": "https://civilprotection.gov.gr/",
+        "accessUrl": "https://civilprotection.gov.gr/",
+        "termsUrl": "https://civilprotection.gov.gr/oroi-xrisis",
+        "noGuideReason": "Official terms specify CC BY-NC-SA 4.0 plus unchanged content; normalized summaries need a compatible presentation contract. The old all-guidelines URL redirects to static protection guidance. Need a supported current machine-warning feed with exact affected areas, validity and cancellation."
+      }
+    ],
+    "HU": [
+      {
+        "id": "hu-public-warning",
+        "name": "VÉSZ",
+        "status": "blocked",
+        "officialUrl": "https://www.katasztrofavedelem.hu/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed VÉSZ authority page for HU does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      }
+    ],
+    "IE": [
+      {
+        "id": "ie-public-warning",
+        "name": "Ireland public warning system",
+        "status": "blocked",
+        "officialUrl": "https://www.gov.ie/en/department-of-defence/organisation-information/office-of-emergency-planning/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Ireland public warning system authority page for IE does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "met-eireann-json",
+        "name": "Met Eireann warnings",
+        "status": "active",
+        "officialUrl": "https://www.met.ie/warnings-today.html",
+        "accessUrl": "https://www.met.ie/Open_Data/json/warning_IRELAND.json",
+        "termsUrl": "https://www.met.ie/about-us/specialised-services/widgets",
+        "guideId": "met-eireann-warnings"
+      }
+    ],
+    "IT": [
+      {
+        "id": "it-public-warning",
+        "name": "IT-alert",
+        "status": "blocked",
+        "officialUrl": "https://www.it-alert.gov.it/en/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed IT-alert authority page for IT does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "dpc-flood-bulletin",
+        "name": "National hydrogeological and hydraulic bulletin",
+        "status": "active",
+        "officialUrl": "https://mappe.protezionecivile.gov.it/it/mappe-rischi/bollettino-di-criticita/",
+        "accessUrl": "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/commits?path=files/topojson&per_page=1",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "guideId": "dpc-italy-flood-bulletins"
+      },
+      {
+        "id": "dpc-volcanic-restrictions",
+        "name": "Italian volcanic warnings and restrictions",
+        "status": "evidence_gated",
+        "officialUrl": "https://rischi.protezionecivile.gov.it/it/vulcanico/vulcani-italia/stromboli/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "Official historical municipal ordinances include path/altitude restrictions and revocation, but no complete current inventory, bounded zone extraction or current reuse contract is established. Publication-end dates do not establish restriction expiry. DPC activity levels remain distinct from local emergency orders."
+      }
+    ],
+    "LV": [
+      {
+        "id": "lv-112-active",
+        "name": "Latvia public warning system",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.vugd.gov.lv/en",
+        "accessUrl": "https://www.112.lv/",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Latvia public warning system surface for LV does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      },
+      {
+        "id": "lvgmc-flood",
+        "name": "LVĢMC hydrological warnings",
+        "status": "active",
+        "officialUrl": "https://data.gov.lv/dati/dataset/hidrometeorologiskie-bridinajumi",
+        "accessUrl": "https://data.gov.lv/dati/api/3/action/package_show?id=hidrometeorologiskie-bridinajumi",
+        "termsUrl": "https://data.gov.lv/dati/dataset/hidrometeorologiskie-bridinajumi",
+        "guideId": "lvgmc-hydrometeorological-warnings"
+      }
+    ],
+    "LT": [
+      {
+        "id": "lt72-sent-warnings",
+        "name": "LT72",
+        "status": "evidence_gated",
+        "officialUrl": "https://lt72.lt/",
+        "accessUrl": "https://lt72.lt/kategorija/pranesimai/",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed LT72 surface for LT does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      }
+    ],
+    "LU": [
+      {
+        "id": "lu-alert",
+        "name": "LU-Alert",
+        "status": "active",
+        "officialUrl": "https://data.public.lu/fr/datasets/alertes-du-systeme-lu-alert/",
+        "accessUrl": "https://data.public.lu/api/1/datasets/alertes-du-systeme-lu-alert/",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "guideId": "lu-alert-cap"
+      }
+    ],
+    "MT": [
+      {
+        "id": "mt-public-warning",
+        "name": "Malta public warning system",
+        "status": "blocked",
+        "officialUrl": "https://cps.gov.mt/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Malta public warning system authority page for MT does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      }
+    ],
+    "NL": [
+      {
+        "id": "nl-alert-current",
+        "name": "NL-Alert",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.nl-alert.nl/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The official website exposes current alerts, but its browser JSON transport is undocumented and not approved for automated reuse."
+      }
+    ],
+    "PL": [
+      {
+        "id": "imgw-hydrology",
+        "name": "IMGW hydrology warnings",
+        "status": "active",
+        "officialUrl": "https://hydro.imgw.pl/",
+        "accessUrl": "https://danepubliczne.imgw.pl/api/data/hydro/",
+        "termsUrl": "https://danepubliczne.imgw.pl/",
+        "guideIds": [
+          {
+            "id": "imgw-current-hydrology",
+            "label": "Station observations"
+          },
+          {
+            "id": "imgw-hydrological-bulletins",
+            "label": "Hydrological bulletins"
+          }
+        ]
+      }
+    ],
+    "PT": [
+      {
+        "id": "ipma-warnings-json",
+        "name": "IPMA weather warnings",
+        "status": "active",
+        "officialUrl": "https://www.ipma.pt/en/otempo/prev-sam/",
+        "accessUrl": "https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json",
+        "termsUrl": "https://api.ipma.pt/",
+        "guideId": "ipma-weather-warnings"
+      },
+      {
+        "id": "pt-public-warning",
+        "name": "PROCIV",
+        "status": "blocked",
+        "officialUrl": "https://prociv.gov.pt/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed PROCIV authority page for PT does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "azores-civil-protection",
+        "name": "Azores Civil Protection alerts",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.prociv.azores.gov.pt/alertas/",
+        "accessUrl": "https://prociv.azores.gov.pt/alertas/api?lang=en&limit_last_alerts=20",
+        "termsUrl": null,
+        "noGuideReason": "The official API is documented, but permission for automated republication has not been established, including for noncommercial use."
+      },
+      {
+        "id": "anepc-incidents",
+        "name": "ANEPC operational incidents",
+        "status": "evidence_gated",
+        "officialUrl": "https://prociv.gov.pt/pt/ocorrencias/",
+        "accessUrl": "https://services-eu1.arcgis.com/VlrHb7fn5ewYhX6y/arcgis/rest/services/OcorrenciasSite/FeatureServer/0/query",
+        "termsUrl": null,
+        "noGuideReason": "Current official ArcGIS service has no licenseInfo/accessInformation; the legacy CC BY catalog points to unavailable SADO services. Need successor-service reuse, authoritative status/category codes and complete-query withdrawal. Current DataDosDados is dataset refresh, not incident onset. Points do not establish perimeters or evacuation zones."
+      }
+    ],
+    "RO": [
+      {
+        "id": "ro-public-warning",
+        "name": "RO-ALERT",
+        "status": "blocked",
+        "officialUrl": "https://www.mai.gov.ro/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed RO-ALERT authority page for RO does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      }
+    ],
+    "SK": [
+      {
+        "id": "sk-public-warning",
+        "name": "Slovakia public warning system",
+        "status": "blocked",
+        "officialUrl": "https://www.minv.sk/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Slovakia public warning system authority page for SK does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      },
+      {
+        "id": "sk-crisis-rest",
+        "name": "Crisis-management REST service",
+        "status": "credential_gated",
+        "officialUrl": "https://portal.minv.sk/wps/esispz-api/docs/index.html",
+        "accessUrl": "https://portal.minv.sk/wps/esispz-api/",
+        "termsUrl": null,
+        "noGuideReason": "The documented reader API requires an authority-issued key and contract validation."
+      }
+    ],
+    "SI": [
+      {
+        "id": "si-spin-incidents",
+        "name": "Slovenia public warning system",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.gov.si/en/state-authorities/bodies-within-ministries/administration-for-civil-protection-and-disaster-relief/",
+        "accessUrl": "https://www.gov.si/en/state-authorities/bodies-within-ministries/administration-for-civil-protection-and-disaster-relief/",
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Slovenia public warning system surface for SI does not publish both an approved automated event contract and reuse terms for the exact feed; a bounded Python reader cannot be verified."
+      }
+    ],
+    "ES": [
+      {
+        "id": "catalonia-plans",
+        "name": "Catalonia civil-protection plans",
+        "status": "active",
+        "officialUrl": "https://interior.gencat.cat/ca/arees_dactuacio/proteccio_civil/",
+        "accessUrl": "https://analisi.transparenciacatalunya.cat/resource/wj9c-j6vf.json",
+        "termsUrl": "https://web.gencat.cat/ca/generalitat/dades-indicadors/dades-obertes/llicencies",
+        "guideId": "catalonia-civil-protection-plans"
+      },
+      {
+        "id": "aemet-cap",
+        "name": "AEMET direct CAP warnings",
+        "status": "active",
+        "officialUrl": "https://www.aemet.es/es/rss_info/avisos/esp",
+        "accessUrl": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_ATOM.xml",
+        "termsUrl": "https://www.aemet.es/es/nota_legal",
+        "guideId": "aemet-cap-warnings"
+      }
+    ],
+    "SE": [
+      {
+        "id": "krisinformation",
+        "name": "Krisinformation",
+        "status": "active",
+        "officialUrl": "https://www.krisinformation.se/en",
+        "accessUrl": "https://api.krisinformation.se/v3/vmas?allCounties=true&language=en",
+        "termsUrl": "https://www.krisinformation.se/om-krisinformation/for-myndigheter-och-andra-aktorer/oppen-data/",
+        "guideId": "krisinformation-vma"
+      },
+      {
+        "id": "smhi-direct-warnings",
+        "name": "SMHI direct warnings",
+        "status": "evidence_gated",
+        "officialUrl": "https://opendata-download-warnings.smhi.se/ibww/api/version/1",
+        "accessUrl": "https://opendata-download-warnings.smhi.se/ibww/api/version/1/warning.json",
+        "termsUrl": null,
+        "noGuideReason": "Special terms require unchanged warning content, attribution and delivery within five minutes, never more than ten. The ten-minute collector plus publication/cache latency cannot meet this. A separately budgeted compliant delivery path is required."
+      }
+    ],
+    "CH": [
+      {
+        "id": "ch-public-warning",
+        "name": "Alertswiss",
+        "status": "blocked",
+        "officialUrl": "https://www.alert.swiss/en/home.html",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Alertswiss authority page for CH does not document a reusable production event feed with geometry, updates, and cancellations; no exact runnable reader can be published."
+      }
+    ],
+    "AD": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "active",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-andorra",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "credential_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/AD",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "Optional authenticated recovery; catalog 3 launch and health rely on the keyless Atom primary, not this transport."
+      },
+      {
+        "id": "ad-official-information",
+        "name": "Andorra weather alerts",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteo.ad/en/Alerts",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Andorra weather alerts public-information page for AD exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "AL": [
+      {
+        "id": "al-official-information",
+        "name": "Institute of Geosciences",
+        "status": "evidence_gated",
+        "officialUrl": "https://geo.edu.al/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Institute of Geosciences public-information page for AL exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "BA": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/BA",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's BA EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "ba-official-information",
+        "name": "Federal Hydrometeorological Institute",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.fhmzbih.gov.ba/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Federal Hydrometeorological Institute public-information page for BA exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "BY": [
+      {
+        "id": "by-official-information",
+        "name": "Belhydromet weather information",
+        "status": "evidence_gated",
+        "officialUrl": "https://pogoda.by/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Belhydromet weather information public-information page for BY exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "GB": [
+      {
+        "id": "ea-flood",
+        "name": "England flood warnings",
+        "status": "active",
+        "officialUrl": "https://check-for-flooding.service.gov.uk/",
+        "accessUrl": "https://environment.data.gov.uk/flood-monitoring/id/floods",
+        "termsUrl": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+        "guideId": "england-flood-warnings"
+      },
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-united-kingdom",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/UK",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's GB EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "gb-official-information",
+        "name": "Met Office UK weather warnings",
+        "status": "evidence_gated",
+        "officialUrl": "https://weather.metoffice.gov.uk/warnings-and-advice/uk-warnings",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Met Office UK weather warnings public-information page for GB exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      },
+      {
+        "id": "met-office-nswws",
+        "name": "National Severe Weather Warning Service",
+        "status": "credential_gated",
+        "officialUrl": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings",
+        "accessUrl": "https://warnings.api.metoffice.gov.uk/",
+        "termsUrl": "https://www.metoffice.gov.uk/about-us/legal",
+        "noGuideReason": "Optional non-contributing enhancement; Met Office credentials are not provisioned for this release."
+      },
+      {
+        "id": "nrw-flood",
+        "name": "Wales flood warnings",
+        "status": "credential_gated",
+        "officialUrl": "https://naturalresources.wales/flooding/check-flood-warnings/?lang=en",
+        "accessUrl": "https://api.naturalresources.wales/floodwarnings/",
+        "termsUrl": null,
+        "noGuideReason": "Optional enhancement; Wales remains authoritative-link coverage without credentials."
+      }
+    ],
+    "IS": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "active",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "credential_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/IS",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "Optional authenticated recovery; catalog 3 launch and health rely on the keyless Atom primary, not this transport."
+      },
+      {
+        "id": "is-official-information",
+        "name": "Icelandic Met Office",
+        "status": "evidence_gated",
+        "officialUrl": "https://en.vedur.is/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Icelandic Met Office public-information page for IS exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "LI": [
+      {
+        "id": "li-official-information",
+        "name": "Liechtenstein government information",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.llv.li/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Liechtenstein government information public-information page for LI exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "MC": [
+      {
+        "id": "mc-official-information",
+        "name": "Monaco government information",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.gouv.mc/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Monaco government information public-information page for MC exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "MD": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-moldova",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/MD",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's MD EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "md-official-information",
+        "name": "Moldova weather warnings",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteo.md/index.php/ro/weather/current-warnings/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Moldova weather warnings public-information page for MD exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "ME": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-montenegro",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/ME",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's ME EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "me-official-information",
+        "name": "Montenegro Hydrometeorological and Seismological Service",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteo.co.me/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Montenegro Hydrometeorological and Seismological Service public-information page for ME exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "MK": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-republic-of-north-macedonia",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/MK",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's MK EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "mk-official-information",
+        "name": "North Macedonia Hydrometeorological Service",
+        "status": "evidence_gated",
+        "officialUrl": "https://uhmr.gov.mk/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed North Macedonia Hydrometeorological Service public-information page for MK exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "NO": [
+      {
+        "id": "met-norway-alerts",
+        "name": "MET Norway MetAlerts",
+        "status": "active",
+        "officialUrl": "https://www.met.no/en/weather-and-climate/text-forecast-and-warnings",
+        "accessUrl": "https://api.met.no/weatherapi/metalerts/2.0/current.json",
+        "termsUrl": "https://api.met.no/doc/TermsOfService",
+        "guideId": "met-norway-metalerts"
+      },
+      {
+        "id": "nve-flood",
+        "name": "NVE flood warnings",
+        "status": "active",
+        "officialUrl": "https://www.varsom.no/en/flood-and-landslide-warning-service/",
+        "accessUrl": "https://api01.nve.no/hydrology/forecast/flood/v1.0.10/Warning/en/",
+        "termsUrl": "https://www.nve.no/about-nve/privacy-policy/terms-of-use/",
+        "guideId": "nve-flood-warnings"
+      },
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-norway",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/NO",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's NO EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "no-official-information",
+        "name": "Varsom natural hazard warnings",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.varsom.no/en/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Varsom natural hazard warnings public-information page for NO exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "RS": [
+      {
+        "id": "meteoalarm-atom",
+        "name": "MeteoAlarm keyless Atom warning feed",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-serbia",
+        "termsUrl": "https://www.meteoalarm.org/en/live/terms-and-conditions/",
+        "guideId": "meteoalarm-atom-warnings"
+      },
+      {
+        "id": "meteoalarm-edr",
+        "name": "MeteoAlarm authenticated EDR recovery",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.meteoalarm.org/",
+        "accessUrl": "https://api.meteoalarm.org/edr/v1/collections/warnings/locations/RS",
+        "termsUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "noGuideReason": "MeteoAlarm's RS EDR location endpoint requires authentication, and this partition lacks verified destination and hazard coverage; the keyless Atom guide does not describe this distinct EDR artifact."
+      },
+      {
+        "id": "rs-official-information",
+        "name": "Serbia hydrometeorological warnings",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.hidmet.gov.rs/latin/upozorenja/index.php",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Serbia hydrometeorological warnings public-information page for RS exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "SM": [
+      {
+        "id": "sm-official-information",
+        "name": "San Marino civil protection orders",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.gov.sm/pub1/GovSM/Circolari-e-Ordinanze/Ordinanze-Protezione-Civile.html",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed San Marino civil protection orders public-information page for SM exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "TR": [
+      {
+        "id": "tr-official-information",
+        "name": "Türkiye meteorological information",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.mgm.gov.tr/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Türkiye meteorological information public-information page for TR exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "VA": [
+      {
+        "id": "va-official-information",
+        "name": "Vatican City State information",
+        "status": "evidence_gated",
+        "officialUrl": "https://www.vaticanstate.va/en/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Vatican City State information public-information page for VA exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ],
+    "XK": [
+      {
+        "id": "xk-official-information",
+        "name": "Kosovo Hydrometeorological Institute",
+        "status": "evidence_gated",
+        "officialUrl": "https://ihmk-rks.net/",
+        "accessUrl": null,
+        "termsUrl": null,
+        "noGuideReason": "The reviewed Kosovo Hydrometeorological Institute public-information page for XK exposes no documented, reusable machine-warning feed or bounded Python access path; this is a source link, not monitored coverage."
+      }
+    ]
+  }
+}

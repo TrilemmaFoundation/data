@@ -9,6 +9,7 @@ import {
   tableCopy,
 } from "../src/content/site-copy";
 import { getActiveDatasets, getAllDatasets, getCatalogDatasets } from "../src/lib/datasets";
+import { getAllCollections, STARTER_COLLECTION_ID } from "../src/lib/collections";
 import { CATALOG_PAGE_SIZE, EMPTY_FILTERS, deriveCatalogPage, filterDatasets } from "../src/lib/search";
 import { getVocabulary, toVocabularySnapshot } from "../src/lib/vocabulary";
 import {
@@ -22,6 +23,20 @@ const CATALOG_PAGES = Math.ceil(DATASET_COUNT / CATALOG_PAGE_SIZE);
 const LAST_PAGE_ITEMS = DATASET_COUNT % CATALOG_PAGE_SIZE || CATALOG_PAGE_SIZE;
 const FIRST_CATALOG_NAME = deriveCatalogPage(getCatalogDatasets(), EMPTY_FILTERS, null, 1)
   .paginated.items[0]!.name;
+const FIRST_GEOTIFF_NAME = deriveCatalogPage(
+  getCatalogDatasets(), { ...EMPTY_FILTERS, query: "GeoTIFF" }, null, 1,
+).paginated.items[0]!.name;
+const FIRST_WILDFIRE_NAME = deriveCatalogPage(
+  getCatalogDatasets(), { ...EMPTY_FILTERS, query: "wildfire" }, null, 1,
+).paginated.items[0]!.name;
+const FIRST_FILINGS_NAME = deriveCatalogPage(
+  getCatalogDatasets(), { ...EMPTY_FILTERS, query: "company filings" }, null, 1,
+).paginated.items[0]!.name;
+const STARTER_PAGE = Math.floor(
+  getCatalogDatasets().findIndex(({ id }) =>
+    getAllCollections().find(({ id }) => id === STARTER_COLLECTION_ID)?.dataset_ids.includes(id),
+  ) / CATALOG_PAGE_SIZE,
+) + 1;
 const EARTHQUAKE_HAZARD_COUNT = filterDatasets(
   getCatalogDatasets(),
   { ...EMPTY_FILTERS, query: "earthquake", domains: ["Natural Hazards"] },
@@ -56,16 +71,16 @@ test("search preserves typed spaces and finds dataset formats", async ({ page })
   await expect(search).toHaveValue("world development");
 
   await search.fill("GeoTIFF");
-  await expect(page.getByRole("link", { name: "Natural Earth" })).toBeVisible();
+  await expect(page.getByRole("link", { name: FIRST_GEOTIFF_NAME })).toBeVisible();
   await expect(
     page.getByRole("button", { name: filterCopy.moreFiltersLabel, exact: true }),
   ).toBeVisible();
 
   await page.goto("/?q=wildfire");
-  await expect(page.getByRole("link", { name: "NASA FIRMS Active Fire Data" })).toBeVisible();
+  await expect(page.getByRole("link", { name: FIRST_WILDFIRE_NAME })).toBeVisible();
   await page.goto("/?q=company+filings");
   await expect(
-    page.getByRole("link", { name: "SEC EDGAR Submissions and Company Facts" }),
+    page.getByRole("link", { name: FIRST_FILINGS_NAME }),
   ).toBeVisible();
 });
 
@@ -111,7 +126,7 @@ test("the hero title leads into build paths without a jump CTA", async ({ page }
 });
 
 test("starter highlighting stays on the unfiltered catalog", async ({ page }) => {
-  await page.goto("/");
+  await page.goto(`/?page=${STARTER_PAGE}`);
   await expect(
     page.getByText(datasetCardCopy.goodFirstBuildLabel).filter({ visible: true }).first(),
   ).toBeVisible();
@@ -417,21 +432,21 @@ test("desktop sorting is shareable, reversible, and restores the promoted order"
   await page.goto("/");
   const table = page.getByRole("table", { name: tableCopy.caption });
   const firstDataRow = () => table.getByRole("row").nth(1);
-  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
+  await expect(firstDataRow()).toContainText(FIRST_CATALOG_NAME);
 
   await page.getByRole("button", { name: tableCopy.sortBy("Dataset", false) }).click();
   await expect(page).toHaveURL((url) =>
     url.searchParams.get("sort") === "name" && url.searchParams.get("order") === "asc",
   );
-  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
+  await expect(firstDataRow()).toContainText(FIRST_CATALOG_NAME);
 
   await page.getByRole("button", { name: tableCopy.sortBy("Dataset", "asc") }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get("order") === "desc");
-  await expect(firstDataRow()).not.toContainText("American Community Survey 5-Year Estimates");
+  await expect(firstDataRow()).not.toContainText(FIRST_CATALOG_NAME);
 
   await page.getByRole("button", { name: tableCopy.sortBy("Dataset", "desc") }).click();
   await expect(page).toHaveURL((url) => !url.searchParams.has("sort"));
-  await expect(firstDataRow()).toContainText("American Community Survey 5-Year Estimates");
+  await expect(firstDataRow()).toContainText(FIRST_CATALOG_NAME);
 
   await page.goto("/?sort=updates&order=asc");
   const sortedFirst = firstDataRow().getByRole("link").first();

@@ -70,6 +70,26 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
                   <p className="mt-1 text-sm"><strong>{appsCopy.sourceAvailabilityLabel}:</strong> {source.availability}</p>
                   {source.coverage && <p className="mt-1 text-sm"><strong>{appsCopy.sourceCoverageLabel}:</strong> {source.coverage}</p>}
                   {source.details && <p className="mt-2 text-sm leading-6 text-muted-foreground">{source.details}</p>}
+                  {source.systems && (
+                    <details className="mt-3 rounded-lg border border-[var(--tf-soft-periwinkle)] p-3 text-sm">
+                      <summary className="cursor-pointer font-semibold">Review {source.systems.length} named warning {source.systems.length === 1 ? "system" : "systems"}</summary>
+                      <ul className="mt-3 space-y-3">
+                        {source.systems.map((system) => (
+                          <li key={system.id} className="border-t border-[var(--tf-soft-periwinkle)] pt-3">
+                            <p className="font-semibold">{system.name} <span className="font-normal text-muted-foreground">({system.status.replaceAll("_", " ")})</span></p>
+                            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                              <a href={system.officialUrl} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">Official source<span className="sr-only"> for {system.name} (opens in a new tab)</span></a>
+                              {system.accessUrl && system.accessUrl !== system.officialUrl && <a href={system.accessUrl} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">Access path<span className="sr-only"> for {system.name} (opens in a new tab)</span></a>}
+                              {system.termsUrl && <a href={system.termsUrl} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">Reuse terms<span className="sr-only"> for {system.name} (opens in a new tab)</span></a>}
+                              {system.guideId && <Link href={datasetPath(system.guideId)} className="text-link hover:underline">Data guide<span className="sr-only"> for {system.name}</span></Link>}
+                              {system.guideIds?.map((guide) => <Link key={guide.id} href={datasetPath(guide.id)} className="text-link hover:underline">{guide.label} guide<span className="sr-only"> for {system.name}</span></Link>)}
+                            </div>
+                            {system.noGuideReason && <p className="mt-1 text-muted-foreground">{system.noGuideReason}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
                   <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
                     <a href={source.officialUrl} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
                       {appsCopy.officialSourceLabel}<span className="sr-only"> for {source.name} (opens in a new tab)</span>
@@ -89,6 +109,11 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
                         {appsCopy.guideLabel}<span className="sr-only"> for {source.name}</span>
                       </Link>
                     )}
+                    {source.guideIds?.map((guide) => (
+                      <Link key={guide.id} href={datasetPath(guide.id)} className="text-link hover:underline">
+                        {guide.label} guide<span className="sr-only"> for {source.name}</span>
+                      </Link>
+                    ))}
                     {source.relatedGuideId && (
                       <Link href={datasetPath(source.relatedGuideId)} className="text-link hover:underline">
                         {appsCopy.relatedGuideLabel}<span className="sr-only"> for {source.name}</span>

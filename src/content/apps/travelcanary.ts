@@ -1,3 +1,5 @@
+import nationalWarningSystems from "./national-warning-systems.json";
+
 // Reviewed against TravelCanary's generated source inventory and its authored
 // source registries. This is a static editorial snapshot, not runtime health.
 export const travelCanary = {
@@ -19,7 +21,7 @@ export const travelCanary = {
       availability: "Configured. Country and destination mappings vary; EDR recovery requires a token and does not add coverage independently.",
       coverage: "European member feeds; the country-by-country active and gated mappings are listed under National warnings.",
       officialUrl: "https://meteoalarm.org/",
-      noGuideReason: "No matching MeteoAlarm warning-feed guide is yet in the Data catalog.",
+      guideId: "meteoalarm-atom-warnings",
     },
     {
       group: "Hazard and discovery feeds",
@@ -35,7 +37,11 @@ export const travelCanary = {
       role: "Fire-danger forecasts and active-fire context; danger forecast does not confirm a fire.",
       availability: "Configured; active-fire detections and perimeters are complementary and do not establish official wildfire-warning coverage.",
       officialUrl: "https://forest-fire.emergency.copernicus.eu/",
-      noGuideReason: "No matching EFFIS fire-danger or active-fire guide is yet in the Data catalog.",
+      guideIds: [
+        { id: "effis-fire-danger-forecast", label: "Fire danger forecast" },
+        { id: "effis-active-fire-hotspots", label: "Active-fire hotspots" },
+        { id: "effis-burned-area-perimeters", label: "Optional burned-area perimeters" },
+      ],
     },
     {
       group: "Hazard and discovery feeds",
@@ -51,7 +57,7 @@ export const travelCanary = {
       role: "Complementary maps for wildfire, flood, industrial, and other emergency events.",
       availability: "Configured as non-blocking context; a Rapid Mapping activation is not current warning coverage.",
       officialUrl: "https://mapping.emergency.copernicus.eu/",
-      noGuideReason: "No matching Rapid Mapping activation guide is yet in the Data catalog.",
+      guideId: "copernicus-rapid-mapping-activations",
     },
     {
       group: "Hazard and discovery feeds",
@@ -67,7 +73,10 @@ export const travelCanary = {
       role: "Satellite flood corroboration.",
       availability: "Environment-gated and non-blocking; no official flood-warning coverage credit.",
       officialUrl: "https://global-flood.emergency.copernicus.eu/",
-      noGuideReason: "No matching Global Flood Monitoring guide is yet in the Data catalog.",
+      guideIds: [
+        { id: "copernicus-gfm-flood-layers", label: "Satellite flood extent and quality" },
+        { id: "copernicus-glofas-flood-outlook", label: "Optional GloFAS forecast targeting" },
+      ],
     },
     {
       group: "Hazard and discovery feeds",
@@ -75,7 +84,7 @@ export const travelCanary = {
       role: "Preliminary earthquake fallback when primary USGS evidence is unavailable.",
       availability: "Configured as fallback; unmatched reports cannot replace ShakeMap intensity or establish monitoring coverage.",
       officialUrl: "https://www.seismicportal.eu/",
-      noGuideReason: "The USGS guide describes a different earthquake feed; an EMSC guide needs separate review.",
+      guideId: "emsc-earthquake-events",
     },
     {
       group: "Hazard and discovery feeds",
@@ -83,7 +92,7 @@ export const travelCanary = {
       role: "Official avalanche warnings for mapped Swiss bulletin regions.",
       availability: "Configured; limited to destinations intersecting reviewed bulletin geometry.",
       officialUrl: "https://www.slf.ch/en/avalanche-bulletin-and-snow-situation/",
-      noGuideReason: "No matching SLF bulletin guide is yet in the Data catalog.",
+      guideId: "slf-avalanche-bulletins",
     },
     {
       group: "Hazard and discovery feeds",
@@ -91,7 +100,7 @@ export const travelCanary = {
       role: "Official avalanche warnings for licensed, reviewed Alpine regions.",
       availability: "Configured only for mapped feed regions; additional region intersections remain gated pending bulletin verification.",
       officialUrl: "https://avalanche.report/",
-      noGuideReason: "No matching Avalanche.report bulletin guide is yet in the Data catalog.",
+      guideId: "avalanche-report-bulletins",
     },
     {
       group: "Hazard and discovery feeds",
@@ -99,7 +108,7 @@ export const travelCanary = {
       role: "Observed station pollutants and European AQI context.",
       availability: "Configured with partial monitoring only at mapped operational stations; modeled or gap-filled values cannot establish an all-clear.",
       officialUrl: "https://airindex.eea.europa.eu/",
-      noGuideReason: "No matching EEA station or AQI artifact guide is yet in the Data catalog.",
+      guideId: "eea-air-quality-index-stations",
     },
     {
       group: "Hazard and discovery feeds",
@@ -107,7 +116,7 @@ export const travelCanary = {
       role: "Corroborated civil-unrest and security news context.",
       availability: "Gated; requires three independently owned reviewed publishers and never establishes monitoring coverage.",
       officialUrl: "https://www.gdeltproject.org/",
-      noGuideReason: "No matching GDELT discovery-feed guide is yet in the Data catalog.",
+      noGuideReason: "The pinned GDELT Geo 2.0 API returned HTTP 404 for a bounded query on 2026-09-28; a runnable exact-feed example could not be verified.",
     },
     {
       group: "Hazard and discovery feeds",
@@ -115,7 +124,7 @@ export const travelCanary = {
       role: "Official French river-section flood warnings.",
       availability: "Configured; only destinations mapped to official river sections qualify.",
       officialUrl: "https://www.vigicrues.gouv.fr/",
-      noGuideReason: "No matching Vigicrues warning guide is yet in the Data catalog.",
+      guideId: "vigicrues-flood-vigilance-rss",
     },
     {
       group: "Hazard and discovery feeds",
@@ -123,7 +132,7 @@ export const travelCanary = {
       role: "Official Swiss flood-warning map sampled at destination geometry.",
       availability: "Configured for the mapped Swiss footprint; a warning-map pixel is not a local water-level measurement.",
       officialUrl: "https://www.hydrodaten.admin.ch/",
-      noGuideReason: "No matching FOEN warning-map guide is yet in the Data catalog.",
+      guideId: "foen-flood-warning-map",
     },
     {
       group: "Hazard and discovery feeds",
@@ -131,7 +140,7 @@ export const travelCanary = {
       role: "Official flood-warning stages at mapped hydrographic stations.",
       availability: "Configured; raw water levels do not score as warnings.",
       officialUrl: "https://ehyd.gv.at/",
-      noGuideReason: "No matching eHYD flood-stage guide is yet in the Data catalog.",
+      guideId: "ehyd-current-flood-stages",
     },
     {
       group: "Hazard and discovery feeds",
@@ -139,7 +148,7 @@ export const travelCanary = {
       role: "Recent wildfire and volcano event context.",
       availability: "Environment-gated, non-blocking, and not a local warning source.",
       officialUrl: "https://eonet.gsfc.nasa.gov/",
-      noGuideReason: "No matching NASA EONET guide is yet in the Data catalog.",
+      guideId: "nasa-eonet-events",
     },
     {
       group: "Hazard and discovery feeds",
@@ -147,7 +156,7 @@ export const travelCanary = {
       role: "Dekadal agricultural and ecosystem drought context.",
       availability: "Environment-gated; not an immediate emergency warning.",
       officialUrl: "https://drought.emergency.copernicus.eu/",
-      noGuideReason: "No matching EDO drought-indicator guide is yet in the Data catalog.",
+      guideId: "copernicus-edo-drought-indicator",
     },
     {
       group: "Hazard and discovery feeds",
@@ -155,17 +164,32 @@ export const travelCanary = {
       role: "Whole-country security and travel-advice context.",
       availability: "Environment-gated; the text does not imply sub-country warning geometry.",
       officialUrl: "https://www.gov.uk/foreign-travel-advice",
-      noGuideReason: "No matching FCDO advice guide is yet in the Data catalog.",
+      guideId: "fcdo-travel-advice",
     },
     {
       group: "Local conditions",
-      name: "Open-Meteo forecasts and Copernicus CAMS",
-      role: "Hourly weather, modeled air-quality, dust and UV, plus nearby marine forecasts.",
-      availability: "Configured but restricted to accepted noncommercial use and local-conditions activation; forecasts are context, not observations or warnings.",
-      coverage: "Weather, air-quality, and marine products; marine applies only to reviewed coastal destinations.",
-      officialUrl: "https://open-meteo.com/",
+      name: "Open-Meteo weather forecasts",
+      role: "Hourly modeled point-weather forecasts for local conditions.",
+      availability: "Configured but restricted to accepted noncommercial use and local-conditions activation; forecasts are not observations or warnings.",
+      officialUrl: "https://open-meteo.com/en/docs",
+      guideId: "open-meteo-weather-forecast",
+    },
+    {
+      group: "Local conditions",
+      name: "Open-Meteo air-quality forecasts and Copernicus CAMS",
+      role: "Modeled air-quality, dust, and UV context served by Open-Meteo using CAMS data.",
+      availability: "Configured but restricted to accepted noncommercial use and local-conditions activation; model values are not station observations.",
+      officialUrl: "https://open-meteo.com/en/docs/air-quality-api",
       additionalUrls: [{ label: "Copernicus Atmosphere Monitoring Service", href: "https://atmosphere.copernicus.eu/" }],
-      noGuideReason: "No matching Open-Meteo forecast guide is yet in the Data catalog; the CAMS model is accessed through Open-Meteo here.",
+      guideId: "open-meteo-air-quality",
+    },
+    {
+      group: "Local conditions",
+      name: "Open-Meteo marine forecasts",
+      role: "Nearby offshore wave and marine forecasts for reviewed coastal destinations.",
+      availability: "Configured but restricted to accepted noncommercial use and local-conditions activation; unsupported coasts remain outside the mapped product.",
+      officialUrl: "https://open-meteo.com/en/docs/marine-weather-api",
+      guideId: "open-meteo-marine",
     },
     {
       group: "Local conditions",
@@ -183,7 +207,7 @@ export const travelCanary = {
       availability: "Configured when local conditions are activated; airport readings are not destination-wide weather conditions or aviation advice.",
       officialUrl: "https://aviationweather.gov/data/api/",
       additionalUrls: [{ label: "Aviation Weather Center", href: "https://aviationweather.gov/" }],
-      noGuideReason: "No matching Aviation Weather Center METAR or station-cache guide is yet in the Data catalog.",
+      guideId: "awc-metar-stations",
     },
     {
       group: "Local conditions",
@@ -191,7 +215,10 @@ export const travelCanary = {
       role: "Portuguese station observations and recent regional earthquake context.",
       availability: "Configured but restricted to accepted noncommercial use and local-conditions activation; measurements do not establish warning coverage.",
       officialUrl: "https://api.ipma.pt/",
-      noGuideReason: "No matching IPMA station or regional seismic guide is yet in the Data catalog.",
+      guideIds: [
+        { id: "ipma-weather-station-observations", label: "Weather stations" },
+        { id: "ipma-seismic-observations", label: "Regional earthquakes" },
+      ],
     },
     {
       group: "Local conditions",
@@ -199,7 +226,7 @@ export const travelCanary = {
       role: "Candidate Spanish regional earthquake context.",
       availability: "Gated and not connected until RSS event time, corrections, and deletion lifecycle are verified.",
       officialUrl: "https://www.ign.es/web/social-rss",
-      noGuideReason: "Activation review is incomplete, so a matching guide is pending.",
+      guideId: "ign-spain-earthquake-rss",
     },
     {
       group: "Local conditions",
@@ -207,7 +234,7 @@ export const travelCanary = {
       role: "Provisional Slovenian river observations at reviewed stations.",
       availability: "Configured for local conditions; reference-level crossings are factual context, not official flood warnings.",
       officialUrl: "https://www.arso.gov.si/vode/podatki/hidro_podatki_xml.html",
-      noGuideReason: "No matching ARSO hydrology guide is yet in the Data catalog.",
+      guideId: "arso-current-hydrology",
     },
     {
       group: "Local conditions",
@@ -216,7 +243,7 @@ export const travelCanary = {
       availability: "Configured for local conditions; unchecked station data are not flood warnings.",
       officialUrl: "https://waterlevel.ie/page/api/",
       additionalUrls: [{ label: "OPW waterlevel.ie", href: "https://waterlevel.ie/" }],
-      noGuideReason: "No matching OPW water-level guide is yet in the Data catalog.",
+      guideId: "opw-ireland-water-levels",
     },
     {
       group: "Local conditions",
@@ -224,7 +251,7 @@ export const travelCanary = {
       role: "Dutch station water levels with quality-code and NAP-datum checks; pinned station metadata maps locations.",
       availability: "Configured for local conditions; observations are not flood warnings.",
       officialUrl: "https://rijkswaterstaatdata.nl/waterdata/",
-      noGuideReason: "No matching Rijkswaterstaat Waterdata guide is yet in the Data catalog.",
+      guideId: "rijkswaterstaat-current-water-levels",
     },
     {
       group: "Local conditions",
@@ -232,7 +259,7 @@ export const travelCanary = {
       role: "Candidate Belgian river-level observations.",
       availability: "Gated: reviewed live group yielded rainfall, while water-level groups, quality codes, mappings, and HIC access remain unapproved.",
       officialUrl: "https://www.waterinfo.vlaanderen.be/default.aspx?path=Public%2FOver+waterinfo%2FFAQ+open+data",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      noGuideReason: "Waterinfo says automated VMM requests require a dedicated token requested from the operator; no authorized water-level token or reviewed level group was available for an exact runnable example. The tested anonymous group contained rainfall, not this feed.",
     },
     {
       group: "Local conditions",
@@ -240,7 +267,7 @@ export const travelCanary = {
       role: "Candidate river and station observations.",
       availability: "Gated until exact station mappings and vertical-reference metadata are reviewed.",
       officialUrl: "https://api.meteo.lt/",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      guideId: "meteo-lt-hydrology-observations",
     },
     {
       group: "Local conditions",
@@ -248,7 +275,7 @@ export const travelCanary = {
       role: "Candidate hydrological station observations.",
       availability: "Gated pending OData fixture, quality flag, datum, and station-mapping review.",
       officialUrl: "https://www.syke.fi/en/environmental-data/open-web-services/environmental-data-apis",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      guideId: "syke-hydrology-water-levels",
     },
     {
       group: "Local conditions",
@@ -256,7 +283,7 @@ export const travelCanary = {
       role: "Candidate air-quality station observations.",
       availability: "Gated pending local-time, instrument-flag, and station-mapping review.",
       officialUrl: "https://www.airquality.dli.mlsi.gov.cy/",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      noGuideReason: "Cyprus publishes this feed under CC BY-SA, but its official all-stations JSON endpoints returned HTTP 403 to a bounded automated request on 2026-09-28; an exact runnable Python example could not be verified.",
     },
     {
       group: "Local conditions",
@@ -264,7 +291,7 @@ export const travelCanary = {
       role: "Candidate daily hydrological observations.",
       availability: "Gated pending timestamp, reuse, and station-area review; daily values cannot imply current flood warnings.",
       officialUrl: "https://info.meteo.bg/openData/",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      noGuideReason: "The official daily runoff CSV and Python access work, but NIMH's current open-data pages no longer expose the reuse conditions indexed in earlier copies; permitted analysis cannot be confirmed from a live source.",
     },
     {
       group: "Local conditions",
@@ -272,7 +299,7 @@ export const travelCanary = {
       role: "Current accident-associated road closures matched by official geometry.",
       availability: "Configured for local conditions; nearby context is not complete disruption coverage or route advice.",
       officialUrl: "https://www.digitraffic.fi/en/road-traffic/",
-      noGuideReason: "No matching Digitraffic traffic-announcement guide is yet in the Data catalog.",
+      guideId: "fintraffic-digitraffic-road-messages",
     },
     {
       group: "Local conditions",
@@ -280,7 +307,7 @@ export const travelCanary = {
       role: "Candidate Swedish water-shortage messages.",
       availability: "Gated until informational-message validity and reuse lifecycle fixtures pass review.",
       officialUrl: "https://opendata-download-warnings.smhi.se/ibww/api/version/1",
-      noGuideReason: "Activation and exact dataset review remain incomplete.",
+      guideId: "smhi-water-shortage-messages",
     },
     {
       group: "Local conditions",
@@ -288,7 +315,7 @@ export const travelCanary = {
       role: "Official Swedish infrastructure and crisis notices, reduced to fixed factual categories.",
       availability: "Configured for local conditions; regional notices do not prove a destination-wide interruption.",
       officialUrl: "https://www.krisinformation.se/",
-      noGuideReason: "No matching Krisinformation notice API guide is yet in the Data catalog.",
+      guideId: "krisinformation-news",
     },
     {
       group: "Local conditions",
@@ -296,7 +323,7 @@ export const travelCanary = {
       role: "Dutch serious road incidents and complete closures intersecting destinations.",
       availability: "Configured for local conditions; not route advice.",
       officialUrl: "https://opendata.ndw.nu/",
-      noGuideReason: "No matching NDW incident-feed guide is yet in the Data catalog.",
+      guideId: "ndw-road-closures",
     },
     {
       group: "Local conditions",
@@ -304,7 +331,7 @@ export const travelCanary = {
       role: "German motorway closures and warnings intersecting destinations.",
       availability: "Configured but restricted to accepted operator use and local-conditions activation; not complete transport monitoring.",
       officialUrl: "https://www.autobahn.de/",
-      noGuideReason: "No matching Autobahn traffic API guide is yet in the Data catalog.",
+      noGuideReason: "The operator's API portal requires an Autobahn employee ID; the community autobahn.api.bund.dev endpoint is not an operator-published reuse grant for the exact closure feed, so access and terms do not qualify.",
     },
     {
       group: "Local conditions",
@@ -312,7 +339,7 @@ export const travelCanary = {
       role: "Candidate current and scheduled power interruptions by district.",
       availability: "Gated: five public district pages exceeded the reviewed eight-second source budget.",
       officialUrl: "https://www.eac.com.cy/EN/RegulatedActivities/Distribution/PowerInterruptions/Pages/Faultsandscheduledinterruptions.aspx?District=0",
-      noGuideReason: "The product's source gate failed; an exact guide needs separate access review.",
+      noGuideReason: "The reviewed official district pages exceeded the product's eight-second source budget, and no official machine-readable outage contract or terms permitting automated analysis were verified for a runnable exact-feed guide.",
     },
     {
       group: "Local conditions",
@@ -320,7 +347,7 @@ export const travelCanary = {
       role: "Candidate Maltese current and planned electricity interruptions.",
       availability: "Gated: the official planned-outage response exceeded the approved 512 KiB limit.",
       officialUrl: "https://www.enemalta.com.mt/planned-power-cuts/",
-      noGuideReason: "The product's source gate failed; an exact guide needs separate access review.",
+      noGuideReason: "The official terms allow only personal, noncommercial reproduction of true copies and do not establish permission for transformed outage analysis; the planned-outage response also exceeded the product's 512 KiB gate.",
     },
     {
       group: "Local conditions",
@@ -328,7 +355,7 @@ export const travelCanary = {
       role: "Polish national electricity-use recommendations, not local outages.",
       availability: "Configured for local conditions; advice describes system-wide conditions only.",
       officialUrl: "https://www.energetycznykompas.pl/",
-      noGuideReason: "No matching PSE Energy Compass guide is yet in the Data catalog.",
+      guideId: "pse-energy-compass",
     },
     {
       group: "Pinned inputs",
@@ -337,7 +364,7 @@ export const travelCanary = {
       availability: "Pinned catalog input, not a live feed; regional matching areas are TravelCanary approximations.",
       officialUrl: "https://download.geonames.org/export/dump/",
       evidenceUrl: "https://github.com/hypertrial/travelcanary/blob/1ff2fdfa06b38880175a03aed10cfe60352bd0f6/data/review-inputs/europe-expansion-catalog.json",
-      noGuideReason: "No matching GeoNames dump guide is yet in the Data catalog.",
+      guideId: "geonames-daily-gazetteer",
     },
     {
       group: "Pinned inputs",
@@ -346,7 +373,7 @@ export const travelCanary = {
       availability: "Pinned geographic input; a regional polygon alone does not establish warning coverage.",
       officialUrl: "https://gisco-services.ec.europa.eu/distribution/v2/nuts/nuts-2024-files.html",
       evidenceUrl: "https://github.com/hypertrial/travelcanary/blob/1ff2fdfa06b38880175a03aed10cfe60352bd0f6/data/catalog-metadata.json",
-      noGuideReason: "The existing Eurostat statistics guide is a different product; no GISCO geometry guide is yet available.",
+      guideId: "eurostat-gisco-nuts-2024",
     },
     {
       group: "Pinned inputs",
@@ -355,7 +382,7 @@ export const travelCanary = {
       availability: "Pinned geographic review input; new region matches remain gated until bulletin and seasonal scope review.",
       officialUrl: "https://eaws.gitlab.io/eaws-regions/micro-regions.geojson",
       evidenceUrl: "https://github.com/hypertrial/travelcanary/blob/1ff2fdfa06b38880175a03aed10cfe60352bd0f6/data/review-inputs/eaws-expansion-review.json",
-      noGuideReason: "No matching EAWS regions guide is yet in the Data catalog.",
+      guideId: "eaws-avalanche-regions",
     },
     {
       group: "Pinned inputs",
@@ -378,7 +405,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Andorra weather alerts", href: "https://www.meteo.ad/en/Alerts" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.AD,
     },
     {
       group: "National warnings",
@@ -387,7 +414,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Institute of Geosciences (evidence-gated; official link/review only).",
       officialUrl: "https://geo.edu.al/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.AL,
     },
     {
       group: "National warnings",
@@ -396,7 +423,7 @@ export const travelCanary = {
       availability: "National civil-alert partition enabled; 1 active system listed.",
       details: "AT-Alert (active; national warning feed).",
       officialUrl: "https://warnung.at-alert.at/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.AT,
     },
     {
       group: "National warnings",
@@ -408,7 +435,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Federal Hydrometeorological Institute", href: "https://www.fhmzbih.gov.ba/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.BA,
     },
     {
       group: "National warnings",
@@ -417,7 +444,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "BE-Alert (evidence-gated; official link/review only).",
       officialUrl: "https://www.be-alert.be/en/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.BE,
     },
     {
       group: "National warnings",
@@ -426,7 +453,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "BG-ALERT (evidence-gated; official link/review only).",
       officialUrl: "https://bg-alert.bg/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.BG,
     },
     {
       group: "National warnings",
@@ -435,7 +462,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Belhydromet weather information (evidence-gated; official link/review only).",
       officialUrl: "https://pogoda.by/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.BY,
     },
     {
       group: "National warnings",
@@ -444,7 +471,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 blocked system listed.",
       details: "Alertswiss (blocked; official link/review only).",
       officialUrl: "https://www.alert.swiss/en/home.html",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.CH,
     },
     {
       group: "National warnings",
@@ -453,7 +480,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Cyprus public warning system (evidence-gated; official link/review only).",
       officialUrl: "https://www.gov.cy/moi/en/civil-defence/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.CY,
     },
     {
       group: "National warnings",
@@ -462,7 +489,7 @@ export const travelCanary = {
       availability: "National civil-alert partition enabled; 1 active system listed.",
       details: "CHMI hydrology and flash-flood risk (active; national warning feed).",
       officialUrl: "https://opendata.chmi.cz/hydrology/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.CZ,
     },
     {
       group: "National warnings",
@@ -475,7 +502,7 @@ export const travelCanary = {
         { label: "BBK civil-protection RSS", href: "https://www.bbk.bund.de/DE/Warnung-Vorsorge/Warn-App-NINA/warn-app-nina_node.html" },
         { label: "DWD direct CAP recovery", href: "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.DE,
     },
     {
       group: "National warnings",
@@ -484,7 +511,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "S!RENEN (evidence-gated; official link/review only).",
       officialUrl: "https://www.sirenen.dk/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.DK,
     },
     {
       group: "National warnings",
@@ -493,7 +520,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 blocked system listed.",
       details: "EE-ALARM (blocked; official link/review only).",
       officialUrl: "https://www.olevalmis.ee/en/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.EE,
     },
     {
       group: "National warnings",
@@ -505,7 +532,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "AEMET direct CAP warnings", href: "https://www.aemet.es/es/rss_info/avisos/esp" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.ES,
     },
     {
       group: "National warnings",
@@ -517,7 +544,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "FMI CAP warnings", href: "https://alerts.fmi.fi/cap/profile/current/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.FI,
     },
     {
       group: "National warnings",
@@ -529,7 +556,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Météo-France Vigilance API", href: "https://www.data.gouv.fr/dataservices/api-bulletin-vigilance" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.FR,
     },
     {
       group: "National warnings",
@@ -544,7 +571,7 @@ export const travelCanary = {
         { label: "National Severe Weather Warning Service", href: "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings" },
         { label: "Wales flood warnings", href: "https://naturalresources.wales/flooding/check-flood-warnings/?lang=en" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.GB,
     },
     {
       group: "National warnings",
@@ -553,7 +580,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "112 Greece (evidence-gated; official link/review only).",
       officialUrl: "https://civilprotection.gov.gr/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.GR,
     },
     {
       group: "National warnings",
@@ -565,7 +592,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "DHMZ direct CAP warnings", href: "https://meteo.hr/proizvodi.php?section=podaci&param=xml_korisnici" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.HR,
     },
     {
       group: "National warnings",
@@ -574,7 +601,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 blocked system listed.",
       details: "VÉSZ (blocked; official link/review only).",
       officialUrl: "https://www.katasztrofavedelem.hu/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.HU,
     },
     {
       group: "National warnings",
@@ -586,7 +613,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Met Eireann warnings", href: "https://www.met.ie/warnings-today.html" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.IE,
     },
     {
       group: "National warnings",
@@ -598,7 +625,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Icelandic Met Office", href: "https://en.vedur.is/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.IS,
     },
     {
       group: "National warnings",
@@ -611,7 +638,7 @@ export const travelCanary = {
         { label: "National hydrogeological and hydraulic bulletin", href: "https://mappe.protezionecivile.gov.it/it/mappe-rischi/bollettino-di-criticita/" },
         { label: "Italian volcanic warnings and restrictions", href: "https://rischi.protezionecivile.gov.it/it/vulcanico/vulcani-italia/stromboli/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.IT,
     },
     {
       group: "National warnings",
@@ -620,7 +647,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Liechtenstein government information (evidence-gated; official link/review only).",
       officialUrl: "https://www.llv.li/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.LI,
     },
     {
       group: "National warnings",
@@ -629,7 +656,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "LT72 (evidence-gated; official link/review only).",
       officialUrl: "https://lt72.lt/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.LT,
     },
     {
       group: "National warnings",
@@ -638,7 +665,7 @@ export const travelCanary = {
       availability: "National civil-alert partition enabled; 1 active system listed.",
       details: "LU-Alert (active; national warning feed).",
       officialUrl: "https://data.public.lu/fr/datasets/alertes-du-systeme-lu-alert/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.LU,
     },
     {
       group: "National warnings",
@@ -650,7 +677,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "LVĢMC hydrological warnings", href: "https://data.gov.lv/dati/dataset/hidrometeorologiskie-bridinajumi" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.LV,
     },
     {
       group: "National warnings",
@@ -659,7 +686,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Monaco government information (evidence-gated; official link/review only).",
       officialUrl: "https://www.gouv.mc/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.MC,
     },
     {
       group: "National warnings",
@@ -671,7 +698,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Moldova weather warnings", href: "https://www.meteo.md/index.php/ro/weather/current-warnings/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.MD,
     },
     {
       group: "National warnings",
@@ -683,7 +710,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Montenegro Hydrometeorological and Seismological Service", href: "https://www.meteo.co.me/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.ME,
     },
     {
       group: "National warnings",
@@ -695,7 +722,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "North Macedonia Hydrometeorological Service", href: "https://uhmr.gov.mk/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.MK,
     },
     {
       group: "National warnings",
@@ -704,7 +731,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 blocked system listed.",
       details: "Malta public warning system (blocked; official link/review only).",
       officialUrl: "https://cps.gov.mt/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.MT,
     },
     {
       group: "National warnings",
@@ -713,7 +740,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "NL-Alert (evidence-gated; official link/review only).",
       officialUrl: "https://www.nl-alert.nl/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.NL,
     },
     {
       group: "National warnings",
@@ -727,7 +754,7 @@ export const travelCanary = {
         { label: "MeteoAlarm keyless Atom warning feed", href: "https://www.meteoalarm.org/" },
         { label: "Varsom natural hazard warnings", href: "https://www.varsom.no/en/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.NO,
     },
     {
       group: "National warnings",
@@ -736,7 +763,7 @@ export const travelCanary = {
       availability: "National civil-alert partition enabled; 1 active system listed.",
       details: "IMGW hydrology warnings (active; national warning feed).",
       officialUrl: "https://hydro.imgw.pl/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.PL,
     },
     {
       group: "National warnings",
@@ -750,7 +777,7 @@ export const travelCanary = {
         { label: "Azores Civil Protection alerts", href: "https://www.prociv.azores.gov.pt/alertas/" },
         { label: "ANEPC operational incidents", href: "https://prociv.gov.pt/pt/ocorrencias/" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.PT,
     },
     {
       group: "National warnings",
@@ -759,7 +786,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 blocked system listed.",
       details: "RO-ALERT (blocked; official link/review only).",
       officialUrl: "https://www.mai.gov.ro/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.RO,
     },
     {
       group: "National warnings",
@@ -771,7 +798,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Serbia hydrometeorological warnings", href: "https://www.hidmet.gov.rs/latin/upozorenja/index.php" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.RS,
     },
     {
       group: "National warnings",
@@ -783,7 +810,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "SMHI direct warnings", href: "https://opendata-download-warnings.smhi.se/ibww/api/version/1" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.SE,
     },
     {
       group: "National warnings",
@@ -792,7 +819,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Slovenia public warning system (evidence-gated; official link/review only).",
       officialUrl: "https://www.gov.si/en/state-authorities/bodies-within-ministries/administration-for-civil-protection-and-disaster-relief/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.SI,
     },
     {
       group: "National warnings",
@@ -804,7 +831,7 @@ export const travelCanary = {
       additionalUrls: [
         { label: "Crisis-management REST service", href: "https://portal.minv.sk/wps/esispz-api/docs/index.html" },
       ],
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.SK,
     },
     {
       group: "National warnings",
@@ -813,7 +840,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "San Marino civil protection orders (evidence-gated; official link/review only).",
       officialUrl: "https://www.gov.sm/pub1/GovSM/Circolari-e-Ordinanze/Ordinanze-Protezione-Civile.html",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.SM,
     },
     {
       group: "National warnings",
@@ -822,7 +849,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Türkiye meteorological information (evidence-gated; official link/review only).",
       officialUrl: "https://www.mgm.gov.tr/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.TR,
     },
     {
       group: "National warnings",
@@ -831,7 +858,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Vatican City State information (evidence-gated; official link/review only).",
       officialUrl: "https://www.vaticanstate.va/en/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.VA,
     },
     {
       group: "National warnings",
@@ -840,7 +867,7 @@ export const travelCanary = {
       availability: "National civil-alert partition not enabled; 1 gated system listed.",
       details: "Kosovo Hydrometeorological Institute (evidence-gated; official link/review only).",
       officialUrl: "https://ihmk-rks.net/",
-      noGuideReason: "No matching national warning feed guide is yet in the Data catalog; each listed system has separate access and reuse terms.",
+      systems: nationalWarningSystems.countries.XK,
     },
   ],
 } as const;

@@ -48,6 +48,74 @@ type UrlStatusException = {
 
 const STATUS_EXCEPTIONS = new Map<string, UrlStatusException>([
   [
+    "https://www.bls.gov/cew/downloadable-data-files.htm",
+    {
+      statuses: [403],
+      reason: "BLS blocks automated documentation requests; the official 2025 county high-level ZIP responded with a valid ranged ZIP header on 2026-09-28",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://www.bls.gov/bls/linksite.htm",
+    {
+      statuses: [200, 403],
+      reason: "BLS serves its public-domain notice as an access-denied page to automated checks; official text was independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://ucr.fbi.gov/data_quality_guidelines",
+    {
+      statuses: [403],
+      reason: "FBI bot-protects its UCR public-domain guidance from automated validation; official text was independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://help.bdc.fcc.gov/hc/en-us/articles/10467446103579-How-to-Use-the-FCC-s-National-Broadband-Map",
+    {
+      statuses: [403],
+      reason: "FCC help pages block automated validation here; the official download instructions and exact December 2025 ZIP were independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://avalanche.report/more/open-data",
+    {
+      statuses: [200],
+      reason: "Avalanche.report serves a JavaScript shell to automated checks; official CC BY page independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://www.coinbase.com/legal/market_data",
+    {
+      statuses: [403],
+      reason: "Coinbase bot-protects its market-data terms; official page independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+    },
+  ],
+  [
+    "https://www.bitstamp.net/api/",
+    {
+      statuses: [200],
+      reason: "Bitstamp API and commercial-data terms exceed the 1 MB validation cap; official page independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+      skipIdentity: true,
+    },
+  ],
+  [
+    "https://www.binance.com/en/terms",
+    {
+      statuses: [202],
+      reason: "Binance serves an empty bot-challenge response to automated validation; official terms independently reviewed 2026-09-28",
+      expires: "2026-11-12",
+      skipIdentity: true,
+    },
+  ],
+  [
     "https://kalshi.com/developer-agreement",
     {
       statuses: [429],

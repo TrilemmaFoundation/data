@@ -199,8 +199,23 @@ test("source links distinguish matching guides from official sources", async ({ 
 
   await page.goto("/apps/househunter");
   const nri = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "FEMA National Risk Index" }) });
-  await expect(nri.getByRole("link", { name: /Dataset Guide/ })).toHaveCount(0);
-  await expect(nri).toContainText("FEMA National Flood Hazard Layer is a different dataset");
+  await expect(nri.getByRole("link", { name: /Dataset Guide/ })).toHaveAttribute("href", "/datasets/fema-national-risk-index");
+  await page.goto("/apps/rockyroad");
+  const geofabrik = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "OpenStreetMap regional extracts via Geofabrik" }) });
+  await expect(geofabrik.getByRole("link", { name: /Dataset Guide/ })).toHaveAttribute("href", "/datasets/geofabrik-osm-extracts");
+});
+
+test("country warning partitions show separate guide decisions for each system", async ({ page }) => {
+  await page.goto("/apps/travelcanary");
+  const germany = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "Germany (DE) warning systems" }) });
+  await germany.locator("summary").click();
+  const systems = germany.locator("details > ul > li");
+  await expect(systems).toHaveCount(3);
+  await expect(systems.filter({ hasText: "LHP flood warnings" }).getByRole("link", { name: /Data guide/ })).toHaveAttribute("href", "/datasets/lhp-germany-flood-warnings");
+  const bbk = systems.filter({ hasText: "BBK civil-protection RSS" });
+  await expect(bbk.getByRole("link", { name: /Data guide/ })).toHaveCount(0);
+  await expect(bbk).toContainText("state/municipal issuer rights");
+  await expect(systems.filter({ hasText: "DWD direct CAP recovery" }).getByRole("link", { name: /Data guide/ })).toHaveAttribute("href", "/datasets/dwd-cap-warnings");
 });
 
 test("Bitview is discoverable as a dataset guide with a runnable notebook", async ({ page }) => {

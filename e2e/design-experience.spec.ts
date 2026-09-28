@@ -30,7 +30,7 @@ test('TravelCanary source list remains readable at narrow and desktop widths and
   for (const width of [320, 390, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/apps/travelcanary');
-    const sources = page.locator('main section[aria-labelledby="app-sources-title"] li');
+    const sources = page.locator('main section[aria-labelledby="app-sources-title"] > section > ul > li');
     expect(await sources.count()).toBeGreaterThan(20);
     await sources.last().scrollIntoViewIfNeeded();
     await expect(sources.last()).toBeVisible();

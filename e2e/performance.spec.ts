@@ -22,7 +22,8 @@ const BUDGETS = {
   gzipCode: 360_000,
   analytics: 40_000,
   notebooks: 8_000_000,
-  catalogJson: 250_000,
+  // Catalog search data grows with each independently searchable guide.
+  catalogJson: 5_000 + addedDatasets * 1_600,
 };
 
 async function initialCodeBytes(page: Page, path: string) {

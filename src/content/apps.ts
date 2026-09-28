@@ -1,6 +1,19 @@
 import { otherApps } from "./apps/other";
 import { travelCanary } from "./apps/travelcanary";
 
+export type NationalWarningSystem = {
+  id: string;
+  name: string;
+  status: string;
+  officialUrl: string;
+  accessUrl?: string | null;
+  termsUrl?: string | null;
+} & (
+  | { guideId: string; guideIds?: never; noGuideReason?: never }
+  | { guideId?: never; guideIds: readonly { id: string; label: string }[]; noGuideReason?: never }
+  | { guideId?: never; guideIds?: never; noGuideReason: string }
+);
+
 export type AppSource = {
   name: string;
   group?: string;
@@ -13,8 +26,10 @@ export type AppSource = {
   details?: string;
   relatedGuideId?: string;
 } & (
-  | { guideId: string; noGuideReason?: never }
-  | { guideId?: never; noGuideReason: string }
+  | { guideId: string; guideIds?: never; noGuideReason?: never; systems?: never }
+  | { guideId?: never; guideIds: readonly { id: string; label: string }[]; noGuideReason?: never; systems?: never }
+  | { guideId?: never; guideIds?: never; noGuideReason: string; systems?: never }
+  | { guideId?: never; guideIds?: never; noGuideReason?: never; systems: readonly NationalWarningSystem[] }
 );
 
 export type AppEntry = {
