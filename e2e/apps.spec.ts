@@ -64,17 +64,18 @@ test("cards and details expose only the intended external actions", async ({ pag
     ["Live App", "https://travelcanary.org/", "https://github.com/hypertrial/travelcanary"],
     [undefined, undefined, "https://github.com/hypertrial/househunter"],
     [undefined, undefined, "https://github.com/hypertrial/rockyroad"],
-    ["Archive", "https://stackingsats.org/", "https://github.com/hypertrial/stacksats"],
+    ["Archive", "https://stackingsats.org/", "https://github.com/hypertrial/stacksats", "https://bitview.space/"],
   ] as const;
   const statuses = [undefined, undefined, "Beta", "Alpha", "Alpha", "Archived"] as const;
-  for (const [index, [action, destination, source]] of expected.entries()) {
+  for (const [index, [action, destination, source, brkUrl]] of expected.entries()) {
     const card = cards.nth(index);
     const status = statuses[index];
     if (status) await expect(card.getByText(status, { exact: true })).toBeVisible();
     else await expect(card.getByText(/^(Alpha|Beta|Archived)$/)).toHaveCount(0);
     const links = card.locator('a[target="_blank"]');
-    await expect(links).toHaveCount(action ? 2 : 1);
+    await expect(links).toHaveCount((action ? 2 : 1) + (brkUrl ? 1 : 0));
     if (action) await expect(links.first()).toHaveAttribute("href", destination!);
+    if (brkUrl) await expect(links.nth(1)).toHaveAttribute("href", brkUrl);
     await expect(links.last()).toHaveAttribute("href", source);
     for (const link of await links.all()) {
       await expect(link).toHaveAttribute("rel", /noopener.*noreferrer/);
@@ -90,6 +91,7 @@ test("cards and details expose only the intended external actions", async ({ pag
 
   await page.goto("/apps/stackingsats");
   await expect(page.getByRole("link", { name: /Archive/ })).toHaveAttribute("href", "https://stackingsats.org/");
+  await expect(page.getByRole("link", { name: /Explore BRK Data/ })).toHaveAttribute("href", "https://bitview.space/");
   await expect(page.getByRole("link", { name: /Live App/ })).toHaveCount(0);
   await expect(page.getByText(/historical|archiv/i).first()).toBeVisible();
 });
