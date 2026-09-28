@@ -1,0 +1,73 @@
+id: catalonia-civil-protection-plans
+name: Catalonia Civil Protection Plans
+description: >
+  Current Catalan civil-protection plan activations and phases for reviewing
+  regional emergency context and official CECAT updates.
+theme: Environment & Hazards
+url: https://analisi.transparenciacatalunya.cat/api/views/wj9c-j6vf
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  Generalitat of Catalonia open-information licence; cite the department,
+  preserve meaning and latest update, and follow any dataset-specific notice.
+license_url: https://web.gencat.cat/ca/generalitat/dades-indicadors/dades-obertes/llicencies
+url_checks:
+  source_marker: Civil protection plans currently in the pre-alert
+  license_marker: La reutilització de la informació
+domains:
+  - Emergency Management
+data_types:
+  - Event Data
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: beginner
+geography:
+  - Catalonia
+temporal_coverage: current plan phases and official update links
+update_frequency: occasional
+provider: Generalitat de Catalunya Civil Protection
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The Generalitat publishes the current pre-alert, alert, and emergency
+    phases of Catalan civil-protection plans through one Socrata dataset.
+    Start with five records. A plan phase is regional context and must not be
+    treated as a destination-specific evacuation order. Attribute the agency,
+    preserve meaning, and show the last update date.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the exact dataset metadata and Catalan reuse conditions.
+    - Request five current plan rows from the official dataset API.
+    - Inspect acronym, phase, activation flag, and phase timestamp.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://analisi.transparenciacatalunya.cat/resource/wj9c-j6vf.json",
+          params={"$limit": 5}, timeout=30,
+      )
+      response.raise_for_status()
+      for plan in response.json():
+          print(plan.get("plaacronim"), plan.get("plafase"),
+                plan.get("plaactivat"), plan.get("fasedatahora"))
+  first_project:
+    title: Inspect Current Catalan Plan Phases
+    goal: Review five official plan records for regional emergency context.
+    steps:
+      - Keep plan acronym, phase, activation flag, and update timestamp.
+      - Link the official CECAT communication when one is supplied.
+      - Explain why a regional plan phase is not a local restriction or order.

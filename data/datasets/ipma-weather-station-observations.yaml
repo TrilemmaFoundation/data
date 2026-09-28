@@ -1,0 +1,55 @@
+id: ipma-weather-station-observations
+name: IPMA Weather Station Observations
+description: >
+  Portuguese hourly station weather observations for building a local conditions display with explicit station context.
+theme: Environment & Hazards
+url: https://api.ipma.pt/open-data/observation/meteorology/stations/obs-surface.geojson
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.002
+formats: [GeoJSON]
+license: IPMA permits free personal or public noncommercial use with source attribution; commercial use is excluded.
+license_url: https://api.ipma.pt/
+url_checks:
+  source_marker: FeatureCollection
+  license_marker: Condições de Utilização
+domains: [Weather]
+data_types: [Geospatial, Time Series]
+tasks: [Monitoring, Mapping]
+difficulty: beginner
+geography: [Portugal]
+temporal_coverage: latest hourly station observations
+update_frequency: near real time
+provider: Instituto Português do Mar e da Atmosfera
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    IPMA publishes a GeoJSON file of recent Portuguese weather station readings.
+    Start with two features and preserve their timestamps and station IDs;
+    a station reading is not a destination-wide measurement or warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the IPMA API documentation and noncommercial reuse conditions.
+    - Download the current GeoJSON station observations.
+    - Inspect two station readings and their observation times.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = "https://api.ipma.pt/open-data/observation/meteorology/stations/obs-surface.geojson"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      for station in response.json()["features"][:2]:
+          row = station["properties"]
+          print(row.get("idEstacao"), row.get("time"), row.get("temperatura"))
+  first_project:
+    title: Show Nearby Station Weather
+    goal: Present two current IPMA station readings with timestamps.
+    steps:
+      - Select stations by their reviewed coordinates and IDs.
+      - Display temperature with its station name and observation time.
+      - Explain that station conditions can differ from a travel destination.

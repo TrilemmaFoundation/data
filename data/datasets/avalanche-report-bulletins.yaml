@@ -1,0 +1,55 @@
+id: avalanche-report-bulletins
+name: Avalanche.report Regional Bulletins
+description: >
+  European regional avalanche bulletins published as CAAML JSON for building a dated mountain hazard view.
+theme: Environment & Hazards
+url: https://static.avalanche.report/eaws_bulletins/2026-01-31/2026-01-31-AT-02.json
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: CC BY 4.0 for Avalanche.report data; credit the issuing regional warning service and Avalanche.report.
+license_url: https://avalanche.report/more/open-data
+url_checks:
+  source_marker: avalancheActivity
+  license_marker: All data provided, such as the avalanche report
+domains: [Natural Hazards]
+data_types: [Event Data, Geospatial]
+tasks: [Monitoring, Mapping]
+difficulty: beginner
+geography: [Europe]
+temporal_coverage: seasonal daily avalanche bulletins
+update_frequency: daily
+provider: Avalanche.report
+source_type: nonprofit
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Avalanche.report publishes daily regional CAAML JSON partitions, including
+    AT-02 used by TravelCanary. Start with two archived January 2026 bulletin
+    records; an archived bulletin is not a current warning, and no bulletin
+    may be published outside its season.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the official open-data licence and CAAML access description.
+    - Fetch one dated regional bulletin file.
+    - Inspect two bulletin IDs and their validity periods.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = "https://static.avalanche.report/eaws_bulletins/2026-01-31/2026-01-31-AT-02.json"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      for bulletin in response.json()["bulletins"][:2]:
+          print(bulletin["bulletinID"], bulletin.get("validTime"))
+  first_project:
+    title: Review Regional Avalanche Bulletins
+    goal: Inspect two dated CAAML bulletins before mapping warning regions.
+    steps:
+      - Fetch one regional partition and retain its publication time.
+      - Match its region identifiers to the official EAWS geometry.
+      - Explain why an archived bulletin does not describe today's mountain hazard.

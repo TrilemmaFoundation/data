@@ -1,0 +1,60 @@
+id: foen-flood-warning-map
+name: FOEN National Flood Warning Map
+description: >
+  Swiss federal flood-warning map layer for checking official warning levels near mapped destinations.
+theme: Environment & Hazards
+url: https://opendata.swiss/en/dataset/hochwasserwarnkarte
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GeoTIFF]
+license: >
+  The Swiss catalog marks this layer for unrestricted open use, including commercial analysis; source credit is recommended and geo.admin fair-use limits apply.
+license_url: https://opendata.swiss/terms-of-use#terms_open
+url_checks:
+  source_marker: ch.bafu.hydroweb-warnkarte_national
+  license_marker: diesen Datensatz für kommerzielle Zwecke nutzen
+domains: [Water Resources]
+data_types: [Raster]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Switzerland]
+temporal_coverage: current national flood-warning map
+update_frequency: near real time
+provider: Swiss Federal Office for the Environment
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    FOEN publishes the ch.bafu.hydroweb-warnkarte_national layer through the federal WMS.
+    Start with a small map image; its warning colors are not direct gauge measurements.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the official flood-map catalog record and open-use condition.
+    - Request a bounded WMS image of the exact FOEN warning layer.
+    - Read its legend before assigning meanings to colors.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://wms.geo.admin.ch/",
+          params={"SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetMap",
+                  "LAYERS": "ch.bafu.hydroweb-warnkarte_national",
+                  "STYLES": "default", "SRS": "EPSG:4326",
+                  "BBOX": "5.9,45.8,10.6,47.9", "WIDTH": 64, "HEIGHT": 32,
+                  "FORMAT": "image/tiff"}, timeout=25,
+      )
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*"), "Expected GeoTIFF"
+      print("FOEN warning-map bytes:", len(response.content))
+  first_project:
+    title: Inspect a Swiss Flood-Warning Tile
+    goal: Display a small official warning-map image with its source and extent.
+    steps:
+      - Fetch the named FOEN WMS layer.
+      - Show its map bounds and official legend link.
+      - Explain that colors represent warnings, not measured water height.

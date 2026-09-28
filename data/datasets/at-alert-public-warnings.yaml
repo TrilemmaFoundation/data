@@ -1,0 +1,76 @@
+id: at-alert-public-warnings
+name: Austria AT-Alert Public Warnings
+description: >
+  Official Austrian civil-emergency alerts from the AT-Alert public API for
+  reviewing affected polygons, alert levels, and validity intervals.
+theme: Environment & Hazards
+url: https://warnung.at-alert.at/de
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Official public warnings under Austrian free-works terms; credit the issuing authority.
+license_url: https://www.rtr.at/rtr/service/opendata/OD_Nutzungsbedingungen.de.html
+url_checks:
+  source_marker: Aktuelle Warnungen
+  license_marker: keinen urheberrechtlichen Schutz
+domains:
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Austria
+temporal_coverage: current official civil alerts
+update_frequency: near real time
+provider: Austrian Federal Ministry of the Interior
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    AT-Alert lists current public warnings through a JSON RPC POST endpoint.
+    Start with at most five production alert records; an empty response is
+    possible. Preserve official polygons, severity, and begin/end times, and
+    exclude tests before presenting any warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official AT-Alert site and public-data reuse terms.
+    - POST a five-record request for production alert levels.
+    - Check alert identifier, validity, level, and geography.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.post(
+          "https://warnung.at-alert.at/api/rpc/alert/list",
+          json={"json": {"limit": 5, "offset": 0,
+                         "alertLevels": ["AlertLevel1", "AlertLevel2",
+                                         "AlertLevel3", "AlertLevel4"]}},
+          timeout=30,
+      )
+      response.raise_for_status()
+      payload = response.json()["json"]
+      print(f"{payload['totalCount']} production alerts in this response")
+      for alert in payload["alerts"][:5]:
+          print(alert.get("consolidation_identifier"), alert.get("alert_level"),
+                alert.get("begin_date"), alert.get("end_date"))
+  first_project:
+    title: Inspect Austrian Civil Alerts
+    goal: Check a bounded AT-Alert response for region-specific warning review.
+    steps:
+      - Keep issuer, alert ID, severity, validity, and official polygons.
+      - Reject test messages and handle updates and expirations.
+      - Explain why no returned records do not establish an all-clear.

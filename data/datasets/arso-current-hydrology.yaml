@@ -1,0 +1,67 @@
+id: arso-current-hydrology
+name: ARSO Current Hydrology
+description: Slovenian river and lake station measurements for building a local water-level conditions
+  display.
+theme: Environment & Hazards
+url: https://www.arso.gov.si/xml/vode/hidro_podatki_zadnji.xml
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.005
+formats:
+- XML
+license: ARSO permits public-information reuse for commercial and noncommercial analysis with source citation.
+license_url: https://kazalci.arso.gov.si/en/content/legal-note
+url_checks:
+  source_marker: Agencija RS za okolje
+  license_marker: reuse of public information for commercial or non-commercial purposes
+domains:
+- Water Resources
+data_types:
+- Time Series
+tasks:
+- Monitoring
+difficulty: beginner
+geography:
+- Slovenia
+temporal_coverage: current observations or notices
+update_frequency: near real time
+provider: Slovenian Environment Agency
+source_type: government
+last_verified: '2026-09-28'
+getting_started:
+  overview: The official Slovenian Environment Agency feed supplies current public data. Start with two
+    current Slovenian stations; a provisional station level is not a flood warning or a destination-wide
+    measurement.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official data documentation and reuse terms.
+  - Fetch the small official feed and inspect two records.
+  - Preserve source timestamps and locations before mapping results.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+      from xml.etree import ElementTree as ET
+
+      url = "https://www.arso.gov.si/xml/vode/hidro_podatki_zadnji.xml"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      print("Prepared", root.findtext("datum_priprave"))
+      for station in root.findall("postaja")[:2]:
+          print(station.get("sifra"), station.findtext("reka"),
+                station.findtext("vodostaj"), station.findtext("datum_cet"))
+  first_project:
+    title: Inspect Dated Local Conditions
+    goal: Inspect two current Slovenian stations with source timestamps.
+    steps:
+    - Fetch the official source and retain its update time.
+    - Show two records with their station or notice identifiers.
+    - Explain why these records are context rather than complete hazard coverage.

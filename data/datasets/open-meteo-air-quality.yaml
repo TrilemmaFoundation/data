@@ -1,0 +1,77 @@
+id: open-meteo-air-quality
+name: Open-Meteo Air Quality Forecast
+description: >
+  Modeled European air-quality forecasts served by Open-Meteo for inspecting
+  point-level AQI context under noncommercial free API terms.
+theme: Environment & Hazards
+url: https://open-meteo.com/en/docs/air-quality-api
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Free API is for noncommercial use only, with CC BY 4.0 attribution and rate limits; acknowledge CAMS model data where used.
+license_url: https://open-meteo.com/en/terms
+url_checks:
+  source_marker: European Air Quality Index
+  license_marker: You may only use the free API services for non-commercial purposes
+domains:
+  - Air Quality
+  - Forecasting
+data_types:
+  - Time Series
+  - Forecast Data
+tasks:
+  - Forecasting
+  - Risk Mapping
+difficulty: beginner
+geography:
+  - Europe
+temporal_coverage: current hourly forecasts
+update_frequency: continuous
+provider: Open-Meteo with Copernicus Atmosphere Monitoring Service model data
+source_type: company
+last_verified: 2026-09-28
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+  rate_limit_notes: Free noncommercial API permits fewer than 10000 calls per day.
+getting_started:
+  overview: >
+    Start with one point and one day. The free Open-Meteo air-quality endpoint permits noncommercial use only;
+    commercial services need separate paid access. It serves modeled CAMS
+    air-quality context, not a direct station observation or health all-clear.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read Open-Meteo's noncommercial service terms and CAMS attribution guidance.
+    - Request one point and one day of European AQI forecasts.
+    - Preserve the model label and timestamps with displayed values.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://air-quality-api.open-meteo.com/v1/air-quality",
+          params={"latitude": 52.52, "longitude": 13.41,
+                  "hourly": "european_aqi", "forecast_days": 1},
+          timeout=30,
+      )
+      response.raise_for_status()
+      hourly = response.json()["hourly"]
+      print(list(zip(hourly["time"], hourly["european_aqi"]))[:5])
+  first_project:
+    title: Inspect a Modeled AQI Day
+    goal: Assess whether one forecast series supports noncommercial air-quality context.
+    steps:
+      - Keep the model source, units, and issue context with hourly values.
+      - Inspect missing values before displaying an AQI badge.
+      - Explain the noncommercial API limit and why modeled AQI is not a station reading.

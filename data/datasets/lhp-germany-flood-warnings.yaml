@@ -1,0 +1,73 @@
+id: lhp-germany-flood-warnings
+name: German LHP Flood Warnings
+description: >
+  Current state flood-warning alerts from Germany's interregional LHP portal
+  for reviewing official flood areas and update times.
+theme: Environment & Hazards
+url: https://www.hochwasserzentralen.de/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+license: CC BY 4.0 with Länderübergreifendes Hochwasserportal attribution.
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: Aktuelle Hochwasser
+  license_marker: Attribution 4.0 International
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Event Data
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Germany
+temporal_coverage: current regional flood warnings
+update_frequency: near real time
+provider: Länderübergreifendes Hochwasserportal
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The LHP public API returns current regional flood alerts as GeoJSON with
+    update metadata and a CC BY licence link. Start with one response and
+    inspect at most five features. An empty regional result must not be
+    interpreted as a comprehensive flood all-clear.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read LHP's official portal and the licence advertised by its API.
+    - Fetch a single current GeoJSON response.
+    - Keep update time and geographic scope when showing an alert.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.hochwasserzentralen.de/public/v1/data/alerts",
+          params={"format": "geojson", "lang": "en"}, timeout=30,
+      )
+      response.raise_for_status()
+      data = response.json()
+      print(data["updated"], len(data["features"]))
+      for feature in data["features"][:5]:
+          print(feature.get("properties", {}))
+  first_project:
+    title: Inspect Regional Flood Alerts
+    goal: Test the official alert snapshot for a small German flood map.
+    steps:
+      - Keep the snapshot update time, alert identifier, and geometry.
+      - Compare empty and populated states without inferring safety from either.
+      - Explain why official warnings differ from raw gauge levels and require attribution.

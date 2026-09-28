@@ -1,0 +1,60 @@
+id: ehyd-current-flood-stages
+name: eHYD Current Flood Stages
+description: >
+  Austrian hydrographic station levels and stage codes for bounded, dated flood-context checks.
+theme: Environment & Hazards
+url: https://gis.lfrz.gv.at/api/geodata/i000501/ogc/features/v1/collections/i000501:pegel_aktuell?f=application%2Fjson
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GeoJSON]
+license: >
+  The official eHYD OGC collection links to CC BY 4.0; credit the Austrian hydrographic service and note any changes.
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: i000501:pegel_aktuell
+  license_marker: Attribution 4.0 International
+domains: [Water Resources]
+data_types: [Geospatial, Time Series]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Austria]
+temporal_coverage: current Austrian surface-water station values
+update_frequency: near real time
+provider: Austria eHYD Hydrographic Service
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    eHYD's pegel_aktuell collection publishes current station values and stage codes.
+    Start with one water-level feature; a raw level without its station-specific threshold is not a warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the eHYD OGC collection and its linked CC BY 4.0 licence.
+    - Request one water-level feature using the parameter filter.
+    - Keep its station, unit, timestamp, and code together.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://gis.lfrz.gv.at/api/geodata/i000501/ogc/features/v1/collections/i000501:pegel_aktuell/items",
+          params={"f": "application/geo+json", "limit": 1,
+                  "filter-lang": "cql2-text", "filter": "parameter = 'W'"},
+          timeout=20,
+      )
+      response.raise_for_status()
+      for feature in response.json()["features"]:
+          station = feature["properties"]
+          print(station["messstelle"], station["wert"], station["einheit"],
+                station["zeitpunkt"], station["gesamtcode"])
+  first_project:
+    title: Inspect One Austrian Gauge
+    goal: Display one dated water-level observation with its stage code.
+    steps:
+      - Fetch one W-parameter gauge feature.
+      - Show its value, unit, observation time, and stage code.
+      - Explain that local thresholds are needed to interpret the stage.

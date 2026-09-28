@@ -1,0 +1,56 @@
+id: ipma-seismic-observations
+name: IPMA Regional Seismic Observations
+description: >
+  Portuguese regional earthquake records for building a dated seismic context view around travel destinations.
+theme: Environment & Hazards
+url: https://api.ipma.pt/open-data/observation/seismic/3.json
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: IPMA permits free personal or public noncommercial use with source attribution; commercial use is excluded.
+license_url: https://api.ipma.pt/
+url_checks:
+  source_marker: lastSismicActivityDate
+  license_marker: Condições de Utilização
+domains: [Natural Hazards]
+data_types: [Event Data, Geospatial]
+tasks: [Monitoring, Mapping]
+difficulty: beginner
+geography: [Portugal]
+temporal_coverage: recent regional seismic observations
+update_frequency: near real time
+provider: Instituto Português do Mar e da Atmosfera
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    IPMA publishes regional seismic JSON files, including areas 3 and 7 used
+    by TravelCanary. Start with area 3 and inspect two records; a reported
+    earthquake is contextual information, not an active hazard warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read IPMA's regional seismic API description and noncommercial terms.
+    - Fetch the area 3 file and check its update date.
+    - Inspect two earthquake records before applying a time or magnitude filter.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = "https://api.ipma.pt/open-data/observation/seismic/3.json"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      feed = response.json()
+      print(feed["idArea"], feed.get("updateDate"))
+      for event in feed["data"][:2]:
+          print(event.get("time"), event.get("magnitud"))
+  first_project:
+    title: Review Regional Seismic Context
+    goal: Show two dated earthquake records from an official IPMA region.
+    steps:
+      - Fetch one area and retain its update timestamp.
+      - Display event time and magnitude beside the region ID.
+      - Explain that a past event does not establish current local risk.

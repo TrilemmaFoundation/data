@@ -1,0 +1,57 @@
+id: syke-hydrology-water-levels
+name: SYKE Hydrology Water Levels
+description: >
+  Finnish environmental OData water-level measurements for station-based hydrology monitoring and comparison across basins.
+theme: Environment & Hazards
+url: https://www.syke.fi/en/environmental-data/open-web-services/environmental-data-apis
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [JSON]
+license: >
+  Finnish Environment Institute open data are CC BY 4.0; name SYKE and the hydrology dataset when reusing values.
+license_url: https://www.syke.fi/en/environmental-data/use-license-and-responsibilities
+url_checks:
+  source_marker: The interface for hydrology provides spatial and temporal information
+  license_marker: licenced under Creative Commons Attribution 4.0 International licence
+domains: [Water Resources]
+data_types: [Time Series]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Finland]
+temporal_coverage: observed Finnish station water levels and historical records
+update_frequency: near real time
+provider: Finnish Environment Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    SYKE's Hydrologiarajapinta OData service exposes Vedenkorkeus water-level observations and separate datum metadata.
+    Start with one recent value; a level cannot be compared across stations without reference-system and quality checks.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the SYKE hydrology OData entities and CC BY licence.
+    - Request one latest Vedenkorkeus row.
+    - Keep its place ID, timestamp, value, and quality flag for later station-metadata lookup.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://rajapinnat.ymparisto.fi/api/Hydrologiarajapinta/1.2/odata/Vedenkorkeus",
+          params={"$top": 1, "$orderby": "Aika desc"},
+          headers={"Accept": "application/json"}, timeout=25,
+      )
+      response.raise_for_status()
+      for row in response.json()["value"]:
+          print(row["Paikka_Id"], row["Aika"], row["Arvo"], row["Lippu_id"])
+  first_project:
+    title: Inspect One Finnish Water Level
+    goal: Display one dated OData measurement with its station and quality identifiers.
+    steps:
+      - Fetch one recent Vedenkorkeus record.
+      - Show its place ID, date, value, and quality-flag ID.
+      - Explain that a datum lookup is needed before cross-station comparison.

@@ -1,0 +1,76 @@
+id: nasa-eonet-events
+name: NASA EONET Natural Events
+description: >
+  Curated NASA EONET natural-event metadata for reviewing wildfire, volcano,
+  storm, and other recent event context.
+theme: Environment & Hazards
+url: https://eonet.gsfc.nasa.gov/docs/v3
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  NASA EONET metadata is publicly accessible for analysis; cite EONET and
+  check separately linked source rights. Event extents are informational,
+  approximate, and not official emergency boundaries.
+license_url: https://eonet.gsfc.nasa.gov/what-is-eonet
+url_checks:
+  source_marker: Version 3 Documentation
+  license_marker: visualization and general information purposes only
+domains:
+  - Climate
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Mapping
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: recent natural-event metadata
+update_frequency: near real time
+provider: NASA Earth Observatory Natural Event Tracker
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EONET curates recent natural-event metadata from multiple sources. Start
+    with three open events and inspect IDs, categories, and source links.
+    NASA warns that event extents are approximate and not official; the
+    rights of separately linked source observations must be reviewed before
+    republishing those observations.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the EONET v3 API documentation and event disclaimer.
+    - Request three open events in one bounded call.
+    - Keep event IDs and source links separate from local warning evidence.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://eonet.gsfc.nasa.gov/api/v3/events",
+          params={"limit": 3, "status": "open"}, timeout=30,
+      )
+      response.raise_for_status()
+      for event in response.json()["events"][:3]:
+          print(event["id"], event["title"],
+                [category["id"] for category in event["categories"]])
+  first_project:
+    title: Inspect Recent Natural Events
+    goal: Review a small EONET response as contextual discovery data.
+    steps:
+      - Keep event ID, categories, source URLs, and geometry dates.
+      - Verify independent official sources before local hazard conclusions.
+      - Explain why an EONET event extent is not an official warning area.

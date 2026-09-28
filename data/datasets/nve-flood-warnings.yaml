@@ -1,0 +1,75 @@
+id: nve-flood-warnings
+name: NVE Norway Flood Warnings
+description: >
+  Official regional flood-warning records from Norway's NVE for inspecting
+  affected municipalities, dates, and assessed activity levels.
+theme: Environment & Hazards
+url: https://api.nve.no/doc/flomvarsling/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Free warning-data use with full-bulletin and Varsom attribution conditions.
+license_url: https://api.nve.no/doc/flomvarsling/
+url_checks:
+  source_marker: Warning/{<a href=
+  license_marker: Dataene er fritt tilgjengelige for bruk
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Norway
+temporal_coverage: current regional flood warnings
+update_frequency: daily
+provider: Norwegian Water Resources and Energy Directorate
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    NVE publishes dated flood warnings through a versioned REST endpoint.
+    Start with today's and tomorrow's English Warning records; an empty list
+    means no qualifying entries returned for that scope, not an all-clear.
+    NVE asks reusers to present complete bulletin context and credit Varsom.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the NVE flood API and full-bulletin attribution conditions.
+    - Request a two-day date interval with the English language key.
+    - Preserve warning validity and municipality context with any result.
+  python:
+    packages:
+      - requests
+    code: |
+      from datetime import date, timedelta
+      import requests
+
+      today = date.today()
+      tomorrow = today + timedelta(days=1)
+      url = ("https://api01.nve.no/hydrology/forecast/flood/v1.0.10/api/"
+             f"Warning/2/{today.isoformat()}/{tomorrow.isoformat()}")
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      warnings = response.json()
+      print(f"{len(warnings)} regional flood warnings in this two-day response")
+      for warning in warnings[:5]:
+          print(warning.get("Id"), warning.get("ActivityLevel"))
+  first_project:
+    title: Inspect Two Days of Flood Warnings
+    goal: Check a bounded regional warning response before local matching.
+    steps:
+      - Keep warning identifiers, date range, municipality IDs, and revisions.
+      - Read full bulletins rather than inferring meaning from one activity number.
+      - Explain why an empty list cannot establish nationwide safety.

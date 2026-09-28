@@ -1,0 +1,83 @@
+id: imgw-hydrological-bulletins
+name: IMGW Poland Hydrological Bulletins
+description: >
+  Current official Polish hydrological warning bulletins from IMGW for
+  reviewing affected regions, severity, and validity windows.
+theme: Environment & Hazards
+url: https://danepubliczne.imgw.pl/data/current/ost_hydro/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - TXT
+license: >
+  Free public access for qualifying noncommercial analysis; commercial and
+  specified sectoral uses may require an IMGW agreement and payment.
+license_url: https://danepubliczne.imgw.pl/
+url_checks:
+  source_marker: Index of /data/current/ost_hydro
+  license_marker: REGULAMIN UDOSTĘPNIANIA DANYCH
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Poland
+temporal_coverage: current official hydrological warnings
+update_frequency: near real time
+provider: Institute of Meteorology and Water Management
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    IMGW publishes current hydrological bulletins as separate text files.
+    Free access is limited to qualifying noncommercial analysis; commercial
+    and specified sectoral uses can require an agreement and payment. Start
+    with at most five listed bulletins and preserve issue and validity times.
+    TravelCanary uses flood warnings and excludes drought notices in this
+    shared directory. An empty directory is not the same as an API failure.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read IMGW's access regulation and official current-bulletin listing.
+    - Find one TXT bulletin in the current directory.
+    - Inspect issue time, warning degree, affected region, and validity.
+  python:
+    packages:
+      - requests
+    code: |
+      import re
+      import requests
+
+      base = "https://danepubliczne.imgw.pl/data/current/ost_hydro/"
+      listing = requests.get(base, timeout=30)
+      listing.raise_for_status()
+      names = sorted(set(re.findall(r'href="([A-Za-z0-9_-]+\.TXT)"', listing.text)))
+      print(f"{len(names)} current bulletin files")
+      for name in names[:5]:
+          bulletin = requests.get(base + name, timeout=30)
+          bulletin.raise_for_status()
+          text = bulletin.content.decode("utf-8", errors="replace")
+          if "susza hydrologiczna" not in text.lower():
+              print(name, text[:400])
+              break
+      else:
+          print("No flood bulletin among the first five listed files")
+  first_project:
+    title: Inspect a Polish Hydrological Warning
+    goal: Review one official text bulletin before region matching.
+    steps:
+      - Keep bulletin name, issue time, degree, region, and validity period.
+      - Detect revised and cancelled bulletins before current display.
+      - Explain why an absent bulletin is not a statement of future safety.

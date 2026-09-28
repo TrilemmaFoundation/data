@@ -1,0 +1,74 @@
+id: geonames-daily-gazetteer
+name: GeoNames Daily Gazetteer Dumps
+description: >
+  Daily place-name and coordinate dumps from GeoNames for building searchable
+  destination gazetteers with source attribution.
+theme: Geospatial & Infrastructure
+url: https://www.geonames.org/export/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 1
+formats:
+  - TSV
+  - ZIP
+license: GeoNames attribution licence; credit GeoNames and review any source-specific restrictions.
+license_url: https://www.geonames.org/export/
+url_checks:
+  source_marker: daily GeoNames database extract
+  license_marker: commercial usage is allowed
+domains:
+  - Geography
+  - Places
+data_types:
+  - Geospatial
+  - Tabular
+tasks:
+  - Mapping
+  - Search
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: current gazetteer with daily dump updates
+update_frequency: daily
+provider: GeoNames
+source_type: community
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    GeoNames publishes daily place-name dumps. Start with the small Andorra
+    country archive and retain its attribution. Place names and representative
+    coordinates are imperfect and do not define exact administrative boundaries.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Review the official export terms and source attribution requirements.
+    - Download one small country archive rather than the global dump.
+    - Inspect the tab-separated place records and retain their GeoNames IDs.
+  python:
+    packages:
+      - requests
+    code: |
+      import csv
+      import io
+      from zipfile import ZipFile
+      import requests
+
+      response = requests.get("https://download.geonames.org/export/dump/AD.zip", timeout=30)
+      response.raise_for_status()
+      archive = ZipFile(io.BytesIO(response.content))
+      with archive.open("AD.txt") as file:
+          rows = csv.reader(io.TextIOWrapper(file, encoding="utf-8"), delimiter="\t")
+          for row in list(rows)[:5]:
+              print(row[0], row[1], row[4], row[5])
+  first_project:
+    title: Inspect an Andorran Place Index
+    goal: Evaluate a bounded place-name dump for a destination search prototype.
+    steps:
+      - Keep GeoNames identifiers, names, coordinates, and download date.
+      - Compare the first five rows with their official GeoNames pages.
+      - Explain attribution duties and why point coordinates are not exact boundaries.

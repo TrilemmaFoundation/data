@@ -1,0 +1,74 @@
+id: opw-ireland-water-levels
+name: OPW Ireland Water Levels
+description: >
+  Provisional Irish gauge-level observations from the Office of Public Works
+  for local river context and station monitoring.
+theme: Environment & Hazards
+url: https://waterlevel.ie/page/api/
+access_type:
+  - both
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+  - CSV
+license: CC BY 4.0 for eligible station numbers 00001-41000; attribute the Office of Public Works.
+license_url: https://waterlevel.ie/page/api/
+url_checks:
+  source_marker: Geojson file with latest readings
+  license_marker: Only monitoring stations with reference numbers between 00001 and 41000
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Time Series
+tasks:
+  - Monitoring
+  - Operational Planning
+difficulty: intermediate
+geography:
+  - Ireland
+temporal_coverage: recent provisional gauge readings
+update_frequency: near real time
+provider: Ireland Office of Public Works
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    OPW publishes a pre-generated GeoJSON snapshot of latest readings. Start with five eligible readings. Use that
+    file for automated access and restrict republication to eligible station
+    numbers 00001-41000. Measurements are provisional, relative to station
+    gauge zero, and are not official flood warnings.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official API page, station eligibility rule, and CC BY terms.
+    - Fetch the pre-generated latest-readings GeoJSON at a sensible interval.
+    - Filter to eligible station numbers before using or republishing values.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get("https://waterlevel.ie/geojson/latest/", timeout=30)
+      response.raise_for_status()
+      features = response.json()["features"]
+      eligible = [
+          item["properties"] for item in features
+          if 1 <= int(item["properties"]["station_ref"]) <= 41000
+      ]
+      for item in eligible[:5]:
+          print(item["station_ref"], item["datetime"], item["value"])
+  first_project:
+    title: Check Recent Eligible Gauge Readings
+    goal: Assess whether a small set of current gauges supports a factual river-level panel.
+    steps:
+      - Retain station and sensor IDs, timestamps, quality codes, and gauge units.
+      - Exclude out-of-range station references from republication.
+      - State that provisional gauge readings are not official flood warnings.

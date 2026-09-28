@@ -1,0 +1,71 @@
+id: copernicus-edo-drought-indicator
+name: Copernicus EDO Drought Indicator
+description: >
+  Dekadal European Combined Drought Indicator rasters for agricultural and ecosystem drought context tools.
+theme: Environment & Hazards
+url: https://drought.emergency.copernicus.eu/data/wcs-service
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.002
+size_gb_max: 0.01
+formats: [GeoTIFF]
+license: >
+  CEMS EDO data permit reproduction, distribution, and adaptation with source and modification notices; some restricted products require registration.
+license_url: https://drought.emergency.copernicus.eu/terms%26conditions
+url_checks:
+  source_marker: Combined Drought Indicator (CDI) v4.1
+  license_marker: the data of the CEMS EDO and GDO early warning and monitoring systems
+domains: [Climate]
+data_types: [Raster]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Europe]
+temporal_coverage: dated dekadal CDI product vintages
+update_frequency: occasional
+provider: Copernicus Emergency Management Service
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EDO publishes the cdiad Combined Drought Indicator through its WCS with a dated configuration record.
+    Start with the latest available GeoTIFF; agricultural drought context is not an immediate emergency warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the CDI WCS documentation and CEMS reuse terms.
+    - Find the current cdiad end date in the EDO configuration.
+    - Download that dated WCS GeoTIFF and retain its product date.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      root = "https://drought.emergency.copernicus.eu"
+      config = requests.get(root + "/services/config?appCode=edo_map", timeout=25)
+      config.raise_for_status()
+      def cdi_date(node):
+          if isinstance(node, dict):
+              if node.get("code") == "cdiad":
+                  return node["endDay"]
+              return next((day for value in node.values() if (day := cdi_date(value))), None)
+          if isinstance(node, list):
+              return next((day for value in node if (day := cdi_date(value))), None)
+          return None
+      day = cdi_date(config.json())
+      assert day, "No CDI product date"
+      response = requests.get(
+          root + "/api/wcs",
+          params={"map": "DO_WCS", "SERVICE": "WCS", "VERSION": "2.0.0",
+                  "REQUEST": "GetCoverage", "coverageID": "cdiad", "CRS": "EPSG:4326",
+                  "format": "GEOTIFF", "TIME": day}, timeout=40,
+      )
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*"), "Expected GeoTIFF"
+      print(day, "EDO CDI bytes:", len(response.content))
+  first_project:
+    title: Inspect One Drought Product
+    goal: Display the latest CDI product vintage with its interpretation limit.
+    steps:
+      - Read the current cdiad product date from EDO.
+      - Fetch the matching WCS raster and label that date.
+      - Explain that stale or absent pixels cannot be read as a current all-clear.

@@ -1,0 +1,74 @@
+id: met-norway-metalerts
+name: MET Norway MetAlerts
+description: >
+  Official Norwegian weather warnings from MET Norway's MetAlerts service
+  for reviewing affected areas and alert validity.
+theme: Environment & Hazards
+url: https://api.met.no/weatherapi/metalerts/2.0/documentation
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+  - CAP
+license: NLOD 2.0 and CC BY 4.0 with MET Norway attribution.
+license_url: https://api.met.no/doc/License
+url_checks:
+  source_marker: Weather alerts from the Norwegian Meteorological Institute
+  license_marker: Norwegian Licence for Open Government Data
+domains:
+  - Weather
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Event Data
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Norway
+temporal_coverage: current official weather alerts
+update_frequency: near real time
+provider: Norwegian Meteorological Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    MetAlerts publishes official weather warnings in CAP and beta GeoJSON.
+    Start with five features from the current GeoJSON endpoint. Preserve CAP
+    IDs, updates and cancellations when building an alert timeline, and use a
+    distinct client User-Agent. Weather alerts differ from Locationforecast.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the MetAlerts documentation and MET Norway attribution policy.
+    - Set an identifying User-Agent and request current GeoJSON warnings.
+    - Inspect area, event, and validity before using an alert in a product.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.met.no/weatherapi/metalerts/2.0/current.json",
+          headers={"User-Agent": "TrilemmaDataCatalogExample/1.0 (https://data.trilemma.foundation)"},
+          timeout=30,
+      )
+      response.raise_for_status()
+      for warning in response.json()["features"][:5]:
+          details = warning["properties"]
+          print(details.get("id"), details.get("event"), details.get("area"))
+  first_project:
+    title: Inspect Norwegian Weather Alerts
+    goal: Test whether current alert geometry supports a local warning card.
+    steps:
+      - Keep alert ID, event, severity, geometry, and validity interval.
+      - Account for CAP updates and cancellations before retaining a warning.
+      - Attribute MET Norway and avoid equating an empty sample with safety.

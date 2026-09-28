@@ -1,0 +1,75 @@
+id: eurostat-gisco-nuts-2024
+name: Eurostat GISCO NUTS 2024 Geometry
+description: >
+  Official 2024 NUTS regional polygons from Eurostat GISCO for mapping
+  statistical regions to geographic destinations under noncommercial terms.
+theme: Geospatial & Infrastructure
+url: https://ec.europa.eu/eurostat/web/gisco/geodata/statistical-units/territorial-units-statistics
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.001
+size_gb_max: 0.1
+formats:
+  - GeoJSON
+  - Shapefile
+license: Noncommercial use only, with GISCO and EuroGeographics boundary attribution.
+license_url: https://ec.europa.eu/eurostat/web/gisco/geodata/statistical-units
+url_checks:
+  source_marker: Territorial units for statistics
+  license_marker: the data will not be used for commercial purposes
+domains:
+  - Geography
+  - Demographics
+data_types:
+  - Geospatial
+  - Vector Data
+tasks:
+  - Mapping
+  - Spatial Analysis
+difficulty: intermediate
+geography:
+  - Europe
+temporal_coverage: 2024 NUTS reference geometry
+update_frequency: occasional
+provider: Eurostat GISCO
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    GISCO publishes versioned NUTS polygons, including the 2024 reference year.
+    The downloadable boundary data are licensed for noncommercial use only and
+    require GISCO and EuroGeographics attribution. Start with level-two region
+    identifiers from the 20M GeoJSON; polygons do not prove warning coverage.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the GISCO NUTS download rules and noncommercial licence conditions.
+    - Download the 2024 NUTS regional GeoJSON at 20M scale.
+    - Filter to level-two regions before intersecting destinations.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://gisco-services.ec.europa.eu/distribution/v2/nuts/geojson/"
+          "NUTS_RG_20M_2024_4326.geojson", timeout=30,
+      )
+      response.raise_for_status()
+      regions = [
+          item["properties"]["NUTS_ID"] for item in response.json()["features"]
+          if item["properties"]["LEVL_CODE"] == 2
+      ]
+      print(regions[:5], len(regions))
+  first_project:
+    title: Check Level-Two Regional Identifiers
+    goal: Evaluate noncommercial regional matching for a destination map.
+    steps:
+      - Keep the NUTS reference year, region ID, scale, and download date.
+      - Check one destination against the relevant level-two polygon.
+      - Add the required boundary attribution and avoid treating regions as warning footprints.

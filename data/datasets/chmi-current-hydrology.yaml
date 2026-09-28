@@ -1,0 +1,71 @@
+id: chmi-current-hydrology
+name: CHMI Current Hydrology Stations
+description: >
+  Current Czech hydrological station series from CHMI for checking measured
+  water levels against separately documented local thresholds.
+theme: Environment & Hazards
+url: https://opendata.chmi.cz/hydrology/now/data/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: CC BY 4.0 with CHMI attribution.
+license_url: https://www.chmi.cz/-/jak-mohu-pou%C5%BE%C3%ADvat-otev%C5%99en%C3%A1-data-%C4%8Dhm%C3%BA-
+url_checks:
+  source_marker: Index of /hydrology/now/data/
+  license_marker: Creative Commons BY 4.0
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Time Series
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Czechia
+temporal_coverage: current station observations
+update_frequency: near real time
+provider: Czech Hydrometeorological Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    CHMI publishes per-station current H and Q time series as small JSON files.
+    Start with one station used by TravelCanary. Station observations are not
+    official warnings by themselves; check timestamps and separately sourced
+    flood thresholds before interpreting a value.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the CHMI open-data licence and current hydrology documentation.
+    - Fetch one station JSON file from the current-data directory.
+    - Inspect series type, unit, and the latest observation time.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = "https://opendata.chmi.cz/hydrology/now/data/0-203-1-244000.json"
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      station = response.json()["objList"][0]
+      for series in [row for row in station["tsList"]
+                     if row["tsConID"] in ("H", "Q")][:2]:
+          print(station["objID"], series["tsConID"], series.get("unit"),
+                series["tsData"][-1] if series.get("tsData") else None)
+  first_project:
+    title: Inspect One Czech River Station
+    goal: Review one bounded current observation before flood-threshold use.
+    steps:
+      - Keep station ID, series type, unit, and measurement time.
+      - Check the observation age and applicable station threshold metadata.
+      - Explain why a measured stage alone is not an official flood warning.

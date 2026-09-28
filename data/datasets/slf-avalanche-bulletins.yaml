@@ -1,0 +1,66 @@
+id: slf-avalanche-bulletins
+name: SLF Avalanche Bulletins
+description: Swiss official avalanche bulletin GeoJSON for building a dated mountain hazard context map.
+theme: Environment & Hazards
+url: https://aws.slf.ch/api/bulletin/caaml/v4/en/geojson?activeAt=2026-01-11T11%3A30Z
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+- GeoJSON
+license: CC BY 4.0; visibly attribute WSL Institute for Snow and Avalanche Research SLF and link its digital
+  source.
+license_url: https://www.slf.ch/en/services-and-products/slf-data-service/
+url_checks:
+  source_marker: '"validTime":{"startTime"'
+  license_marker: The data is subject to the licence
+domains:
+- Natural Hazards
+data_types:
+- Event Data
+- Geospatial
+tasks:
+- Monitoring
+- Mapping
+difficulty: beginner
+geography:
+- Switzerland
+temporal_coverage: seasonal or current official warnings
+update_frequency: near real time
+provider: WSL Institute for Snow and Avalanche Research SLF
+source_type: academic
+last_verified: '2026-09-28'
+getting_started:
+  overview: The official WSL Institute for Snow and Avalanche Research SLF feed supports regional hazard
+    context. Start with two archived January 2026 bulletin regions; an archived bulletin is not a current
+    avalanche warning and off-season responses can be empty.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official feed documentation and reuse terms.
+  - Fetch one bounded official response.
+  - Inspect two records and retain their validity period.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+
+      url = "https://aws.slf.ch/api/bulletin/caaml/v4/en/geojson"
+      response = requests.get(url, params={"activeAt": "2026-01-11T11:30:00Z"}, timeout=20)
+      response.raise_for_status()
+      for region in response.json()["features"][:2]:
+          props = region["properties"]
+          print(props.get("bulletinID"), props.get("validTime"))
+  first_project:
+    title: Map Dated Regional Warnings
+    goal: Inspect two archived January 2026 bulletin regions with official validity and source links.
+    steps:
+    - Fetch one official response and retain its issue time.
+    - Display two region or river records with their source links.
+    - Explain why coverage and validity cannot be inferred beyond the named area.

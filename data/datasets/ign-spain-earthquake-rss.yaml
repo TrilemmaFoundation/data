@@ -1,0 +1,61 @@
+id: ign-spain-earthquake-rss
+name: IGN Spain Earthquake RSS
+description: >
+  Spain's official IGN earthquake event headlines and coordinates for regional seismic context tools.
+theme: Environment & Hazards
+url: https://www.ign.es/web/social-rss
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [XML]
+license: >
+  IGN's public-sector information reuse terms permit reuse with attribution,
+  preserved update dates and metadata, and no distortion or implied endorsement;
+  geographic IGN products and services follow its CC BY-compatible user license.
+license_url: https://www.ign.es/web/en/ign/portal/info-aviso-legal
+url_checks:
+  source_marker: Información de terremotos
+  license_marker: Re-use of Public Sector Information
+domains: [Earth Science, Emergency Management]
+data_types: [Event Data, Geospatial]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Spain]
+temporal_coverage: recent official seismic notices
+update_frequency: near real time
+provider: Instituto Geográfico Nacional de España
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    IGN lists a public earthquake RSS feed in its own RSS directory. Fetch one
+    feed and inspect a few items; RSS headlines are regional event context, not
+    a complete alert lifecycle or proof that a destination is safe.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read IGN's RSS directory and public-sector reuse terms.
+    - Fetch the earthquake RSS feed once.
+    - Preserve each event's link, publication time, and any location metadata.
+  python:
+    packages: [requests]
+    code: |
+      import xml.etree.ElementTree as ET
+      import requests
+
+      response = requests.get(
+          "https://www.ign.es/ign/RssTools/sismologia.xml", timeout=20,
+      )
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      for item in root.findall("./channel/item")[:3]:
+          print(item.findtext("title"), item.findtext("pubDate"),
+                item.findtext("link"))
+  first_project:
+    title: Review Recent Spanish Earthquakes
+    goal: Show a few dated IGN earthquake notices with source links.
+    steps:
+      - Fetch and parse the official RSS feed.
+      - Show the publication time and original IGN event link.
+      - Explain why a headline feed does not establish local warning coverage.

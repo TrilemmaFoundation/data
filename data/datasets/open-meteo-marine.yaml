@@ -1,0 +1,77 @@
+id: open-meteo-marine
+name: Open-Meteo Marine Forecast
+description: >
+  Hourly offshore marine forecasts from Open-Meteo for coastal planning context
+  under the free API's noncommercial use limit.
+theme: Environment & Hazards
+url: https://open-meteo.com/en/docs/marine-weather-api
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Free API is for noncommercial use only, with CC BY 4.0 attribution and rate limits.
+license_url: https://open-meteo.com/en/terms
+url_checks:
+  source_marker: Marine Weather API
+  license_marker: You may only use the free API services for non-commercial purposes
+domains:
+  - Weather
+  - Forecasting
+data_types:
+  - Time Series
+  - Forecast Data
+tasks:
+  - Forecasting
+  - Operational Planning
+difficulty: beginner
+geography:
+  - Global coastlines
+temporal_coverage: current hourly forecasts
+update_frequency: continuous
+provider: Open-Meteo
+source_type: company
+last_verified: 2026-09-28
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+  rate_limit_notes: Free noncommercial API permits fewer than 10000 calls per day.
+getting_started:
+  overview: >
+    Start with one offshore point and one forecast day. The free Open-Meteo marine endpoint permits noncommercial use only;
+    commercial services need separate paid access. Query a reviewed offshore
+    point; a returned model cell is not beach, navigation, or ferry safety advice.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the free API noncommercial terms and marine model limitations.
+    - Choose a suitable offshore point and request one day of wave forecasts.
+    - Check that the returned grid cell and wave values apply to that point.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://marine-api.open-meteo.com/v1/marine",
+          params={"latitude": 53.208336, "longitude": -9.2916565,
+                  "hourly": "wave_height", "forecast_days": 1},
+          timeout=30,
+      )
+      response.raise_for_status()
+      hourly = response.json()["hourly"]
+      print(list(zip(hourly["time"], hourly["wave_height"]))[:5])
+  first_project:
+    title: Inspect One Offshore Wave Forecast
+    goal: Assess one wave-height series as noncommercial coastal context.
+    steps:
+      - Verify the returned point is offshore and inspect missing wave values.
+      - Record the time, unit, and model source for each displayed value.
+      - Explain the noncommercial API limit and why forecasts are not marine safety advice.

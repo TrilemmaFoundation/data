@@ -1,0 +1,74 @@
+id: fintraffic-digitraffic-road-messages
+name: Fintraffic Digitraffic Road Messages
+description: >
+  Current Finnish road-traffic announcements from Fintraffic for inspecting
+  accident-related closures and other mapped road disruptions.
+theme: Geospatial & Infrastructure
+url: https://www.digitraffic.fi/en/road-traffic/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.1
+formats:
+  - GeoJSON
+license: CC BY 4.0; credit Fintraffic and preserve its required attribution and notices.
+license_url: https://www.digitraffic.fi/en/terms-of-service/
+url_checks:
+  source_marker: Traffic messages
+  license_marker: Creative Commons 4.0 By license
+domains:
+  - Transportation
+  - Infrastructure
+data_types:
+  - Geospatial
+  - Real-Time Data
+tasks:
+  - Monitoring
+  - Mapping
+difficulty: intermediate
+geography:
+  - Finland
+temporal_coverage: current road traffic announcements
+update_frequency: near real time
+provider: Fintraffic
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Digitraffic returns current road messages with mapped geometry. Begin by
+    counting a few announcement categories from one snapshot. The feed is not
+    complete route advice; inspect event type, validity, and geometry before
+    associating a closure with a destination.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Review the road-traffic documentation and CC BY attribution terms.
+    - Fetch one current v2 traffic-announcement GeoJSON response.
+    - Inspect event categories before filtering to accident-related closures.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://tie.digitraffic.fi/api/traffic-message/v2/traffic-announcements",
+          timeout=30,
+      )
+      response.raise_for_status()
+      features = response.json()["features"]
+      for item in features[:5]:
+          properties = item["properties"]
+          print(properties["situationId"], properties["situationType"],
+                properties["releaseTime"])
+  first_project:
+    title: Inspect Finnish Road Message Types
+    goal: Identify which live message categories could support a local disruption card.
+    steps:
+      - Count current messages by situation type and retain update timestamps.
+      - Check geometry and validity before labeling a message as local.
+      - Credit Fintraffic and explain why the feed is not complete routing advice.

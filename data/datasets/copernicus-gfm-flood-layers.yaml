@@ -1,0 +1,61 @@
+id: copernicus-gfm-flood-layers
+name: Copernicus Global Flood Monitoring Layers
+description: >
+  Satellite observed flood extent, likelihood, and advisory-flag rasters for corroborating possible flood events.
+theme: Environment & Hazards
+url: https://confluence.ecmwf.int/spaces/CEMS/pages/242067378/Web%2BLayers
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GeoTIFF]
+license: >
+  CEMS early-warning data permit reproduction, distribution, and adaptation with source and modification notices; some restricted products require registration.
+license_url: https://drought.emergency.copernicus.eu/terms%26conditions
+url_checks:
+  source_marker: Observed Flood Extent
+  license_marker: Global Flood Monitoring product
+domains: [Water Resources]
+data_types: [Raster]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Global]
+temporal_coverage: recent Sentinel-1 flood-monitoring layers
+update_frequency: near real time
+provider: Copernicus Emergency Management Service
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    GFM serves observed_flood_extent, uncertainty_values, and advisory_flags as related WMS raster layers.
+    Start with a small observed-extent tile; satellite coverage and uncertainty must be checked before inferring flooding.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the GFM product, layer definitions, and CEMS reuse conditions.
+    - Request a bounded observed_flood_extent GeoTIFF from the public WMS.
+    - Check matching uncertainty_values and advisory_flags before interpreting pixels.
+  python:
+    packages: [requests]
+    code: |
+      from datetime import datetime, timezone
+      import requests
+
+      valid_day = datetime.now(timezone.utc).strftime("%Y-%m-%dT00:00:00.000Z")
+      response = requests.get(
+          "https://geoserver.gfm.eodc.eu/geoserver/gfm/wms",
+          params={"SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetMap",
+                  "LAYERS": "observed_flood_extent", "STYLES": "", "SRS": "EPSG:4326",
+                  "BBOX": "5,45,5.1,45.1", "WIDTH": 32, "HEIGHT": 32,
+                  "FORMAT": "image/geotiff", "TIME": valid_day}, timeout=20,
+      )
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*"), "Expected GeoTIFF"
+      print(valid_day, "GFM extent bytes:", len(response.content))
+  first_project:
+    title: Inspect a Flood-Extent Tile
+    goal: Display a dated, bounded GFM tile with its uncertainty caveat.
+    steps:
+      - Fetch one observed_flood_extent tile.
+      - Record its bounds and valid date with the matching quality-layer names.
+      - Explain that absent satellite pixels are not an all-clear.

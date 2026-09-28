@@ -1,0 +1,64 @@
+id: krisinformation-news
+name: Krisinformation News Feed
+description: Swedish official crisis and infrastructure news for building a dated local-disruption context
+  view.
+theme: Government & Policy
+url: https://api.krisinformation.se/v3/news?format=json&allcounties=true&days=365
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.005
+formats:
+- JSON
+license: Krisinformation open API permits reuse with visible source attribution and original notice links.
+license_url: https://www.krisinformation.se/om-krisinformation/for-myndigheter-och-andra-aktorer/oppen-data/
+url_checks:
+  source_marker: '"ContentTypeName": "newspage"'
+  license_marker: Ursprungsmärkning
+domains:
+- Public Safety
+data_types:
+- Event Data
+tasks:
+- Monitoring
+difficulty: beginner
+geography:
+- Sweden
+temporal_coverage: current observations or notices
+update_frequency: near real time
+provider: Krisinformation.se
+source_type: government
+last_verified: '2026-09-28'
+getting_started:
+  overview: The official Krisinformation.se feed supplies current public data. Start with two recent official
+    news records; a regional notice does not prove a destination-wide infrastructure outage.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official data documentation and reuse terms.
+  - Fetch the small official feed and inspect two records.
+  - Preserve source timestamps and locations before mapping results.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+
+      url = "https://api.krisinformation.se/v3/news"
+      response = requests.get(url, params={"format": "json", "allcounties": "true",
+                                           "days": 365}, timeout=20)
+      response.raise_for_status()
+      for notice in response.json()[:2]:
+          print(notice.get("Identifier"), notice.get("Headline"),
+                notice.get("Updated"))
+  first_project:
+    title: Inspect Dated Local Conditions
+    goal: Inspect two recent official news records with source timestamps.
+    steps:
+    - Fetch the official source and retain its update time.
+    - Show two records with their station or notice identifiers.
+    - Explain why these records are context rather than complete hazard coverage.

@@ -1,0 +1,76 @@
+id: aemet-cap-warnings
+name: AEMET Spain CAP Warnings
+description: >
+  Official Spanish adverse-weather CAP warning Atom feed from AEMET for
+  inspecting alert IDs, updates, and affected regions.
+theme: Environment & Hazards
+url: https://www.aemet.es/es/rss_info/avisos/esp
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - Atom
+  - CAP
+license: AEMET public information may be reused commercially or noncommercially with attribution and integrity conditions.
+license_url: https://www.aemet.es/es/nota_legal
+url_checks:
+  source_marker: CAP_AFAE_ATOM.xml
+  license_marker: fines comerciales y no comerciales
+domains:
+  - Weather
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Spain
+temporal_coverage: current adverse-weather alerts
+update_frequency: near real time
+provider: Agencia Estatal de Meteorología
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    AEMET publishes adverse-weather warnings through an Atom index with CAP
+    details. Start with five current Atom entries, preserving IDs and update
+    times. The legal notice requires source attribution and forbids distorting
+    technical meaning; verify official area and validity before display.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read AEMET's CAP feed page and legal reuse conditions.
+    - Fetch the national Atom index and inspect at most five entries.
+    - Use linked CAP details for severity, affected area, and expiry.
+  python:
+    packages:
+      - requests
+    code: |
+      import xml.etree.ElementTree as ET
+      import requests
+
+      response = requests.get(
+          "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/"
+          "CAP_AFAE_ATOM.xml", timeout=30,
+      )
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      atom = "{http://www.w3.org/2005/Atom}"
+      print(root.findtext(f"{atom}updated"))
+      for entry in root.findall(f"{atom}entry")[:5]:
+          print(entry.findtext(f"{atom}id"), entry.findtext(f"{atom}title"))
+  first_project:
+    title: Inspect Spanish CAP Publications
+    goal: Test the official warning index for a bounded Spanish alert card.
+    steps:
+      - Keep AEMET IDs, update timestamps, and CAP detail links.
+      - Check whether each CAP message is current and applies to the intended area.
+      - Explain why Atom publication alone cannot establish local warning coverage.

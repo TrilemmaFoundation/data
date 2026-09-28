@@ -1,0 +1,55 @@
+id: eaws-avalanche-regions
+name: EAWS Avalanche Microregions
+description: >
+  European avalanche warning-region polygons for matching mountain destinations to regional bulletins across published areas.
+theme: Geospatial & Infrastructure
+url: https://eaws.gitlab.io/eaws-regions/micro-regions/AT-02_micro-regions.geojson.json
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.02
+formats: [GeoJSON]
+license: CC0 1.0 Universal; the EAWS source still merits attribution when combining its geometry with a bulletin.
+license_url: https://gitlab.com/api/v4/projects/eaws%2Feaws-regions/repository/files/LICENSE/raw?ref=master
+url_checks:
+  source_marker: AT-02_micro-regions
+  license_marker: CC0 1.0 Universal
+domains: [Natural Hazards]
+data_types: [Geospatial]
+tasks: [Mapping]
+difficulty: beginner
+geography: [Europe]
+temporal_coverage: current EAWS warning-region boundaries
+update_frequency: occasional
+provider: European Avalanche Warning Services
+source_type: nonprofit
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EAWS publishes a maintained composite GeoJSON and smaller country or
+    subregion partitions. Start with the AT-02 partition and two polygons;
+    matching a destination to a polygon does not establish that a bulletin
+    is active or applicable at its exact location.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the EAWS geometry index and source-repository CC0 licence.
+    - Download one bounded microregion partition.
+    - Inspect feature IDs and geometry before joining to bulletins.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = "https://eaws.gitlab.io/eaws-regions/micro-regions/AT-02_micro-regions.geojson.json"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      for region in response.json()["features"][:2]:
+          print(region["properties"].get("id"), region["geometry"]["type"])
+  first_project:
+    title: Match Avalanche Regions
+    goal: Inspect two EAWS microregions before joining bulletin coverage.
+    steps:
+      - Download one partition and retain its region IDs.
+      - Compare a destination coordinate with candidate polygons.
+      - Explain why a geometry match is not a current avalanche warning.

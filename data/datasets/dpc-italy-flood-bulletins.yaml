@@ -1,0 +1,82 @@
+id: dpc-italy-flood-bulletins
+name: Italian DPC Flood-Criticality Bulletins
+description: >
+  Daily national hydrogeological and hydraulic criticality bulletins from
+  Italy's Civil Protection Department for mapped alert-zone context.
+theme: Environment & Hazards
+url: https://github.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - TopoJSON
+license: CC BY 4.0 with Italian Civil Protection Department attribution.
+license_url: https://github.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/blob/master/LICENSE
+url_checks:
+  source_marker: Bollettini di Criticità Idrogeologica e Idraulica Nazionale
+  license_marker: Creative Commons Attribution 4.0
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Event Data
+tasks:
+  - Mapping
+  - Alerting
+difficulty: intermediate
+geography:
+  - Italy
+temporal_coverage: daily today and tomorrow bulletins with revisions
+update_frequency: daily
+provider: Italian Civil Protection Department
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The DPC GitHub repository publishes a national criticality bulletin daily
+    and can add corrections. Start with one current today/tomorrow TopoJSON
+    file from the latest bulletin commit. A forecast criticality zone is not
+    a point flood measurement; retain issue and revision context.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the DPC repository's update schedule and CC BY licence.
+    - Find the latest commit touching the topojson bulletin directory.
+    - Fetch one current bulletin file from that exact commit.
+  python:
+    packages:
+      - requests
+    code: |
+      import re
+      import requests
+
+      repo = "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica"
+      headers = {"User-Agent": "TrilemmaDataCatalogExample/1.0"}
+      commits = requests.get(f"{repo}/commits", params={"path": "files/topojson", "per_page": 1},
+                             headers=headers, timeout=30)
+      commits.raise_for_status()
+      sha = commits.json()[0]["sha"]
+      detail = requests.get(f"{repo}/commits/{sha}", headers=headers, timeout=30)
+      detail.raise_for_status()
+      files = [item["filename"] for item in detail.json()["files"]
+               if item["status"] != "removed" and re.fullmatch(
+                   r"files/topojson/\d{8}_\d{4}_(today|tomorrow)\.json", item["filename"])]
+      if not files:
+          raise RuntimeError("Latest bulletin commit has no current TopoJSON file")
+      url = f"https://raw.githubusercontent.com/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/{sha}/{files[0]}"
+      bulletin = requests.get(url, timeout=30)
+      bulletin.raise_for_status()
+      print(files[0], list(bulletin.json().get("objects", {}))[:5])
+  first_project:
+    title: Inspect One Italian Criticality Bulletin
+    goal: Check one official daily zone artifact before local hazard matching.
+    steps:
+      - Retain commit SHA, bulletin filename, publication date, and zone IDs.
+      - Prefer later corrections to earlier files for the same validity day.
+      - Explain why forecast zones do not confirm a flood at a destination.

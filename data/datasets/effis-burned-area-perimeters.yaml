@@ -1,0 +1,59 @@
+id: effis-burned-area-perimeters
+name: EFFIS Burned-Area Perimeters
+description: >
+  Near-real-time European burned-area polygons for corroborating recent wildfire detections against mapped perimeters.
+theme: Environment & Hazards
+url: https://forest-fire.emergency.copernicus.eu/applications/data-and-services
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GML]
+license: >
+  EU-owned EFFIS content is CC BY 4.0 unless marked otherwise; credit EFFIS and any identified underlying provider.
+license_url: https://forest-fire.emergency.copernicus.eu/about-effis/data-license
+url_checks:
+  source_marker: real-time updated Burnt Areas database
+  license_marker: Creative Commons Attribution 4.0 International
+domains: [Wildfires]
+data_types: [Geospatial]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Europe]
+temporal_coverage: recent EFFIS mapped burned areas
+update_frequency: near real time
+provider: Copernicus Emergency Management Service EFFIS
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EFFIS exposes effis.nrt.ba.poly polygons through its WFS, separately from thermal-detection points.
+    Start with one bounded feature request; an empty result is not proof of no fires.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review EFFIS's burned-area service and attribution rules.
+    - Request at most one effis.nrt.ba.poly feature in a small bounding box.
+    - Keep mapping time and spatial coverage distinct from active-fire detections.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://maps.effis.emergency.copernicus.eu/effis",
+          params={"service": "WFS", "version": "1.1.0", "request": "GetFeature",
+                  "typeName": "effis.nrt.ba.poly", "maxFeatures": 1,
+                  "bbox": "5,45,6,46,EPSG:4326"},
+          timeout=25,
+      )
+      response.raise_for_status()
+      assert b"FeatureCollection" in response.content[:4096]
+      print("EFFIS perimeter response bytes:", len(response.content))
+  first_project:
+    title: Inspect a Recent Perimeter Query
+    goal: Query a bounded recent burned-area polygon layer.
+    steps:
+      - Request one feature at most in a small European bounding box.
+      - Record whether a polygon was returned and its geographic bounds.
+      - Explain that an empty query cannot establish an all-clear.

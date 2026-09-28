@@ -1,0 +1,76 @@
+id: lu-alert-cap
+name: Luxembourg LU-Alert CAP Messages
+description: >
+  Official Luxembourg civil-alert messages published as CAP-LU files through
+  the national open-data portal for tracking current civil emergencies.
+theme: Environment & Hazards
+url: https://data.public.lu/api/1/datasets/alertes-du-systeme-lu-alert/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - XML
+license: CC BY 4.0; identify LU-Alert as the source of each alert.
+license_url: https://creativecommons.org/licenses/by/4.0/
+url_checks:
+  source_marker: alertes-du-systeme-lu-alert
+  license_marker: Attribution 4.0 International
+domains:
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Luxembourg
+temporal_coverage: current and archived CAP-LU alert files
+update_frequency: near real time
+provider: Luxembourg Government LU-Alert
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    LU-Alert publishes issuer messages as CAP-LU XML resources in one portal
+    dataset. Start with resource metadata from the first API page; inspect
+    message status, validity, and cancellation before presenting an alert.
+    Credit LU-Alert and retain the source resource URL.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the LU-Alert dataset licence and CAP-LU documentation.
+    - Fetch the dataset API metadata once and inspect one recent XML resource.
+    - Keep issuer, event, message status, issue time, and affected area.
+  python:
+    packages:
+      - requests
+    code: |
+      import xml.etree.ElementTree as ET
+      import requests
+
+      url = "https://data.public.lu/api/1/datasets/alertes-du-systeme-lu-alert/"
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      resources = [r for r in response.json()["resources"]
+                   if r.get("format", "").lower() == "xml"]
+      resource = resources[0]
+      alert = requests.get(resource["url"], timeout=30)
+      alert.raise_for_status()
+      root = ET.fromstring(alert.content)
+      namespace = root.tag.split("}")[0] + "}"
+      print(resource["title"], root.findtext(f"{namespace}identifier"),
+            root.findtext(f"{namespace}status"), root.findtext(f"{namespace}sent"))
+  first_project:
+    title: Inspect Official Luxembourg Alerts
+    goal: Find recent CAP-LU resources for a bounded official alert review.
+    steps:
+      - Retain the source resource URL, update timestamp, and CAP identifier.
+      - Handle tests, updates, and cancellations before displaying a warning.
+      - Attribute each displayed message to LU-Alert.

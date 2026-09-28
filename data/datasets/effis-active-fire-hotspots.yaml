@@ -1,0 +1,60 @@
+id: effis-active-fire-hotspots
+name: EFFIS Active Fire Hotspots
+description: >
+  Filtered MODIS and VIIRS thermal-detection layers for current European wildfire discovery and corroboration.
+theme: Environment & Hazards
+url: https://forest-fire.emergency.copernicus.eu/about-effis/technical-background/active-fire-detection
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GeoTIFF]
+license: >
+  EFFIS EU-owned presentation and filtering are CC BY 4.0 unless marked otherwise; underlying NASA FIRMS detections require their own source credit.
+license_url: https://forest-fire.emergency.copernicus.eu/about-effis/data-license
+url_checks:
+  source_marker: EFFIS uses the active fire detection provided by the NASA FIRMS
+  license_marker: Creative Commons Attribution 4.0 International
+domains: [Wildfires]
+data_types: [Raster]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Europe]
+temporal_coverage: recent filtered satellite thermal detections
+update_frequency: near real time
+provider: Copernicus Emergency Management Service EFFIS
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EFFIS filters FIRMS thermal detections into its all.hs active-fire WMS layer.
+    Start with a small map tile; a hotspot may be another heat source and is not a confirmed perimeter.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read EFFIS's detection methodology and credit both EFFIS and FIRMS.
+    - Request a small all.hs image from the public WMS.
+    - Keep sensor, time, and false-positive limits visible when interpreting hotspots.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://maps.effis.emergency.copernicus.eu/effis",
+          params={"SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetMap",
+                  "LAYERS": "all.hs", "STYLES": "default", "SRS": "EPSG:4326",
+                  "BBOX": "5,45,6,46", "WIDTH": 32, "HEIGHT": 32,
+                  "FORMAT": "image/tiff"},
+          timeout=25,
+      )
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*"), "Expected GeoTIFF"
+      print("EFFIS hotspot GeoTIFF bytes:", len(response.content))
+  first_project:
+    title: Inspect an Active-Fire Layer
+    goal: Display a bounded thermal-detection tile as discovery context.
+    steps:
+      - Fetch one all.hs WMS tile.
+      - Label the geographic bounds and EFFIS/FIRMS attribution.
+      - Explain detection delays and why a thermal anomaly is not a verified wildfire.

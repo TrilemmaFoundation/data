@@ -1,0 +1,74 @@
+id: chmi-flash-flood-risk
+name: CHMI Flash-Flood Risk Product
+description: >
+  Official Czech flash-flood risk classes for administrative areas from
+  CHMI for reviewing local short-term flooding risk.
+theme: Environment & Hazards
+url: https://opendata.chmi.cz/hydrology/product/data/flash_flood/risk_FF_web.json
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: CC BY 4.0 with CHMI attribution.
+license_url: https://www.chmi.cz/-/jak-mohu-pou%C5%BE%C3%ADvat-otev%C5%99en%C3%A1-data-%C4%8Dhm%C3%BA-
+url_checks:
+  source_marker: povodne_orp_risk_ff
+  license_marker: Creative Commons BY 4.0
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Czechia
+temporal_coverage: current ORP flash-flood risk product
+update_frequency: near real time
+provider: Czech Hydrometeorological Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    CHMI publishes a dated flash-flood risk JSON product by Czech ORP area.
+    Start with one response and inspect at most five areas if present. A
+    response with only report metadata means no listed risk areas; it does not
+    replace current station observations or general flood guidance.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read CHMI's risk-class metadata and CC BY 4.0 condition.
+    - Fetch the current risk product once.
+    - Keep creation time, ORP code, and resulting risk class.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = "https://opendata.chmi.cz/hydrology/product/data/flash_flood/risk_FF_web.json"
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      product = response.json()
+      print(product["datumVytvoreni"])
+      for key, areas in product["data"].items():
+          if key == "report":
+              continue
+          for area in areas[:5]:
+              print(area.get("kod_orp_ruian"), area.get("riziko_vysledne"))
+  first_project:
+    title: Inspect Czech Flash-Flood Areas
+    goal: Review official nonzero risk classes against one mapped locality.
+    steps:
+      - Keep the issue time, ORP identifier, and forecast risk class.
+      - Distinguish forecast risk from measured water levels.
+      - Explain why no listed areas do not imply permanent or nationwide safety.

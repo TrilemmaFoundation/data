@@ -1,0 +1,64 @@
+id: eea-air-quality-index-stations
+name: EEA Air Quality Index Stations
+description: >
+  European Environment Agency hourly station AQI details for building a measured air-quality context view.
+theme: Environment & Hazards
+url: https://dis2datalake.blob.core.windows.net/airquality-derivated/AQI-noRunningMeans/current/AT60118.json
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.003
+formats: [JSON]
+license: EEA material is CC BY with EEA attribution; check station-level third-party notices and do not distort values.
+license_url: https://www.eea.europa.eu/en/legal-notice
+url_checks:
+  source_marker: '"modelled_O3":0,"modelled_NO2":0'
+  license_marker: EEA materials are published under the CC-BY license
+domains: [Air Quality]
+data_types: [Time Series]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Europe]
+temporal_coverage: recent hourly station observations and model context
+update_frequency: near real time
+provider: European Environment Agency
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The EEA Air Quality Index publishes a station metadata index, hourly map,
+    and per-station detail JSON. Start with one reviewed Austrian station and
+    two hours; modeled gap fills must not be presented as measurements, and
+    one station does not establish destination-wide air quality.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the EEA AQI methodology and legal notice.
+    - Fetch one station-detail artifact from the official AQI data lake.
+    - Inspect the observation and modeled flags for two hourly records.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+      from datetime import datetime, timezone
+
+      url = ("https://dis2datalake.blob.core.windows.net/airquality-derivated/"
+             "AQI-noRunningMeans/current/AT60118.json")
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      now = datetime.now(timezone.utc)
+      observed = []
+      for hour, row in response.json().items():
+          pollutant = row.get("culprit")
+          if (pollutant and datetime.fromisoformat(hour.replace("Z", "+00:00")) <= now
+                  and row.get(f"modelled_{pollutant}") == 0):
+              observed.append((hour, row))
+      for hour, row in sorted(observed)[-2:]:
+          print(hour, row.get("aqi"), row.get("culprit"))
+  first_project:
+    title: Inspect Station AQI Context
+    goal: Compare two station hours while retaining modeled-value provenance.
+    steps:
+      - Fetch one station's dated hourly values.
+      - Display the culprit pollutant and model flag beside AQI.
+      - Explain why a modeled fill or one station is not a local measurement.

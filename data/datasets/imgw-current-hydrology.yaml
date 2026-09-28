@@ -1,0 +1,71 @@
+id: imgw-current-hydrology
+name: IMGW Poland Current Hydrology
+description: >
+  Current Polish river-station observations and official thresholds from IMGW
+  for checking stage exceedance at reviewed gauges.
+theme: Environment & Hazards
+url: https://danepubliczne.imgw.pl/api/data/hydro/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  Free public access for qualifying noncommercial analysis; commercial and
+  specified sectoral uses may require an IMGW agreement and payment.
+license_url: https://danepubliczne.imgw.pl/
+url_checks:
+  source_marker: stan_ostrzegawczy
+  license_marker: REGULAMIN UDOSTĘPNIANIA DANYCH
+domains:
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Time Series
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: beginner
+geography:
+  - Poland
+temporal_coverage: current river-stage station observations
+update_frequency: near real time
+provider: Institute of Meteorology and Water Management
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    IMGW's public API returns river-stage measurements with official warning
+    and alarm thresholds. Free access is limited to qualifying noncommercial
+    analysis; commercial and specified sectoral uses can require a separate
+    agreement and payment. Start with five stations from one response. A
+    threshold crossing at one station is not a published area-wide warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read IMGW's current access regulation before reusing observations.
+    - Fetch one current hydrology API response.
+    - Inspect station ID, measurement time, stage, and warning threshold.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get("https://danepubliczne.imgw.pl/api/data/hydro/", timeout=30)
+      response.raise_for_status()
+      for station in response.json()[:5]:
+          print(station.get("id_stacji"), station.get("stan_wody"),
+                station.get("stan_ostrzegawczy"), station.get("stan_wody_data_pomiaru"))
+  first_project:
+    title: Inspect Polish River Thresholds
+    goal: Review five official station readings before local stage matching.
+    steps:
+      - Keep station ID, river, reading time, units, and both thresholds.
+      - Reject stale, missing, or malformed readings before comparison.
+      - Explain why a station reading does not equal an official area warning.

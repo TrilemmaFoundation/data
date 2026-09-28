@@ -1,0 +1,86 @@
+id: lvgmc-hydrometeorological-warnings
+name: Latvia Hydrometeorological Warnings
+description: >
+  Official Latvian weather and hydrological warning resources published by
+  the Latvian Environment, Geology and Meteorology Centre for local alert review.
+theme: Environment & Hazards
+url: https://data.gov.lv/dati/eng/dataset/hidrometeorologiskie-bridinajumi
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+  - CSV
+license: CC0 1.0 for the named portal dataset; retain the originating authority and issue context.
+license_url: https://data.gov.lv/dati/eng/dataset/hidrometeorologiskie-bridinajumi
+url_checks:
+  source_marker: Hidrometeoroloģiskie brīdinājumi
+  license_marker: property="dc:rights">CC0-1.0
+domains:
+  - Weather
+  - Hydrology
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Latvia
+temporal_coverage: current and published warning resources
+update_frequency: near real time
+provider: Latvian Environment, Geology and Meteorology Centre
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The Latvian open-data package lists maintained hydrometeorological warning
+    resources. Start with one package metadata response and inspect five
+    warning resource URLs;
+    Riga warnings may be separate from wider regional warnings. A package
+    listing alone is not a current warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official package description, resource list, and CC0 terms.
+    - Query the bounded CKAN package metadata endpoint once.
+    - Fetch five warning metadata records from the exact named resource.
+    - Match issue time, hazard, and locality in any current record.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = "https://data.gov.lv/dati/api/3/action/package_show"
+      response = requests.get(url, params={"id": "hidrometeorologiskie-bridinajumi"}, timeout=30)
+      response.raise_for_status()
+      package = response.json()["result"]
+      print(package["title"])
+      warnings = next(r for r in package["resources"]
+                      if r["id"] == "59c111fb-8c9a-4a63-8284-0a64a2920681")
+      records = requests.get(
+          "https://data.gov.lv/dati/api/3/action/datastore_search",
+          params={"resource_id": warnings["id"], "limit": 5}, timeout=30,
+      )
+      records.raise_for_status()
+      rows = [row for row in records.json()["result"]["records"]
+              if row.get("WEATHER_WARNING_EV_ID")]
+      print(f"{len(rows)} warning metadata rows in this page")
+      for row in rows:
+          print(row.get("WEATHER_WARNING_EV_ID"), row.get("PARADIBA_EN"),
+                row.get("TIME_FROM"), row.get("TIME_TILL"))
+  first_project:
+    title: Inspect Latvian Warning Resources
+    goal: Identify the official resources and their geographic coverage.
+    steps:
+      - Keep resource IDs, warning issue times, and affected area names.
+      - Check Riga separately from regional notices when appropriate.
+      - Explain why metadata refresh is not itself a current warning event.

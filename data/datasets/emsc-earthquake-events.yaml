@@ -1,0 +1,74 @@
+id: emsc-earthquake-events
+name: EMSC Seismic Portal Events
+description: >
+  Preliminary EMSC earthquake event records through the FDSN service for
+  seismic discovery and comparison with other official event feeds.
+theme: Environment & Hazards
+url: https://seismicportal.eu/fdsn-wsevent.html
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+  - CSV
+license: FDSN event service data are CC BY 4.0 with source attribution.
+license_url: https://seismicportal.eu/fdsn-wsevent.html
+url_checks:
+  source_marker: FDSN WS-EVENT API demonstration
+  license_marker: Creative Commons Attribution 4.0 International
+domains:
+  - Seismology
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Time Series
+tasks:
+  - Monitoring
+  - Risk Mapping
+difficulty: intermediate
+geography:
+  - Global
+temporal_coverage: current and historical event catalogue
+update_frequency: near real time
+provider: European-Mediterranean Seismological Centre
+source_type: nonprofit
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The EMSC FDSN event endpoint returns recent earthquakes as GeoJSON. Start
+    with only two events to inspect the event time, magnitude, and revision time.
+    Preliminary events can be corrected; they do not replace local intensity
+    products or establish comprehensive warning coverage.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the FDSN event service documentation and its CC BY licence statement.
+    - Request a bounded recent event sample in JSON format.
+    - Preserve event identifiers and last-update time when comparing revisions.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://www.seismicportal.eu/fdsnws/event/1/query",
+          params={"format": "json", "limit": 2}, timeout=30,
+      )
+      response.raise_for_status()
+      for event in response.json()["features"]:
+          details = event["properties"]
+          print(event["id"], details["time"], details["mag"],
+                details["lastupdate"])
+  first_project:
+    title: Compare Two Recent Earthquake Reports
+    goal: Test a bounded seismic-event fallback without treating it as an intensity forecast.
+    steps:
+      - Keep each event ID, source agency, event time, and last-update time.
+      - Compare locations and magnitudes with the primary USGS feed when available.
+      - Explain preliminary corrections and EMSC attribution requirements.

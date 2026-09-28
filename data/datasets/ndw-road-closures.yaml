@@ -1,0 +1,73 @@
+id: ndw-road-closures
+name: NDW Road Events and Closures
+description: Dutch compressed road-closure and safety-message records for building a dated traffic-disruption
+  map.
+theme: Geospatial & Infrastructure
+url: https://opendata.ndw.nu/
+access_type:
+- download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.005
+formats:
+- XML
+license: NDW open-data content is CC0 unless a specific file states otherwise.
+license_url: https://english.ndw.nu/service/copyright
+url_checks:
+  source_marker: tijdelijke_verkeersmaatregelen_afsluitingen.xml.gz
+  license_marker: CC0 (Creative Commons Zero)
+domains:
+- Transportation
+data_types:
+- Event Data
+- Geospatial
+tasks:
+- Monitoring
+- Mapping
+difficulty: beginner
+geography:
+- Netherlands
+temporal_coverage: current observations or notices
+update_frequency: near real time
+provider: Nationaal Dataportaal Wegverkeer
+source_type: government
+last_verified: '2026-09-28'
+getting_started:
+  overview: The official NDW index publishes separate closure and safety-message DATEX files. Start with
+    two Dutch closure records; a listed restriction is not a complete route planner or safety instruction.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official data documentation and reuse terms.
+  - Fetch the small official feed and inspect two records.
+  - Preserve source timestamps and locations before mapping results.
+  python:
+    packages:
+    - requests
+    code: |
+      import gzip
+      import io
+      import itertools
+      import requests
+      from xml.etree import ElementTree as ET
+
+      url = "https://opendata.ndw.nu/tijdelijke_verkeersmaatregelen_afsluitingen.xml.gz"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      assert len(response.content) < 1_000_000
+      xml = gzip.decompress(response.content)
+      assert len(xml) < 5_000_000
+      records = (element for _, element in ET.iterparse(io.BytesIO(xml), events=("end",))
+                 if element.tag.endswith("}situationRecord"))
+      for record in itertools.islice(records, 2):
+          print(record.get("id"), record.get("version"))
+  first_project:
+    title: Inspect Dated Local Conditions
+    goal: Inspect two Dutch closure records with source timestamps.
+    steps:
+    - Fetch the official source and retain its update time.
+    - Show two records with their station or notice identifiers.
+    - Explain why these records are context rather than complete hazard coverage.

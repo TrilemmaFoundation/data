@@ -1,0 +1,55 @@
+id: fcdo-travel-advice
+name: FCDO Foreign Travel Advice
+description: >
+  Published UK government country travel advice for building a destination briefing with dated safety context.
+theme: Government & Policy
+url: https://www.gov.uk/api/content/foreign-travel-advice/switzerland
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: Open Government Licence v3.0; acknowledge Crown copyright and check third-party material.
+license_url: https://www.gov.uk/help/reuse-govuk-content
+url_checks:
+  source_marker: FCDO travel advice for Switzerland
+  license_marker: Open Government Licence
+domains: [Public Policy]
+data_types: [Text]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Global]
+temporal_coverage: current country advice
+update_frequency: occasional
+provider: UK Foreign, Commonwealth & Development Office
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The GOV.UK Content API returns structured advice for one country path.
+    Start with Switzerland and inspect its update date; advice is not a
+    guarantee of safety or a substitute for the full official notice.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read GOV.UK's Content API documentation and reuse terms.
+    - Fetch one country's published advice by its GOV.UK path.
+    - Inspect the publication date and link to the complete advice.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      url = "https://www.gov.uk/api/content/foreign-travel-advice/switzerland"
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      advice = response.json()
+      print(advice["title"], advice.get("public_updated_at"))
+      print("https://www.gov.uk" + advice["base_path"])
+  first_project:
+    title: Build a Dated Country Briefing
+    goal: Show a country advice link and its latest publication timestamp.
+    steps:
+      - Fetch one country record and keep its source path.
+      - Display its update date beside a link to the full advice.
+      - Explain that official advice can change after the cached snapshot.

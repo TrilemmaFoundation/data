@@ -1,0 +1,56 @@
+id: copernicus-rapid-mapping-activations
+name: Copernicus Rapid Mapping Activations
+description: >
+  Public emergency-mapping activation metadata and product references for dated disaster-response context tools.
+theme: Environment & Hazards
+url: https://mapping.emergency.copernicus.eu/about/how-to-harvest-cems-mapping-data/emergency-response-data/
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: >
+  Public CEMS mapping information may be reused with source and modification attribution; sensitive activations can be restricted.
+license_url: https://mapping.emergency.copernicus.eu/terms-and-conditions/
+url_checks:
+  source_marker: Copernicus EMS Rapid Mapping API provides a programmatic interface
+  license_marker: free, full and open access to Copernicus Service Information
+domains: [Emergency Management]
+data_types: [Events]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Global]
+temporal_coverage: public emergency mapping activations and product metadata
+update_frequency: near real time
+provider: Copernicus Emergency Management Service
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The public Rapid Mapping API lists activations and offers detail records and product links.
+    Start with one activation; its existence does not establish current warning coverage at a location.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the public activation API documentation and CEMS reuse terms.
+    - Request one activation from the public listing.
+    - Keep event and update timestamps separate from present hazard status.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/",
+          params={"limit": 1, "offset": 0}, timeout=25,
+      )
+      response.raise_for_status()
+      for activation in response.json()["results"]:
+          print(activation["code"], activation["name"], activation["eventTime"])
+  first_project:
+    title: Inspect a Public Activation
+    goal: Display one mapped emergency event with its activation identifier and event time.
+    steps:
+      - Fetch one public activation record.
+      - Show the identifier, event date, and affected country.
+      - Explain that an activation is not a current local warning.

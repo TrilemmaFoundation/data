@@ -1,0 +1,77 @@
+id: open-meteo-weather-forecast
+name: Open-Meteo Weather Forecast
+description: >
+  Hourly point weather forecasts from Open-Meteo for planning location-specific
+  conditions panels, subject to noncommercial free API terms.
+theme: Environment & Hazards
+url: https://open-meteo.com/en/docs
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: Free API is for noncommercial use only, with CC BY 4.0 attribution and rate limits.
+license_url: https://open-meteo.com/en/terms
+url_checks:
+  source_marker: Weather Forecast API
+  license_marker: You may only use the free API services for non-commercial purposes
+domains:
+  - Weather
+  - Forecasting
+data_types:
+  - Time Series
+  - Forecast Data
+tasks:
+  - Forecasting
+  - Operational Planning
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: current hourly forecasts
+update_frequency: continuous
+provider: Open-Meteo
+source_type: company
+last_verified: 2026-09-28
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+  rate_limit_notes: Free noncommercial API permits fewer than 10000 calls per day.
+getting_started:
+  overview: >
+    The free Open-Meteo weather endpoint permits noncommercial use only; commercial
+    services need separate paid access. Start with one point and one forecast day.
+    Model output is not a local observation or official weather warning.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the free API noncommercial terms and attribution requirements.
+    - Choose one coordinate and limit the forecast to one day.
+    - Compare the hourly timestamps with the location's time zone before display.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.open-meteo.com/v1/forecast",
+          params={"latitude": 52.52, "longitude": 13.41,
+                  "hourly": "temperature_2m", "forecast_days": 1},
+          timeout=30,
+      )
+      response.raise_for_status()
+      hourly = response.json()["hourly"]
+      print(list(zip(hourly["time"], hourly["temperature_2m"]))[:5])
+  first_project:
+    title: Inspect a One-Day Weather Forecast
+    goal: Check whether hourly temperatures support a noncommercial local conditions card.
+    steps:
+      - Keep the returned units and forecast timestamps with each value.
+      - Display five hourly temperatures for the selected point.
+      - Explain the noncommercial API limit and why a forecast is not an official warning.

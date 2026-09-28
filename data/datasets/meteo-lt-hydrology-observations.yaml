@@ -1,0 +1,58 @@
+id: meteo-lt-hydrology-observations
+name: Meteo LT Hydrology Observations
+description: >
+  Lithuanian river-station water levels and temperatures for dated local hydrology context tools.
+theme: Environment & Hazards
+url: https://api.meteo.lt/
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: >
+  The Lithuanian Hydrometeorological Service publishes API data under CC BY-SA 4.0 unless marked otherwise; attribute the source and share adapted data under compatible terms.
+license_url: https://api.meteo.lt/
+url_checks:
+  source_marker: /hydro-stations/{station-code}/observations/measured/{date}
+  license_marker: Creative Commons Attribution-ShareAlike 4.0
+domains: [Water Resources]
+data_types: [Time Series]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Lithuania]
+temporal_coverage: current and recent station observations
+update_frequency: near real time
+provider: Lithuanian Hydrometeorological Service
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Meteo LT publishes current measured water levels at named hydro-stations in centimeters.
+    Start with one documented station; a water level without a station datum or official threshold is not a flood warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read the hydro-station endpoint documentation and CC BY-SA terms.
+    - Fetch the latest observations for one documented station.
+    - Keep its UTC observation time, station name, and water-level unit together.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.meteo.lt/v1/hydro-stations/nemajunu-vms/observations/measured/latest",
+          timeout=20,
+      )
+      response.raise_for_status()
+      data = response.json()
+      for observation in data["observations"][-2:]:
+          print(data["station"]["name"], observation["observationTimeUtc"],
+                observation["waterLevel"], "cm")
+  first_project:
+    title: Inspect One River Station
+    goal: Show one recent Lithuanian station water level with its time and unit.
+    steps:
+      - Fetch the documented station's latest measured observations.
+      - Display its station name, UTC time, and centimeter level.
+      - Explain why the value cannot be treated as an official flood warning.

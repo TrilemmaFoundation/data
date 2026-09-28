@@ -1,0 +1,67 @@
+id: smhi-water-shortage-messages
+name: SMHI Water Shortage Messages
+description: >
+  Official Swedish water-shortage information messages from the impact-based
+  warning API, with dated affected-area and validity metadata for local water-risk review.
+theme: Environment & Hazards
+url: https://opendata-download-warnings.smhi.se/ibww/api/version/1
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: >
+  SMHI warnings and messages may be used for commercial or noncommercial purposes,
+  but their information must not be altered; always attribute SMHI and heed all
+  validity times. These special warning terms override the general CC BY data terms.
+license_url: https://www.smhi.se/data/om-smhis-data/villkor-for-anvandning
+url_checks:
+  source_marker: SMHI Impact Based Weather Warnings Download
+  license_marker: Informationen får inte ändras
+domains: [Water Resources, Emergency Management]
+data_types: [Event Data, Geospatial]
+tasks: [Monitoring, Alerting]
+difficulty: beginner
+geography: [Sweden]
+temporal_coverage: current official information messages
+update_frequency: near real time
+provider: Swedish Meteorological and Hydrological Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The documented SMHI impact-based warning API also publishes official
+    water-shortage information messages. Start with one current warning list,
+    filter by the documented event code, and keep message text and its timing intact;
+    a message without valid time and area context is not a local warning.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review the official API entry and the special warning and message terms.
+    - Request the current warning JSON once and select WATER_SHORTAGE events.
+    - Check affected areas and validity before displaying an unchanged message.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://opendata-download-warnings.smhi.se/ibww/api/version/1/warning.json",
+          timeout=20,
+      )
+      response.raise_for_status()
+      messages = [warning for warning in response.json()
+                  if warning.get("event", {}).get("code") == "WATER_SHORTAGE"]
+      print(f"{len(messages)} current water-shortage messages")
+      for message in messages[:3]:
+          for area in message.get("warningAreas", [])[:2]:
+              name = area.get("areaName", {})
+              print(message["id"], name.get("en") or name.get("sv"),
+                    area.get("published"), area.get("approximateStart"))
+  first_project:
+    title: Review Current Water Shortage Information
+    goal: List a few official messages with their affected areas and publication times.
+    steps:
+      - Preserve the source message and event code without changing its wording.
+      - Show affected areas and validity alongside every message.
+      - Cite SMHI and refresh before presenting current conditions.

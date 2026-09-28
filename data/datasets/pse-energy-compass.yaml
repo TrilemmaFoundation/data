@@ -1,0 +1,60 @@
+id: pse-energy-compass
+name: PSE Energy Compass Advisories
+description: >
+  Polish grid operator PSE's hourly national electricity-use recommendations for building dated system-context tools.
+theme: Geospatial & Infrastructure
+url: https://api.raporty.pse.pl/api/pdgsz?$filter=is_active%20eq%20true&$orderby=dtime_utc%20desc&$first=48
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats: [JSON]
+license: >
+  PSE permits free commercial and noncommercial public-information reuse with source/date attribution,
+  removal of the PSE logo, and clear labeling of processed results.
+license_url: https://www.pse.pl/bip/ponowne-wykorzystanie-informacji-publicznej
+url_checks:
+  source_marker: '"publication_ts_utc"'
+  license_marker: ponownego wykorzystywania informacji sektora publicznego
+domains: [Energy]
+data_types: [Time Series]
+tasks: [Monitoring]
+difficulty: beginner
+geography: [Poland]
+temporal_coverage: current and near-future national hourly advisories
+update_frequency: near real time
+provider: Polskie Sieci Elektroenergetyczne
+source_type: company
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    PSE publishes the Energy Compass forecast through its official reports API.
+    Start with the first active hourly row, keeping its UTC time and publication
+    time. The advice describes Poland-wide electricity-system conditions and
+    cannot establish a local power outage.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read PSE's Energy Compass explanation and public-information reuse conditions.
+    - Fetch a bounded set of active hourly recommendations.
+    - Record the publication time, valid hour, and usage forecast code.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.raporty.pse.pl/api/pdgsz",
+          params={"$filter": "is_active eq true", "$orderby": "dtime_utc desc", "$first": 48},
+          timeout=20,
+      )
+      response.raise_for_status()
+      for row in response.json()["value"][:2]:
+          print(row["dtime_utc"], row["usage_fcst"], row["publication_ts_utc"])
+  first_project:
+    title: Inspect National Grid Advice
+    goal: Display one hourly recommendation with its publication time and national scope.
+    steps:
+      - Fetch the latest active Energy Compass rows.
+      - Label the UTC valid hour and publication time.
+      - Explain why a country-wide advisory does not report a local interruption.

@@ -1,0 +1,71 @@
+id: fmi-cap-warnings
+name: Finnish Meteorological Institute CAP Warnings
+description: >
+  FMI weather-warning RSS and linked CAP messages for monitoring official
+  Finnish alert publications and validity.
+theme: Environment & Hazards
+url: https://alerts.fmi.fi/cap/profile/current/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - RSS
+  - CAP
+license: Finnish Meteorological Institute open data under CC BY 4.0 attribution.
+license_url: https://en.ilmatieteenlaitos.fi/open-data-licence
+url_checks:
+  source_marker: FMI CAP Profile Version
+  license_marker: Creative Commons Attribution 4.0
+domains:
+  - Weather
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Finland
+temporal_coverage: current official alert publications
+update_frequency: near real time
+provider: Finnish Meteorological Institute
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    FMI provides a CAP-backed RSS feed of current Finnish warnings. Start with
+    one English feed response and inspect its channel update time and up to
+    five entries. An empty feed is not proof that every location is safe.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read FMI's CAP profile and CC BY open-data licence.
+    - Fetch the English RSS feed once and record its publication time.
+    - Follow a linked CAP message for full event, area, and validity details.
+  python:
+    packages:
+      - requests
+    code: |
+      import xml.etree.ElementTree as ET
+      import requests
+
+      response = requests.get("https://alerts.fmi.fi/cap/feed/rss_en-GB.rss", timeout=30)
+      response.raise_for_status()
+      channel = ET.fromstring(response.content).find("channel")
+      print(channel.findtext("pubDate"), len(channel.findall("item")))
+      for item in channel.findall("item")[:5]:
+          print(item.findtext("title"), item.findtext("link"))
+  first_project:
+    title: Inspect Current Finnish Warning Entries
+    goal: Test a small official warning index before mapping CAP areas.
+    steps:
+      - Keep feed publication time and each item's official CAP link.
+      - Check CAP issue, expiry, and affected geometry before display.
+      - Explain why the RSS index is not a complete local all-clear.

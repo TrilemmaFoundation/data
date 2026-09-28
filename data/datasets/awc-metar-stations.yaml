@@ -1,0 +1,80 @@
+id: awc-metar-stations
+name: Aviation Weather Center METAR and Stations
+description: >
+  Current airport METAR observations and station metadata from NOAA's Aviation
+  Weather Center for checking representative weather conditions near destinations.
+theme: Environment & Hazards
+url: https://aviationweather.gov/data/api/
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+  - CSV
+license: U.S. government public information; credit NOAA and check third-party notices.
+license_url: https://sos.noaa.gov/copyright/
+url_checks:
+  source_marker: METARs are found
+  license_marker: digital media created by NOAA is not copyrighted
+domains:
+  - Weather
+  - Transportation
+data_types:
+  - Time Series
+  - Tabular
+tasks:
+  - Monitoring
+  - Operational Planning
+difficulty: beginner
+geography:
+  - Global participating airports
+temporal_coverage: current METARs and maintained station metadata
+update_frequency: continuous
+provider: NOAA Aviation Weather Center
+source_type: government
+last_verified: 2026-09-28
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+  rate_limit_notes: AWC limits requests to 100 per minute; match the product cadence.
+getting_started:
+  overview: >
+    AWC serves airport observations and station metadata through one documented
+    API family. Start with a single airport's METAR and station record. A
+    nearby airport is only a proxy for destination conditions, and this feed
+    does not provide official destination-wide weather warnings.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the AWC API request limits and NOAA public-information terms.
+    - Select one airport ICAO code and request its latest METAR.
+    - Query the same station ID and retain its coordinates with the reading.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      headers = {"User-Agent": "TrilemmaDataCatalogExample/1.0 (https://data.trilemma.foundation)"}
+      base = "https://aviationweather.gov/api/data"
+      params = {"ids": "EIDW", "format": "json"}
+      metar = requests.get(f"{base}/metar", params=params, headers=headers, timeout=30)
+      metar.raise_for_status()
+      station = requests.get(f"{base}/stationinfo", params=params, headers=headers, timeout=30)
+      station.raise_for_status()
+      if metar.json() and station.json():
+          print(metar.json()[0]["icaoId"], metar.json()[0]["reportTime"],
+                station.json()[0]["lat"], station.json()[0]["lon"])
+  first_project:
+    title: Check One Airport Observation
+    goal: Assess whether one METAR and station coordinate can support local weather context.
+    steps:
+      - Keep station ID, coordinates, report time, and observed units.
+      - Compare the reading age with the intended display freshness.
+      - Explain why airport conditions cannot prove destination-wide safety.

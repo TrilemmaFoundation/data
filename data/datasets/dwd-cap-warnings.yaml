@@ -1,0 +1,75 @@
+id: dwd-cap-warnings
+name: DWD Germany CAP Warnings
+description: >
+  Official German weather-warning CAP files from DWD for monitoring current
+  municipal alert status and affected area.
+theme: Environment & Hazards
+url: https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - ZIP
+  - XML
+license: CC BY 4.0 with Deutscher Wetterdienst attribution.
+license_url: https://www.dwd.de/EN/service/legal_notice/legal_notice_node.html
+url_checks:
+  source_marker: Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_EN.zip
+  license_marker: Creative Commons licence conditions
+domains:
+  - Weather
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Alerting
+difficulty: intermediate
+geography:
+  - Germany
+temporal_coverage: current CAP warning status snapshots
+update_frequency: near real time
+provider: Deutscher Wetterdienst
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    DWD publishes versioned and latest CAP ZIP snapshots for German municipal
+    warnings. Start with one latest English status ZIP and list at most five
+    contained files. An empty ZIP is a valid current state, not a provider
+    outage or a general all-clear outside the product's reviewed coverage.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read DWD's CAP directory, profile documentation, and attribution terms.
+    - Download one latest English status ZIP.
+    - Inspect CAP status, revision, and geometry before any alert display.
+  python:
+    packages:
+      - requests
+    code: |
+      from io import BytesIO
+      from zipfile import ZipFile
+      import requests
+
+      url = ("https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/"
+             "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_EN.zip")
+      response = requests.get(url, timeout=30)
+      response.raise_for_status()
+      with ZipFile(BytesIO(response.content)) as archive:
+          names = archive.namelist()
+      print(f"{len(names)} CAP files in the current status ZIP")
+      print(names[:5])
+  first_project:
+    title: Inspect German CAP Status
+    goal: Check a bounded official warning snapshot before local matching.
+    steps:
+      - Retain CAP identifiers, message status, update references, and regions.
+      - Handle cancellations and empty current snapshots correctly.
+      - Explain why a snapshot does not cover every kind of civil emergency.

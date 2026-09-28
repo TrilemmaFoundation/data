@@ -1,0 +1,65 @@
+id: vigicrues-flood-vigilance-rss
+name: Vigicrues Flood Vigilance RSS
+description: French river flood-vigilance RSS items for building a dated regional river-warning view.
+theme: Environment & Hazards
+url: https://www.vigicrues.gouv.fr/territoire/rss
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+- RSS
+license: Public Vigicrues content is reusable under the French Etalab Open Licence with source and update-date
+  attribution; third-party map content has separate rights.
+license_url: https://www.vigicrues.gouv.fr/categorie/2
+url_checks:
+  source_marker: 'Vigicrues : Tronçon(s) de cours'
+  license_marker: librement et gratuitement
+domains:
+- Natural Hazards
+data_types:
+- Event Data
+- Geospatial
+tasks:
+- Monitoring
+- Mapping
+difficulty: beginner
+geography:
+- France
+temporal_coverage: seasonal or current official warnings
+update_frequency: near real time
+provider: Vigicrues
+source_type: government
+last_verified: '2026-09-28'
+getting_started:
+  overview: The official Vigicrues feed supports regional hazard context. Start with two French river-vigilance
+    items; a feed item covers its named river segment, not every nearby location.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official feed documentation and reuse terms.
+  - Fetch one bounded official response.
+  - Inspect two records and retain their validity period.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+      from xml.etree import ElementTree as ET
+
+      response = requests.get("https://www.vigicrues.gouv.fr/territoire/rss", timeout=20)
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      for item in root.findall("./channel/item")[:2]:
+          print(item.findtext("title"), item.findtext("pubDate"), item.findtext("link"))
+  first_project:
+    title: Map Dated Regional Warnings
+    goal: Inspect two French river-vigilance items with official validity and source links.
+    steps:
+    - Fetch one official response and retain its issue time.
+    - Display two region or river records with their source links.
+    - Explain why coverage and validity cannot be inferred beyond the named area.

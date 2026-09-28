@@ -1,0 +1,61 @@
+id: effis-fire-danger-forecast
+name: EFFIS Fire Danger Forecast
+description: >
+  European Fire Weather Index forecast rasters for regional fire-danger context and dated hazard displays.
+theme: Environment & Hazards
+url: https://forest-fire.emergency.copernicus.eu/about-effis/technical-background/fire-danger-forecast
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats: [GeoTIFF]
+license: >
+  EU-owned EFFIS content is CC BY 4.0 unless individually marked otherwise; credit EFFIS and indicate changes.
+license_url: https://forest-fire.emergency.copernicus.eu/about-effis/data-license
+url_checks:
+  source_marker: fire danger forecast module of EFFIS
+  license_marker: Creative Commons Attribution 4.0 International
+domains: [Wildfires]
+data_types: [Raster]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [Europe]
+temporal_coverage: dated daily model forecasts
+update_frequency: daily
+provider: Copernicus Emergency Management Service EFFIS
+source_type: intergovernmental
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    EFFIS serves the modeled Fire Weather Index through the mf010.fwi WMS layer.
+    Start with a one-degree dated GeoTIFF; danger is a forecast, not evidence of an active fire.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Review EFFIS's forecast methodology, web-service instructions, and reuse terms.
+    - Request a small dated mf010.fwi WMS image.
+    - Keep the requested date and geographic bounds with the raster.
+  python:
+    packages: [requests]
+    code: |
+      from datetime import date, timedelta
+      import requests
+
+      response = requests.get(
+          "https://maps.effis.emergency.copernicus.eu/effis",
+          params={"SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetMap",
+                  "LAYERS": "mf010.fwi", "STYLES": "default", "SRS": "EPSG:4326",
+                  "BBOX": "5,45,6,46", "WIDTH": 32, "HEIGHT": 32,
+                  "FORMAT": "image/tiff", "TIME": str(date.today() - timedelta(days=1))},
+          timeout=25,
+      )
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*"), "Expected GeoTIFF"
+      print("EFFIS fire-danger GeoTIFF bytes:", len(response.content))
+  first_project:
+    title: Show a Dated Fire-Danger Tile
+    goal: Display a small forecast tile with its date and bounds.
+    steps:
+      - Fetch one daily Fire Weather Index tile.
+      - Label the forecast date and geographic extent.
+      - Explain that a high index does not confirm an active fire.
