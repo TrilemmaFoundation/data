@@ -6,7 +6,6 @@ export function AppActions({ app }: { app: AppEntry }) {
   const actions = [
     ...(app.liveUrl ? [{ label: appsCopy.liveAppLabel, href: app.liveUrl }] : []),
     ...(app.archiveUrl ? [{ label: appsCopy.archiveLabel, href: app.archiveUrl }] : []),
-    ...(app.brkUrl ? [{ label: appsCopy.exploreBrkLabel, href: app.brkUrl }] : []),
     { label: appsCopy.sourceCodeLabel, href: app.sourceUrl },
   ];
 

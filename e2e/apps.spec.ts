@@ -55,6 +55,18 @@ test("Apps is a primary header destination on listing and details", async ({ pag
   }
 });
 
+test("all six app cards fit in the desktop viewport at 100% zoom", async ({ page }) => {
+  for (const { width, height } of [{ width: 1280, height: 720 }, { width: 1470, height: 776 }]) {
+    await page.setViewportSize({ width, height });
+    await page.goto("/apps");
+    const cards = page.getByRole("article");
+    await expect(cards).toHaveCount(6);
+    const lastCardBottom = await cards.last().evaluate((card) => card.getBoundingClientRect().bottom);
+    expect(lastCardBottom).toBeLessThanOrEqual(height);
+    await expect(cards.last().getByRole("link", { name: /Source Code/ })).toBeInViewport();
+  }
+});
+
 test("cards and details expose only the intended external actions", async ({ page }) => {
   await page.goto("/apps");
   const cards = page.getByRole("article");
@@ -64,18 +76,17 @@ test("cards and details expose only the intended external actions", async ({ pag
     ["Live App", "https://travelcanary.org/", "https://github.com/hypertrial/travelcanary"],
     [undefined, undefined, "https://github.com/hypertrial/househunter"],
     [undefined, undefined, "https://github.com/hypertrial/rockyroad"],
-    ["Archive", "https://stackingsats.org/", "https://github.com/hypertrial/stacksats", "https://bitview.space/"],
+    ["Archive", "https://stackingsats.org/", "https://github.com/hypertrial/stacksats"],
   ] as const;
   const statuses = [undefined, undefined, "Beta", "Alpha", "Alpha", "Archived"] as const;
-  for (const [index, [action, destination, source, brkUrl]] of expected.entries()) {
+  for (const [index, [action, destination, source]] of expected.entries()) {
     const card = cards.nth(index);
     const status = statuses[index];
     if (status) await expect(card.getByText(status, { exact: true })).toBeVisible();
     else await expect(card.getByText(/^(Alpha|Beta|Archived)$/)).toHaveCount(0);
     const links = card.locator('a[target="_blank"]');
-    await expect(links).toHaveCount((action ? 2 : 1) + (brkUrl ? 1 : 0));
+    await expect(links).toHaveCount(action ? 2 : 1);
     if (action) await expect(links.first()).toHaveAttribute("href", destination!);
-    if (brkUrl) await expect(links.nth(1)).toHaveAttribute("href", brkUrl);
     await expect(links.last()).toHaveAttribute("href", source);
     for (const link of await links.all()) {
       await expect(link).toHaveAttribute("rel", /noopener.*noreferrer/);
@@ -91,9 +102,13 @@ test("cards and details expose only the intended external actions", async ({ pag
 
   await page.goto("/apps/stackingsats");
   await expect(page.getByRole("link", { name: /Archive/ })).toHaveAttribute("href", "https://stackingsats.org/");
-  await expect(page.getByRole("link", { name: /Explore BRK Data/ })).toHaveAttribute("href", "https://bitview.space/");
+  await expect(page.getByRole("link", { name: /Explore BRK Data/ })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Live App/ })).toHaveCount(0);
   await expect(page.getByText(/historical|archiv/i).first()).toBeVisible();
+  const brk = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "Bitcoin Research Kit merged metrics" }) });
+  await expect(brk.getByRole("link", { name: /Related Dataset Guide/ })).toHaveAttribute("href", "/datasets/bitview-bitcoin-series");
+  await expect(brk.getByRole("link", { name: /Hosted BRK data \(Bitview\)/ })).toHaveAttribute("href", "https://bitview.space/");
+  await expect(brk).toContainText("not this pinned historical parquet artifact");
 });
 
 test("source links distinguish matching guides from official sources", async ({ page }) => {
@@ -109,4 +124,13 @@ test("source links distinguish matching guides from official sources", async ({ 
   const nri = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "FEMA National Risk Index" }) });
   await expect(nri.getByRole("link", { name: /Dataset Guide/ })).toHaveCount(0);
   await expect(nri).toContainText("FEMA National Flood Hazard Layer is a different dataset");
+});
+
+test("Bitview is discoverable as a dataset guide with a runnable notebook", async ({ page }) => {
+  await page.goto("/?q=Bitview");
+  await expect(page.getByRole("link", { name: "Bitview Bitcoin Series" })).toBeVisible();
+  await page.getByRole("link", { name: "Bitview Bitcoin Series" }).click();
+  await expect(page).toHaveURL(/\/datasets\/bitview-bitcoin-series\/?$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Bitview Bitcoin Series" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Open in Colab/ })).toHaveAttribute("href", /bitview-bitcoin-series\.ipynb/);
 });

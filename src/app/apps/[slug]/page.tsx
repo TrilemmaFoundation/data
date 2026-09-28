@@ -81,6 +81,11 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
                         {appsCopy.guideLabel}<span className="sr-only"> for {source.name}</span>
                       </Link>
                     )}
+                    {source.relatedGuideId && (
+                      <Link href={datasetPath(source.relatedGuideId)} className="text-link hover:underline">
+                        {appsCopy.relatedGuideLabel}<span className="sr-only"> for {source.name}</span>
+                      </Link>
+                    )}
                   </div>
                   {source.noGuideReason && <p className="mt-3 text-sm text-muted-foreground">{source.noGuideReason}</p>}
                 </li>

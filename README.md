@@ -22,8 +22,9 @@ a useful product signal.
 
 The Apps directory showcases six data-powered projects. Each app page cites the
 external sources behind it, links to matching dataset guides where available,
-and links to its hosted experience or archive and source code. The projects run
-outside this static site.
+labels related guides when they cover a different artifact, and links to its
+hosted experience or archive and source code. The projects run outside this
+static site.
 
 The catalog optimizes for beginner clarity, contribution simplicity, and dataset
 quality — not catalog size.
@@ -178,16 +179,17 @@ No application code changes required.
 
 ## Catalog
 
-The catalog currently contains 159 operational datasets spanning natural
+The catalog currently contains 160 operational datasets spanning natural
 hazards, weather, water, climate, flood risk, drought, space weather, global
 disaster alerts, public health, clinical research, cybersecurity, package
 graphs, legislation, sanctions screening, government spending and procurement,
 transit, labor and international markets, trade, nutrition, scholarly research,
 biodiversity, forced displacement, demographics, corporate filings, electricity,
-petroleum inventories, prediction markets, geospatial analysis, places,
-broadband, bridges, EV charging, consumer finance, education, K-12 directories,
-housing prices, rents, food and product recalls, elections, European statistics,
-live transit feeds, aviation, provider directories, drinking water, preprints,
+petroleum inventories, prediction markets, Bitcoin on-chain series,
+geospatial analysis, places, broadband, bridges, EV charging, consumer finance,
+education, K-12 directories, housing prices, rents, food and product recalls,
+elections, European statistics, live transit feeds, aviation, provider
+directories, drinking water, preprints,
 pageviews, agriculture, tropical cyclones, crime, companies, occupations,
 global forecasts, live OSM, food products, nursing homes, LEI, euro-area
 statistics, patents, vital statistics, mortgages, OECD and national statistics,

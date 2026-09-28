@@ -11,6 +11,7 @@ export type AppSource = {
   evidenceUrl?: string;
   coverage?: string;
   details?: string;
+  relatedGuideId?: string;
 } & (
   | { guideId: string; noGuideReason?: never }
   | { guideId?: never; noGuideReason: string }
@@ -23,7 +24,6 @@ export type AppEntry = {
   status?: "alpha" | "beta" | "archived";
   liveUrl?: string;
   archiveUrl?: string;
-  brkUrl?: string;
   sourceUrl: string;
   sourceRevision: string;
   sourceEvidenceUrl: string;

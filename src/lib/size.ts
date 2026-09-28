@@ -29,15 +29,23 @@ export function getSizeCategory(sizeGbMax: number): SizeCategory {
 export function formatSizeRange(min: number, max: number): string {
   if (min === max) {
     if (max === 0) return "<0.001 GB";
+    if (max < 0.001) return `${formatKb(max)} KB`;
     return `${formatGb(max)} GB`;
   }
   if (min === 0 && max < 0.001) return "<0.001 GB";
   if (min === 0) return `≤${formatGb(max)} GB`;
+  if (min < 0.001) {
+    if (max < 0.001) return `${formatKb(min)}–${formatKb(max)} KB`;
+    return `${formatKb(min)} KB–${formatGb(max)} GB`;
+  }
   return `${formatGb(min)}–${formatGb(max)} GB`;
 }
 
+function formatKb(value: number): string {
+  return String(Number((value * 1_000_000).toPrecision(2)));
+}
+
 function formatGb(value: number): string {
-  if (value < 0.001) return value.toExponential(0);
   if (value < 1) {
     const rounded = Number(value.toPrecision(2));
     return String(rounded);

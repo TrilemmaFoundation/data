@@ -14,28 +14,30 @@ export const metadata: Metadata = pageSocialMetadata(
 
 export default function AppsPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
       <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">
         {appsCopy.title}
       </h1>
       <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">
         {appsCopy.description}
       </p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {apps.map((app) => (
-          <article key={app.slug} className="feature-surface flex h-full flex-col p-5">
-            {app.status && (
-              <div className="mb-2"><Badge variant="outline" className="bg-[var(--tf-ghost-white)] text-[var(--tf-primary-navy)]">{appsCopy.statusLabels[app.status]}</Badge></div>
-            )}
-            <h2 className="text-xl font-semibold text-feature-foreground">
-              <Link href={appPath(app.slug)} className="rounded-sm hover:text-[var(--tf-digital-amber)]">
-                {app.title}
-              </Link>
-            </h2>
+          <article key={app.slug} className="feature-surface flex h-full flex-col p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-xl font-semibold text-feature-foreground">
+                <Link href={appPath(app.slug)} className="rounded-sm hover:text-[var(--tf-digital-amber)]">
+                  {app.title}
+                </Link>
+              </h2>
+              {app.status && (
+                <Badge variant="outline" className="bg-[var(--tf-ghost-white)] text-[var(--tf-primary-navy)]">{appsCopy.statusLabels[app.status]}</Badge>
+              )}
+            </div>
             <p className="mt-2 flex-1 text-base leading-relaxed text-feature-foreground">
               {app.summary}
             </p>
-            <p className="mt-4 mb-4 text-sm font-semibold">
+            <p className="mt-3 mb-2 text-sm font-semibold">
               <Link href={appPath(app.slug)} className="text-[var(--tf-peach-glow)] hover:underline">
                 {appsCopy.detailsLabel}<span className="sr-only">: {app.title}</span>
               </Link>

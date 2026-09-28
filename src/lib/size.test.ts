@@ -26,7 +26,9 @@ describe("size helpers", () => {
     expect(formatSizeRange(0, 0.001)).toBe("≤0.001 GB");
     expect(formatSizeRange(0, 1)).toBe("≤1 GB");
     expect(formatSizeRange(0.2, 0.5)).toBe("0.2–0.5 GB");
-    expect(formatSizeRange(0.0001, 0.0002)).toBe("1e-4–2e-4 GB");
+    expect(formatSizeRange(0.0001, 0.0001)).toBe("100 KB");
+    expect(formatSizeRange(0.0001, 0.0002)).toBe("100–200 KB");
+    expect(formatSizeRange(0.000001, 1)).toBe("1 KB–1 GB");
   });
 
   it("detects category overlap aligned with getSizeCategory", () => {

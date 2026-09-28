@@ -99,3 +99,12 @@ test('only local navigation is rendered and offsets track its actual height', as
     for (const link of await header.locator('a').all()) await expect(link).toBeInViewport({ ratio: 1 });
   }
 });
+
+test('narrow header keeps all destinations together on the second row', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto('/apps');
+  const links = page.locator('.data-header a');
+  const boxes = await Promise.all((await links.all()).map((link) => link.boundingBox()));
+  expect(boxes[0]!.y).toBeLessThan(boxes[1]!.y);
+  for (const box of boxes.slice(2)) expect(box!.y).toBe(boxes[1]!.y);
+});

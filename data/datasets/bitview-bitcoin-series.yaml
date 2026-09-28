@@ -1,0 +1,81 @@
+id: bitview-bitcoin-series
+name: Bitview Bitcoin Series
+description: >
+  Bitcoin Research Kit (BRK) on-chain time series through Bitview's hosted API for
+  tracking network trends and prototyping bounded research dashboards.
+theme: Markets & Economics
+url: https://bitview.space/api
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.000001
+size_gb_max: 1
+formats:
+  - JSON
+  - CSV
+license: MIT license advertised by Bitview's OpenAPI for the provider API; this example uses chain-derived supply data.
+license_url: https://github.com/bitcoinresearchkit/mono/blob/main/LICENSE
+url_checks:
+  source_marker: Free Bitcoin on-chain analytics API
+  license_marker: Copyright (c) 2026 Bitcoin Research Kit
+domains:
+  - Finance
+  - Research
+data_types:
+  - Time Series
+  - Numeric Data
+tasks:
+  - Trend Analysis
+  - Economic Monitoring
+difficulty: beginner
+geography:
+  - Global
+temporal_coverage: Bitcoin network history from 2009 to present, varying by series
+update_frequency: daily
+provider: Bitcoin Research Kit
+source_type: community
+last_verified: 2026-09-28
+access_profile:
+  friction: low
+  setup_minutes: 5
+  registration_required: false
+  first_sample_gb_min: 0
+  first_sample_gb_max: 0.001
+getting_started:
+  overview: >
+    Bitview serves BRK's Bitcoin network series through a free, no-key API.
+    Start with seven daily supply values rather than the full catalog. The
+    supply series measures bitcoin in unspent outputs, not coins available for
+    immediate spending; raw values also need their index to be dated correctly.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Open the Bitview API documentation and inspect the Series endpoints.
+    - Check the supply series metadata for its definition and day1 index.
+    - Request only the last seven day1 values before expanding the range.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://bitview.space/api/series/supply/day1/data",
+          params={"start": -7},
+          headers={"User-Agent": "Trilemma Data guide (https://data.trilemma.foundation)"},
+          timeout=20,
+      )
+      response.raise_for_status()
+      supply_btc = response.json()
+      print(f"{len(supply_btc)} recent daily supply values (BTC):")
+      print(supply_btc)
+  first_project:
+    title: Track Bitcoin Supply across Seven Daily Samples
+    goal: Test whether a short supply series can support a network-trend dashboard.
+    steps:
+      - Fetch seven daily supply values and confirm their count.
+      - Compare the first and last values in BTC, and plot them by sample order.
+      - Explain that UTXO supply is not spendable float and the raw array needs a verified day1 index before labeling dates.

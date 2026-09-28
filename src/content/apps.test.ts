@@ -3,12 +3,12 @@ import { apps, getAppBySlug } from "./apps";
 import { getActiveDatasets } from "../lib/datasets";
 
 const expectedApps = [
-  { slug: "titanskies", title: "TitanSkies", status: undefined, liveUrl: "https://www.titanskies.com/", archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/titanskies" },
-  { slug: "hyperoptions", title: "HyperOptions", status: undefined, liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/hyperoptions" },
-  { slug: "travelcanary", title: "TravelCanary", status: "beta", liveUrl: "https://travelcanary.org/", archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/travelcanary" },
-  { slug: "househunter", title: "HouseHunter", status: "alpha", liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/househunter" },
-  { slug: "rockyroad", title: "RockyRoad", status: "alpha", liveUrl: undefined, archiveUrl: undefined, brkUrl: undefined, sourceUrl: "https://github.com/hypertrial/rockyroad" },
-  { slug: "stackingsats", title: "StackingSats", status: "archived", liveUrl: undefined, archiveUrl: "https://stackingsats.org/", brkUrl: "https://bitview.space/", sourceUrl: "https://github.com/hypertrial/stacksats" },
+  { slug: "titanskies", title: "TitanSkies", status: undefined, liveUrl: "https://www.titanskies.com/", archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/titanskies" },
+  { slug: "hyperoptions", title: "HyperOptions", status: undefined, liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/hyperoptions" },
+  { slug: "travelcanary", title: "TravelCanary", status: "beta", liveUrl: "https://travelcanary.org/", archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/travelcanary" },
+  { slug: "househunter", title: "HouseHunter", status: "alpha", liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/househunter" },
+  { slug: "rockyroad", title: "RockyRoad", status: "alpha", liveUrl: undefined, archiveUrl: undefined, sourceUrl: "https://github.com/hypertrial/rockyroad" },
+  { slug: "stackingsats", title: "StackingSats", status: "archived", liveUrl: undefined, archiveUrl: "https://stackingsats.org/", sourceUrl: "https://github.com/hypertrial/stacksats" },
 ] as const;
 
 function expectHttps(raw: string) {
@@ -21,8 +21,8 @@ function expectHttps(raw: string) {
 
 describe("reviewed app catalog", () => {
   it("has exactly the six intended routes, availability states, and outbound destinations", () => {
-    expect(apps.map(({ slug, title, status, liveUrl, archiveUrl, brkUrl, sourceUrl }) => ({
-      slug, title, status, liveUrl, archiveUrl, brkUrl, sourceUrl,
+    expect(apps.map(({ slug, title, status, liveUrl, archiveUrl, sourceUrl }) => ({
+      slug, title, status, liveUrl, archiveUrl, sourceUrl,
     }))).toEqual(expectedApps);
     expect(new Set(apps.map(({ slug }) => slug)).size).toBe(6);
     expect(getAppBySlug("")).toBeUndefined();
@@ -45,7 +45,7 @@ describe("reviewed app catalog", () => {
       const today = new Date();
       const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
       expect(todayUtc - reviewDate.getTime(), `${app.slug}: source map is older than 90 days`).toBeLessThanOrEqual(90 * 24 * 60 * 60 * 1000);
-      for (const url of [app.sourceUrl, app.sourceEvidenceUrl, app.liveUrl, app.archiveUrl, app.brkUrl]) {
+      for (const url of [app.sourceUrl, app.sourceEvidenceUrl, app.liveUrl, app.archiveUrl]) {
         if (url) expectHttps(url);
       }
       expect(app.sourceEvidenceUrl, app.slug).toContain(app.sourceRevision);
@@ -62,6 +62,7 @@ describe("reviewed app catalog", () => {
         for (const { href } of source.additionalUrls ?? []) expectHttps(href);
         expect(Boolean(source.guideId), `${app.slug}: ${source.name}`).not.toBe(Boolean(source.noGuideReason));
         if (source.guideId) expect(activeGuideIds.has(source.guideId), `${app.slug}: ${source.name}`).toBe(true);
+        if (source.relatedGuideId) expect(activeGuideIds.has(source.relatedGuideId), `${app.slug}: ${source.name}`).toBe(true);
         if (source.noGuideReason) expect(source.noGuideReason.trim().length, `${app.slug}: ${source.name}`).toBeGreaterThan(10);
       }
     }
@@ -89,6 +90,10 @@ describe("reviewed app catalog", () => {
       expect(source?.noGuideReason, `${slug}: ${name}`).toMatch(/different|does not cover/i);
     }
     expect(getAppBySlug("stackingsats")?.sourceIntro).toMatch(/historical|archiv/i);
+    const brk = getAppBySlug("stackingsats")?.sources.find(({ name }) => name === "Bitcoin Research Kit merged metrics");
+    expect(brk?.guideId).toBeUndefined();
+    expect(brk?.relatedGuideId).toBe("bitview-bitcoin-series");
+    expect(brk?.noGuideReason).toMatch(/not this pinned historical parquet/i);
     expect(getAppBySlug("travelcanary")?.sources.length).toBeGreaterThan(20);
   });
 });

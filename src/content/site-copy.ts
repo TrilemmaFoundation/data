@@ -49,6 +49,7 @@ export const appsCopy = {
   officialSourceLabel: "Official Source",
   sourceEvidenceLabel: "Project Source Evidence",
   guideLabel: "Dataset Guide",
+  relatedGuideLabel: "Related Dataset Guide",
   reviewedLabel: "Source Map Reviewed",
   statusLabels: {
     alpha: "Alpha",
@@ -57,7 +58,6 @@ export const appsCopy = {
   },
   liveAppLabel: "Live App",
   archiveLabel: "Archive",
-  exploreBrkLabel: "Explore BRK Data",
   sourceCodeLabel: "Source Code",
 } as const;
 

@@ -399,12 +399,11 @@ export const otherApps = [
     summary: "Archived Bitcoin accumulation research site and Python library for testing fixed-budget allocation strategies.",
     status: "archived",
     archiveUrl: "https://stackingsats.org/",
-    brkUrl: "https://bitview.space/",
     sourceUrl: "https://github.com/hypertrial/stacksats",
     sourceRevision: "9ba73643c4478ddd92650557a90e91e64674f587",
     sourceEvidenceUrl: "https://github.com/hypertrial/stacksats/blob/9ba73643c4478ddd92650557a90e91e64674f587/docs/data-source.md",
     reviewedAt: "2026-09-28",
-    sourceIntro: "The archived website is informational. The historical StackSats library uses a manually fetched, hash-verified BRK parquet and can optionally call market-price helpers. Bitview is BRK's separate hosted explorer; it does not feed the archived site or library.",
+    sourceIntro: "The archived website is informational. The historical StackSats library uses a manually fetched, hash-verified BRK parquet and can optionally call market-price helpers. Bitview's current hosted API has a related Data guide; it does not feed the archived site or library.",
     sources: [
       {
         name: "Bitcoin Research Kit merged metrics",
@@ -418,7 +417,8 @@ export const otherApps = [
         ],
         evidenceUrl: "https://github.com/hypertrial/stacksats/blob/9ba73643c4478ddd92650557a90e91e64674f587/stacksats/assets/brk_data_manifest.json",
         coverage: "Snapshot documents 2009-01-03 through 2026-03-13 daily metrics.",
-        noGuideReason: "A BRK merged-metrics guide has not passed the Data catalog's access and reuse review.",
+        relatedGuideId: "bitview-bitcoin-series",
+        noGuideReason: "The related Bitview guide covers its current hosted API, not this pinned historical parquet artifact.",
       },
       {
         name: "CoinGecko",
