@@ -1,0 +1,73 @@
+id: cwfis-m3-perimeter-estimates
+name: CWFIS M3 Perimeter Estimates
+description: >
+  Canadian M3 estimated wildfire perimeters from NRCan CWFIS for showing
+  approximate fire-footprint context.
+theme: Environment & Hazards
+url: https://cwfis.cfs.nrcan.gc.ca/geoserver/public/ows?service=WFS&version=2.0.0&request=GetCapabilities
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+license: Open Government Licence Canada 2.0 with Natural Resources Canada attribution.
+license_url: https://open.canada.ca/en/open-government-licence-canada
+url_checks:
+  source_marker: <Name>public:m3polygons</Name>
+  license_marker: Open Government Licence
+domains:
+  - Natural Hazards
+  - Emergency Management
+data_types:
+  - Geospatial
+tasks:
+  - Mapping
+  - Monitoring
+difficulty: beginner
+geography:
+  - Canada
+temporal_coverage: M3 fire-perimeter estimates since 2003
+update_frequency: daily
+provider: Natural Resources Canada CWFIS
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    The legacy CWFIS WFS serves public:m3polygons, an M3 perimeter-estimate
+    layer distinct from reported incident points and authoritative evacuation
+    boundaries. Start with three GeoJSON features and retain their estimated
+    dates. NRCan's 2026 service placemat identifies this layer by name.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official CWFIS service catalogue and Canadian open licence.
+    - Request three M3 polygon features from the named WFS layer.
+    - Inspect estimate dates and geometry before rendering.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://cwfis.cfs.nrcan.gc.ca/geoserver/public/ows",
+          params={"service": "WFS", "version": "2.0.0", "request": "GetFeature",
+                  "typeNames": "public:m3polygons", "outputFormat": "application/json",
+                  "srsName": "EPSG:4326", "count": 3}, timeout=30,
+      )
+      response.raise_for_status()
+      for estimate in response.json()["features"][:3]:
+          row = estimate["properties"]
+          print(row.get("uid"), row.get("lastdate"), row.get("area"))
+  first_project:
+    title: Inspect Canadian M3 Footprints
+    goal: Review three estimated fire footprints before map rendering.
+    steps:
+      - Keep polygon ID, estimate date, and stated area.
+      - Compare footprint age with current incident reports.
+      - Explain why an M3 estimate is not a surveyed perimeter or evacuation map.

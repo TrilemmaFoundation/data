@@ -1,0 +1,76 @@
+id: cwfif-active-wildland-fires
+name: CWFIF Active Wildland Fires
+description: >
+  Canadian active-wildfire records from NRCan CWFIF for inspecting fire
+  identifiers, status, size, and reported location.
+theme: Environment & Hazards
+url: https://geoserver.cwfif.nrcan.gc.ca/geoserver/wfs?service=WFS&version=2.0.0&request=GetCapabilities
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+license: Open Government Licence Canada 2.0 with Natural Resources Canada attribution.
+license_url: https://open.canada.ca/en/open-government-licence-canada
+url_checks:
+  source_marker: cwfif_national_activefires
+  license_marker: Open Government Licence
+domains:
+  - Natural Hazards
+  - Emergency Management
+data_types:
+  - Event Data
+  - Geospatial
+tasks:
+  - Monitoring
+  - Mapping
+difficulty: beginner
+geography:
+  - Canada
+temporal_coverage: active wildland fires since 2010
+update_frequency: near real time
+provider: Natural Resources Canada CWFIF
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    NRCan's current CWFIF WFS offers active wildland-fire features under
+    public:cwfif_national_activefires. Start with three GeoJSON features
+    in EPSG:4326. A reported active-fire point is context; it does not by
+    itself prove smoke origin, local exposure, or an evacuation area.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official WFS capabilities and Canadian licence.
+    - Request three active-fire features with explicit geographic coordinates.
+    - Inspect fire ID, prescribed status, and report time.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://geoserver.cwfif.nrcan.gc.ca/geoserver/wfs",
+          params={"service": "WFS", "version": "2.0.0", "request": "GetFeature",
+                  "typeNames": "public:cwfif_national_activefires",
+                  "outputFormat": "application/json", "srsName": "EPSG:4326", "count": 3},
+          timeout=30,
+      )
+      response.raise_for_status()
+      for fire in response.json()["features"][:3]:
+          row = fire["properties"]
+          print(row.get("national_fire_id"), row.get("fire_size"),
+                row.get("fire_was_prescribed"))
+  first_project:
+    title: Inspect Canadian Active Fires
+    goal: Review three official fire records before regional context mapping.
+    steps:
+      - Keep fire ID, report time, size, and prescribed-fire flag.
+      - Check freshness and geometry before mapping incidents.
+      - Explain why an active-fire record is not a smoke-source attribution.

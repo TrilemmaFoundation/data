@@ -1,0 +1,60 @@
+id: eccc-firework-smoke
+name: ECCC FireWork Smoke Forecast
+description: >
+  Environment and Climate Change Canada's wildfire-smoke concentration forecast for dated regional smoke-context tools.
+theme: Environment & Hazards
+url: https://www.weather.gc.ca/firework/index_e.html
+access_type: [api]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 1
+formats: [GeoTIFF]
+license: Open Government Licence Canada; credit Environment and Climate Change Canada and retain forecast time.
+license_url: https://open.canada.ca/en/open-government-licence-canada
+url_checks:
+  source_marker: Wildfire smoke fine particulate matter
+  license_marker: Open Government Licence - Canada
+domains: [Air Quality]
+data_types: [Geospatial, Time Series]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [North America]
+temporal_coverage: current dated smoke forecast cycles
+update_frequency: near real time
+provider: Environment and Climate Change Canada
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    GeoMet WCS serves FireWork's RAQDPS surface wildfire-smoke PM2.5 layer as GeoTIFF.
+    Start with a one-degree coverage request. Values are modeled mass concentrations
+    in kg/m3, not observed AQI; retain the valid and model-run times for decisions.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read ECCC's FireWork forecast and Open Government Licence pages.
+    - Request a small GeoTIFF coverage for the exact wildfire-smoke layer.
+    - Inspect the model units and dated WCS dimensions before displaying values.
+  python:
+    packages: [requests]
+    code: |
+      import requests
+
+      params = [
+          ("SERVICE", "WCS"), ("VERSION", "2.0.1"),
+          ("REQUEST", "GetCoverage"),
+          ("COVERAGEID", "RAQDPS.Sfc_PM2.5-WildfireSmokePlume"),
+          ("FORMAT", "image/tiff"), ("SUBSETTINGCRS", "EPSG:4326"),
+          ("SUBSET", "x(-76,-75)"), ("SUBSET", "y(45,46)"),
+      ]
+      response = requests.get("https://geo.weather.gc.ca/geomet", params=params, timeout=30)
+      response.raise_for_status()
+      assert response.content[:4] in (b"II*\x00", b"MM\x00*")
+      print("FireWork GeoTIFF bytes:", len(response.content))
+  first_project:
+    title: Inspect a FireWork Smoke Coverage
+    goal: Show a small, dated FireWork smoke-model view with clear units and provenance.
+    steps:
+      - Request one GeoTIFF coverage over a small area.
+      - Read its model and valid times before comparing forecast values.
+      - Explain why modeled PM2.5 cannot be labeled as a local monitor observation.

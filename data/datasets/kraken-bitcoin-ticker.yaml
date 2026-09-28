@@ -1,0 +1,66 @@
+id: kraken-bitcoin-ticker
+name: Kraken Bitcoin Ticker
+description: Kraken XBT/USD exchange ticker fields for a private Bitcoin market comparison with explicit
+  provider provenance and retrieval time.
+theme: Markets & Economics
+url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+- JSON
+license: Kraken public market-data API permits personal use under Kraken terms; nonpersonal commercial
+  use requires a data licence.
+license_url: https://docs.kraken.com/api/docs/rest-api/get-ticker-information/
+url_checks:
+  source_marker: '"result":{"XXBTZUSD"'
+  license_marker: Get Ticker Information
+domains:
+- Capital Markets
+data_types:
+- Tabular
+tasks:
+- Market Monitoring
+difficulty: beginner
+geography:
+- Global
+temporal_coverage: current BTC spot quote
+update_frequency: near real time
+provider: Kraken
+source_type: company
+last_verified: '2026-09-28'
+getting_started:
+  overview: The Kraken public endpoint returns one current Bitcoin quote. Start with one response and
+    record its retrieval time; a snapshot is neither a historical series nor an investment recommendation.
+    Follow the provider usage limits above.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official Kraken API and data-use terms.
+  - Fetch one Bitcoin quote from the documented public endpoint.
+  - Keep the pair, retrieval time, and provider name separate from other exchanges.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+
+      url = 'https://api.kraken.com/0/public/Ticker?pair=XBTUSD'
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      feed = response.json()
+      assert not feed["error"], feed["error"]
+      quote = next(iter(feed["result"].values()))
+      print("XBT/USD last trade", quote["c"][0])
+  first_project:
+    title: Compare One Bitcoin Quote
+    goal: Inspect a single provider quote without treating it as an investment signal.
+    steps:
+    - Fetch a single response and retain its pair identifier.
+    - Record the retrieval time and label the provider.
+    - Explain why exchange quotes differ and cannot stand in for historical returns.

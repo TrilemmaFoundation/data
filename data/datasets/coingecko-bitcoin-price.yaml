@@ -1,0 +1,64 @@
+id: coingecko-bitcoin-price
+name: CoinGecko Bitcoin Spot Price
+description: CoinGecko Bitcoin-to-USD spot quotes for a personal, dated Bitcoin price comparison with
+  explicit provider provenance and retrieval time.
+theme: Markets & Economics
+url: https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+- JSON
+license: CoinGecko API terms permit contracted API use subject to attribution and plan limits; public
+  endpoints offer no redistribution rights.
+license_url: https://www.coingecko.com/en/api_terms
+url_checks:
+  source_marker: '"bitcoin":{"usd":'
+  license_marker: CoinGecko API Terms of Service
+domains:
+- Capital Markets
+data_types:
+- Tabular
+tasks:
+- Market Monitoring
+difficulty: beginner
+geography:
+- Global
+temporal_coverage: current BTC spot quote
+update_frequency: near real time
+provider: CoinGecko
+source_type: company
+last_verified: '2026-09-28'
+getting_started:
+  overview: The CoinGecko public endpoint returns one current Bitcoin quote. Start with one response and
+    record its retrieval time; a snapshot is neither a historical series nor an investment recommendation.
+    Follow the provider usage limits above.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official CoinGecko API and data-use terms.
+  - Fetch one Bitcoin quote from the documented public endpoint.
+  - Keep the pair, retrieval time, and provider name separate from other exchanges.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+
+      url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      bitcoin = response.json()["bitcoin"]
+      print("USD", bitcoin["usd"])
+  first_project:
+    title: Compare One Bitcoin Quote
+    goal: Inspect a single provider quote without treating it as an investment signal.
+    steps:
+    - Fetch a single response and retain its pair identifier.
+    - Record the retrieval time and label the provider.
+    - Explain why exchange quotes differ and cannot stand in for historical returns.

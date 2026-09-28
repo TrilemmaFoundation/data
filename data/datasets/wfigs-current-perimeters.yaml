@@ -1,0 +1,75 @@
+id: wfigs-current-perimeters
+name: WFIGS Current Wildfire Perimeters
+description: >
+  Agency-reported U.S. wildfire perimeter polygons from NIFC for mapping
+  approximate current fire footprints.
+theme: Environment & Hazards
+url: https://www.arcgis.com/sharing/rest/content/items/d1c32af3212341869b3c810f1a215824?f=json
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  Public federal wildfire information with NIFC and contributing-agency
+  attribution; item-specific accuracy and non-legal-use notices apply.
+license_url: https://www.arcgis.com/sharing/rest/content/items/d1c32af3212341869b3c810f1a215824?f=json
+url_checks:
+  source_marker: WFIGS Current Interagency Fire Perimeters
+  license_marker: The National Interagency Fire Center shall not be held liable
+domains:
+  - Natural Hazards
+  - Emergency Management
+data_types:
+  - Geospatial
+tasks:
+  - Mapping
+  - Monitoring
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current agency-reported wildfire perimeters
+update_frequency: near real time
+provider: National Interagency Fire Center
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    WFIGS publishes a separate current perimeter layer for agency-reported
+    wildfire footprints. Start with three bounded feature records and keep
+    polygon date and incident name. Perimeters can lag a moving fire and are
+    not evacuation or legal boundary maps.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the perimeter item's official notice and update context.
+    - Query three current perimeter records from its feature layer.
+    - Inspect polygon date and incident identity before mapping.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = ("https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/"
+             "WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query")
+      response = requests.get(
+          url, params={"where": "attr_IncidentTypeCategory='WF'", "outFields": "OBJECTID,poly_IncidentName,poly_PolygonDateTime",
+                       "returnGeometry": "false", "resultRecordCount": 3, "f": "json"}, timeout=30,
+      )
+      response.raise_for_status()
+      for feature in response.json()["features"][:3]:
+          row = feature["attributes"]
+          print(row["OBJECTID"], row["poly_IncidentName"], row["poly_PolygonDateTime"])
+  first_project:
+    title: Inspect Current U.S. Fire Perimeters
+    goal: Review three reported fire polygons before map rendering.
+    steps:
+      - Keep object ID, polygon date, incident association, and attribution.
+      - Filter prescribed or superseded features when building a current map.
+      - Explain why a perimeter does not establish evacuation status.

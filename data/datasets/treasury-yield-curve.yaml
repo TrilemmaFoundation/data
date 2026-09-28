@@ -1,0 +1,80 @@
+id: treasury-yield-curve
+name: U.S. Treasury Daily Yield Curve
+description: >
+  Official daily U.S. Treasury par yield curve rates in XML for building
+  dated fixed-income context and comparing interest-rate terms.
+theme: Markets & Economics
+url: https://home.treasury.gov/treasury-daily-interest-rate-xml-feed
+access_type:
+  - api
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0.000001
+size_gb_max: 0.1
+formats:
+  - XML
+license: U.S. Government public data / federal copyright guidance
+license_url: https://www.usa.gov/government-copyright
+url_checks:
+  source_marker: Treasury Daily Interest Rate XML Feed
+  license_marker: federal government materials
+domains:
+  - Fixed Income
+  - Macroeconomics
+data_types:
+  - Time Series
+  - Numeric Data
+tasks:
+  - Economic Monitoring
+  - Trend Analysis
+difficulty: intermediate
+geography:
+  - United States
+temporal_coverage: daily par yield curve rates from 1990 to present
+update_frequency: daily
+provider: U.S. Department of the Treasury
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    Treasury publishes daily par yield curves through a dated XML feed. Start
+    with the current month and the 10-year tenor, retaining the observation date.
+    A par yield is not a real-time trade quote or an option's realized return.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Open Treasury's XML feed documentation and choose the daily par yield curve dataset.
+    - Request only the current month using its YYYYMM parameter.
+    - Read the observation date and tenor field without mixing rates from different dates.
+  python:
+    packages:
+      - requests
+    code: |
+      from datetime import date
+      import xml.etree.ElementTree as ET
+      import requests
+
+      month = date.today().strftime("%Y%m")
+      response = requests.get(
+          "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml",
+          params={
+              "data": "daily_treasury_yield_curve",
+              "field_tdr_date_value_month": month,
+          },
+          timeout=30,
+      )
+      response.raise_for_status()
+      root = ET.fromstring(response.content)
+      for entry in list(root)[-5:]:
+          fields = {node.tag.rsplit("}", 1)[-1]: node.text for node in entry.iter()}
+          print(fields.get("NEW_DATE", "")[:10], fields.get("BC_10YEAR"))
+  first_project:
+    title: Track a Dated Treasury Tenor
+    goal: Test whether a short yield-curve series supports a fixed-income context panel.
+    steps:
+      - Retrieve the current month and retain the date alongside each 10-year par yield.
+      - Compare the available business-day observations without filling weekends with invented rates.
+      - Explain why par yields and dated official releases are not live market quotes.

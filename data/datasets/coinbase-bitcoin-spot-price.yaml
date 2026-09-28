@@ -1,0 +1,64 @@
+id: coinbase-bitcoin-spot-price
+name: Coinbase Bitcoin Spot Price
+description: Coinbase Bitcoin-to-USD spot quotes for a private, personal research comparison with explicit
+  provider provenance and retrieval time.
+theme: Markets & Economics
+url: https://api.coinbase.com/v2/prices/BTC-USD/spot
+access_type:
+- api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.001
+formats:
+- JSON
+license: Coinbase Market Data Terms allow personal or internal research only; external app display and
+  redistribution require permission.
+license_url: https://www.coinbase.com/legal/market_data
+url_checks:
+  source_marker: '"base":"BTC","currency":"USD"'
+  license_marker: personal or research purposes
+domains:
+- Capital Markets
+data_types:
+- Tabular
+tasks:
+- Market Monitoring
+difficulty: beginner
+geography:
+- Global
+temporal_coverage: current BTC spot quote
+update_frequency: near real time
+provider: Coinbase
+source_type: company
+last_verified: '2026-09-28'
+getting_started:
+  overview: The Coinbase public endpoint returns one current Bitcoin quote. Start with one response and
+    record its retrieval time; a snapshot is neither a historical series nor an investment recommendation.
+    Follow the provider usage limits above.
+  prerequisites:
+  - Python 3.10 or newer
+  - An internet connection
+  - The requests Python package
+  access_steps:
+  - Read the official Coinbase API and data-use terms.
+  - Fetch one Bitcoin quote from the documented public endpoint.
+  - Keep the pair, retrieval time, and provider name separate from other exchanges.
+  python:
+    packages:
+    - requests
+    code: |
+      import requests
+
+      url = 'https://api.coinbase.com/v2/prices/BTC-USD/spot'
+      response = requests.get(url, timeout=20)
+      response.raise_for_status()
+      quote = response.json()["data"]
+      print(quote["base"], quote["currency"], quote["amount"])
+  first_project:
+    title: Compare One Bitcoin Quote
+    goal: Inspect a single provider quote without treating it as an investment signal.
+    steps:
+    - Fetch a single response and retain its pair identifier.
+    - Record the retrieval time and label the provider.
+    - Explain why exchange quotes differ and cannot stand in for historical returns.

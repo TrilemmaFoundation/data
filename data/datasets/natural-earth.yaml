@@ -52,33 +52,30 @@ last_verified: 2026-09-27
 getting_started:
   overview: >
     Natural Earth provides compact, public-domain layers designed for clear
-    small-scale maps. Start with the 1:110m country boundaries to learn
-    attributes, coordinate systems, and thematic mapping. These generalized
-    boundaries are not authoritative for precise local or legal analysis.
+    small-scale maps. Start with the 1:50m ocean mask and 1:10m populated places
+    used as geography inputs by TitanSkies. These generalized layers are not
+    authoritative for precise local boundaries or current population counts.
   prerequisites:
     - Python 3.10 or newer
     - A notebook environment such as Jupyter or Google Colab
-    - A Python environment where GeoPandas and Matplotlib can be installed
+    - A Python environment where GeoPandas can be installed
   access_steps:
-    - Open the official Natural Earth site and select the 1:110m Admin 0 Countries layer.
-    - Download the layer and extract the shapefile beside your notebook.
+    - Open the official Natural Earth site and select the 1:50m Ocean and 1:10m Populated Places layers.
+    - Download both ZIP files and place them beside your notebook.
   python:
     packages:
       - geopandas
-      - matplotlib
     code: |
       import geopandas as gpd
-      import matplotlib.pyplot as plt
 
-      countries = gpd.read_file("ne_110m_admin_0_countries.shp")
-      print(countries[["ADMIN", "CONTINENT", "geometry"]].head())
-      countries.plot(column="CONTINENT", legend=True, figsize=(12, 6))
-      plt.axis("off")
-      plt.show()
+      ocean = gpd.read_file("ne_50m_ocean.zip")
+      places = gpd.read_file("ne_10m_populated_places.zip")
+      print(f"{len(ocean)} ocean polygons; {len(places)} populated places")
+      print(places[["NAME", "POP_MAX"]].head())
   first_project:
-    title: Compare World Regions on One Map
-    goal: Build a continent map and explain how geometry and projection choices affect its interpretation.
+    title: Map Ocean Coverage and Populated Places
+    goal: Test whether generalized ocean and city layers can support a regional map.
     steps:
-      - Inspect the layer's geometry type and coordinate reference system.
-      - Check for missing continent or geometry values.
-      - Create the map and explain how generalized boundaries and the chosen projection limit its use.
+      - Inspect each layer's geometry type and coordinate reference system.
+      - Filter populated places to one region and check for missing names or population estimates.
+      - Create the map and explain why generalized oceans and place estimates cannot establish exact local coverage.

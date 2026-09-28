@@ -1,0 +1,74 @@
+id: bc-unverified-hourly-pm25
+name: British Columbia Hourly PM2.5
+description: >
+  Preliminary British Columbia fine-particle station readings for inspecting
+  hourly particulate concentrations and their observation times.
+theme: Environment & Hazards
+url: https://open.canada.ca/data/en/dataset/01867404-ba2a-470e-94b7-0604607cfa30
+access_type:
+  - download
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - CSV
+license: >
+  B.C. Open Government Licence 2.0 with provincial attribution. These hourly
+  values are unverified and exclude Metro Vancouver and Fraser Valley data.
+license_url: https://open.canada.ca/data/en/dataset/01867404-ba2a-470e-94b7-0604607cfa30
+url_checks:
+  source_marker: Unverified Hourly Air Quality and Meteorological Data
+  license_marker: Open Government Licence - British Columbia
+domains:
+  - Public Health
+  - Weather
+data_types:
+  - Time Series
+tasks:
+  - Monitoring
+difficulty: beginner
+geography:
+  - British Columbia
+temporal_coverage: recent unverified hourly PM2.5 readings
+update_frequency: near real time
+provider: Government of British Columbia
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    B.C. publishes an unverified PM2.5 CSV and a station metadata CSV. Start
+    with five lines from the current pollutant file using a streaming read;
+    the full file is several megabytes. The catalog record confirms its OGL-BC
+    licence and warns that Metro Vancouver and Fraser Valley readings are
+    excluded. These concentrations are not provider-reported AQI values.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the B.C. catalog record, geographic exclusions, and licence.
+    - Stream the official PM2.5 CSV and inspect five data rows.
+    - Join station names to official station metadata before mapping.
+  python:
+    packages:
+      - requests
+    code: |
+      import csv
+      import itertools
+      import requests
+
+      url = ("https://www.env.gov.bc.ca/epd/bcairquality/aqo/csv/"
+             "Hourly_Raw_Air_Data/Air_Quality/PM25.csv")
+      with requests.get(url, stream=True, timeout=30) as response:
+          response.raise_for_status()
+          rows = csv.DictReader(response.iter_lines(decode_unicode=True))
+          for row in itertools.islice(rows, 5):
+              print(row["STATION_NAME"], row["DATE_PST"], row["RAW_VALUE"], row["UNITS"])
+  first_project:
+    title: Inspect B.C. Hourly PM2.5
+    goal: Review five preliminary observations before station mapping.
+    steps:
+      - Keep station ID or name, timestamp, unit, and concentration.
+      - Check quality and coverage before deriving a local AQI estimate.
+      - Explain why a missing station is not evidence of clean air.

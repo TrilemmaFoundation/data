@@ -1,0 +1,76 @@
+id: wfigs-current-incidents
+name: WFIGS Current Wildfire Incidents
+description: >
+  Agency-reported U.S. current wildfire incident points from NIFC for
+  inspecting incident identity, location, size, and update time.
+theme: Environment & Hazards
+url: https://www.arcgis.com/sharing/rest/content/items/4181a117dc9e43db8598533e29972015?f=json
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - JSON
+license: >
+  Public federal wildfire information with NIFC and contributing-agency
+  attribution; item-specific accuracy and non-legal-use notices apply.
+license_url: https://www.arcgis.com/sharing/rest/content/items/4181a117dc9e43db8598533e29972015?f=json
+url_checks:
+  source_marker: Current Wildland Fire Incident Locations
+  license_marker: The National Interagency Fire Center shall not be held liable
+domains:
+  - Natural Hazards
+  - Emergency Management
+data_types:
+  - Geospatial
+  - Event Data
+tasks:
+  - Mapping
+  - Monitoring
+difficulty: beginner
+geography:
+  - United States
+temporal_coverage: current agency-reported wildfire incidents
+update_frequency: near real time
+provider: National Interagency Fire Center
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    WFIGS publishes a current incident-point layer derived from agency fire
+    reports. Start with three features from the public ArcGIS layer. Incident
+    locations are approximate, dynamic, and not legal boundaries; cite NIFC
+    and contributing agencies and keep the update timestamp.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the exact ArcGIS item and its item-specific use notice.
+    - Query three current incident records from the feature layer.
+    - Inspect incident name, size, and modification time.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      url = ("https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/"
+             "WFIGS_Incident_Locations_Current/FeatureServer/0/query")
+      response = requests.get(
+          url, params={"where": "IncidentTypeCategory='WF'", "outFields": "OBJECTID,IrwinID,IncidentName,IncidentSize,ModifiedOnDateTime_dt",
+                       "returnGeometry": "false", "resultRecordCount": 3, "f": "json"}, timeout=30,
+      )
+      response.raise_for_status()
+      for feature in response.json()["features"][:3]:
+          row = feature["attributes"]
+          print(row["IrwinID"], row["IncidentName"], row["ModifiedOnDateTime_dt"])
+  first_project:
+    title: Inspect Current U.S. Wildfire Points
+    goal: Review three agency incidents before mapping wildfire context.
+    steps:
+      - Keep the IRWIN ID, incident type, update time, and source agency.
+      - Check freshness and exclude prescribed fires when needed.
+      - Explain why a point does not identify a smoke plume's origin.

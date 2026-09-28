@@ -1,0 +1,72 @@
+id: eccc-aqhi-observations
+name: ECCC Air Quality Health Index
+description: >
+  Real-time Canadian AQHI observations from ECCC for reviewing health-risk
+  index readings at reporting regions and stations.
+theme: Environment & Hazards
+url: https://api.weather.gc.ca/collections/aqhi-observations-realtime?f=json
+access_type:
+  - api
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 0.01
+formats:
+  - GeoJSON
+license: Open Government Licence Canada 2.0 with Environment and Climate Change Canada attribution.
+license_url: https://open.canada.ca/en/open-government-licence-canada
+url_checks:
+  source_marker: aqhi-observations-realtime
+  license_marker: Open Government Licence
+domains:
+  - Public Health
+  - Weather
+data_types:
+  - Geospatial
+  - Time Series
+tasks:
+  - Monitoring
+difficulty: beginner
+geography:
+  - Canada
+temporal_coverage: current preliminary AQHI observations
+update_frequency: near real time
+provider: Environment and Climate Change Canada
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    ECCC's GeoMet collection exposes preliminary AQHI observations as
+    GeoJSON. Start with five latest features, retaining their observation
+    times and AQHI scale. AQHI is a Canadian health-risk index and is not
+    interchangeable with a U.S. EPA AQI or an individual pollutant value.
+  prerequisites:
+    - Python 3.10 or newer
+    - An internet connection
+    - The requests Python package
+  access_steps:
+    - Read the official AQHI collection description and Canadian open licence.
+    - Request five latest GeoJSON items in one call.
+    - Inspect observation time, geometry, and AQHI property.
+  python:
+    packages:
+      - requests
+    code: |
+      import requests
+
+      response = requests.get(
+          "https://api.weather.gc.ca/collections/aqhi-observations-realtime/items",
+          params={"f": "json", "latest": "true", "limit": 5}, timeout=30,
+      )
+      response.raise_for_status()
+      data = response.json()
+      for item in data["features"][:5]:
+          print(item["id"], item["properties"].get("aqhi"),
+                item["properties"].get("observation_datetime"))
+  first_project:
+    title: Inspect Canadian AQHI Readings
+    goal: Review five reported index features before local display.
+    steps:
+      - Keep feature ID, AQHI scale value, location, and observation time.
+      - Check freshness and regional scope before matching a destination.
+      - Explain why AQHI cannot be relabeled as U.S. AQI.

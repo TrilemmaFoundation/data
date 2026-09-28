@@ -1,0 +1,65 @@
+id: noaa-hrrr-smoke
+name: NOAA HRRR-Smoke Forecast
+description: >
+  NOAA's operational high-resolution smoke-concentration forecast for building dated regional exposure context tools.
+theme: Environment & Hazards
+url: https://rapidrefresh.noaa.gov/hrrr/HRRRsmoke/
+access_type: [download]
+api_key_required: false
+free_to_access: true
+size_gb_min: 0
+size_gb_max: 2
+formats: [GRIB2]
+license: NOAA-produced data are U.S. public-domain material; cite NOAA and do not imply endorsement.
+license_url: https://gml.noaa.gov/about/disclaimer.html
+url_checks:
+  source_marker: HRRR-Smoke Graphics
+  license_marker: information on government servers are in the public domain
+domains: [Air Quality]
+data_types: [Geospatial, Time Series]
+tasks: [Monitoring]
+difficulty: intermediate
+geography: [United States]
+temporal_coverage: hourly forecast cycles with dated forecast hours
+update_frequency: near real time
+provider: National Oceanic and Atmospheric Administration
+source_type: government
+last_verified: 2026-09-28
+getting_started:
+  overview: >
+    NOAA publishes HRRR-Smoke MASSDEN at 8 m above ground in GRIB2 through NOMADS.
+    Start with a one-degree area and one completed cycle. This is modeled smoke mass
+    concentration, not a monitor reading, and the GRIB values need unit conversion.
+  prerequisites: [Python 3.10 or newer, An internet connection, The requests Python package]
+  access_steps:
+    - Read NOAA's HRRR-Smoke model page and public-domain notice.
+    - Select a completed model cycle and request only MASSDEN at 8 m for a small area.
+    - Inspect the GRIB field before interpreting smoke concentrations.
+  python:
+    packages: [requests]
+    code: |
+      from datetime import datetime, timedelta, timezone
+      import requests
+
+      run = datetime.now(timezone.utc) - timedelta(hours=5)
+      day, hour = run.strftime("%Y%m%d"), run.strftime("%H")
+      params = {
+          "file": f"hrrr.t{hour}z.wrfsfcf00.grib2",
+          "lev_8_m_above_ground": "on", "var_MASSDEN": "on",
+          "subregion": "", "leftlon": "-106", "rightlon": "-105",
+          "toplat": "40", "bottomlat": "39", "dir": f"/hrrr.{day}/conus",
+      }
+      response = requests.get(
+          "https://nomads.ncep.noaa.gov/cgi-bin/filter_hrrr_2d.pl",
+          params=params, timeout=30,
+      )
+      response.raise_for_status()
+      assert response.content.startswith(b"GRIB")
+      print(day, hour, len(response.content), "GRIB2 bytes")
+  first_project:
+    title: Inspect a Smoke Forecast Field
+    goal: Inspect one forecast cycle before displaying model smoke context.
+    steps:
+      - Request a bounded MASSDEN GRIB field for one cycle.
+      - Decode and convert its kg/m3 mass density to micrograms per cubic meter.
+      - Explain why a model forecast cannot be presented as a current monitor observation.
