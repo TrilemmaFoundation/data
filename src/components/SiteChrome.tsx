@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { siteCopy } from "@/content/site-copy";
@@ -21,10 +22,15 @@ export function SiteHeader() {
   return <header ref={header} className="data-header foundation-local-nav">
     <nav className="foundation-local-inner" aria-label="Data navigation">
       <Link href="/" className="foundation-local-brand" aria-label="Trilemma Data home">Data</Link>
-      <Link href="/" aria-current={isDatasetsPath(pathname) ? "page" : undefined}>{siteCopy.datasetsNavigationLabel}</Link>
-      <Link href="/apps" aria-current={isAppsPath(pathname) ? "page" : undefined}>{siteCopy.appsNavigationLabel}</Link>
-      <Link href="/collections" aria-current={isCollectionsPath(pathname) ? "page" : undefined}>{siteCopy.collectionsNavigationLabel}</Link>
-      <Link href="/contribute" prefetch={false} aria-current={isContributePath(pathname) ? "page" : undefined}>{siteCopy.contributeLabel}</Link>
+      <a className="foundation-local-logo" href="https://www.trilemma.foundation/" aria-label="Visit Trilemma Foundation">
+        <Image src="/foundation/symbol.svg" width={40} height={40} alt="" unoptimized />
+      </a>
+      <div className="foundation-local-links">
+        <Link href="/" aria-current={isDatasetsPath(pathname) ? "page" : undefined}>{siteCopy.datasetsNavigationLabel}</Link>
+        <Link href="/apps" aria-current={isAppsPath(pathname) ? "page" : undefined}>{siteCopy.appsNavigationLabel}</Link>
+        <Link href="/collections" aria-current={isCollectionsPath(pathname) ? "page" : undefined}>{siteCopy.collectionsNavigationLabel}</Link>
+        <Link href="/contribute" prefetch={false} aria-current={isContributePath(pathname) ? "page" : undefined}>{siteCopy.contributeLabel}</Link>
+      </div>
     </nav>
   </header>;
 }

@@ -70,8 +70,9 @@ interaction rules, and checksums.
 - Azure `#5858C8` links and light-surface focus; amber `#FF9940` dark-surface focus
 - Roboto typography, 10px controls, 16px cards, and 44px minimum interactive targets
 
-Data renders only its local header (Datasets, Apps, Build Paths, Contribute), with
-sticky offsets measured from its actual height. The shared Foundation footer
+Data keeps its local Datasets, Apps, Build Paths, and Contribute navigation, with
+the Foundation symbol centered in the header and linked to the main website.
+Sticky offsets track the header's actual height. The shared Foundation footer
 remains. Run `npm run check:design` when updating the vendored contract.
 
 ## Editing content

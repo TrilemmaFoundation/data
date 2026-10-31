@@ -88,23 +88,77 @@ test('only local navigation is rendered and offsets track its actual height', as
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/');
     const header = page.locator('.data-header');
+    const logo = page.getByRole('link', { name: 'Visit Trilemma Foundation' });
     await expect(header).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Data navigation', exact: true })).toBeVisible();
     await expect(page.locator('.foundation-header, .foundation-header-bar')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Open site menu' })).toHaveCount(0);
     const box = await header.boundingBox();
+    const logoBox = await logo.boundingBox();
+    await expect(logo).toHaveAttribute('href', 'https://www.trilemma.foundation/');
+    await expect(logo).not.toHaveAttribute('target');
+    await expect(logo.locator('img')).toHaveAttribute('src', '/foundation/symbol.svg');
+    await expect(logo.locator('img')).toHaveAttribute('alt', '');
+    await expect.poll(() => logo.locator('img').evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     expect(box!.y).toBe(0);
+    expect(logoBox!.width).toBeGreaterThanOrEqual(44);
+    expect(logoBox!.height).toBeGreaterThanOrEqual(44);
+    expect(logoBox!.x + logoBox!.width / 2).toBeCloseTo(box!.x + box!.width / 2, 0);
     expect(box!.height).toBeLessThan(width >= 1024 ? 65 : 120);
     await expect.poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--foundation-shell-height')))).toBeCloseTo(box!.height, 0);
     for (const link of await header.locator('a').all()) await expect(link).toBeInViewport({ ratio: 1 });
   }
 });
 
-test('narrow header keeps all destinations together on the second row', async ({ page }) => {
+test('narrow header keeps local routes reachable below the centered mark', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await page.goto('/apps');
-  const links = page.locator('.data-header a');
-  const boxes = await Promise.all((await links.all()).map((link) => link.boundingBox()));
-  expect(boxes[0]!.y).toBeLessThan(boxes[1]!.y);
-  for (const box of boxes.slice(2)) expect(box!.y).toBe(boxes[1]!.y);
+  const local = page.getByRole('navigation', { name: 'Data navigation' });
+  const brandBox = await local.getByRole('link', { name: 'Trilemma Data home' }).boundingBox();
+  const logoBox = await local.getByRole('link', { name: 'Visit Trilemma Foundation' }).boundingBox();
+  expect(brandBox!.y).toBeCloseTo(logoBox!.y, 0);
+  const routes = local.locator('.foundation-local-links a');
+  expect(await routes.count()).toBe(4);
+  for (const link of await routes.all()) {
+    const box = await link.boundingBox();
+    expect(box!.y).toBeGreaterThanOrEqual(logoBox!.y + logoBox!.height);
+    await expect(link).toBeInViewport({ ratio: 1 });
+  }
+});
+
+test('centered Foundation link and local routes remain usable with 200% header text', async ({ page }) => {
+  for (const width of [320, 1024, 1536]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/apps');
+    await page.addStyleTag({ content: '.data-header .foundation-local-inner a { font-size: 28px !important; }' });
+    const header = page.locator('.data-header');
+    const logo = page.getByRole('link', { name: 'Visit Trilemma Foundation' });
+    const headerBox = await header.boundingBox();
+    const logoBox = await logo.boundingBox();
+    expect(logoBox!.x + logoBox!.width / 2).toBeCloseTo(headerBox!.x + headerBox!.width / 2, 0);
+    const local = page.getByRole('navigation', { name: 'Data navigation' });
+    const targets = [local.getByRole('link', { name: 'Trilemma Data home' }), logo, ...await local.locator('.foundation-local-links a').all()];
+    const boxes = await Promise.all(targets.map((target) => target.boundingBox()));
+    for (const box of boxes) expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+    for (const link of targets) await expect(link).toBeInViewport({ ratio: 1 });
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const a = boxes[i]!;
+        const b = boxes[j]!;
+        expect(a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height).toBe(false);
+      }
+    }
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
+test('local navigation links change routes from the keyboard', async ({ page }) => {
+  await page.goto('/');
+  const local = page.getByRole('navigation', { name: 'Data navigation' });
+  const apps = local.getByRole('link', { name: 'Apps', exact: true });
+  await apps.focus();
+  await expect(apps).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/apps\/?$/);
+  await expect(local.getByRole('link', { name: 'Apps', exact: true })).toHaveAttribute('aria-current', 'page');
 });

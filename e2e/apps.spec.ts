@@ -50,7 +50,8 @@ test("Apps is a primary header destination on listing and details", async ({ pag
   for (const path of ["/apps", "/apps/travelcanary", "/apps/stackingsats/"]) {
     await page.goto(path);
     const nav = page.getByRole("navigation", { name: "Data navigation" });
-    await expect(nav.locator("a")).toHaveText(["Data", "Datasets", "Apps", "Build Paths", "Contribute"]);
+    await expect(nav.locator(".foundation-local-brand")).toHaveText("Data");
+    await expect(nav.locator(".foundation-local-links a")).toHaveText(["Datasets", "Apps", "Build Paths", "Contribute"]);
     await expect(nav.getByRole("link", { name: "Apps", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(nav.getByRole("link", { name: "Datasets", exact: true })).not.toHaveAttribute("aria-current");
   }
